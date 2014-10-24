@@ -134,7 +134,7 @@ void generate_code_php(batch *b)
                         if ( strcmp(tmppcklist->key->id,tmplist->key->package->id)){
                             /* This class' package and our current class' package are
                                not the same */
-                            outdir = create_package_dir( b, tmppcklist->key );
+                            create_package_dir( b, tmppcklist->key );
                             fprintf(outfile, "require_once '%s/%s.php';\n", tmppcklist->key->directory, used_classes->key->name );
                         }
                     } else {
