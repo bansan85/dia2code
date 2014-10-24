@@ -1,15 +1,17 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(Makefile.am)
+AC_PREREQ([2.68])
 
 AC_CONFIG_HEADERS(config.h)
 
-AC_INIT([dia2code], [0.9.0])
+AC_INIT(dia2code, 0.9.0)
 AC_CONFIG_SRCDIR([dia2code/main.c])
 AM_INIT_AUTOMAKE
+AC_CONFIG_MACRO_DIR([m4])
+
+LT_INIT
 
 dnl Checks for programs.
 AC_PROG_CC
-AC_PROG_RANLIB
 AN_MAKEVAR([AR], [AC_PROG_AR])
 AN_PROGRAM([ar], [AC_PROG_AR])
 AC_DEFUN([AC_PROG_AR], [AC_CHECK_TOOL(AR, ar, :)])
@@ -37,4 +39,4 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 
 dnl Checks for library functions.
 
-AC_OUTPUT(Makefile dia2code/Makefile dia2code/docs/Makefile dia2code/docs/en/Makefile )
+AC_OUTPUT(Makefile dia2code/Makefile dia2code/docs/Makefile dia2code/docs/en/Makefile)
