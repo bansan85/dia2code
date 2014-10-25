@@ -16,7 +16,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "dia2code.h"
+#include "dia2code.hpp"
 
 void generate_code_python(batch *b) {
     umlclasslist tmplist, parents;

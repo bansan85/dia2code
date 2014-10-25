@@ -19,7 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "dia2code.h"
+#include "dia2code.hpp"
 
 static char *
 pkgname (umlpackagelist pkg)

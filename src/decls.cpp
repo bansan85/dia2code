@@ -1,4 +1,4 @@
-#include "decls.h"
+#include "decls.hpp"
 
 declaration *decls = NULL;
 static namelist tmp_classes = NULL;

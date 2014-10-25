@@ -15,11 +15,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "dia2code.h"
+#include "dia2code.hpp"
 #include <errno.h>
 
 char * d2c_indentstring = "   ";
 int d2c_indentposition = 0;
+int generate_backup;
 
 int indentlevel = 0;
 static int number_of_spaces_for_one_indentation = 2;
@@ -706,7 +707,7 @@ int d2c_backup(char *filename)
      * tag-on four more characters - not DOS-friendly)
      * But I'll admit to being a bit out-of-the loop here.
      */
-    char *backup_filename = my_malloc(strlen(filename) + 4);
+    char *backup_filename = (void *)my_malloc(strlen(filename) + 4);
     strcpy(backup_filename, filename);
     strcat(backup_filename, ".bak");
 

@@ -17,9 +17,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "dia2code.h"
-#include "decls.h"
-#include "includes.h"
+#include "dia2code.hpp"
+#include "decls.hpp"
+#include "includes.hpp"
 
 #define PACKAGE_EXT "_types"
 #define SPEC_EXT "ads"
@@ -34,13 +34,13 @@ static batch *gb;   /* The current batch being processed.  */
 /* Utilities.  */
 
 static void
-check_umlattr (umlattribute *u, char *typename)
+check_umlattr (umlattribute *u, char *typename_)
 {
     /* Check settings that don't make sense for Ada generation.  */
     if (u->visibility == '1')
-        fprintf (stderr, "%s/%s: ignoring non-visibility\n", typename, u->name);
+        fprintf (stderr, "%s/%s: ignoring non-visibility\n", typename_, u->name);
     if (u->isstatic)
-        fprintf (stderr, "%s/%s: ignoring staticness\n", typename, u->name);
+        fprintf (stderr, "%s/%s: ignoring staticness\n", typename_, u->name);
 }
 
 static char *
@@ -121,7 +121,7 @@ adaname (char *name)
 
 
 static void
-do_operations (char *typename, umloplist umlo, int in_valuetype)
+do_operations (umloplist umlo, int in_valuetype)
 {
     if (umlo == NULL)
         return;
@@ -333,7 +333,7 @@ gen_class (umlclassnode *node, int do_valuetype)
             umla = umla->next;
         }
     }
-    do_operations (name, node->key->operations, do_valuetype);
+    do_operations (node->key->operations, do_valuetype);
     indentlevel--;
     print ("private\n\n");
     indentlevel++;

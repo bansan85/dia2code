@@ -20,9 +20,9 @@
 /* NB: If you use CORBA stereotypes, you will need the file p_orb.h
    found in the runtime/cpp directory.  */
 
-#include "dia2code.h"
-#include "decls.h"
-#include "includes.h"
+#include "dia2code.hpp"
+#include "decls.hpp"
+#include "includes.hpp"
 
 #define SPEC_EXT "h"
 #define BODY_EXT "cpp"
@@ -34,13 +34,13 @@ static batch *gb;   /* The current batch being processed.  */
 /* Utilities.  */
 
 static void
-check_umlattr (umlattribute *u, char *typename)
+check_umlattr (umlattribute *u, char *typename_)
 {
     /* Check settings that don't make sense for C++ generation.  */
     if (u->visibility == '1')
-        fprintf (stderr, "%s/%s: ignoring non-visibility\n", typename, u->name);
+        fprintf (stderr, "%s/%s: ignoring non-visibility\n", typename_, u->name);
     if (u->isstatic)
-        fprintf (stderr, "%s/%s: ignoring staticness\n", typename, u->name);
+        fprintf (stderr, "%s/%s: ignoring staticness\n", typename_, u->name);
 }
 
 static char *
@@ -201,15 +201,15 @@ gen_class (umlclassnode *node)
     print("/// class %s - %s\n", name, node->key->comment);
 
     if (node->key->templates != NULL) {
-        umltemplatelist template = node->key->templates;
+        umltemplatelist template_ = node->key->templates;
         if (is_valuetype) {
             fprintf (stderr, "CORBAValue %s: template ignored\n", name);
         } else {
             print ("template <");
-            while (template != NULL) {
-                print ("%s %s", template->key.type, template->key.name);
-                template = template->next;
-                if (template != NULL)
+            while (template_ != NULL) {
+                print ("%s %s", template_->key.type, template_->key.name);
+                template_ = template_->next;
+                if (template_ != NULL)
                     emit (", ");
             }
             emit (">\n");

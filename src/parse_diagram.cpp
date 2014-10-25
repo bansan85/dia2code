@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "parse_diagram.h"
+#include "parse_diagram.hpp"
 
 #ifndef MIN
 #define MIN(x, y) (x < y ? x : y)
@@ -434,7 +434,7 @@ umlpackagelist parse_package(xmlNodePtr package) {
     return listmyself;
 }
 
-umlclasslist parse_class(xmlNodePtr class) {
+umlclasslist parse_class(xmlNodePtr class_) {
     xmlNodePtr attribute;
     xmlChar *attrname;
     umlclasslist listmyself;
@@ -450,7 +450,7 @@ umlclasslist parse_class(xmlNodePtr class) {
     listmyself->dependencies = NULL;
     listmyself->next = NULL;
 
-    attribute = class->xmlChildrenNode;
+    attribute = class_->xmlChildrenNode;
     while ( attribute != NULL ) {
         attrname = xmlGetProp(attribute, "name");
         /* fix a segfault - dia files contains *also* some rare tags without any "name" attribute : <dia:parent  for ex.  */

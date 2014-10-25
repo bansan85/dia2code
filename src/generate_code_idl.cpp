@@ -19,23 +19,23 @@
 
 #include <stdarg.h>
 
-#include "dia2code.h"
-#include "decls.h"
-#include "includes.h"
+#include "dia2code.hpp"
+#include "decls.hpp"
+#include "includes.hpp"
 
 static void
-check_umlattr (umlattribute *u, char *typename)
+check_umlattr (umlattribute *u, char *typename_)
 {
     /* Check settings that don't make sense for IDL generation.  */
     if (u->visibility == '1')
-        fprintf (stderr, "%s/%s: ignoring non-visibility\n", typename, u->name);
+        fprintf (stderr, "%s/%s: ignoring non-visibility\n", typename_, u->name);
     if (u->isstatic)
-        fprintf (stderr, "%s/%s: ignoring staticness\n", typename, u->name);
+        fprintf (stderr, "%s/%s: ignoring staticness\n", typename_, u->name);
 }
 
 
 static void
-do_operations (char *typename, umloplist umlo)
+do_operations (char *typename_, umloplist umlo)
 {
     if (umlo == NULL)
         return;
@@ -51,7 +51,7 @@ do_operations (char *typename, umloplist umlo)
             fprintf (stderr, "ignoring abstractness\n");
             /* umlo->key.attr.value[0] = '0'; */
         }
-        check_umlattr (&umlo->key.attr, typename);
+        check_umlattr (&umlo->key.attr, typename_);
 
         if (strlen (umlo->key.attr.type) > 0)
             emit ("%s ", umlo->key.attr.type);
@@ -89,9 +89,9 @@ close_scope ()
 static void
 gen_interface (umlclassnode *node)
 {
-    char *typename = node->key->name;
+    char *typename_ = node->key->name;
 
-    print ("interface %s", typename);
+    print ("interface %s", typename_);
 
     if (node->parents != NULL) {
         umlclasslist parents = node->parents;
@@ -124,13 +124,13 @@ gen_interface (umlclassnode *node)
         umlattrlist umla = node->key->attributes;
         print ("// Attributes\n");
         while (umla != NULL) {
-            check_umlattr (&umla->key, typename);
+            check_umlattr (&umla->key, typename_);
             print ("attribute %s %s;\n", umla->key.type, umla->key.name);
             umla = umla->next;
         }
     }
 
-    do_operations (typename, node->key->operations);
+    do_operations (typename_, node->key->operations);
     close_scope ();
 }
 

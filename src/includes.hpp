@@ -4,8 +4,8 @@
 /* Includefile computation related stuff (equally applicable to
    Ada with clause computation and Java package use computation)  */
 
-#include "dia2code.h"
-#include "decls.h"
+#include "dia2code.hpp"
+#include "decls.hpp"
 
 extern namelist includes;
 

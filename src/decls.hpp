@@ -1,7 +1,7 @@
 #ifndef DECLS_H
 #define DECLS_H
 
-#include "dia2code.h"
+#include "dia2code.hpp"
 
 /* Package processing auxiliary structure:
    "Declarations" are UML packages (which map to IDL module or C++

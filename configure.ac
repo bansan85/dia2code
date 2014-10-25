@@ -4,14 +4,14 @@ AC_PREREQ([2.68])
 AC_CONFIG_HEADER(config.h)
 
 AC_INIT(dia2code, 0.9.0)
-AC_CONFIG_SRCDIR([src/main.c])
+AC_CONFIG_SRCDIR([src/main.cpp])
 AM_INIT_AUTOMAKE
 AC_CONFIG_MACRO_DIR([m4])
 
 LT_INIT
 
 dnl Checks for programs.
-AC_PROG_CC
+AC_PROG_CXX
 AN_MAKEVAR([AR], [AC_PROG_AR])
 AN_PROGRAM([ar], [AC_PROG_AR])
 AC_DEFUN([AC_PROG_AR], [AC_CHECK_TOOL(AR, ar, :)])

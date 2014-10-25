@@ -7,8 +7,8 @@
     
 **/
 
-#include "dia2code.h"
-#include "source_parser.h"
+#include "dia2code.hpp"
+#include "source_parser.hpp"
 
 /*  block with heterogen or unknown content */
 #define SP_AT_MISC  1
@@ -21,7 +21,7 @@
  * test a file existence and extract the source and the blocks
  * source is allocated and initialised with the source code buffer and the blocks markers
  */
-void source_preserve( batch *b, umlclass *class, const char *filename, sourcecode *source )
+void source_preserve( batch *b, umlclass *class_, const char *filename, sourcecode *source )
 {
     char *diaoid = NULL;
     umloplist umlo;
@@ -34,7 +34,7 @@ void source_preserve( batch *b, umlclass *class, const char *filename, sourcecod
     //open the file in read only 
     FILE * rofile = fopen(filename, "r");
     if( ! rofile ) {
-        debug( DBG_SOURCE, "no existing file %s for class %s", filename, class->name );
+        debug( DBG_SOURCE, "no existing file %s for class %s", filename, class_->name );
         return;
     }
     /* from here, the file exists, we transfer the content in a buffer and parse the source */
@@ -44,7 +44,7 @@ void source_preserve( batch *b, umlclass *class, const char *filename, sourcecod
     } else {
         source->blocks  = source_parse( source->buffer );
         /* copy source blocks found to method->implementation */
-        umlo = class->operations;
+        umlo = class_->operations;
         while( umlo != NULL ) {
             /* is there a diaoid hidden in the operation comment ? */
             if( (diaoid=find_diaoid(umlo->key.attr.comment,NULL)) != NULL) {
@@ -89,15 +89,15 @@ sourceblock *sourceblock_new( char *spos, size_t len, char *oid, int type )
 sourceblocknode *sourceblocklist_add( sourceblocknode *list, const sourceblock *blk )
 {
     debug( DBG_GENCODE, "sourceblocklist_add( list=%p, blk=%p )", list,blk );
-    sourceblocknode *new =  (sourceblocknode*) malloc( sizeof(sourceblocknode));
-    new->blk = (sourceblock*) blk;
+    sourceblocknode *new_ =  (sourceblocknode*) malloc( sizeof(sourceblocknode));
+    new_->blk = (sourceblock*) blk;
     /* if the list is null, no need to link  */
     if( list == NULL ) {
-        new->next = NULL;
+        new_->next = NULL;
     } else {
-        new->next = list;
+        new_->next = list;
     }
-    return new;
+    return new_;
 }
 
 sourceblock *sourceblock_find( sourceblocknode *list, const char *oid )

@@ -23,7 +23,7 @@
  *   packages not implemented yet
 ***************************************************************************/
 
-#include "dia2code.h"
+#include "dia2code.hpp"
 
 #define TABS "  "  /* 2 */
 

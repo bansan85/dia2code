@@ -1,5 +1,5 @@
 /***************************************************************************
-                          parse_diagram.h  -  The parser of the Dia file
+                         code_generators.h  -  Header for the code generating functions
                              -------------------
     begin                : Sat Dec 16 2000
     copyright            : (C) 2000-2001 by Javier O'Hara
@@ -14,8 +14,27 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+#ifndef CODE_GENERATORS
+#define CODE_GENERATORS
 
-#include "dia2code.h"
+#include "dia2code.hpp"
 
-umlclasslist parse_diagram(char *diafile);
+#define NO_GENERATORS 13
 
+void generate_code_c(batch *b);
+void generate_code_cpp(batch *b);
+void generate_code_java(batch *b);
+void generate_code_sql(batch *b);
+void generate_code_ada(batch *b);
+void generate_code_python(batch *b);
+void generate_code_php(batch *b);
+void generate_code_shp(batch *b);
+void generate_code_idl(batch *b);
+void generate_code_csharp(batch *b);
+void generate_code_php_five(batch *b);
+void generate_code_ruby(batch *b);
+void generate_code_as3(batch *b);
+
+void inherit_attributes(umlclasslist, umlattrlist);
+
+#endif

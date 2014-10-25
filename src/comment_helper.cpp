@@ -14,7 +14,7 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#include "dia2code.h"
+#include "dia2code.hpp"
 
 
 /**
@@ -22,10 +22,8 @@
   *
  *
  */
-void generate_class_comment( FILE *outfile, batch *b, umlclass *class )
+void generate_class_comment( FILE *outfile, batch *b, umlclass *class_)
 {
-    
-    
 }
 
 /**

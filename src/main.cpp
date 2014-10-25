@@ -15,9 +15,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "dia2code.h"
-#include "code_generators.h"
-#include "parse_diagram.h"
+#include "dia2code.hpp"
+#include "code_generators.hpp"
+#include "parse_diagram.hpp"
 
 int process_initialization_file(char *filename, int exit_if_not_found);
 
@@ -82,7 +82,6 @@ int main(int argc, char **argv) {
     char inifile[BIG_BUFFER];
 
     void (*generator)(batch *);
-    void (*generators[NO_GENERATORS])(batch *);
 
     char * notice = "\
 dia2code version " VERSION ", Copyright (C) 2000-2001 Javier O'Hara\n\
@@ -130,19 +129,6 @@ under certain conditions; read the COPYING file for details.\n";
     dia2code_initializations();
 
     generator = NULL;
-    generators[0] = generate_code_cpp;
-    generators[1] = generate_code_java;
-    generators[2] = generate_code_c;
-    generators[3] = generate_code_sql;
-    generators[4] = generate_code_ada;
-    generators[5] = generate_code_python;
-    generators[6] = generate_code_php;
-    generators[7] = generate_code_shp;
-    generators[8] = generate_code_idl;
-    generators[9] = generate_code_csharp;
-    generators[10] = generate_code_php_five;
-    generators[11] = generate_code_ruby;
-    generators[12] = generate_code_as3;
 
 
     if (argc < 2) {
@@ -190,33 +176,33 @@ under certain conditions; read the COPYING file for details.\n";
         case 1:   /* Which code generator */
             parameter = 0;
             if ( eq (argv[i], "cpp") ) {
-                generator = generators[0];
+                generator = generate_code_cpp;
             } else if ( eq (argv[i], "java") ) {
-                generator = generators[1];
+//                generator = generators[1];
                 generator_buildtree = 1;
             } else if ( eq (argv[i], "c") ) {
-                generator = generators[2];
+//                generator = generators[2];
             } else if ( eq (argv[i], "sql") ) {
-                generator = generators[3];
+//                generator = generators[3];
             } else if ( eq (argv[i], "ada") ) {
-                generator = generators[4];
+//                generator = generators[4];
             } else if ( eq (argv[i], "python") ) {
-                generator = generators[5];
+//                generator = generators[5];
             } else if ( eq (argv[i], "php") ) {
-                generator = generators[6];
+//                generator = generators[6];
                 generator_buildtree = 1;
             } else if ( eq (argv[i], "shp") ) {
-                generator = generators[7];
+//                generator = generators[7];
             } else if ( eq (argv[i], "idl") ) {
-                generator = generators[8];
+//                generator = generators[8];
             } else if ( eq (argv[i], "csharp") ) {
-                generator = generators[9];
+//                generator = generators[9];
             } else if ( eq(argv[i], "php5") ) {
-                generator = generators[10];
+//                generator = generators[10];
             } else if ( eq(argv[i], "ruby") ) {
-                generator = generators[11];
+//                generator = generators[11];
             } else if ( eq(argv[i], "as3") ) {
-                generator = generators[12];
+//                generator = generators[12];
                 generator_buildtree = 1;
             } else {
 #ifdef DSO
@@ -314,7 +300,8 @@ parameter = -1;   /* error */
 
     /* Code generation */
     if ( !generator ) {
-        generator = generators[DEFAULT_TARGET];
+        fprintf( stderr,"error : no generator specify.\n" );
+        exit (1);
     }
     (*generator)(thisbatch);
 

@@ -14,9 +14,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "dia2code.h"
-#include "parse_diagram.h"
-#include "code_generators.h"
+#include "dia2code.hpp"
+#include "parse_diagram.hpp"
+#include "code_generators.hpp"
 
 void inherit_attributes(umlclasslist parents, umlattrlist umla) {
     umlattrlist pumla;

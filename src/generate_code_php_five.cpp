@@ -18,7 +18,7 @@ generate_code_php5.c  -  Function that generates Php 5 code
  *                                                                         *
  ***************************************************************************/
 
-#include "dia2code.h"
+#include "dia2code.hpp"
 
 #define TABS "    "  /* 4 */
 

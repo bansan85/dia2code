@@ -1,9 +1,8 @@
 /***************************************************************************
-          generate_code_java.c  -  Function that generates Java code
+    generate_code_as3.c  -  Function that generates Actionscript 3.0 code
                              -------------------
-    begin                : Sat Dec 16 2000
-    copyright            : (C) 2000-2001 by Javier O'Hara
-    email                : joh314@users.sourceforge.net
+    begin                : Sun Mar 30 2014
+    email                : ldimat@gmail.con
  ***************************************************************************/
 
 /***************************************************************************
@@ -15,9 +14,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "dia2code.h"
-#include "comment_helper.h"
-#include "source_parser.h"
+#include "dia2code.hpp"
+#include "comment_helper.hpp"
+#include "source_parser.hpp"
 
 /* Other things to be fixed:
  * The code that determines the parent class and implementations needs to go
@@ -31,12 +30,14 @@
 #define JAVA_EXTENDS         0
 #define JAVA_IMPLEMENTS      1
 
+char *java_visibility_to_string(int visibility);
+
 /**
  * get the visibility java keyword from the Dia visibility code
  * @param int the dia visibility constant
  * @return the java keyword for visibility 
  */
-char *java_visibility_to_string(int visibility)
+char *as3_visibility_to_string(int visibility)
 {
     switch (visibility)
     {
@@ -51,11 +52,17 @@ char *java_visibility_to_string(int visibility)
     }
 }
 
+int as3_vector_multiplicity(char *multiplicity) {
+  if (strlen(multiplicity) == 0 ||
+      eq(multiplicity, "1") ||
+      eq(multiplicity, "0..1")) return 1;
+  return 2;
+}
 
 /**
  * This function dumps out the list of interfaces and extensions, as necessary.
  */
-int java_manage_parents(FILE *f, umlclasslist parents, int stereotype)
+int as3_manage_parents(FILE *f, umlclasslist parents, int stereotype)
 {
     char *tmpname;
     int cnt = 0;
@@ -89,14 +96,14 @@ int java_manage_parents(FILE *f, umlclasslist parents, int stereotype)
  * @param the output file
  * @param the attribute struct to generate
  */
-int java_generate_attribute( FILE * outfile, umlattribute *attr )
+int as3_generate_attribute( FILE * outfile, umlattribute *attr )
 {
     debug( DBG_GENCODE, "generate attribute %s\n", attr->name );
     generate_attribute_comment( outfile, NULL, attr );
     d2c_fprintf(outfile, "%s ", java_visibility_to_string(attr->visibility));
     if (attr->isstatic)
         d2c_fprintf(outfile, "static ");
-    d2c_fprintf(outfile, "%s %s", attr->type, attr->name);
+    d2c_fprintf(outfile, "var %s:%s", attr->name, attr->type);
     if ( attr->value[0] != 0 )
         d2c_fprintf(outfile, " = %s", attr->value);
     d2c_fprintf(outfile, ";\n");
@@ -108,7 +115,7 @@ int java_generate_attribute( FILE * outfile, umlattribute *attr )
  * @param the output file
  * @param the operation struct to generate
  */
-int java_generate_operation( FILE * outfile, umloperation *ope, int classtype )
+int as3_generate_operation( FILE * outfile, umloperation *ope, int classtype )
 {
     umlattrlist tmpa;
     debug( DBG_GENCODE, "generate method %s\n", ope->attr.name );
@@ -117,34 +124,37 @@ int java_generate_operation( FILE * outfile, umloperation *ope, int classtype )
 
     /* method declaration */
     if ( ope->attr.isabstract ){
-        d2c_fprintf(outfile, "abstract ");
-        ope->attr.value[0] = '0';
+        fprintf(stderr, "Actionscript cannot have abstract classes!\n");
+        /* d2c_fprintf(outfile, "abstract "); */
+        /* ope->attr.value[0] = '0'; */
     }
     d2c_fprintf(outfile, "%s ", java_visibility_to_string(ope->attr.visibility));
     if ( ope->attr.isstatic )
         d2c_fprintf(outfile, "static ");
-    if (strlen(ope->attr.type) > 0)
-        d2c_fprintf(outfile, "%s ", ope->attr.type);
-    d2c_fprintf(outfile, "%s ( ", ope->attr.name);
+    d2c_fprintf(outfile, " function %s(", ope->attr.name);
     tmpa = ope->parameters;
     while (tmpa != NULL)
     {
-        d2c_fprintf(outfile, "%s %s", tmpa->key.type, tmpa->key.name);
+        d2c_fprintf(outfile, "%s:%s", tmpa->key.name, tmpa->key.type);
         tmpa = tmpa->next;
         if (tmpa != NULL)
             d2c_fprintf(outfile, ", ");
     }
-    d2c_fprintf(outfile, " )");
+    d2c_fprintf(outfile, ")");
+    if (strlen(ope->attr.type) > 0)
+        d2c_fprintf(outfile, ":%s", ope->attr.type);
+    else
+        d2c_fprintf(outfile, ":void");
     if ( classtype == CLASSTYPE_ABSTRACT || classtype == CLASSTYPE_INTERFACE) {
         d2c_fprintf(outfile, ";\n");
-    } 
+    }
     else {
         if ( ope->implementation != NULL ) {
             debug( DBG_GENCODE, "implementation found" );
-            d2c_fprintf(outfile, "{%s}", ope->implementation);
+            d2c_fprintf(outfile, " {%s}", ope->implementation);
         }
         else {
-            d2c_fprintf(outfile, "{");
+            d2c_fprintf(outfile, " {\n");
             d2c_fprintf(outfile, "}");
         }
     }
@@ -152,8 +162,7 @@ int java_generate_operation( FILE * outfile, umloperation *ope, int classtype )
     return 0;
 }
 
-
-void generate_code_java(batch *b)
+void generate_code_as3(batch *b)
 {
     umlclasslist tmplist;
     umlassoclist associations;
@@ -165,7 +174,7 @@ void generate_code_java(batch *b)
     FILE * outfile, *dummyfile, *licensefile = NULL;
     int file_found = 0;
     umlclasslist used_classes;
-    umlclass *class;
+    umlclass *class_;
     int classtype;
     sourcecode *source = NULL;
     int tmpdirlgth, tmpfilelgth;
@@ -190,34 +199,34 @@ void generate_code_java(batch *b)
 
     while ( tmplist != NULL )
     {
-        class = tmplist->key;
-        if ( is_present(b->classes,class->name) ^ b->mask ) {
+        class_ = tmplist->key;
+        if ( is_present(b->classes, class_->name) ^ b->mask ) {
             tmplist = tmplist->next;
             continue;
         }
-        tmpname = class->name;
+        tmpname = class_->name;
 
         /* This prevents buffer overflows */
         tmpfilelgth = strlen(tmpname);
-        if (tmpfilelgth + tmpdirlgth > sizeof(*outfilename) - 2)
+        if (tmpfilelgth + tmpdirlgth > sizeof(outfilename) - 2)
         {
             fprintf(stderr, "Sorry, name of file too long ...\nTry a smaller dir name\n");
             exit(4);
         }
-        
+
         tmppcklist = make_package_list(tmplist->key->package);
 
         if (tmppcklist) {
             /* here we  calculate and create the directory if necessary */
             char *outdir = create_package_dir( b, tmppcklist->key );
-            sprintf(outfilename, "%s/%s.java", outdir, tmplist->key->name);
+            sprintf(outfilename, "%s/%s.as", outdir, tmplist->key->name);
         } else {
-            sprintf(outfilename, "%s.java", tmplist->key->name);
+            sprintf(outfilename, "%s.as", tmplist->key->name);
         }
 
         /* get implementation code from the existing file */
         source_preserve( b, tmplist->key, outfilename, source );
-        
+
         if ( b->clobber )
         {
             outfile = fopen(outfilename, "w");
@@ -233,20 +242,25 @@ void generate_code_java(batch *b)
                 int lc;
                 rewind(licensefile);
                 while ((lc = fgetc(licensefile)) != EOF)
-                    d2c_fputc(lc, (char) outfile);
+                    d2c_fputc( (char) lc, outfile);
             }
 
-            
-            tmppcklist = make_package_list(class->package);
+            tmppcklist = make_package_list(class_->package);
             if ( tmppcklist != NULL ){
-                d2c_fprintf(outfile,"package %s",tmppcklist->key->name);
-                tmppcklist=tmppcklist->next;
+                d2c_fprintf(outfile, "package %s", tmppcklist->key->name);
+                d2c_open_brace(outfile, "");
+                d2c_shift_code();
+                tmppcklist = tmppcklist->next;
                 while ( tmppcklist != NULL )
                 {
-                    d2c_fprintf(outfile,".%s",tmppcklist->key->name);
-                    tmppcklist=tmppcklist->next;
+                    d2c_fprintf(outfile, ".%s", tmppcklist->key->name);
+                    tmppcklist = tmppcklist->next;
                 }
-                d2c_fputs(";\n\n", outfile);
+                /* d2c_fputs(";\n\n", outfile); */
+            } else {
+                d2c_fprintf(outfile, "package ");
+                d2c_open_brace(outfile, "");
+                d2c_shift_code();
             }
 
             /* We generate the import clauses */
@@ -256,60 +270,58 @@ void generate_code_java(batch *b)
                 tmppcklist = make_package_list(used_classes->key->package);
                 if ( tmppcklist != NULL )
                 {
-                    if ( strcmp(tmppcklist->key->id,class->package->id))
+                    if (strcmp(tmppcklist->key->id, class_->package->id))
                     {
                         /* This class' package and our current class' package are
                            not the same */
-                        d2c_fprintf(outfile,"import %s",tmppcklist->key->name);
-                        tmppcklist=tmppcklist->next;
+                        d2c_fprintf(outfile, "import %s", tmppcklist->key->name);
+                        tmppcklist = tmppcklist->next;
                         while ( tmppcklist != NULL )
                         {
                             d2c_fprintf(outfile, ".%s", tmppcklist->key->name);
-                            tmppcklist=tmppcklist->next;
+                            tmppcklist = tmppcklist->next;
                         }
-                        d2c_fprintf(outfile,".%s;\n",used_classes->key->name);
+                        d2c_fprintf(outfile, ".%s;\n", used_classes->key->name);
                     }
                 }
                 else
                 {
                     /* No info for this class' package, we include it directly */
-                    if (index(used_classes->key->name, '.') != NULL)
-                        d2c_fprintf(outfile, "import %s;\n", used_classes->key->name);
-                    else
-                        d2c_fprintf(outfile, "// not generating import for unqualified name %s\n",
-                                    used_classes->key->name);
+                    d2c_fprintf(outfile, "import %s;\n", used_classes->key->name);
                 }
                 used_classes = used_classes->next;
             }
 
             d2c_fprintf(outfile, "\npublic ");
 
-            tmpname = strtolower(class->stereotype);
-            if (eq("interface", tmpname))
+            tmpname = strtolower(class_->stereotype);
+            if (eq(tmpname, "interface")) {
                 classtype = CLASSTYPE_INTERFACE;
-            else
-            {
-                if (class->isabstract)
+            } else {
+                if (class_->isabstract) {
                     classtype = CLASSTYPE_ABSTRACT;
-                else
+                    fprintf( stderr, "Actionscript cannot have abstract classes!\n" );
+                } else {
                     classtype = CLASSTYPE_CLASS;
+		}
             }
             free(tmpname);
 
-            switch(classtype)
+            switch (classtype)
             {
             case CLASSTYPE_INTERFACE:   d2c_fprintf(outfile, "interface "); break;
-            case CLASSTYPE_ABSTRACT:    d2c_fprintf(outfile, "abstract class "); break;
+            case CLASSTYPE_ABSTRACT:    d2c_fprintf(outfile, "class "); break;
             case CLASSTYPE_CLASS:       d2c_fprintf(outfile, "class "); break;
             }
 
-            d2c_fprintf(outfile, "%s", class->name);
+            d2c_fprintf(outfile, "%s", class_->name);
 
-            if (java_manage_parents(outfile, tmplist->parents, JAVA_EXTENDS) == 0)
-            {
-                d2c_fprintf(outfile, "\n");
-            }
-            java_manage_parents(outfile, tmplist->parents, JAVA_IMPLEMENTS);
+            /* if (as3_manage_parents(outfile, tmplist->parents, JAVA_EXTENDS) == 0) */
+            /* { */
+            /*     d2c_fprintf(outfile, "\n"); */
+            /* } */
+            as3_manage_parents(outfile, tmplist->parents, JAVA_EXTENDS);
+            as3_manage_parents(outfile, tmplist->parents, JAVA_IMPLEMENTS);
 
             /* At this point we need to make a decision:
                If you want to implement flexibility to add "extends", then
@@ -317,14 +329,14 @@ void generate_code_java(batch *b)
             d2c_open_brace(outfile, "");
 
             d2c_shift_code();
-            umla = class->attributes;
+            umla = class_->attributes;
 
-            if( umla != NULL)
+            if (umla != NULL)
                 d2c_fprintf(outfile, "/** Attributes */\n");
 
-            while ( umla != NULL)
+            while (umla != NULL)
             {
-                java_generate_attribute(outfile, &umla->key);
+                as3_generate_attribute(outfile, &umla->key);
                 umla = umla->next;
             }
 
@@ -334,18 +346,29 @@ void generate_code_java(batch *b)
 
             while ( associations != NULL )
             {
-                d2c_fprintf(outfile, "private %s %s;\n", associations->key->name, associations->name);
+                if (as3_vector_multiplicity(associations->multiplicity) == 2) {
+                    d2c_fprintf(outfile, "private %s:Vector.<%s>;\n",
+                                associations->name, associations->key->name);
+                } else {
+                  d2c_fprintf(outfile, "private %s:%s;\n",
+                              associations->name, associations->key->name);
+                }
                 associations = associations->next;
             }
 
             /* Operations */
-            umlo = class->operations;
-            while ( umlo != NULL)
+            umlo = class_->operations;
+            while (umlo != NULL)
             {
-                java_generate_operation( outfile, &umlo->key, classtype );
+                as3_generate_operation( outfile, &umlo->key, classtype );
                 umlo = umlo->next;
             }
 
+            /* Class declaration. */
+            d2c_unshift_code();
+            d2c_close_brace(outfile, "\n");
+
+            /* Package declaration. */
             d2c_unshift_code();
             d2c_close_brace(outfile, "\n");
 
@@ -354,4 +377,3 @@ void generate_code_java(batch *b)
         tmplist = tmplist->next;
     }
 }
-

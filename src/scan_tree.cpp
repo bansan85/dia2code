@@ -14,7 +14,7 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#include "dia2code.h"
+#include "dia2code.hpp"
 #define NEW_KLASS(c) ((c*)malloc(sizeof(c)))
 
 /* Adds an item to a name list */
@@ -119,15 +119,15 @@ umlclasslist find_by_name(umlclasslist list, const char * name ) {
 
 /* Creates a new umlclassnode with class as the key, then appends it to
   the end of list */
-umlclasslist append ( umlclasslist list, umlclassnode * class ) {
+umlclasslist append ( umlclasslist list, umlclassnode * class_ ) {
     umlclasslist tmplist = list;
     umlclassnode *tmpnode = NULL;
 
     tmpnode = (umlclassnode*) my_malloc ( sizeof(umlclassnode) );
-    tmpnode->key = class->key;
-    tmpnode->parents = class->parents;
-    tmpnode->associations = class->associations;
-    tmpnode->dependencies = class->dependencies;
+    tmpnode->key = class_->key;
+    tmpnode->parents = class_->parents;
+    tmpnode->associations = class_->associations;
+    tmpnode->dependencies = class_->dependencies;
     tmpnode->next = NULL;
 
     if ( tmplist != NULL ) {

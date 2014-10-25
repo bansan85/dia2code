@@ -16,9 +16,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "dia2code.h"
-#include "source_parser.h"
-#include "comment_helper.h"
+#include "dia2code.hpp"
+#include "source_parser.hpp"
+#include "comment_helper.hpp"
 
 #define TABS "    "  /* 4 */
 
