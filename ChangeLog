@@ -8,6 +8,7 @@ Unreleased:  Version 0.8.8
   > clauses only when the class name is fully qualified.
 - Fixed infinite loop on reading license file, see fgetc.patch at
   http://sourceforge.net/p/dia2code/patches/25/
+- Refactoring code : convert to program to C++.
 
 07 Jul 2014:  Version 0.8.7
 - Added ActionScript-3 code generator by Dima Levchenko

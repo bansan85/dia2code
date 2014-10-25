@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.68])
 
-AC_CONFIG_HEADERS(config.h)
+AC_CONFIG_HEADER(config.h)
 
 AC_INIT(dia2code, 0.9.0)
 AC_CONFIG_SRCDIR([dia2code/main.c])
@@ -18,22 +18,23 @@ AC_DEFUN([AC_PROG_AR], [AC_CHECK_TOOL(AR, ar, :)])
 AC_PROG_AR
 dnl Checks for libraries.
 
+
 AC_PATH_PROG(XML_CONFIG, xml2-config, no)
 if test "$XML_CONFIG" = "no"; then
   AC_MSG_ERROR([Cannot determine configuration of libxml.
 Perhaps you forgot to install the package libxml2-devel ?])
 else
-  XML_INCLUDES=`$XML_CONFIG --cflags`
-  LIBXML_LIBS=`$XML_CONFIG --libs`
-  AC_SUBST(XML_INCLUDES)
-  LIBS="$LIBS $LIBXML_LIBS"
+  AC_SUBST(XML_CFLAGS, `$XML_CONFIG --cflags`)
+  AC_SUBST(XML_LIBS, `$XML_CONFIG --libs`)
 fi
 
 dnl Checks for header files.
 
 AC_CHECK_HEADERS(dlfcn.h)
 
-AC_CHECK_LIB(dl, dlopen,[LDFLAGS="$LDFLAGS -rdynamic"; LIBS="$LIBS -ldl"; CPPFLAGS="$CPPFLAGS -DDSO"])
+AC_CHECK_LIB(dl, dlopen,[LDFLAGS="$LDFLAGS -rdynamic"
+                         LIBS="$LIBS -ldl"
+                         AC_DEFINE(DSO, 1, [dlopen is supported])])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 
