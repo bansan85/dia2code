@@ -1,7 +1,6 @@
 *.o
 Makefile
-dia2code/dia2code
-dia2code/libdia2code.a
+src/dia2code
 config.*
 autom4te.cache
 compile
@@ -12,7 +11,7 @@ libtool
 ltmain.sh
 m4
 missing
-dia2code/.deps
+.deps
 *.in
 stamp-h2
 aclocal.m4
