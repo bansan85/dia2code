@@ -1,11 +1,20 @@
-/**
-    DIA2CODE 
-    source_parser.c code-preservation functions
-    provides some functions to parse source code and extract method implementations
-    @debug DBG 6  (public functions ) or 7 (low level calls)
-    @author Leo West west_leoATyahooDOTcom
-    
-**/
+/*
+Copyright (C) 2000-2014 Leo West
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
 
 #include "dia2code.hpp"
 #include "source_parser.hpp"

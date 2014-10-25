@@ -1,5 +1,6 @@
 Author:
 - Javier O'Hara <joh314@users.sourceforge.net>: author and mantainer
+- Leo West <west_leo AT yahoo DOT com>
 - Richard Torkar <richard.torkar@htu.se>: maintainer
 
 Contributors: (in alphabetical order, by last name)
@@ -12,6 +13,7 @@ Contributors: (in alphabetical order, by last name)
 - Vincent Le Garrec (bansan) <legarrec.vincent@gmail.com> Improvements to C++ code generation. Convert to C++.
 - Dima Levchenko <dimalev@users.sf.net> AS3 code generation, association multiplicities
 - Ruben Lopez <ryu@gpul.org>, C code generation
+- Leandro Lucarella <luca@lugmen.org.ar>, php code generation
 - Steffen Macke <sdteffen@gmail.com> batch shapefile generation, win32 installer
 - Chris McGee <sirnewton_01@yahoo.ca> Dependencies, Associations, C++ Templates, SQL, IDL
 - Takashi Okamoto <toraneko@kun.ne.jp> License inclusion mechanism.

@@ -1,22 +1,21 @@
-/***************************************************************************
-generate_code_php5.c  -  Function that generates Php 5 code
-                             -------------------
-    begin                : Sat Dec 12 2001
-    copyright            : (C) 2001 by Harald Fielker
-    email                : fielker@softsolutions.de
-    modified by          : Leandro Lucarella <luca@lugmen.org.ar>
-    modified by          : tim rodger <tim.rodger@gmail.com>
-    modified by          : Charles Schaefer <charlesschaefer@gmail.com>
- ***************************************************************************/
+/*
+Copyright (C) 2001-2014 Harald Fielker, Leandro Lucarella,
+                        Tim Rodger, Charles Schaefer
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
 
 #include "dia2code.hpp"
 
