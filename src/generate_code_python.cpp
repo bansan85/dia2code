@@ -196,4 +196,4 @@ void generate_code_python(batch *b) {
     }
 }
 
-
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

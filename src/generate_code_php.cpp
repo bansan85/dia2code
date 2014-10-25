@@ -283,3 +283,5 @@ void generate_code_php(batch *b)
         tmplist = tmplist->next;
     }
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

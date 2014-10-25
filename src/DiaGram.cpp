@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2000-2014 Javier O'Hara
+Copyright (C) 2014-2014
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -16,13 +16,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef PARSE_DIAGRAM_HPP
-#define PARSE_DIAGRAM_HPP
-#include "dia2code.hpp"
+#include "config.h"
 
-umlclasslist parse_diagram(char *diafile);
-umlattrlist insert_attribute(umlattrlist n, umlattrlist l);
+#include "DiaGram.hpp"
 
-#endif
+DiaGram::DiaGram ()
+{
+}
+
+DiaGram::~DiaGram ()
+{
+}
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

@@ -26,3 +26,5 @@ void generate_attribute_comment( FILE *outfile, batch *b, umlattribute *attr );
 
 
 #endif
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

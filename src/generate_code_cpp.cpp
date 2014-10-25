@@ -642,3 +642,4 @@ generate_code_cpp (batch *b)
     }
 }
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

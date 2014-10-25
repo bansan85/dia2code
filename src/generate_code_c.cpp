@@ -332,3 +332,5 @@ void generate_code_c(batch *b) {
         tmplist = tmplist->next;
     }
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

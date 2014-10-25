@@ -77,3 +77,4 @@ void determine_includes (declaration *d, batch *b)
     }
 }
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

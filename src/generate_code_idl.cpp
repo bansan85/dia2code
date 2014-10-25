@@ -407,3 +407,5 @@ generate_code_idl (batch *b)
         d = d->next;
     }
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

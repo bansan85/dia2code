@@ -314,3 +314,5 @@ extern int indent_open_brace_on_newline;
 extern int generate_backup;
 
 #endif
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

@@ -213,3 +213,5 @@ umlclasslist list_classes(umlclasslist current_class, batch *b) {
     return result;
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

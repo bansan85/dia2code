@@ -77,3 +77,5 @@ sourceblock *find_matching_char( const char *buf, char *oid, char openc, char cl
 
 
 #endif
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

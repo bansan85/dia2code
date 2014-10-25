@@ -32,5 +32,6 @@ extern void add_include (char *name);
 extern void push_include (umlclassnode *node);
 extern void determine_includes (declaration *d, batch *b);
 
-#endif  /* INCLUDES_H */
+#endif
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

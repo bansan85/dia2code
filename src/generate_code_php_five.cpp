@@ -459,3 +459,4 @@ void generate_code_php_five(batch *b)
     }
 }
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

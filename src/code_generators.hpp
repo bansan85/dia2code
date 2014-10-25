@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "dia2code.hpp"
 
-#define NO_GENERATORS 13
-
 void generate_code_c(batch *b);
 void generate_code_cpp(batch *b);
 void generate_code_java(batch *b);
@@ -40,3 +38,5 @@ void generate_code_as3(batch *b);
 void inherit_attributes(umlclasslist, umlattrlist);
 
 #endif
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

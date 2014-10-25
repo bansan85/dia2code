@@ -279,3 +279,4 @@ sourceblock *find_matching_char( const char *buf, char *oid, char openc, char cl
     return srcbk;
 }
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

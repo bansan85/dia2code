@@ -156,3 +156,4 @@ void generate_code_shp(batch *b) {
     }
 }
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

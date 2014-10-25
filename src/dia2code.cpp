@@ -822,8 +822,8 @@ int _d2c_fputs(const char *s, FILE *f)
     return 1;
 }
 
-
 char d2c_fprintf_buf[HUGE_BUFFER * 2];
+
 int _d2c_fprintf(FILE *f, char *fmt, ...)
 {
     va_list argptr;
@@ -1006,3 +1006,4 @@ char *find_diaoid( const char *buf, char **newpos  )
 }
 
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

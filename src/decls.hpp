@@ -83,3 +83,4 @@ extern int use_corba;  /* Set by push() if CORBA stereotypes in use.  */
 
 #endif  /* DECLS_H */
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

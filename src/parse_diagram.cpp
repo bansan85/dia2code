@@ -885,3 +885,5 @@ umlclasslist parse_diagram(char *diafile) {
 
     return classlist;
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

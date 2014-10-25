@@ -379,3 +379,6 @@ void generate_code_as3(batch *b)
         tmplist = tmplist->next;
     }
 }
+
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

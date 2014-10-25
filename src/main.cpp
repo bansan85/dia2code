@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
     void (*generator)(batch *);
 
     char * notice = "\
-dia2code version " VERSION ", Copyright (C) 2000-2001 Javier O'Hara\n\
+dia2code version " VERSION ", Copyright (C) 2000-2014 Javier O'Hara\n\
 Dia2Code comes with ABSOLUTELY NO WARRANTY\n\
 This is free software, and you are welcome to redistribute it\n\
 under certain conditions; read the COPYING file for details.\n";
@@ -442,3 +442,5 @@ int process_initialization_file(char *filename, int exit_if_not_found)
     
     return 1;
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

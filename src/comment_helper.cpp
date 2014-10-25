@@ -20,15 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 /**
-* generate a comment block for a class
-  *
- *
- */
-void generate_class_comment( FILE *outfile, batch *b, umlclass *class_)
-{
-}
-
-/**
  * generate a comment block for an operation
  *
  */
@@ -65,3 +56,4 @@ void generate_attribute_comment( FILE *outfile, batch *b, umlattribute *attr )
 }
 
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
