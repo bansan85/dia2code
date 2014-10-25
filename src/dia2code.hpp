@@ -19,8 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef DIA2CODE_H
 #define DIA2CODE_H
 
-#define  _GNU_SOURCE
-#include <string.h>
+#include <cstring>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,7 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#define VERSION "0.8.7"
+#define VERSION "0.9.0"
 
 #ifdef DSO
 #include <dlfcn.h>
@@ -292,7 +291,6 @@ int d2c_backup(char *filename);
 void d2c_log( int level, char * msg );
 
 #define TAG fprintf(stderr, "%s %d\n", __FILE__, __LINE__);
-#define eq  !strcmp
 
 struct param_list
 {

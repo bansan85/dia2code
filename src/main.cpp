@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "code_generators.hpp"
 #include "parse_diagram.hpp"
 
+#include "DiaGram.hpp"
+
 int process_initialization_file(char *filename, int exit_if_not_found);
 
 #ifdef DSO
@@ -67,8 +69,8 @@ int INDENT_CNT = 4; /* This should be a parameter in the command line */
 int bOpenBraceOnNewline = 1; /* This should also be a command-line parameter */
 
 int main(int argc, char **argv) {
+    DiaGram diagram;
     int i;
-    char *license = NULL;  /* License file */
     int clobber = 1;   /*  Overwrite files while generating code*/
     char *infile = NULL;    /* The input file */
     namelist classestogenerate = NULL;
@@ -141,32 +143,32 @@ under certain conditions; read the COPYING file for details.\n";
     for (i = 1; i < argc; i++) {
         switch ( parameter ) {
         case 0:
-            if ( eq (argv[i], "-t") ) {
+            if ( !strcmp (argv[i], "-t") ) {
                 parameter = 1;
-            } else if ( eq (argv[i], "-d") ) {
+            } else if ( !strcmp (argv[i], "-d") ) {
                 parameter = 2;
-            } else if ( eq (argv[i], "-nc") ) {
+            } else if ( !strcmp (argv[i], "-nc") ) {
                 clobber = 0;
-            } else if ( eq (argv[i], "-cl") ) {
+            } else if ( !strcmp (argv[i], "-cl") ) {
                 parameter = 3;
-            } else if ( eq (argv[i], "-l") ) {
+            } else if ( !strcmp (argv[i], "-l") ) {
                 parameter = 4;
-            } else if ( eq (argv[i], "-ext") ) {
+            } else if ( !strcmp (argv[i], "-ext") ) {
                 parameter = 5;
-            } else if ( eq (argv[i], "-bext") ) {
+            } else if ( !strcmp (argv[i], "-bext") ) {
                 parameter = 6;
-            } else if ( eq (argv[i], "-ini") ) {
+            } else if ( !strcmp (argv[i], "-ini") ) {
                 parameter = 7;
-            } else if ( eq (argv[i], "-v") ) {
+            } else if ( !strcmp (argv[i], "-v") ) {
                 classmask = 1 - classmask;
-            } else if ( eq (argv[i], "--debug") ) {
+            } else if ( !strcmp (argv[i], "--debug") ) {
                 parameter = 8;
-            } else if ( eq (argv[i], "-sqlx") ) {
+            } else if ( !strcmp (argv[i], "-sqlx") ) {
                 parameter = 9;
-            } else if ( eq("-h", argv[i]) || eq("--help", argv[i]) ) {
+            } else if ( !strcmp("-h", argv[i]) || !strcmp("--help", argv[i]) ) {
                 printf("%s\nUsage: %s %s\n\n%s\n", notice, argv[0], help, bighelp);
                 exit(0);
-            } else if ( eq (argv[i], "--buildtree") ) {
+            } else if ( !strcmp (argv[i], "--buildtree") ) {
                 buildtree = 1;
             } else {
                 infile = argv[i];
@@ -174,33 +176,33 @@ under certain conditions; read the COPYING file for details.\n";
             break;
         case 1:   /* Which code generator */
             parameter = 0;
-            if ( eq (argv[i], "cpp") ) {
+            if ( !strcmp (argv[i], "cpp") ) {
                 generator = generate_code_cpp;
-            } else if ( eq (argv[i], "java") ) {
+            } else if ( !strcmp (argv[i], "java") ) {
 //                generator = generators[1];
                 generator_buildtree = 1;
-            } else if ( eq (argv[i], "c") ) {
+            } else if ( !strcmp (argv[i], "c") ) {
 //                generator = generators[2];
-            } else if ( eq (argv[i], "sql") ) {
+            } else if ( !strcmp (argv[i], "sql") ) {
 //                generator = generators[3];
-            } else if ( eq (argv[i], "ada") ) {
+            } else if ( !strcmp (argv[i], "ada") ) {
 //                generator = generators[4];
-            } else if ( eq (argv[i], "python") ) {
+            } else if ( !strcmp (argv[i], "python") ) {
 //                generator = generators[5];
-            } else if ( eq (argv[i], "php") ) {
+            } else if ( !strcmp (argv[i], "php") ) {
 //                generator = generators[6];
                 generator_buildtree = 1;
-            } else if ( eq (argv[i], "shp") ) {
+            } else if ( !strcmp (argv[i], "shp") ) {
 //                generator = generators[7];
-            } else if ( eq (argv[i], "idl") ) {
+            } else if ( !strcmp (argv[i], "idl") ) {
 //                generator = generators[8];
-            } else if ( eq (argv[i], "csharp") ) {
+            } else if ( !strcmp (argv[i], "csharp") ) {
 //                generator = generators[9];
-            } else if ( eq(argv[i], "php5") ) {
+            } else if ( !strcmp(argv[i], "php5") ) {
 //                generator = generators[10];
-            } else if ( eq(argv[i], "ruby") ) {
+            } else if ( !strcmp(argv[i], "ruby") ) {
 //                generator = generators[11];
-            } else if ( eq(argv[i], "as3") ) {
+            } else if ( !strcmp(argv[i], "as3") ) {
 //                generator = generators[12];
                 generator_buildtree = 1;
             } else {
@@ -225,7 +227,7 @@ parameter = -1;   /* error */
             parameter = 0;
             break;
         case 4:   /* Which license file */
-            license = argv[i];
+            diagram.setLicense (argv[i]);
             parameter = 0;
             break;
         case 5:   /* Which file extension */
@@ -290,7 +292,6 @@ parameter = -1;   /* error */
     thisbatch->classlist = parse_diagram(infile);
 
     thisbatch->outdir = outdir;
-    thisbatch->license = license;
     thisbatch->clobber = clobber;
     thisbatch->classes = classestogenerate;
     thisbatch->sqlopts = sqloptions;
@@ -342,7 +343,7 @@ void parse_command(char *name, char *value)
         ini_parse_command *cmd = &ini_parse_commands[i];
         if(cmd->name == NULL)
             break;
-        if (eq(cmd->name, name) == 0)
+        if (strcmp(cmd->name, name) != 0)
         {
             i++;
             continue;

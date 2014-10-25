@@ -20,9 +20,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "DiaGram.hpp"
 
-DiaGram::DiaGram ()
+DiaGram::DiaGram () :
+  license ()
 {
 }
+
+
+char *
+DiaGram::getLicense ()
+{
+    return license.c_str ();
+}
+
+
+void
+DiaGram::setLicense (char * lic)
+{
+    license.assign (lic);
+
+    return;
+}
+
 
 DiaGram::~DiaGram ()
 {

@@ -19,11 +19,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef DIA_GRAM_HPP
 #define DIA_GRAM_HPP
 
+#include <string>
+
 class DiaGram
 {
-    public :
+    private:
+        std::string license;
+    public:
         DiaGram ();
-        DiaGram (DiaGram & diagram) = delete;
+//        DiaGram (DiaGram & diagram) = delete;
+
+        char * getLicense ();
+        void   setLicense (char * lic);
+
         ~DiaGram ();
 };
 

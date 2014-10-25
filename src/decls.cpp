@@ -161,7 +161,7 @@ push (umlclassnode *node, batch *b)
     tmpnode = used_classes;
     while (tmpnode != NULL) {
         /* don't push this class !*/
-        if (! eq (node->key->name, tmpnode->key->name) &&
+        if (! !strcmp (node->key->name, tmpnode->key->name) &&
             ! (is_present (tmp_classes, tmpnode->key->name) ^ b->mask)) {
             push (tmpnode, b);
         }
