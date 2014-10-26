@@ -21,21 +21,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "dia2code.hpp"
 
-void generate_code_c(batch *b);
-void generate_code_cpp(batch *b);
-void generate_code_java(batch *b);
-void generate_code_sql(batch *b);
-void generate_code_ada(batch *b);
-void generate_code_python(batch *b);
-void generate_code_php(batch *b);
-void generate_code_shp(batch *b);
-void generate_code_idl(batch *b);
-void generate_code_csharp(batch *b);
-void generate_code_php_five(batch *b);
-void generate_code_ruby(batch *b);
-void generate_code_as3(batch *b);
+void generate_code_c        (batch *b);
+void generate_code_cpp      (batch *b);
+void generate_code_java     (batch *b);
+void generate_code_sql      (batch *b);
+void generate_code_ada      (batch *b);
+void generate_code_python   (batch *b);
+void generate_code_php      (batch *b);
+void generate_code_shp      (batch *b);
+void generate_code_idl      (batch *b);
+void generate_code_csharp   (batch *b);
+void generate_code_php_five (batch *b);
+void generate_code_ruby     (batch *b);
+void generate_code_as3      (batch *b);
 
-void inherit_attributes(umlclasslist, umlattrlist);
+void inherit_attributes (umlclasslist, umlattrlist);
 
 #endif
 

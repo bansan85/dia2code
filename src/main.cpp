@@ -71,7 +71,6 @@ int bOpenBraceOnNewline = 1; /* This should also be a command-line parameter */
 int main(int argc, char **argv) {
     DiaGram diagram;
     int i;
-    int clobber = 1;   /*  Overwrite files while generating code*/
     char *infile = NULL;    /* The input file */
     namelist classestogenerate = NULL;
     namelist sqloptions = NULL;
@@ -148,7 +147,7 @@ under certain conditions; read the COPYING file for details.\n";
             } else if ( !strcmp (argv[i], "-d") ) {
                 parameter = 2;
             } else if ( !strcmp (argv[i], "-nc") ) {
-                clobber = 0;
+                diagram.setOverwrite (false);
             } else if ( !strcmp (argv[i], "-cl") ) {
                 parameter = 3;
             } else if ( !strcmp (argv[i], "-l") ) {
@@ -292,7 +291,6 @@ parameter = -1;   /* error */
     thisbatch->classlist = parse_diagram(infile);
 
     thisbatch->outdir = outdir;
-    thisbatch->clobber = clobber;
     thisbatch->classes = classestogenerate;
     thisbatch->sqlopts = sqloptions;
     thisbatch->mask = classmask;

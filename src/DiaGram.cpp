@@ -21,7 +21,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "DiaGram.hpp"
 
 DiaGram::DiaGram () :
-  license ()
+  license (),
+  overwrite (true)
 {
 }
 
@@ -37,6 +38,22 @@ void
 DiaGram::setLicense (char * lic)
 {
     license.assign (lic);
+
+    return;
+}
+
+
+bool
+DiaGram::getOverwrite ()
+{
+    return overwrite;
+}
+
+
+void
+DiaGram::setOverwrite (bool over)
+{
+    overwrite = over;
 
     return;
 }

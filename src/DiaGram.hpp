@@ -24,13 +24,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class DiaGram
 {
     private:
+        // License file.
         std::string license;
+        // Overwrite files while generating code.
+        bool        overwrite : 1;
     public:
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;
 
         char * getLicense ();
         void   setLicense (char * lic);
+
+        bool getOverwrite ();
+        void setOverwrite (bool over);
 
         ~DiaGram ();
 };
