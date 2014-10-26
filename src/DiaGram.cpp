@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 DiaGram::DiaGram () :
   license (),
+  outdir ("."),
   overwrite (true)
 {
 }
@@ -38,6 +39,29 @@ void
 DiaGram::setLicense (char * lic)
 {
     license.assign (lic);
+
+    return;
+}
+
+
+char *
+DiaGram::getOutdir ()
+{
+    return outdir.c_str ();
+}
+
+
+const std::string *
+DiaGram::getOutdirS ()
+{
+    return &outdir;
+}
+
+
+void
+DiaGram::setOutdir (char * dir)
+{
+    outdir.assign (dir);
 
     return;
 }

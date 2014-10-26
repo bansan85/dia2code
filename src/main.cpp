@@ -63,10 +63,23 @@ find_dia2code_module(const char *lang) {
 }
 #endif /* DSO */
 
-char *outdir = NULL;   /* Output directory */
-
 int INDENT_CNT = 4; /* This should be a parameter in the command line */
 int bOpenBraceOnNewline = 1; /* This should also be a command-line parameter */
+
+#define PARSE_TYPE_FUNCTION 0
+#define PARSE_TYPE_INT 1
+#define PARSE_TYPE_STRCPY 2
+#define PARSE_TYPE_STRDUP 3
+#define PARSE_TYPE_YESNO 4
+#define PARSE_TYPE_TRUEFALSE 5
+
+typedef struct ini_parse_command {
+    char * name;
+    int    type;
+    void * ref;
+} ini_parse_command;
+
+ini_parse_command *ini_parse_commands;
 
 int main(int argc, char **argv) {
     DiaGram diagram;
@@ -217,7 +230,7 @@ parameter = -1;   /* error */
             }
             break;
         case 2:   /* Which output directory */
-            outdir = argv[i];
+            diagram.setOutdir (argv[i]);
             parameter = 0;
             break;
         case 3:   /* Which classes to consider */
@@ -290,11 +303,28 @@ parameter = -1;   /* error */
     /* We build the class list from the dia file here */
     thisbatch->classlist = parse_diagram(infile);
 
-    thisbatch->outdir = outdir;
     thisbatch->classes = classestogenerate;
     thisbatch->sqlopts = sqloptions;
     thisbatch->mask = classmask;
     thisbatch->buildtree = buildtree;
+
+    ini_parse_command ini_parse_commands[] = {
+        {"file.outdir",
+         PARSE_TYPE_STRDUP,
+         diagram.getOutdirS ()},
+        {"indent.brace.newline",
+         PARSE_TYPE_YESNO,
+         &indent_open_brace_on_newline},
+        {"indent.size",
+         PARSE_TYPE_INT,
+         &indent_count},
+        {"generate.backup",
+         PARSE_TYPE_YESNO,
+         &generate_backup},
+        {NULL,
+         -1,
+         NULL}
+    };
 
     /* Code generation */
     if ( !generator ) {
@@ -307,34 +337,10 @@ parameter = -1;   /* error */
     return 0;
 }
 
-typedef struct ini_parse_command
-{
-    char *name;
-    int type;
-    void *ref;
-} ini_parse_command;
-
-#define PARSE_TYPE_FUNCTION 0
-#define PARSE_TYPE_INT 1
-#define PARSE_TYPE_STRCPY 2
-#define PARSE_TYPE_STRDUP 3
-#define PARSE_TYPE_YESNO 4
-#define PARSE_TYPE_TRUEFALSE 5
-
-ini_parse_command ini_parse_commands[] =
-{
-    {"file.outdir", PARSE_TYPE_STRDUP, &outdir},
-    {"indent.brace.newline", PARSE_TYPE_YESNO, &indent_open_brace_on_newline},
-    {"indent.size", PARSE_TYPE_INT, &indent_count},
-    {"generate.backup", PARSE_TYPE_YESNO, &generate_backup},
-    {NULL, -1, NULL}
-};
-
 void parse_command(char *name, char *value)
 {
     int i = 0;
     void (*method)(char *, char *);
-    char **css;
 
     while (1)
     {
@@ -362,12 +368,12 @@ void parse_command(char *name, char *value)
             break;
 
         case PARSE_TYPE_STRDUP:
-            css = (char **)cmd->ref;
-            if (*css)
-                free(*css);
-               *css = strdup(value);
+        {
+            std::string *css = (std::string *)cmd->ref;
+            css->assign (value);
             break;
-
+        }
+        
         case PARSE_TYPE_YESNO:
             switch(tolower(value[0]))
             {

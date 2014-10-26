@@ -26,6 +26,8 @@ class DiaGram
     private:
         // License file.
         std::string license;
+        // Output directory.
+        std::string outdir;
         // Overwrite files while generating code.
         bool        overwrite : 1;
     public:
@@ -34,6 +36,10 @@ class DiaGram
 
         char * getLicense ();
         void   setLicense (char * lic);
+
+        char * getOutdir ();
+        const std::string * getOutdirS ();
+        void   setOutdir (char * dir);
 
         bool getOverwrite ();
         void setOverwrite (bool over);
