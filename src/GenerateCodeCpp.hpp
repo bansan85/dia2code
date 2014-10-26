@@ -20,29 +20,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define GENERATE_CODE_CPP_HPP
 
 #include "DiaGram.hpp"
+#include "GenerateCode.hpp"
 
-class GenerateCodeCpp {
-    private:
-        // Diagram to generate into code.
-        DiaGram & dia;
-        uint8_t indent : 3;
-        uint8_t indentlevel : 3;
-        int pass_by_reference (umlclass *cl);
-        void gen_class (umlclassnode *node);
-        void gen_decl (declaration *d);
-        char * cppname (char *name);
-        void check_visibility (int *curr_vis, int new_vis);
-        void print (char *msg, ...);
-        void pbody (char *msg, ...);
-        void pboth (char *msg, ...);
-        char * spc();
+class GenerateCodeCpp : public GenerateCode {
     public:
         GenerateCodeCpp (DiaGram & diagram);
 
-        void generate_code_cpp ();
-        
-        uint32_t getIndent ();
-        void     setIndent (uint32_t spaces);
+        void generate_code ();
         
         ~GenerateCodeCpp ();
 };

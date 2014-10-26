@@ -21,18 +21,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "dia2code.hpp"
 #include "decls.hpp"
-#include "generate_code_cpp.hpp"
+#include "GenerateCode.hpp"
 
 #define SPEC_EXT "h"
 #define BODY_EXT "cpp"
 
 #define eq  !strcmp
 
-GenerateCodeCpp::GenerateCodeCpp (DiaGram & diagram) :
+GenerateCode::GenerateCode (DiaGram & diagram) :
     dia (diagram),
     indent (4),
     indentlevel (0){
 }
+
+
+DiaGram &
+GenerateCode::getDia () {
+    return dia;
+}
+
 
 static void
 check_umlattr (umlattribute *u, char *typename_)
@@ -60,7 +67,7 @@ nospc (char *str)
 }
 
 int
-GenerateCodeCpp::pass_by_reference (umlclass *cl)
+GenerateCode::pass_by_reference (umlclass *cl)
 {
     char *st;
     if (cl == NULL)
@@ -112,7 +119,7 @@ has_oo_class (declaration *d)
 }
 
 char *
-GenerateCodeCpp::cppname (char *name)
+GenerateCode::cppname (char *name)
 {
     static char buf[SMALL_BUFFER];
     if (dia.getUseCorba ()) {
@@ -167,7 +174,7 @@ fqname (umlclassnode *node, int use_ref_type)
 }
 
 void
-GenerateCodeCpp::check_visibility (int *curr_vis, int new_vis)
+GenerateCode::check_visibility (int *curr_vis, int new_vis)
 {
     if (*curr_vis == new_vis)
         return;
@@ -188,7 +195,7 @@ GenerateCodeCpp::check_visibility (int *curr_vis, int new_vis)
 }
 
 void
-GenerateCodeCpp::gen_class (umlclassnode *node)
+GenerateCode::gen_class (umlclassnode *node)
 {
     char *name = node->key->name;
     char *stype = node->key->stereotype;
@@ -422,7 +429,7 @@ GenerateCodeCpp::gen_class (umlclassnode *node)
 
 
 void
-GenerateCodeCpp::gen_decl (declaration *d)
+GenerateCode::gen_decl (declaration *d)
 {
     char *name;
     char *stype;
@@ -556,91 +563,8 @@ GenerateCodeCpp::gen_decl (declaration *d)
 }
 
 
-void
-GenerateCodeCpp::generate_code_cpp ()
-{
-    declaration *d;
-    umlclasslist tmplist = dia.getUml ();
-    FILE *licensefile = NULL;
-
-    if (file_ext == NULL)
-        file_ext = "h";
-    /*
-    if (body_file_ext == NULL)
-        body_file_ext = "cpp";
-     */
-
-    /* open license file */
-    if (dia.getLicense () != NULL) {
-        licensefile = fopen (dia.getLicense (), "r");
-        if (!licensefile) {
-            fprintf (stderr, "Can't open the license file.\n");
-            exit (1);
-        }
-    }
-
-    while (tmplist != NULL) {
-        if (! (is_present (dia.getGenClasses (), tmplist->key->name) ^ dia.getInvertSel ())) {
-            dia.push (tmplist);
-        }
-        tmplist = tmplist->next;
-    }
-
-    /* Generate a file for each outer declaration.  */
-    d = decls;
-    while (d != NULL) {
-        char *name, *tmpname;
-        char filename[BIG_BUFFER];
-
-        if (d->decl_kind == dk_module) {
-            name = d->u.this_module->pkg->name;
-        } else {         /* dk_class */
-            name = d->u.this_class->key->name;
-        }
-        sprintf (filename, "%s.%s", name, file_ext);
-
-        spec = dia.open_outfile (filename);
-        if (spec == NULL) {
-            d = d->next;
-            continue;
-        }
-
-        tmpname = strtoupper(name);
-        print("#ifndef %s__H\n", tmpname);
-        print("#define %s__H\n\n", tmpname);
-
-        /* add license to the header */
-        if (dia.getLicense ()) {
-            int lc;
-            rewind (licensefile);
-            while ((lc = fgetc (licensefile)) != EOF)
-                print ("%c", (char) lc);
-        }
-
-        dia.cleanIncludes ();
-        dia.determine_includes (d);
-        if (dia.getUseCorba ())
-            print ("#include <p_orb.h>\n\n");
-        std::list <std::string> incfile = dia.getIncludes ();
-        for (std::string namei : incfile) {
-            if (namei.compare (name)) {
-                print ("#include \"%s.%s\"\n", namei.c_str (), file_ext);
-            }
-        }
-        print ("\n");
-
-        gen_decl (d);
-
-        indentlevel = 0;  /* just for safety (should be 0 already) */
-        print("#endif\n");
-        fclose (spec);
-
-        d = d->next;
-    }
-}
-
 char *
-GenerateCodeCpp::spc()
+GenerateCode::spc()
 {
    static char spcbuf[BIG_BUFFER];
    int n_spaces = indent * indentlevel;
@@ -655,13 +579,13 @@ GenerateCodeCpp::spc()
 
 
 uint32_t
-GenerateCodeCpp::getIndent () {
+GenerateCode::getIndent () {
     return indent;
 }
 
 
 void
-GenerateCodeCpp::print (char *msg, ...)
+GenerateCode::print (char *msg, ...)
 {
     var_arg_to_str (msg);
     fprintf (spec, "%s%s", spc(), str);
@@ -669,7 +593,7 @@ GenerateCodeCpp::print (char *msg, ...)
 
 
 void
-GenerateCodeCpp::pbody (char *msg, ...)
+GenerateCode::pbody (char *msg, ...)
 {
     var_arg_to_str (msg);
     if (body != NULL)
@@ -677,7 +601,7 @@ GenerateCodeCpp::pbody (char *msg, ...)
 }
 
 void
-GenerateCodeCpp::pboth (char *msg, ...)
+GenerateCode::pboth (char *msg, ...)
 {
     var_arg_to_str (msg);
     fprintf (spec, "%s%s", spc(), str);
@@ -687,7 +611,7 @@ GenerateCodeCpp::pboth (char *msg, ...)
 
 
 void
-GenerateCodeCpp::setIndent (uint32_t spaces) {
+GenerateCode::setIndent (uint32_t spaces) {
     if ((spaces < 1) || (spaces > 8))
         return;
     
@@ -698,7 +622,7 @@ GenerateCodeCpp::setIndent (uint32_t spaces) {
 
 
 
-GenerateCodeCpp::~GenerateCodeCpp () {
+GenerateCode::~GenerateCode () {
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

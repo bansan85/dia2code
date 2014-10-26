@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "dia2code.hpp"
 #include "parse_diagram.hpp"
-#include "generate_code_cpp.hpp"
+#include "GenerateCodeCpp.hpp"
 
 #include "DiaGram.hpp"
 
@@ -91,6 +91,7 @@ int main(int argc, char **argv) {
     int generator_buildtree = 0;
     int iniParameterProcessed;
     char inifile[BIG_BUFFER];
+    int tab;
 
     GenerateCodeCpp *generator;
 
@@ -246,12 +247,12 @@ parameter = -1;
             parameter = 0;
             break;
         case 7:   /* Use initialization file */
-            process_initialization_file(argv[i], 1);
+            process_initialization_file (argv[i], 1);
             iniParameterProcessed = 1;
             parameter = 0;
             break;
         case 8:   /* Debug level */
-            debug_setlevel( atoi( argv[i] ) );
+            debug_setlevel (atoi (argv[i]));
             parameter = 0;
             break;
         case 9: {  /* Number of spaces for one indentation */
@@ -260,7 +261,7 @@ parameter = -1;
                 fprintf (stderr, "The number of spaces for one indentation must be between 1 and 8.\n");
             }
             else {
-                generator->setIndent (num);
+                tab = num;
             }
             parameter = 0;
             break;
@@ -270,8 +271,8 @@ parameter = -1;
     /* parameter != 0 means the command line was invalid */
 
     if ( parameter != 0 || infile == NULL ) {
-        printf("%s\nUsage: %s %s\n\n%s\n", notice, argv[0], help, bighelp);
-        exit(2);
+        printf ("%s\nUsage: %s %s\n\n%s\n", notice, argv[0], help, bighelp);
+        exit (2);
     }
 
     if (iniParameterProcessed == 0)
@@ -326,7 +327,8 @@ parameter = -1;
         exit (1);
     }
     
-    generator->generate_code_cpp ();
+    generator->setIndent (tab);
+    generator->generate_code ();
     delete generator;
 
     param_list_destroy();
