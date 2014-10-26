@@ -26,8 +26,6 @@ class GenerateCodeCpp : public GenerateCode {
     public:
         GenerateCodeCpp (DiaGram & diagram);
 
-        void generate_code ();
-        
         ~GenerateCodeCpp ();
 };
 

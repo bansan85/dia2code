@@ -40,7 +40,7 @@ class GenerateCode {
         GenerateCode (DiaGram & diagram, const char * ext);
 
         DiaGram & getDia ();
-        virtual void generate_code () = 0;
+        void generate_code ();
         
         char * getFileExt ();
         void   setFileExt (char * ext);
