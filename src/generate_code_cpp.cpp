@@ -109,11 +109,11 @@ has_oo_class (declaration *d)
     return 0;
 }
 
-static char *
-cppname (char *name)
+char *
+GenerateCodeCpp::cppname (char *name)
 {
     static char buf[SMALL_BUFFER];
-    if (use_corba) {
+    if (dia.getUseCorba ()) {
         if (eq (name, "boolean") ||
             eq (name, "char") ||
             eq (name, "octet") ||
@@ -617,7 +617,7 @@ GenerateCodeCpp::generate_code_cpp ()
 
         dia.cleanIncludes ();
         dia.determine_includes (d);
-        if (use_corba)
+        if (dia.getUseCorba ())
             print ("#include <p_orb.h>\n\n");
         std::list <std::string> incfile = dia.getIncludes ();
         for (std::string namei : incfile) {

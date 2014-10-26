@@ -28,6 +28,7 @@ DiaGram::DiaGram () :
     overwrite (true),
     buildtree (false),
     invertsel (false),
+    usecorba (false),
     tmp_classes (),
     includes () {
 }
@@ -147,6 +148,20 @@ DiaGram::getInvertSel () {
 void
 DiaGram::setInvertSel (bool invert) {
     invertsel = invert;
+
+    return;
+}
+
+
+bool
+DiaGram::getUseCorba () {
+    return usecorba;
+}
+
+
+void
+DiaGram::setUseCorba (bool corba) {
+    usecorba = corba;
 
     return;
 }
@@ -456,7 +471,7 @@ DiaGram::push (umlclassnode *node)
     d->u.this_class = NEW (umlclassnode);
     memcpy (d->u.this_class, node, sizeof(umlclassnode));
     if (strncmp (node->key->stereotype, "CORBA", 5) == 0)
-        use_corba = 1;
+        usecorba = true;
 }
 
 

@@ -28,6 +28,7 @@ class GenerateCodeCpp {
         int pass_by_reference (umlclass *cl);
         void gen_class (umlclassnode *node);
         void gen_decl (declaration *d);
+        char * cppname (char *name);
     public:
         GenerateCodeCpp (DiaGram & diagram);
 

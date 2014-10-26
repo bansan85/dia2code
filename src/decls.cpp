@@ -18,12 +18,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "decls.hpp"
 
+
 declaration *decls = NULL;
 
-int use_corba = 0;
 
 module *
-create_nested_modules_from_pkglist (umlpackagelist pkglist, module *m)
+create_nested_modules_from_pkglist (umlpackagelist pkglist,
+                                    module        *m)
 {
     /* Expects pkglist and m to be non-NULL and m->contents to be NULL.
        Returns a reference to the innermost module created.  */
@@ -41,8 +42,10 @@ create_nested_modules_from_pkglist (umlpackagelist pkglist, module *m)
     return m;
 }
 
+
 module *
-find_or_add_module (declaration **dptr, umlpackagelist pkglist)
+find_or_add_module (declaration  **dptr,
+                    umlpackagelist pkglist)
 {
     declaration *d = *dptr;
     module *m;
@@ -82,8 +85,10 @@ find_or_add_module (declaration **dptr, umlpackagelist pkglist)
     return create_nested_modules_from_pkglist (pkglist, m);
 }
 
+
 module *
-find_module (declaration *d, umlpackagelist pkglist)
+find_module (declaration   *d,
+             umlpackagelist pkglist)
 {
     while (d != NULL) {
         if (d->decl_kind == dk_module) {
@@ -99,6 +104,7 @@ find_module (declaration *d, umlpackagelist pkglist)
     }
     return NULL;
 }
+
 
 declaration *
 find_class (umlclassnode *node)
@@ -126,6 +132,7 @@ find_class (umlclassnode *node)
     return NULL;
 }
 
+
 declaration *
 append_decl (declaration *d)
 {
@@ -137,5 +144,6 @@ append_decl (declaration *d)
     d = d->next;
     return d;
 }
+
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

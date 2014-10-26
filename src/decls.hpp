@@ -66,9 +66,6 @@ extern declaration *decls;
    interdependence.)  */
 
 extern module *
-       create_nested_modules_from_pkglist (umlpackagelist pkglist, module *m);
-
-extern module *
        find_or_add_module (declaration **dptr, umlpackagelist pkglist);
 
 extern module * find_module (declaration *d, umlpackagelist pkglist);
@@ -76,8 +73,6 @@ extern module * find_module (declaration *d, umlpackagelist pkglist);
 extern declaration * find_class (umlclassnode *node);
 
 extern declaration * append_decl (declaration *d);
-
-extern int use_corba;  /* Set by push() if CORBA stereotypes in use.  */
 
 #endif  /* DECLS_H */
 
