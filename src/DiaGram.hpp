@@ -30,8 +30,10 @@ class DiaGram
         std::string outdir;
         // Overwrite files while generating code.
         bool        overwrite : 1;
-        // Convert package names to a directory tree..
+        // Convert package names to a directory tree.
         bool        buildtree : 1;
+        // Flag that inverts the above selection.
+        bool        invertsel : 1;
     public:
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;
@@ -40,7 +42,7 @@ class DiaGram
         void   setLicense (char * lic);
 
         char * getOutdir ();
-        const std::string * getOutdirS ();
+        const  std::string * getOutdirS ();
         void   setOutdir (char * dir);
 
         bool getOverwrite ();
@@ -48,6 +50,9 @@ class DiaGram
 
         bool getBuildTree ();
         void setBuildTree (bool build);
+
+        bool getInvertSel ();
+        void setInvertSel (bool invert);
 
         ~DiaGram ();
 };

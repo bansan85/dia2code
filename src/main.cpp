@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
     char *infile = NULL;    /* The input file */
     namelist classestogenerate = NULL;
     namelist sqloptions = NULL;
-    int classmask = 0, parameter = 0;
+    int parameter = 0;
     /* put to 1 in the params loop if the generator accepts buildtree option */
     int generator_buildtree = 0;
     batch *thisbatch;
@@ -174,7 +174,7 @@ under certain conditions; read the COPYING file for details.\n";
             } else if ( !strcmp (argv[i], "-ini") ) {
                 parameter = 7;
             } else if ( !strcmp (argv[i], "-v") ) {
-                classmask = 1 - classmask;
+                diagram.setInvertSel (!diagram.getInvertSel ());
             } else if ( !strcmp (argv[i], "--debug") ) {
                 parameter = 8;
             } else if ( !strcmp (argv[i], "-sqlx") ) {
@@ -224,10 +224,10 @@ under certain conditions; read the COPYING file for details.\n";
                 generator = find_dia2code_module(argv[i]);
                 if ( ! generator ) {
                     fprintf(stderr, "can't find the generator: %s\n", dlerror());
-                    parameter = -1;   /* error */
+                    parameter = -1;
                 }
 #else
-parameter = -1;   /* error */
+parameter = -1;
 #endif
             }
             break;
@@ -237,7 +237,6 @@ parameter = -1;   /* error */
             break;
         case 3:   /* Which classes to consider */
             classestogenerate = parse_class_names(argv[i]);
-            classmask = 1 - classmask;
             parameter = 0;
             break;
         case 4:   /* Which license file */
@@ -307,7 +306,6 @@ parameter = -1;   /* error */
 
     thisbatch->classes = classestogenerate;
     thisbatch->sqlopts = sqloptions;
-    thisbatch->mask = classmask;
 
     ini_parse_command ini_parse_commands[] = {
         {"file.outdir",

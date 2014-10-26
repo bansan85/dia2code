@@ -24,7 +24,8 @@ DiaGram::DiaGram () :
   license (),
   outdir ("."),
   overwrite (true),
-  buildtree (false)
+  buildtree (false),
+  invertsel (false)
 {
 }
 
@@ -95,6 +96,22 @@ void
 DiaGram::setBuildTree (bool build)
 {
     buildtree = build;
+
+    return;
+}
+
+
+bool
+DiaGram::getInvertSel ()
+{
+    return invertsel;
+}
+
+
+void
+DiaGram::setInvertSel (bool invert)
+{
+    invertsel = invert;
 
     return;
 }
