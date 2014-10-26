@@ -289,7 +289,7 @@ parameter = -1;
     xmlKeepBlanksDefault(0);
 
     /* We build the class list from the dia file here */
-    thisbatch->classlist = parse_diagram(infile);
+    diagram.setUml (parse_diagram(infile));
 
     ini_parse_command ini_parse_commands[] = {
         {"file.outdir",

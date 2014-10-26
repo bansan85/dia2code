@@ -21,12 +21,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "DiaGram.hpp"
 
 DiaGram::DiaGram () :
+    uml (),
     genClasses (),
     license (),
     outdir ("."),
     overwrite (true),
     buildtree (false),
     invertsel (false) {
+}
+
+
+void
+DiaGram::setUml (umlclasslist diagram) {
+    uml = diagram;
+
+    return;
 }
 
 

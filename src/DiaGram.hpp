@@ -22,8 +22,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <string>
 #include <list>
 
+#include "dia2code.hpp"
+
 class DiaGram {
     private:
+        // Diagram under uml format.
+        umlclasslist uml;
         // Selection of classes to generate code for.
         std::list <std::string> genClasses;
         // License file.
@@ -39,6 +43,8 @@ class DiaGram {
     public:
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;
+
+        void setUml (umlclasslist diagram);
 
         void addGenClasses (std::list <std::string> classes);
         bool genGenClasses (char * class_);
