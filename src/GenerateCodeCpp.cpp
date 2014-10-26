@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define eq  !strcmp
 
 GenerateCodeCpp::GenerateCodeCpp (DiaGram & diagram) :
-    GenerateCode (diagram) {
+    GenerateCode (diagram, "hpp") {
 }
 
 void
@@ -39,8 +39,8 @@ GenerateCodeCpp::generate_code ()
     umlclasslist tmplist = getDia ().getUml ();
     FILE *licensefile = NULL;
 
-    if (file_ext == NULL)
-        file_ext = "h";
+    if (getFileExt () == NULL)
+        setFileExt ("hpp");
     /*
     if (body_file_ext == NULL)
         body_file_ext = "cpp";
@@ -73,7 +73,7 @@ GenerateCodeCpp::generate_code ()
         } else {         /* dk_class */
             name = d->u.this_class->key->name;
         }
-        sprintf (filename, "%s.%s", name, file_ext);
+        sprintf (filename, "%s.%s", name, getFileExt ());
 
         spec = getDia ().open_outfile (filename);
         if (spec == NULL) {
@@ -100,7 +100,7 @@ GenerateCodeCpp::generate_code ()
         std::list <std::string> incfile = getDia ().getIncludes ();
         for (std::string namei : incfile) {
             if (namei.compare (name)) {
-                print ("#include \"%s.%s\"\n", namei.c_str (), file_ext);
+                print ("#include \"%s.%s\"\n", namei.c_str (), getFileExt ());
             }
         }
         print ("\n");

@@ -204,8 +204,6 @@ void * my_malloc( size_t size );
 
 umlpackagelist make_package_list( umlpackage * package);
 
-extern char *file_ext;       /* Set by switch "-ext". Language specific
-                                default applies when NULL.  */
 extern char *body_file_ext;  /* Set by switch "-bext". Language specific
                                 default applies when NULL.  */
 

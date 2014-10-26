@@ -28,16 +28,32 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #define eq  !strcmp
 
-GenerateCode::GenerateCode (DiaGram & diagram) :
+GenerateCode::GenerateCode (DiaGram    & diagram,
+                            const char * ext) :
     dia (diagram),
+    file_ext (ext),
     indent (4),
-    indentlevel (0){
+    indentlevel (0) {
 }
 
 
 DiaGram &
 GenerateCode::getDia () {
     return dia;
+}
+
+
+char *
+GenerateCode::getFileExt () {
+    return file_ext.c_str ();
+}
+
+
+void
+GenerateCode::setFileExt (char * ext) {
+    file_ext.assign (ext);
+
+    return;
 }
 
 

@@ -226,7 +226,6 @@ void eboth (char *msg, ...)
 }
 
 
-char *file_ext = NULL;
 char *body_file_ext = NULL;
 
 int

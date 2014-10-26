@@ -92,6 +92,7 @@ int main(int argc, char **argv) {
     int iniParameterProcessed;
     char inifile[BIG_BUFFER];
     int tab;
+    char *ext = NULL;
 
     GenerateCodeCpp *generator;
 
@@ -239,7 +240,7 @@ parameter = -1;
             parameter = 0;
             break;
         case 5:   /* Which file extension */
-            file_ext = argv[i];
+            ext = argv[i];
             parameter = 0;
             break;
         case 6:   /* Which implementation file extension */
@@ -328,6 +329,8 @@ parameter = -1;
     }
     
     generator->setIndent (tab);
+    if (ext != NULL)
+        generator->setFileExt (ext);
     generator->generate_code ();
     delete generator;
 

@@ -24,9 +24,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class GenerateCode {
     private:
         // Diagram to generate into code.
-        DiaGram & dia;
+        DiaGram &   dia;
+        std::string file_ext;
         uint8_t indent : 3;
         uint8_t indentlevel : 3;
+        
         int pass_by_reference (umlclass *cl);
         void gen_class (umlclassnode *node);
         char * cppname (char *name);
@@ -35,11 +37,14 @@ class GenerateCode {
         void pboth (char *msg, ...);
         char * spc();
     public:
-        GenerateCode (DiaGram & diagram);
+        GenerateCode (DiaGram & diagram, const char * ext);
 
         DiaGram & getDia ();
         virtual void generate_code () = 0;
         
+        char * getFileExt ();
+        void   setFileExt (char * ext);
+
         uint32_t getIndent ();
         void     setIndent (uint32_t spaces);
 
