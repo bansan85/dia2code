@@ -66,17 +66,19 @@ find_dia2code_module(const char *lang) {
 int INDENT_CNT = 4; /* This should be a parameter in the command line */
 int bOpenBraceOnNewline = 1; /* This should also be a command-line parameter */
 
-#define PARSE_TYPE_FUNCTION 0
-#define PARSE_TYPE_INT 1
-#define PARSE_TYPE_STRCPY 2
-#define PARSE_TYPE_STRDUP 3
-#define PARSE_TYPE_YESNO 4
-#define PARSE_TYPE_TRUEFALSE 5
+enum ParseType {
+    PARSE_TYPE_FUNCTION = 0,
+    PARSE_TYPE_INT = 1,
+    PARSE_TYPE_STRCPY = 2,
+    PARSE_TYPE_STRDUP = 3,
+    PARSE_TYPE_YESNO = 4,
+    PARSE_TYPE_TRUEFALSE = 5
+};
 
 typedef struct ini_parse_command {
-    char * name;
-    int    type;
-    void * ref;
+    char *    name;
+    ParseType type;
+    void *    ref;
 } ini_parse_command;
 
 ini_parse_command *ini_parse_commands;

@@ -182,7 +182,7 @@ typedef namenode * namelist;
 
 struct batch {
     umlclasslist classlist; /* The classes in the diagram */
-    char *outdir;           /* Output directory */
+    char *outdir;//         /* Output directory */
     int clobber;//          /* Overwrite files in directory */
     int buildtree;          /* Convert package name to a directory tree */
     int verbose;            /* Verbose mode */
