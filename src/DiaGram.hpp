@@ -30,6 +30,8 @@ class DiaGram
         std::string outdir;
         // Overwrite files while generating code.
         bool        overwrite : 1;
+        // Convert package names to a directory tree..
+        bool        buildtree : 1;
     public:
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;
@@ -43,6 +45,9 @@ class DiaGram
 
         bool getOverwrite ();
         void setOverwrite (bool over);
+
+        bool getBuildTree ();
+        void setBuildTree (bool build);
 
         ~DiaGram ();
 };

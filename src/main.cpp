@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
     char *infile = NULL;    /* The input file */
     namelist classestogenerate = NULL;
     namelist sqloptions = NULL;
-    int classmask = 0, parameter = 0, buildtree = 0;
+    int classmask = 0, parameter = 0;
     /* put to 1 in the params loop if the generator accepts buildtree option */
     int generator_buildtree = 0;
     batch *thisbatch;
@@ -183,7 +183,7 @@ under certain conditions; read the COPYING file for details.\n";
                 printf("%s\nUsage: %s %s\n\n%s\n", notice, argv[0], help, bighelp);
                 exit(0);
             } else if ( !strcmp (argv[i], "--buildtree") ) {
-                buildtree = 1;
+                diagram.setBuildTree (true);
             } else {
                 infile = argv[i];
             }
@@ -292,8 +292,8 @@ parameter = -1;   /* error */
         }
     }
 
-    if (generator_buildtree == 0 && buildtree == 1) {
-        buildtree = 0;
+    if (generator_buildtree == 0 && diagram.getBuildTree ()) {
+        diagram.setBuildTree (false);
         fprintf( stderr,"warning: this generator does not support building tree yet. disabled \n" );
     }
 
@@ -308,7 +308,6 @@ parameter = -1;   /* error */
     thisbatch->classes = classestogenerate;
     thisbatch->sqlopts = sqloptions;
     thisbatch->mask = classmask;
-    thisbatch->buildtree = buildtree;
 
     ini_parse_command ini_parse_commands[] = {
         {"file.outdir",

@@ -23,7 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 DiaGram::DiaGram () :
   license (),
   outdir ("."),
-  overwrite (true)
+  overwrite (true),
+  buildtree (false)
 {
 }
 
@@ -78,6 +79,22 @@ void
 DiaGram::setOverwrite (bool over)
 {
     overwrite = over;
+
+    return;
+}
+
+
+bool
+DiaGram::getBuildTree ()
+{
+    return buildtree;
+}
+
+
+void
+DiaGram::setBuildTree (bool build)
+{
+    buildtree = build;
 
     return;
 }
