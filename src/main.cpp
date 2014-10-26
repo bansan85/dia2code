@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dia2code.hpp"
 #include "code_generators.hpp"
 #include "parse_diagram.hpp"
+#include "generate_code_cpp.hpp"
 
 #include "DiaGram.hpp"
 
@@ -90,11 +91,10 @@ int main(int argc, char **argv) {
     int parameter = 0;
     /* put to 1 in the params loop if the generator accepts buildtree option */
     int generator_buildtree = 0;
-    batch *thisbatch;
     int iniParameterProcessed;
     char inifile[BIG_BUFFER];
 
-    void (*generator)(batch *);
+    GenerateCodeCpp *generator;
 
     char * notice = "\
 dia2code version " VERSION ", Copyright (C) 2000-2014 Javier O'Hara\n\
@@ -183,7 +183,7 @@ under certain conditions; read the COPYING file for details.\n";
         case 1:   /* Which code generator */
             parameter = 0;
             if ( !strcmp (argv[i], "cpp") ) {
-                generator = generate_code_cpp;
+                generator = new GenerateCodeCpp (diagram);
             } else if ( !strcmp (argv[i], "java") ) {
 //                generator = generators[1];
                 generator_buildtree = 1;
@@ -213,11 +213,11 @@ under certain conditions; read the COPYING file for details.\n";
                 generator_buildtree = 1;
             } else {
 #ifdef DSO
-                generator = find_dia2code_module(argv[i]);
+/*                generator = find_dia2code_module(argv[i]);
                 if ( ! generator ) {
                     fprintf(stderr, "can't find the generator: %s\n", dlerror());
                     parameter = -1;
-                }
+                }*/
 #else
 parameter = -1;
 #endif
@@ -283,8 +283,6 @@ parameter = -1;
         fprintf( stderr,"warning: this generator does not support building tree yet. disabled \n" );
     }
 
-    thisbatch = (batch*)my_malloc(sizeof(batch));
-
     LIBXML_TEST_VERSION;
     xmlKeepBlanksDefault(0);
 
@@ -314,7 +312,9 @@ parameter = -1;
         fprintf( stderr,"error : no generator specify.\n" );
         exit (1);
     }
-    (*generator)(thisbatch);
+    
+    generator->generate_code_cpp ();
+    delete generator;
 
     param_list_destroy();
     return 0;

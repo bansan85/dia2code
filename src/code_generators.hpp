@@ -20,20 +20,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define CODE_GENERATORS
 
 #include "dia2code.hpp"
+#include "DiaGram.hpp"
 
-void generate_code_c        (batch *b);
-void generate_code_cpp      (batch *b);
-void generate_code_java     (batch *b);
-void generate_code_sql      (batch *b);
-void generate_code_ada      (batch *b);
-void generate_code_python   (batch *b);
-void generate_code_php      (batch *b);
-void generate_code_shp      (batch *b);
-void generate_code_idl      (batch *b);
-void generate_code_csharp   (batch *b);
-void generate_code_php_five (batch *b);
-void generate_code_ruby     (batch *b);
-void generate_code_as3      (batch *b);
+/*void generate_code_c        (DiaGram &dia);
+void generate_code_cpp      (DiaGram &dia);
+void generate_code_java     (DiaGram &dia);
+void generate_code_sql      (DiaGram &dia);
+void generate_code_ada      (DiaGram &dia);
+void generate_code_python   (DiaGram &dia);
+void generate_code_php      (DiaGram &dia);
+void generate_code_shp      (DiaGram &dia);
+void generate_code_idl      (DiaGram &dia);
+void generate_code_csharp   (DiaGram &dia);
+void generate_code_php_five (DiaGram &dia);
+void generate_code_ruby     (DiaGram &dia);
+void generate_code_as3      (DiaGram &dia);*/
 
 void inherit_attributes (umlclasslist, umlattrlist);
 

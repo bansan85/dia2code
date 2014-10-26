@@ -60,7 +60,6 @@ struct _sourcecode
 typedef struct _sourcecode sourcecode;
 
 
-void source_preserve( batch *b, umlclass *class_, const char *filename, sourcecode *source );
 
 //sourceblock *block_find( sourceblocknode list, const char *oid );
 sourceblock *sourceblock_find( sourceblocknode *list, const char *oid );

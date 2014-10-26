@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <list>
 
 #include "dia2code.hpp"
+#include "decls.hpp"
+#include "source_parser.hpp"
 
 class DiaGram {
     private:
@@ -40,14 +42,36 @@ class DiaGram {
         bool        buildtree : 1;
         // Flag that inverts the above selection.
         bool        invertsel : 1;
+        
+        std::list <std::string> tmp_classes;
+        std::list <std::string> includes;
+        
+        std::list <std::string> scan_tree_classes ();
+        std::list <std::string> find_classes (umlclasslist current_class);
+        umlclasslist            list_classes (umlclasslist current_class);
+
+        char * create_package_dir (umlpackage *pkg);
+        /**
+         * open_outfile() returns NULL if the file exists and is not rewritten
+         * due to a clobber prohibition. Does an exit(1) if serious problems happen.
+        */
+        int have_include (char *name);
+        void add_include (char *name);
+        void push_include (umlclassnode *node);
+
+        void source_preserve(umlclass *class_, const char *filename, sourcecode *source );
+        void generate_operation_comment( FILE *outfile, umloperation *ope );
+        void generate_attribute_comment( FILE *outfile, umlattribute *attr );
     public:
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;
 
+        umlclasslist getUml ();
         void setUml (umlclasslist diagram);
 
         void addGenClasses (std::list <std::string> classes);
         bool genGenClasses (char * class_);
+        std::list <std::string> getGenClasses ();
 
         char * getLicense ();
         void   setLicense (char * lic);
@@ -65,6 +89,12 @@ class DiaGram {
         bool getInvertSel ();
         void setInvertSel (bool invert);
 
+        FILE * open_outfile (char *filename);
+        void push (umlclassnode *node);
+        std::list <std::string> getIncludes ();
+        void cleanIncludes ();
+        void determine_includes (declaration *d);
+        
         ~DiaGram ();
 };
 

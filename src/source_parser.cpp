@@ -27,53 +27,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define SP_OP_IMPL   3
 
 /*
- * test a file existence and extract the source and the blocks
- * source is allocated and initialised with the source code buffer and the blocks markers
- */
-void source_preserve( batch *b, umlclass *class_, const char *filename, sourcecode *source )
-{
-    char *diaoid = NULL;
-    umloplist umlo;
-    sourceblock *srcblock = NULL;
-    debug( 4, "preserve_source(filename=%s)", filename);
-    source = (sourcecode*) my_malloc( sizeof(sourcecode));
-    source->buffer = NULL;
-    source->blocks = NULL;
-    
-    //open the file in read only 
-    FILE * rofile = fopen(filename, "r");
-    if( ! rofile ) {
-        debug( DBG_SOURCE, "no existing file %s for class %s", filename, class_->name );
-        return;
-    }
-    /* from here, the file exists, we transfer the content in a buffer and parse the source */
-    source->buffer = source_loadfromfile( filename );
-    if( source->buffer == NULL ) {
-        debug( 4, "warning: NULL sourcebuffer from file" );
-    } else {
-        source->blocks  = source_parse( source->buffer );
-        /* copy source blocks found to method->implementation */
-        umlo = class_->operations;
-        while( umlo != NULL ) {
-            /* is there a diaoid hidden in the operation comment ? */
-            if( (diaoid=find_diaoid(umlo->key.attr.comment,NULL)) != NULL) {
-                debug( DBG_SOURCE,"diaoid:%s found in comment for method %s", diaoid, umlo->key.attr.name );
-                /* now try to find the implementation block in the sourcebuffer */
-                srcblock = sourceblock_find( source->blocks, diaoid );
-                // srcblock->spos poitns the implementation of lengtjh srcblock->len
-                if( srcblock != NULL ) {
-                    umlo->key.implementation = (char*) strndup( srcblock->spos, srcblock->len );
-                }
-            } else {
-                debug( DBG_SOURCE, "diaoid %s not found in source", diaoid );
-            }
-            umlo = umlo->next;
-        } // while
-    }
-    fclose(rofile);
-}
-
-/*
  * constructor for a new sourceblock structure address
  * @return an initialized sourceblock address
  */

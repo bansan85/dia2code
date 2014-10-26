@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2000-2014
+Copyright (C) 2014-2014
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -16,14 +16,25 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef D2C_COMMENTHELPER_H
-#define D2C_COMMENTHELPER_H
+#ifndef GENERATE_CODE_CPP_HPP
+#define GENERATE_CODE_CPP_HPP
 
+#include "DiaGram.hpp"
 
-void generate_class_comment( FILE *outfile, batch *b, umlclass *class_ );
-void generate_operation_comment( FILE *outfile, batch *b, umloperation *ope );
-void generate_attribute_comment( FILE *outfile, batch *b, umlattribute *attr );
+class GenerateCodeCpp {
+    private:
+        // Diagram to generate into code.
+        DiaGram & dia;
+        int pass_by_reference (umlclass *cl);
+        void gen_class (umlclassnode *node);
+        void gen_decl (declaration *d);
+    public:
+        GenerateCodeCpp (DiaGram & diagram);
 
+        void generate_code_cpp ();
+        
+        ~GenerateCodeCpp ();
+};
 
 #endif
 

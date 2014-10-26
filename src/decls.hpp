@@ -77,8 +77,6 @@ extern declaration * find_class (umlclassnode *node);
 
 extern declaration * append_decl (declaration *d);
 
-extern void push (umlclassnode *node, batch *b);
-
 extern int use_corba;  /* Set by push() if CORBA stereotypes in use.  */
 
 #endif  /* DECLS_H */

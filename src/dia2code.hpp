@@ -173,28 +173,6 @@ typedef struct umlclassnode umlclassnode;
 
 typedef umlclassnode * umlclasslist;
 
-struct namenode {
-   char *name;
-   struct namenode *next;
-};
-typedef struct namenode namenode;
-
-typedef namenode * namelist;
-
-
-struct batch {
-    umlclasslist classlist;// /* The classes in the diagram */
-    char *outdir;//         /* Output directory */
-    int clobber;//          /* Overwrite files in directory */
-    int buildtree;//        /* Convert package name to a directory tree */
-    int verbose;//          /* Verbose mode */
-    namelist classes;//     /* Selection of classes to generate code for */
-    namelist sqlopts;//     /* SQL options */
-    int mask;//             /* Flag that inverts the above selection */
-    char *license;//        /* License file */
-};
-typedef struct batch batch;
-
 void debug_setlevel( int newlevel );
 void debug( int level, char *fmt, ... );
 
@@ -202,8 +180,7 @@ char *strtoupper(char *s);
 char *strtolower(char *s);
 char *strtoupperfirst(char *s);
 std::list <std::string> parse_class_names (const char *s);
-int is_present(namelist list, const char *name);
-namelist find_classes(umlclasslist current_class, batch *b);
+int is_present(std::list <std::string> list, const char *name);
 umlclasslist find_by_name(umlclasslist list, const char * name);
 
 int is_enum_stereo (char * stereo);
@@ -218,10 +195,6 @@ void * my_malloc( size_t size );
 #define NEW(c) ((c*)my_malloc(sizeof(c)))
 
 umlpackagelist make_package_list( umlpackage * package);
-
-umlclasslist list_classes(umlclasslist current_class, batch *b);
-
-char *create_package_dir(const batch *batch, umlpackage *pkg);
 
 extern char *file_ext;       /* Set by switch "-ext". Language specific
                                 default applies when NULL.  */
@@ -254,12 +227,6 @@ void eboth (char *msg, ...);  /* print verbatim to both spec and body */
 void print (char *msg, ...);  /* print with leading indentation to spec */
 void pbody (char *msg, ...);  /* print with leading indentation to body */
 void pboth (char *msg, ...);  /* print with leading indentation to both */
-
-/**
- * open_outfile() returns NULL if the file exists and is not rewritten
- * due to a clobber prohibition. Does an exit(1) if serious problems happen.
-*/
-FILE * open_outfile (char *filename, batch *b);
 
 #define NEW_AUTO_INDENT 1
 #ifdef NEW_AUTO_INDENT

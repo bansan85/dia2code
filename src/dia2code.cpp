@@ -125,26 +125,26 @@ std::list <std::string> parse_class_names (const char *s) {
 }
 
 
-int is_present(namelist list, const char *name) {
-    while (list != NULL) {
+int is_present(std::list <std::string> list, const char *name) {
+    for (std::string str : list) {
+        char *namei = str.c_str ();
         int len;
         char* mask;
-        if ( ! strcmp(list->name, name) ) {
+        if ( ! strcmp(namei, name) ) {
             return 1;
         }
-        len = strlen(list->name);
+        len = strlen(namei);
         if (len >= 2 && len <= strlen(name)
-                && (mask = strchr(list->name, '*')) != NULL
-                && mask == strrchr(list->name, '*') ) {
+                && (mask = strchr(namei, '*')) != NULL
+                && mask == strrchr(namei, '*') ) {
             len--;
-            if ( mask == list->name && ! strcmp(list->name+1, name+strlen(name)-len) ) {
+            if ( mask == namei && ! strcmp(namei+1, name+strlen(name)-len) ) {
                 return 1;
             }
-            if ( mask == list->name+len && ! strncmp(list->name, name, len) ) {
+            if ( mask == namei+len && ! strncmp(namei, name, len) ) {
                 return 1;
             }
         }
-        list = list->next;
     }
     return 0;
 }
@@ -203,45 +203,6 @@ umlattrlist copy_attributes(umlattrlist src)
     return start;
 }
 
-
-/**
- * create a directory hierarchy for the package name 
- * batch.outdir is taken as root directory 
- * works with java-like package naming convention 
- * the directory path is stored in pkg->directory
- * eg. org.foo.bar will create directory tree org/foo/bar
- * @param the current batch
- * @param the package pointer
- * @return the full directory path eg. "<outdir>/org/foo/bar"
- * 
- */
-char *create_package_dir( const batch *batch, umlpackage *pkg )
-{
-    char *fulldirname, *dirname, fulldirnamedup[BIG_BUFFER];
-    /* created directories permissions */
-    mode_t dir_mask = S_IRUSR | S_IWUSR | S_IXUSR |S_IRGRP | S_IXGRP;
-    if (pkg == NULL) {
-        return NULL;
-    }
-    if (batch->buildtree == 0 || pkg->name == NULL) {
-        pkg->directory = batch->outdir;
-    } else {
-        fulldirname = (char*)my_malloc(BIG_BUFFER);
-        sprintf(fulldirname, "%s", batch->outdir);
-        dirname = strdup(pkg->name);
-        dirname = strtok( dirname, "." );
-        while (dirname != NULL) {
-            sprintf( fulldirnamedup, "%s/%s", fulldirname, dirname );
-            sprintf( fulldirname, "%s", fulldirnamedup );
-            /* TODO : should create only if not existent */
-            mkdir( fulldirname, dir_mask );
-            dirname = strtok( NULL, "." );
-        }
-        /* set the package directory used later for source file creation */
-        pkg->directory = fulldirname;
-    }
-    return pkg->directory;
-}
 
 void set_number_of_spaces_for_one_indentation(int n)
 {
@@ -316,41 +277,6 @@ void pboth (char *msg, ...)
 
 char *file_ext = NULL;
 char *body_file_ext = NULL;
-
-FILE * open_outfile (char *filename, batch *b)
-{
-    static char outfilename[BIG_BUFFER];
-    FILE *o;
-    int tmpdirlgth, tmpfilelgth;
-
-    if (b->outdir == NULL) {
-        b->outdir = ".";
-    }
-
-    tmpdirlgth = strlen (b->outdir);
-    tmpfilelgth = strlen (filename);
-
-    /* This prevents buffer overflows */
-    if (tmpfilelgth + tmpdirlgth > sizeof(outfilename) - 2) {
-        fprintf (stderr, "Sorry, name of file too long ...\n"
-                    "Try a smaller dir name\n");
-        exit (1);
-    }
-
-    sprintf (outfilename, "%s/%s", b->outdir, filename);
-    o = fopen (outfilename, "r");
-    if (o != NULL && !b->clobber) {
-        fclose (o);
-        return NULL;
-    }
-    o = fopen (outfilename, "w");
-    if (o == NULL) {
-        fprintf (stderr, "Can't open file %s for writing\n", outfilename);
-        exit (1);
-    }
-    return o;
-}
-
 
 int
 is_enum_stereo (char *stereo)

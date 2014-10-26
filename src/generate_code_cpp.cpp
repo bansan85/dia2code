@@ -21,16 +21,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "dia2code.hpp"
 #include "decls.hpp"
-#include "includes.hpp"
+#include "generate_code_cpp.hpp"
 
 #define SPEC_EXT "h"
 #define BODY_EXT "cpp"
 
 #define eq  !strcmp
 
-static batch *gb;   /* The current batch being processed.  */
-
-/* Utilities.  */
+GenerateCodeCpp::GenerateCodeCpp (DiaGram & diagram) :
+    dia (diagram) {
+}
 
 static void
 check_umlattr (umlattribute *u, char *typename_)
@@ -57,8 +57,8 @@ nospc (char *str)
     return subst (str, ' ', '_');
 }
 
-static int
-pass_by_reference (umlclass *cl)
+int
+GenerateCodeCpp::pass_by_reference (umlclass *cl)
 {
     char *st;
     if (cl == NULL)
@@ -67,7 +67,7 @@ pass_by_reference (umlclass *cl)
     if (strlen (st) == 0)
         return 1;
     if (is_typedef_stereo (st)) {
-        umlclassnode *ref = find_by_name (gb->classlist, cl->name);
+        umlclassnode *ref = find_by_name (dia.getUml (), cl->name);
         if (ref == NULL)
             return 0;
         return pass_by_reference (ref->key);
@@ -185,8 +185,8 @@ check_visibility (int *curr_vis, int new_vis)
     indentlevel++;
 }
 
-static void
-gen_class (umlclassnode *node)
+void
+GenerateCodeCpp::gen_class (umlclassnode *node)
 {
     char *name = node->key->name;
     char *stype = node->key->stereotype;
@@ -244,7 +244,7 @@ gen_class (umlclassnode *node)
             umlclassnode *ref;
             if (assoc->name[0] != '\0')
             {
-                ref = find_by_name (gb->classlist, assoc->key->name);
+                ref = find_by_name (dia.getUml (), assoc->key->name);
                 print ("");
                 if (ref != NULL)
                     emit ("%s", fqname (ref, !assoc->composite));
@@ -275,7 +275,7 @@ gen_class (umlclassnode *node)
                     fprintf (stderr, "CORBAValue %s/%s: static not supported\n",
                                      name, member);
                 }
-                ref = find_by_name (gb->classlist, umla->key.type);
+                ref = find_by_name (dia.getUml (), umla->key.type);
                 if (ref != NULL)
                     eboth ("%s", fqname (ref, 1));
                 else
@@ -399,7 +399,7 @@ gen_class (umlclassnode *node)
         print ("private:  // State member implementation\n");
         indentlevel++;
         while (umla != NULL) {
-            umlclassnode *ref = find_by_name (gb->classlist, umla->key.type);
+            umlclassnode *ref = find_by_name (dia.getUml (), umla->key.type);
             print ("");
             if (ref != NULL) {
                 emit ("%s", fqname (ref, is_oo_class (ref->key)));
@@ -419,8 +419,8 @@ gen_class (umlclassnode *node)
 }
 
 
-static void
-gen_decl (declaration *d)
+void
+GenerateCodeCpp::gen_decl (declaration *d)
 {
     char *name;
     char *stype;
@@ -555,13 +555,11 @@ gen_decl (declaration *d)
 
 
 void
-generate_code_cpp (batch *b)
+GenerateCodeCpp::generate_code_cpp ()
 {
     declaration *d;
-    umlclasslist tmplist = b->classlist;
+    umlclasslist tmplist = dia.getUml ();
     FILE *licensefile = NULL;
-
-    gb = b;
 
     if (file_ext == NULL)
         file_ext = "h";
@@ -571,8 +569,8 @@ generate_code_cpp (batch *b)
      */
 
     /* open license file */
-    if (b->license != NULL) {
-        licensefile = fopen (b->license, "r");
+    if (dia.getLicense () != NULL) {
+        licensefile = fopen (dia.getLicense (), "r");
         if (!licensefile) {
             fprintf (stderr, "Can't open the license file.\n");
             exit (1);
@@ -580,8 +578,8 @@ generate_code_cpp (batch *b)
     }
 
     while (tmplist != NULL) {
-        if (! (is_present (b->classes, tmplist->key->name) ^ b->mask)) {
-            push (tmplist, b);
+        if (! (is_present (dia.getGenClasses (), tmplist->key->name) ^ dia.getInvertSel ())) {
+            dia.push (tmplist);
         }
         tmplist = tmplist->next;
     }
@@ -599,7 +597,7 @@ generate_code_cpp (batch *b)
         }
         sprintf (filename, "%s.%s", name, file_ext);
 
-        spec = open_outfile (filename, b);
+        spec = dia.open_outfile (filename);
         if (spec == NULL) {
             d = d->next;
             continue;
@@ -610,27 +608,25 @@ generate_code_cpp (batch *b)
         print("#define %s__H\n\n", tmpname);
 
         /* add license to the header */
-        if (b->license != NULL) {
+        if (dia.getLicense ()) {
             int lc;
             rewind (licensefile);
             while ((lc = fgetc (licensefile)) != EOF)
                 print ("%c", (char) lc);
         }
 
-        includes = NULL;
-        determine_includes (d, b);
+        dia.cleanIncludes ();
+        dia.determine_includes (d);
         if (use_corba)
             print ("#include <p_orb.h>\n\n");
-        if (includes) {
-            namelist incfile = includes;
-            while (incfile != NULL) {
-                if (!eq (incfile->name, name)) {
-                    print ("#include \"%s.%s\"\n", incfile->name, file_ext);
-                }
-                incfile = incfile->next;
+        std::list <std::string> incfile = dia.getIncludes ();
+        for (std::string namei : incfile) {
+            printf ("boucle %s %s\n", namei.c_str (), name);
+            if (namei.compare (name)) {
+                print ("#include \"%s.%s\"\n", namei.c_str (), file_ext);
             }
-            print ("\n");
         }
+        print ("\n");
 
         gen_decl (d);
 
@@ -640,6 +636,9 @@ generate_code_cpp (batch *b)
 
         d = d->next;
     }
+}
+
+GenerateCodeCpp::~GenerateCodeCpp () {
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

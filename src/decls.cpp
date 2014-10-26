@@ -19,7 +19,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "decls.hpp"
 
 declaration *decls = NULL;
-static namelist tmp_classes = NULL;
 
 int use_corba = 0;
 
@@ -138,66 +137,5 @@ append_decl (declaration *d)
     d = d->next;
     return d;
 }
-
-void
-push (umlclassnode *node, batch *b)
-{
-    umlclasslist used_classes, tmpnode;
-    module *m;
-    declaration *d;
-    namelist l_tmp;
-
-    if (node == NULL || find_class (node) != NULL) {
-        return;
-    }
-
-    l_tmp = NEW (namenode);
-    l_tmp->name = strdup (node->key->name);
-    l_tmp->next = tmp_classes;
-    tmp_classes = l_tmp;
-    
-    used_classes = list_classes (node, b);
-    /* Make sure all classes that this one depends on are already pushed. */
-    tmpnode = used_classes;
-    while (tmpnode != NULL) {
-        /* don't push this class !*/
-        if (! !strcmp (node->key->name, tmpnode->key->name) &&
-            ! (is_present (tmp_classes, tmpnode->key->name) ^ b->mask)) {
-            push (tmpnode, b);
-        }
-        tmpnode = tmpnode->next;
-    }
-
-    if (node->key->package != NULL) {
-        umlpackagelist pkglist = make_package_list (node->key->package);
-        m = find_or_add_module (&decls, pkglist);
-        if (m->contents == NULL) {
-            m->contents = NEW (declaration);
-            d = m->contents;
-            d->prev = NULL;
-        } else {
-            /* We can simply append because all classes that we depend on
-               are already pushed. */
-            d = append_decl (m->contents);
-        }
-    } else {
-        if (decls == NULL) {
-            decls = NEW (declaration);
-            d = decls;
-            d->prev = NULL;
-        } else {
-            d = append_decl (decls);
-            /* We can simply append because all classes that we depend on
-               are already pushed. */
-        }
-    }
-    d->decl_kind = dk_class;
-    d->next = NULL;
-    d->u.this_class = NEW (umlclassnode);
-    memcpy (d->u.this_class, node, sizeof(umlclassnode));
-    if (strncmp (node->key->stereotype, "CORBA", 5) == 0)
-        use_corba = 1;
-}
-
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
