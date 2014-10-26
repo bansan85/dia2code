@@ -20,10 +20,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define DIA_GRAM_HPP
 
 #include <string>
+#include <list>
 
-class DiaGram
-{
+class DiaGram {
     private:
+        // Selection of classes to generate code for.
+        std::list <std::string> genClasses;
         // License file.
         std::string license;
         // Output directory.
@@ -37,6 +39,9 @@ class DiaGram
     public:
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;
+
+        void addGenClasses (std::list <std::string> classes);
+        bool genGenClasses (char * class_);
 
         char * getLicense ();
         void   setLicense (char * lic);

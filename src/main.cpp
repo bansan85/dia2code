@@ -87,8 +87,6 @@ int main(int argc, char **argv) {
     DiaGram diagram;
     int i;
     char *infile = NULL;    /* The input file */
-    namelist classestogenerate = NULL;
-    namelist sqloptions = NULL;
     int parameter = 0;
     /* put to 1 in the params loop if the generator accepts buildtree option */
     int generator_buildtree = 0;
@@ -131,10 +129,6 @@ under certain conditions; read the COPYING file for details.\n";
                          extension. Currently only applies only to ada.\n\
                          Here are the defaults:\n\
                          ada:\"adb\"\n\
-    -sqlx <optionlist>   Use the following comma-separated <optionlist> to control\n\
-                         special options in the creation of the SQL schema. Currently the \n\
-                         only option is \"fkidx\" which creates an index for each FK defined.\n\
-                         The default is no options.\n\
     -ini <file>          Can be used instead of command-line parameters\n\
     --debug <level>     Show debugging messages of this level\n\
     <diagramfile>        The Dia file that holds the diagram to be read\n\n\
@@ -177,8 +171,6 @@ under certain conditions; read the COPYING file for details.\n";
                 diagram.setInvertSel (!diagram.getInvertSel ());
             } else if ( !strcmp (argv[i], "--debug") ) {
                 parameter = 8;
-            } else if ( !strcmp (argv[i], "-sqlx") ) {
-                parameter = 9;
             } else if ( !strcmp("-h", argv[i]) || !strcmp("--help", argv[i]) ) {
                 printf("%s\nUsage: %s %s\n\n%s\n", notice, argv[0], help, bighelp);
                 exit(0);
@@ -236,7 +228,7 @@ parameter = -1;
             parameter = 0;
             break;
         case 3:   /* Which classes to consider */
-            classestogenerate = parse_class_names(argv[i]);
+            diagram.addGenClasses (parse_class_names(argv[i]));
             parameter = 0;
             break;
         case 4:   /* Which license file */
@@ -260,11 +252,6 @@ parameter = -1;
             debug_setlevel( atoi( argv[i] ) );
             parameter = 0;
             break;
-        case 9:   /* SQLx options */
-            sqloptions = parse_sql_options(argv[i]);
-            parameter = 0;
-            break;
-
         }
     }
     /* parameter != 0 means the command line was invalid */
@@ -303,9 +290,6 @@ parameter = -1;
 
     /* We build the class list from the dia file here */
     thisbatch->classlist = parse_diagram(infile);
-
-    thisbatch->classes = classestogenerate;
-    thisbatch->sqlopts = sqloptions;
 
     ini_parse_command ini_parse_commands[] = {
         {"file.outdir",

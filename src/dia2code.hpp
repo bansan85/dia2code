@@ -19,6 +19,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef DIA2CODE_H
 #define DIA2CODE_H
 
+#include <list>
+#include <string>
 #include <cstring>
 #include <ctype.h>
 #include <stdio.h>
@@ -181,14 +183,14 @@ typedef namenode * namelist;
 
 
 struct batch {
-    umlclasslist classlist; /* The classes in the diagram */
+    umlclasslist classlist;// /* The classes in the diagram */
     char *outdir;//         /* Output directory */
     int clobber;//          /* Overwrite files in directory */
     int buildtree;//        /* Convert package name to a directory tree */
     int verbose;//          /* Verbose mode */
-    namelist classes;       /* Selection of classes to generate code for */
-    namelist sqlopts;       /* SQL options */
-    int mask;               /* Flag that inverts the above selection */
+    namelist classes;//     /* Selection of classes to generate code for */
+    namelist sqlopts;//     /* SQL options */
+    int mask;//             /* Flag that inverts the above selection */
     char *license;//        /* License file */
 };
 typedef struct batch batch;
@@ -199,8 +201,7 @@ void debug( int level, char *fmt, ... );
 char *strtoupper(char *s);
 char *strtolower(char *s);
 char *strtoupperfirst(char *s);
-namelist parse_class_names(const char *s);
-namelist parse_sql_options(const char *s);
+std::list <std::string> parse_class_names (const char *s);
 int is_present(namelist list, const char *name);
 namelist find_classes(umlclasslist current_class, batch *b);
 umlclasslist find_by_name(umlclasslist list, const char * name);

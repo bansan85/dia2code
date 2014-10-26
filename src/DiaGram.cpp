@@ -21,25 +21,46 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "DiaGram.hpp"
 
 DiaGram::DiaGram () :
-  license (),
-  outdir ("."),
-  overwrite (true),
-  buildtree (false),
-  invertsel (false)
-{
+    genClasses (),
+    license (),
+    outdir ("."),
+    overwrite (true),
+    buildtree (false),
+    invertsel (false) {
+}
+
+
+void
+DiaGram::addGenClasses (std::list <std::string> classes) {
+    genClasses.merge (classes);
+
+    return;
+}
+
+
+bool
+DiaGram::genGenClasses (char * class_) {
+    if (genClasses.empty ())
+        return true;
+
+    for (std::string nom : genClasses) {
+        if (nom.compare (class_) == 0) {
+            return true ^ invertsel;
+        }
+    }
+
+    return false ^ invertsel;
 }
 
 
 char *
-DiaGram::getLicense ()
-{
+DiaGram::getLicense () {
     return license.c_str ();
 }
 
 
 void
-DiaGram::setLicense (char * lic)
-{
+DiaGram::setLicense (char * lic) {
     license.assign (lic);
 
     return;
@@ -47,22 +68,19 @@ DiaGram::setLicense (char * lic)
 
 
 char *
-DiaGram::getOutdir ()
-{
+DiaGram::getOutdir () {
     return outdir.c_str ();
 }
 
 
 const std::string *
-DiaGram::getOutdirS ()
-{
+DiaGram::getOutdirS () {
     return &outdir;
 }
 
 
 void
-DiaGram::setOutdir (char * dir)
-{
+DiaGram::setOutdir (char * dir) {
     outdir.assign (dir);
 
     return;
@@ -70,15 +88,13 @@ DiaGram::setOutdir (char * dir)
 
 
 bool
-DiaGram::getOverwrite ()
-{
+DiaGram::getOverwrite () {
     return overwrite;
 }
 
 
 void
-DiaGram::setOverwrite (bool over)
-{
+DiaGram::setOverwrite (bool over) {
     overwrite = over;
 
     return;
@@ -86,15 +102,13 @@ DiaGram::setOverwrite (bool over)
 
 
 bool
-DiaGram::getBuildTree ()
-{
+DiaGram::getBuildTree () {
     return buildtree;
 }
 
 
 void
-DiaGram::setBuildTree (bool build)
-{
+DiaGram::setBuildTree (bool build) {
     buildtree = build;
 
     return;
@@ -102,23 +116,20 @@ DiaGram::setBuildTree (bool build)
 
 
 bool
-DiaGram::getInvertSel ()
-{
+DiaGram::getInvertSel () {
     return invertsel;
 }
 
 
 void
-DiaGram::setInvertSel (bool invert)
-{
+DiaGram::setInvertSel (bool invert) {
     invertsel = invert;
 
     return;
 }
 
 
-DiaGram::~DiaGram ()
-{
+DiaGram::~DiaGram () {
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

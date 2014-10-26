@@ -111,36 +111,19 @@ char *strtoupperfirst(char *s) {
 }
 
 
-namelist parse_class_names(const char *s) {
-    char *cp, *token;
+std::list <std::string> parse_class_names (const char *s) {
+    char *token;
     const char *delim = ",";
-    namelist list = NULL;
+    std::list <std::string> list;
 
-    cp = strdup(s);
-    if (cp == NULL) {
-        fprintf(stderr, "Out of memory\n");
-        exit(1);
-    }
-    token = strtok (cp, delim);
+    token = strtok (s, delim);
     while ( token != NULL ) {
-        namenode *tmp = NEW (namenode);
-        tmp->name = strdup(token);
-        if (tmp->name == NULL) {
-            fprintf(stderr, "Out of memory\n");
-            exit(1);
-        }
-        tmp->next = list;
-        list = tmp;
+        list.push_back (token);
         token = strtok (NULL, delim);
     }
-    free(cp);
     return list;
 }
 
-namelist parse_sql_options(const char *s) {
-  /* AI: same thing for now but it could change in the future */
-  return parse_class_names(s);
-}
 
 int is_present(namelist list, const char *name) {
     while (list != NULL) {
