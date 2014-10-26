@@ -29,7 +29,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define eq  !strcmp
 
 GenerateCodeCpp::GenerateCodeCpp (DiaGram & diagram) :
-    dia (diagram) {
+    dia (diagram),
+    indent (4),
+    indentlevel (0){
 }
 
 static void
@@ -123,7 +125,7 @@ GenerateCodeCpp::cppname (char *name)
             eq (name, "double") ||
             eq (name, "string") ||
             eq (name, "any")) {
-            sprintf (buf, "CORBA::%s", strtoupperfirst (name));
+            sprintf (buf, "CORBA::%s", nospc (strtoupperfirst (name)));
         } else if (eq (name, "long long")) {
             sprintf (buf, "CORBA::LongLong");
         } else if (eq (name, "unsigned short")) {
@@ -164,8 +166,8 @@ fqname (umlclassnode *node, int use_ref_type)
     return buf;
 }
 
-static void
-check_visibility (int *curr_vis, int new_vis)
+void
+GenerateCodeCpp::check_visibility (int *curr_vis, int new_vis)
 {
     if (*curr_vis == new_vis)
         return;
@@ -621,7 +623,6 @@ GenerateCodeCpp::generate_code_cpp ()
             print ("#include <p_orb.h>\n\n");
         std::list <std::string> incfile = dia.getIncludes ();
         for (std::string namei : incfile) {
-            printf ("boucle %s %s\n", namei.c_str (), name);
             if (namei.compare (name)) {
                 print ("#include \"%s.%s\"\n", namei.c_str (), file_ext);
             }
@@ -637,6 +638,65 @@ GenerateCodeCpp::generate_code_cpp ()
         d = d->next;
     }
 }
+
+char *
+GenerateCodeCpp::spc()
+{
+   static char spcbuf[BIG_BUFFER];
+   int n_spaces = indent * indentlevel;
+   if (n_spaces >= sizeof(spcbuf)) {
+       fprintf (stderr, "spc(): spaces buffer overflow\n");
+       exit (1);
+   }
+   memset (spcbuf, ' ', n_spaces);
+   spcbuf[n_spaces] = '\0';
+   return spcbuf;
+}
+
+
+uint32_t
+GenerateCodeCpp::getIndent () {
+    return indent;
+}
+
+
+void
+GenerateCodeCpp::print (char *msg, ...)
+{
+    var_arg_to_str (msg);
+    fprintf (spec, "%s%s", spc(), str);
+}
+
+
+void
+GenerateCodeCpp::pbody (char *msg, ...)
+{
+    var_arg_to_str (msg);
+    if (body != NULL)
+        fprintf (body, "%s%s", spc(), str);
+}
+
+void
+GenerateCodeCpp::pboth (char *msg, ...)
+{
+    var_arg_to_str (msg);
+    fprintf (spec, "%s%s", spc(), str);
+    if (body != NULL)
+        fprintf (body, "%s%s", spc(), str);
+}
+
+
+void
+GenerateCodeCpp::setIndent (uint32_t spaces) {
+    if ((spaces < 1) || (spaces > 8))
+        return;
+    
+    indent = spaces;
+
+    return;
+}
+
+
 
 GenerateCodeCpp::~GenerateCodeCpp () {
 }

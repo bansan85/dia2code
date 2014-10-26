@@ -63,7 +63,6 @@ find_dia2code_module(const char *lang) {
 }
 #endif /* DSO */
 
-int INDENT_CNT = 4; /* This should be a parameter in the command line */
 int bOpenBraceOnNewline = 1; /* This should also be a command-line parameter */
 
 enum ParseType {
@@ -103,22 +102,24 @@ under certain conditions; read the COPYING file for details.\n";
 
     char *help = "[-h|--help] [-d <dir>] [-nc] [-cl <classlist>]\n\
        [-t (ada|c|cpp|csharp|idl|java|php|php5|python|ruby|shp|sql|as3)] [-v]\n\
-       [-l <license file>] [-ini <initialization file>]<diagramfile>";
+       [-l <license file>] [-ini <initialization file>] <diagramfile>";
 
     char *bighelp = "\
-    -h --help            Print this help and exit\n\
+    -h --help            Print this help and exit.\n\
     -t <target>          Selects the output language. <target> can be\n\
                          one of: ada,c,cpp,idl,java,php,php5,python,ruby,shp,sql,as3 or csharp. \n\
-                         Default is C++\n\
+                         Default is C++.\n\
     -d <dir>             Output generated files to <dir>, default is \".\" \n\
-    --buildtree          Convert package names to a directory tree. off by default \n\
+    --buildtree          Convert package names to a directory tree. off by default.\n\
     -l <license>         License file to prepend to generated files.\n\
-    -nc                  Do not overwrite files that already exist\n\
+    -nc                  Do not overwrite files that already exist.\n\
     -cl <classlist>      Generate code only for the classes specified in\n\
                          the comma-separated <classlist>. \n\
                          E.g: Base,Derived.\n\
     -v                   Invert the class list selection.  When used \n\
-                         without -cl prevents any file from being created\n\
+                         without -cl prevents any file from being created.\n\
+    --tab <number>       Set numbre of spaces for one indentation.\n\
+                         Default: 4. Maximum: 8.\
     -ext <extension>     Use <extension> as the file extension.\n\
                          Here are the defaults:\n\
                          ada:\"ads\", c:\"h\", cpp:\"h\", idl:\"idl\",\n\
@@ -128,9 +129,9 @@ under certain conditions; read the COPYING file for details.\n";
                          extension. Currently only applies only to ada.\n\
                          Here are the defaults:\n\
                          ada:\"adb\"\n\
-    -ini <file>          Can be used instead of command-line parameters\n\
-    --debug <level>     Show debugging messages of this level\n\
-    <diagramfile>        The Dia file that holds the diagram to be read\n\n\
+    -ini <file>          Can be used instead of command-line parameters.\n\
+    --debug <level>      Show debugging messages of this level.\n\
+    <diagramfile>        The Dia file that holds the diagram to be read.\n\n\
     Note: parameters can be specified in any order.";
 
     /* initialise stuff like global variables to their default values */
@@ -170,6 +171,8 @@ under certain conditions; read the COPYING file for details.\n";
                 diagram.setInvertSel (!diagram.getInvertSel ());
             } else if ( !strcmp (argv[i], "--debug") ) {
                 parameter = 8;
+            } else if ( !strcmp (argv[i], "--tab") ) {
+                parameter = 9;
             } else if ( !strcmp("-h", argv[i]) || !strcmp("--help", argv[i]) ) {
                 printf("%s\nUsage: %s %s\n\n%s\n", notice, argv[0], help, bighelp);
                 exit(0);
@@ -251,6 +254,17 @@ parameter = -1;
             debug_setlevel( atoi( argv[i] ) );
             parameter = 0;
             break;
+        case 9: {  /* Number of spaces for one indentation */
+            int num = atoi( argv[i] );
+            if ((num < 1) || (num > 8)) {
+                fprintf (stderr, "The number of spaces for one indentation must be between 1 and 8.\n");
+            }
+            else {
+                generator->setIndent (num);
+            }
+            parameter = 0;
+            break;
+        }
         }
     }
     /* parameter != 0 means the command line was invalid */

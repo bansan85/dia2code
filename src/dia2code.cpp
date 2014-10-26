@@ -23,8 +23,6 @@ char * d2c_indentstring = "   ";
 int d2c_indentposition = 0;
 int generate_backup;
 
-int indentlevel = 0;
-static int number_of_spaces_for_one_indentation = 2;
 static int DBG_LEVEL = 4;
 
 void dia2code_initializations()
@@ -204,33 +202,7 @@ umlattrlist copy_attributes(umlattrlist src)
 }
 
 
-void set_number_of_spaces_for_one_indentation(int n)
-{
-    number_of_spaces_for_one_indentation = n;
-}
-
-char *spc()
-{
-   static char spcbuf[BIG_BUFFER];
-   int n_spaces = number_of_spaces_for_one_indentation * indentlevel;
-   if (n_spaces >= sizeof(spcbuf)) {
-       fprintf (stderr, "spc(): spaces buffer overflow\n");
-       exit (1);
-   }
-   memset (spcbuf, ' ', n_spaces);
-   spcbuf[n_spaces] = '\0';
-   return spcbuf;
-}
-
 FILE *spec = NULL, *body = NULL;
-
-/* Auxiliary define for the emit/print functions  */
-#define var_arg_to_str(first_arg) \
-    va_list vargu; \
-    char str[LARGE_BUFFER]; \
-    va_start (vargu, first_arg); \
-    vsnprintf (str, LARGE_BUFFER, first_arg, vargu); \
-    va_end (vargu)
 
 void emit (char *msg, ...)
 {
@@ -253,27 +225,6 @@ void eboth (char *msg, ...)
         fputs (str, body);
 }
 
-
-void print (char *msg, ...)
-{
-    var_arg_to_str (msg);
-    fprintf (spec, "%s%s", spc(), str);
-}
-
-void pbody (char *msg, ...)
-{
-    var_arg_to_str (msg);
-    if (body != NULL)
-        fprintf (body, "%s%s", spc(), str);
-}
-
-void pboth (char *msg, ...)
-{
-    var_arg_to_str (msg);
-    fprintf (spec, "%s%s", spc(), str);
-    if (body != NULL)
-        fprintf (body, "%s%s", spc(), str);
-}
 
 char *file_ext = NULL;
 char *body_file_ext = NULL;

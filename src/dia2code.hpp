@@ -45,6 +45,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #define kind_str(A)   ((A)=='1'?"in":((A)=='2'?"in/out":((A)=='3'?"out":"???")))
 
+/* Auxiliary define for the emit/print functions  */
+#define var_arg_to_str(first_arg) \
+    va_list vargu; \
+    char str[LARGE_BUFFER]; \
+    va_start (vargu, first_arg); \
+    vsnprintf (str, LARGE_BUFFER, first_arg, vargu); \
+    va_end (vargu)
+
 /* constants for scope / visibilities */
 #define D2C_PUBLIC      '0'
 #define D2C_PRIVATE     '1'
@@ -201,9 +209,6 @@ extern char *file_ext;       /* Set by switch "-ext". Language specific
 extern char *body_file_ext;  /* Set by switch "-bext". Language specific
                                 default applies when NULL.  */
 
-extern int indentlevel;
-void set_number_of_spaces_for_one_indentation(int n);  /* default: 2 spaces */
-char *spc();
 /* Returns a string consisting of (indentlevel *
    number_of_spaces_for_one_indentation) spaces.  */
 void d2c_indentate(FILE *f);
