@@ -30,12 +30,6 @@ fi
 
 dnl Checks for header files.
 
-AC_CHECK_HEADERS(dlfcn.h)
-
-AC_CHECK_LIB(dl, dlopen,[LDFLAGS="$LDFLAGS -rdynamic"
-                         LIBS="$LIBS -ldl"
-                         AC_DEFINE(DSO, 1, [dlopen is supported])])
-
 dnl Checks for typedefs, structures, and compiler characteristics.
 
 dnl Checks for library functions.

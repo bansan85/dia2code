@@ -24,45 +24,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 int process_initialization_file(char *filename, int exit_if_not_found);
 
-#ifdef DSO
-static void *
-find_dia2code_module(const char *lang) {
-    char *homedir;
-    char *modulepath;
-    char *modulename;
-    /*  char *generatorname;*/
-    void *handle;
-    void (*generator)();
-
-    homedir = getenv("HOME");
-    if ( homedir )
-        homedir = strdup(homedir);
-    else
-        homedir = strdup(".");
-
-    modulename = (char*)malloc(strlen(DSO_PREFIX) + strlen(lang) + 1);
-    sprintf(modulename, "%s%s", DSO_PREFIX, lang);
-
-    modulepath = (char*)malloc(strlen(homedir) + strlen(modulename)
-                               + strlen(MODULE_DIR) + strlen(DSO_SUFFIX) + 3);
-    sprintf(modulepath, "%s/%s/%s%s", homedir, MODULE_DIR, modulename, DSO_SUFFIX);
-
-    handle = dlopen(modulepath, RTLD_NOW | RTLD_GLOBAL);
-    if ( !handle ) {
-        fprintf(stderr, "can't find the module: %s\n", dlerror());
-        exit(2);
-    }
-    printf("module name : %s\n", modulename);
-    generator = dlsym(handle, modulename);
-
-    free(modulepath);
-    free(modulename);
-    free(homedir);
-
-    return generator;
-}
-#endif /* DSO */
-
 int bOpenBraceOnNewline = 1; /* This should also be a command-line parameter */
 
 enum ParseType {
@@ -218,15 +179,7 @@ under certain conditions; read the COPYING file for details.\n";
 //                generator = generators[12];
                 generator_buildtree = 1;
             } else {
-#ifdef DSO
-/*                generator = find_dia2code_module(argv[i]);
-                if ( ! generator ) {
-                    fprintf(stderr, "can't find the generator: %s\n", dlerror());
-                    parameter = -1;
-                }*/
-#else
-parameter = -1;
-#endif
+                parameter = -1;
             }
             break;
         case 2:   /* Which output directory */

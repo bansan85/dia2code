@@ -36,13 +36,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#ifdef DSO
-#include <dlfcn.h>
-#define MODULE_DIR ".dia2code"
-#define DSO_PREFIX "generate_code_"
-#define DSO_SUFFIX ".so"
-#endif
-
 #define kind_str(A)   ((A)=='1'?"in":((A)=='2'?"in/out":((A)=='3'?"out":"???")))
 
 /* Auxiliary define for the emit/print functions  */
