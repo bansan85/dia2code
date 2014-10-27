@@ -37,6 +37,7 @@ class GenerateCode {
         bool        overwrite : 1;
         // Convert package names to a directory tree.
         bool        buildtree : 1;
+        bool        bOpenBraceOnNewline : 1;
         
         int pass_by_reference (umlclass *cl);
         void gen_class (umlclassnode *node);
@@ -74,7 +75,9 @@ class GenerateCode {
         bool getBuildTree ();
         void setBuildTree (bool build);
 
-        
+        bool getOpenBraceOnNewline ();
+        void setOpenBraceOnNewline (bool newline);
+
         void print (char *msg, ...);
         void gen_decl (declaration *d);
         

@@ -24,8 +24,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 int process_initialization_file(char *filename, int exit_if_not_found);
 
-int bOpenBraceOnNewline = 1; /* This should also be a command-line parameter */
-
 enum ParseType {
     PARSE_TYPE_FUNCTION = 0,
     PARSE_TYPE_INT = 1,
@@ -55,7 +53,7 @@ int main(int argc, char **argv) {
     
     int     tab;
     char *  ext = NULL, *outdir = NULL, *license = NULL;
-    bool    overwrite = true, buildtree = false;
+    bool    overwrite = true, buildtree = false, newline = false;
 
     GenerateCodeCpp *generator;
 
@@ -95,6 +93,7 @@ under certain conditions; read the COPYING file for details.\n";
                          Here are the defaults:\n\
                          ada:\"adb\"\n\
     -ini <file>          Can be used instead of command-line parameters.\n\
+    -nl                  Create new line on new brace. Default no.\n\
     --debug <level>      Show debugging messages of this level.\n\
     <diagramfile>        The Dia file that holds the diagram to be read.\n\n\
     Note: parameters can be specified in any order.";
@@ -138,6 +137,8 @@ under certain conditions; read the COPYING file for details.\n";
                 parameter = 8;
             } else if ( !strcmp (argv[i], "--tab") ) {
                 parameter = 9;
+            } else if ( !strcmp (argv[i], "-nl") ) {
+                newline = true;
             } else if ( !strcmp("-h", argv[i]) || !strcmp("--help", argv[i]) ) {
                 printf("%s\nUsage: %s %s\n\n%s\n", notice, argv[0], help, bighelp);
                 exit(0);
@@ -286,12 +287,13 @@ under certain conditions; read the COPYING file for details.\n";
     generator->setIndent (tab);
     generator->setOverwrite (overwrite);
     generator->setBuildTree (buildtree);
+    generator->setOpenBraceOnNewline (newline);
     if (ext != NULL)
         generator->setFileExt (ext);
     if (outdir != NULL)
         generator->setOutdir (outdir);
     if (license != NULL)
-        generator->setLicense (argv[i]);
+        generator->setLicense (license);
     generator->generate_code ();
     delete generator;
 

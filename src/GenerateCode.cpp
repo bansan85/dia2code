@@ -38,7 +38,8 @@ GenerateCode::GenerateCode (DiaGram    & diagram,
     indent (4),
     indentlevel (0),
     overwrite (true),
-    buildtree (false) {
+    buildtree (false),
+    bOpenBraceOnNewline (false) {
 }
 
 
@@ -105,6 +106,20 @@ GenerateCode::getBuildTree () {
 void
 GenerateCode::setBuildTree (bool build) {
     buildtree = build;
+
+    return;
+}
+
+
+bool
+GenerateCode::getOpenBraceOnNewline () {
+    return bOpenBraceOnNewline;
+}
+
+
+void
+GenerateCode::setOpenBraceOnNewline (bool newline) {
+    bOpenBraceOnNewline = newline;
 
     return;
 }
@@ -483,7 +498,12 @@ GenerateCode::gen_class (umlclassnode *node)
     } else if (is_valuetype) {
         emit (" : CORBA::ValueBase");
     }
-    emit (" {\n");
+    if (bOpenBraceOnNewline) {
+        emit ("\n{\n");
+    }
+    else {
+        emit (" {\n");
+    }
     indentlevel++;
 
     if (node->associations != NULL) {
@@ -535,7 +555,17 @@ GenerateCode::gen_class (umlclassnode *node)
                     eboth ("%s", fqname (ref, 1));
                 else
                     eboth ("%s", cppname (umla->key.type));
-                emit (" %s () { return _%s; }\n", member, member);
+                if (!bOpenBraceOnNewline) {
+                    emit (" %s () { return _%s; }\n", member, member);
+                }
+                else {
+                    emit (" %s ()\n", member);
+                    print ("{\n");
+                    indentlevel++;
+                    print ("return _%s;\n",member);
+                    indentlevel--;
+                    print ("}\n",member);
+                }
                 print ("void %s (", member);
                 if (ref != NULL) {
                     int by_ref = pass_by_reference (ref->key);
@@ -547,7 +577,17 @@ GenerateCode::gen_class (umlclassnode *node)
                 } else {
                     emit ("%s", cppname (umla->key.type));
                 }
-                emit (" value_) { _%s = value_; }\n");
+                if (!bOpenBraceOnNewline) {
+                    emit (" value_) { _%s = value_; }\n", member);
+                }
+                else {
+                    emit (" value_)\n");
+                    print ("{\n");
+                    indentlevel++;
+                    print ("_%s = value_;", member);
+                    indentlevel--;
+                    print ("}\n");
+                }
                 umla = umla->next;
             }
         } else {
@@ -687,7 +727,14 @@ GenerateCode::gen_decl (declaration *d)
 
     if (d->decl_kind == dk_module) {
         name = d->u.this_module->pkg->name;
-        print ("namespace %s {\n\n", name);
+        if (bOpenBraceOnNewline) {
+            print ("namespace %s\n", name);
+            print ("{\n\n");
+        }
+        else
+        {
+            print ("namespace %s {\n\n", name);
+        }
         indentlevel++;
         d = d->u.this_module->contents;
         while (d != NULL) {
@@ -724,7 +771,14 @@ GenerateCode::gen_decl (declaration *d)
                                                  umla->key.value);
 
     } else if (is_enum_stereo (stype)) {
-        print ("enum %s {\n", name);
+        if (bOpenBraceOnNewline) {
+            print ("enum %s\n", name);
+            print ("{\n");
+        }
+        else
+        {
+            print ("enum %s {\n", name);
+        }
         indentlevel++;
         while (umla != NULL) {
             char *literal = umla->key.name;
@@ -743,7 +797,14 @@ GenerateCode::gen_decl (declaration *d)
         print ("};\n\n");
 
     } else if (is_struct_stereo (stype)) {
-        print ("struct %s {\n", name);
+        if (bOpenBraceOnNewline) {
+            print ("struct %s\n", name);
+            print ("{\n");
+        }
+        else
+        {
+            print ("struct %s {\n", name);
+        }
         indentlevel++;
         while (umla != NULL) {
             check_umlattr (&umla->key, name);
@@ -767,7 +828,14 @@ GenerateCode::gen_decl (declaration *d)
             exit (1);
         }
         fprintf (stderr, "%s: CORBAUnion not yet fully implemented\n", name);
-        print ("class %s {  // CORBAUnion\n", name);
+        if (bOpenBraceOnNewline) {
+            print ("class %s\n", name);
+            print ("{ // CORBAUnion\n");
+        }
+        else
+        {
+            print ("class %s { // CORBAUnion\n", name);
+        }
         print ("public:\n", name);
         indentlevel++;
         print ("%s _d();  // body TBD\n\n", umla->key.type);
