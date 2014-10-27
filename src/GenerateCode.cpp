@@ -32,6 +32,7 @@ GenerateCode::GenerateCode (DiaGram    & diagram,
                             const char * ext) :
     dia (diagram),
     file_ext (ext),
+    file (NULL),
     indent (4),
     indentlevel (0) {
 }
@@ -40,6 +41,54 @@ GenerateCode::GenerateCode (DiaGram    & diagram,
 DiaGram &
 GenerateCode::getDia () {
     return dia;
+}
+
+
+void
+GenerateCode::emit (char *msg, ...)
+{
+    var_arg_to_str (msg);
+    fputs (str, file);
+}
+
+void
+GenerateCode::eboth (char *msg, ...)
+{
+    var_arg_to_str (msg);
+    fputs (str, file);
+    if (body != NULL)
+        fputs (str, body);
+}
+
+
+void
+GenerateCode::open_outfile (char *filename)
+{
+    static char outfilename[BIG_BUFFER];
+    int tmpdirlgth, tmpfilelgth;
+
+    tmpdirlgth = strlen (dia.getOutdir ());
+    tmpfilelgth = strlen (filename);
+
+    /* This prevents buffer overflows */
+    if (tmpfilelgth + tmpdirlgth > sizeof(outfilename) - 2) {
+        fprintf (stderr, "Sorry, name of file too long ...\n"
+                    "Try a smaller dir name\n");
+        exit (1);
+    }
+
+    sprintf (outfilename, "%s/%s", dia.getOutdir (), filename);
+    file = fopen (outfilename, "r");
+    if (file != NULL && !overwrite) {
+        fclose (file);
+        return;
+    }
+    file = fopen (outfilename, "w");
+    if (file == NULL) {
+        fprintf (stderr, "Can't open file %s for writing\n", outfilename);
+        exit (1);
+    }
+    return;
 }
 
 
@@ -679,7 +728,7 @@ void
 GenerateCode::print (char *msg, ...)
 {
     var_arg_to_str (msg);
-    fprintf (spec, "%s%s", spc(), str);
+    fprintf (file, "%s%s", spc(), str);
 }
 
 
@@ -695,7 +744,7 @@ void
 GenerateCode::pboth (char *msg, ...)
 {
     var_arg_to_str (msg);
-    fprintf (spec, "%s%s", spc(), str);
+    fprintf (file, "%s%s", spc(), str);
     if (body != NULL)
         fprintf (body, "%s%s", spc(), str);
 }

@@ -217,7 +217,7 @@ int d2c_directprintf(FILE *f, char *fmt, ...);
  * All backends would use `spec', but not all backends require `body'.
  * Hence not all backends need the {e,p}{body,both} functions below.
 */
-extern FILE *spec, *body;
+extern FILE *body;
 
 extern int d2c_indentposition;
 

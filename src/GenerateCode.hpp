@@ -26,6 +26,7 @@ class GenerateCode {
         // Diagram to generate into code.
         DiaGram &   dia;
         std::string file_ext;
+        FILE *      file;
         uint8_t indent : 3;
         uint8_t indentlevel : 3;
         
@@ -36,6 +37,9 @@ class GenerateCode {
         void pbody (char *msg, ...);
         void pboth (char *msg, ...);
         char * spc();
+        void emit (char *msg, ...);
+        void eboth (char *msg, ...);
+        void open_outfile (char *filename);
     public:
         GenerateCode (DiaGram & diagram, const char * ext);
 

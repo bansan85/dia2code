@@ -94,7 +94,6 @@ class DiaGram {
         bool getUseCorba ();
         void setUseCorba (bool corba);
 
-        FILE * open_outfile (char *filename);
         void push (umlclassnode *node);
         std::list <std::string> getIncludes ();
         void cleanIncludes ();

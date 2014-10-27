@@ -202,13 +202,7 @@ umlattrlist copy_attributes(umlattrlist src)
 }
 
 
-FILE *spec = NULL, *body = NULL;
-
-void emit (char *msg, ...)
-{
-    var_arg_to_str (msg);
-    fputs (str, spec);
-}
+FILE *body = NULL;
 
 void ebody (char *msg, ...)
 {
@@ -216,15 +210,6 @@ void ebody (char *msg, ...)
     if (body != NULL)
         fputs (str, body);
 }
-
-void eboth (char *msg, ...)
-{
-    var_arg_to_str (msg);
-    fputs (str, spec);
-    if (body != NULL)
-        fputs (str, body);
-}
-
 
 char *body_file_ext = NULL;
 

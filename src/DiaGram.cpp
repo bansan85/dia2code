@@ -386,38 +386,6 @@ DiaGram::create_package_dir(umlpackage *pkg )
     return pkg->directory;
 }
 
-FILE *
-DiaGram::open_outfile (char *filename)
-{
-    static char outfilename[BIG_BUFFER];
-    FILE *o;
-    int tmpdirlgth, tmpfilelgth;
-
-    tmpdirlgth = outdir.length ();
-    tmpfilelgth = strlen (filename);
-
-    /* This prevents buffer overflows */
-    if (tmpfilelgth + tmpdirlgth > sizeof(outfilename) - 2) {
-        fprintf (stderr, "Sorry, name of file too long ...\n"
-                    "Try a smaller dir name\n");
-        exit (1);
-    }
-
-    sprintf (outfilename, "%s/%s", outdir.c_str (), filename);
-    o = fopen (outfilename, "r");
-    if (o != NULL && !overwrite) {
-        fclose (o);
-        return NULL;
-    }
-    o = fopen (outfilename, "w");
-    if (o == NULL) {
-        fprintf (stderr, "Can't open file %s for writing\n", outfilename);
-        exit (1);
-    }
-    return o;
-}
-
-
 void
 DiaGram::push (umlclassnode *node)
 {
