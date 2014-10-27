@@ -32,14 +32,6 @@ class DiaGram {
         umlclasslist uml;
         // Selection of classes to generate code for.
         std::list <std::string> genClasses;
-        // License file.
-        std::string license;
-        // Output directory.
-        std::string outdir;
-        // Overwrite files while generating code.
-        bool        overwrite : 1;
-        // Convert package names to a directory tree.
-        bool        buildtree : 1;
         // Flag that inverts the above selection.
         bool        invertsel : 1;
         // Set by push() if CORBA stereotypes in use.
@@ -52,7 +44,6 @@ class DiaGram {
         std::list <std::string> find_classes (umlclasslist current_class);
         umlclasslist            list_classes (umlclasslist current_class);
 
-        char * create_package_dir (umlpackage *pkg);
         /**
          * open_outfile() returns NULL if the file exists and is not rewritten
          * due to a clobber prohibition. Does an exit(1) if serious problems happen.
@@ -74,19 +65,6 @@ class DiaGram {
         void addGenClasses (std::list <std::string> classes);
         bool genGenClasses (char * class_);
         std::list <std::string> getGenClasses ();
-
-        char * getLicense ();
-        void   setLicense (char * lic);
-
-        char * getOutdir ();
-        const  std::string * getOutdirS ();
-        void   setOutdir (char * dir);
-
-        bool getOverwrite ();
-        void setOverwrite (bool over);
-
-        bool getBuildTree ();
-        void setBuildTree (bool build);
 
         bool getInvertSel ();
         void setInvertSel (bool invert);

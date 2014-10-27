@@ -91,8 +91,10 @@ int main(int argc, char **argv) {
     int generator_buildtree = 0;
     int iniParameterProcessed;
     char inifile[BIG_BUFFER];
-    int tab;
-    char *ext = NULL;
+    
+    int     tab;
+    char *  ext = NULL, *outdir = NULL, *license = NULL;
+    bool    overwrite = true, buildtree = false;
 
     GenerateCodeCpp *generator;
 
@@ -158,7 +160,7 @@ under certain conditions; read the COPYING file for details.\n";
             } else if ( !strcmp (argv[i], "-d") ) {
                 parameter = 2;
             } else if ( !strcmp (argv[i], "-nc") ) {
-                diagram.setOverwrite (false);
+                overwrite = false;
             } else if ( !strcmp (argv[i], "-cl") ) {
                 parameter = 3;
             } else if ( !strcmp (argv[i], "-l") ) {
@@ -179,7 +181,7 @@ under certain conditions; read the COPYING file for details.\n";
                 printf("%s\nUsage: %s %s\n\n%s\n", notice, argv[0], help, bighelp);
                 exit(0);
             } else if ( !strcmp (argv[i], "--buildtree") ) {
-                diagram.setBuildTree (true);
+                buildtree = true;
             } else {
                 infile = argv[i];
             }
@@ -228,7 +230,7 @@ parameter = -1;
             }
             break;
         case 2:   /* Which output directory */
-            diagram.setOutdir (argv[i]);
+            outdir = argv[i];
             parameter = 0;
             break;
         case 3:   /* Which classes to consider */
@@ -236,7 +238,7 @@ parameter = -1;
             parameter = 0;
             break;
         case 4:   /* Which license file */
-            diagram.setLicense (argv[i]);
+            license = argv[i];
             parameter = 0;
             break;
         case 5:   /* Which file extension */
@@ -293,8 +295,8 @@ parameter = -1;
         }
     }
 
-    if (generator_buildtree == 0 && diagram.getBuildTree ()) {
-        diagram.setBuildTree (false);
+    if (generator_buildtree == 0 && buildtree) {
+        buildtree = false;
         fprintf( stderr,"warning: this generator does not support building tree yet. disabled \n" );
     }
 
@@ -304,10 +306,16 @@ parameter = -1;
     /* We build the class list from the dia file here */
     diagram.setUml (parse_diagram(infile));
 
+    /* Code generation */
+    if ( !generator ) {
+        fprintf( stderr,"error : no generator specify.\n" );
+        exit (1);
+    }
+    
     ini_parse_command ini_parse_commands[] = {
         {"file.outdir",
          PARSE_TYPE_STRDUP,
-         diagram.getOutdirS ()},
+         generator->getOutdirS ()},
         {"indent.brace.newline",
          PARSE_TYPE_YESNO,
          &indent_open_brace_on_newline},
@@ -322,15 +330,15 @@ parameter = -1;
          NULL}
     };
 
-    /* Code generation */
-    if ( !generator ) {
-        fprintf( stderr,"error : no generator specify.\n" );
-        exit (1);
-    }
-    
     generator->setIndent (tab);
+    generator->setOverwrite (overwrite);
+    generator->setBuildTree (buildtree);
     if (ext != NULL)
         generator->setFileExt (ext);
+    if (outdir != NULL)
+        generator->setOutdir (outdir);
+    if (license != NULL)
+        generator->setLicense (argv[i]);
     generator->generate_code ();
     delete generator;
 

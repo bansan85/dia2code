@@ -23,10 +23,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 DiaGram::DiaGram () :
     uml (),
     genClasses (),
-    license (),
-    outdir ("."),
-    overwrite (true),
-    buildtree (false),
     invertsel (false),
     usecorba (false),
     tmp_classes (),
@@ -74,68 +70,6 @@ DiaGram::genGenClasses (char * class_) {
 std::list <std::string>
 DiaGram::getGenClasses () {
     return genClasses;
-}
-
-
-char *
-DiaGram::getLicense () {
-    return license.c_str ();
-}
-
-
-void
-DiaGram::setLicense (char * lic) {
-    license.assign (lic);
-
-    return;
-}
-
-
-char *
-DiaGram::getOutdir () {
-    return outdir.c_str ();
-}
-
-
-const std::string *
-DiaGram::getOutdirS () {
-    return &outdir;
-}
-
-
-void
-DiaGram::setOutdir (char * dir) {
-    outdir.assign (dir);
-
-    return;
-}
-
-
-bool
-DiaGram::getOverwrite () {
-    return overwrite;
-}
-
-
-void
-DiaGram::setOverwrite (bool over) {
-    overwrite = over;
-
-    return;
-}
-
-
-bool
-DiaGram::getBuildTree () {
-    return buildtree;
-}
-
-
-void
-DiaGram::setBuildTree (bool build) {
-    buildtree = build;
-
-    return;
 }
 
 
@@ -344,46 +278,6 @@ DiaGram::list_classes(umlclasslist current_class) {
 
     return result;
 
-}
-
-/**
- * create a directory hierarchy for the package name 
- * batch.outdir is taken as root directory 
- * works with java-like package naming convention 
- * the directory path is stored in pkg->directory
- * eg. org.foo.bar will create directory tree org/foo/bar
- * @param the current batch
- * @param the package pointer
- * @return the full directory path eg. "<outdir>/org/foo/bar"
- * 
- */
-char *
-DiaGram::create_package_dir(umlpackage *pkg )
-{
-    char *fulldirname, *dirname, fulldirnamedup[BIG_BUFFER];
-    /* created directories permissions */
-    mode_t dir_mask = S_IRUSR | S_IWUSR | S_IXUSR |S_IRGRP | S_IXGRP;
-    if (pkg == NULL) {
-        return NULL;
-    }
-    if (buildtree == 0 || pkg->name == NULL) {
-        pkg->directory = outdir.c_str ();
-    } else {
-        fulldirname = (char*)my_malloc(BIG_BUFFER);
-        sprintf(fulldirname, "%s", outdir.c_str ());
-        dirname = strdup(pkg->name);
-        dirname = strtok( dirname, "." );
-        while (dirname != NULL) {
-            sprintf( fulldirnamedup, "%s/%s", fulldirname, dirname );
-            sprintf( fulldirname, "%s", fulldirnamedup );
-            /* TODO : should create only if not existent */
-            mkdir( fulldirname, dir_mask );
-            dirname = strtok( NULL, "." );
-        }
-        /* set the package directory used later for source file creation */
-        pkg->directory = fulldirname;
-    }
-    return pkg->directory;
 }
 
 void

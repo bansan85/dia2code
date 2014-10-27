@@ -31,16 +31,82 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 GenerateCode::GenerateCode (DiaGram    & diagram,
                             const char * ext) :
     dia (diagram),
+    license (),
+    outdir ("."),
     file_ext (ext),
     file (NULL),
     indent (4),
-    indentlevel (0) {
+    indentlevel (0),
+    overwrite (true),
+    buildtree (false) {
 }
 
 
 DiaGram &
 GenerateCode::getDia () {
     return dia;
+}
+
+
+char *
+GenerateCode::getLicense () {
+    return license.c_str ();
+}
+
+
+void
+GenerateCode::setLicense (char * lic) {
+    license.assign (lic);
+
+    return;
+}
+
+
+char *
+GenerateCode::getOutdir () {
+    return outdir.c_str ();
+}
+
+
+const std::string *
+GenerateCode::getOutdirS () {
+    return &outdir;
+}
+
+
+void
+GenerateCode::setOutdir (char * dir) {
+    outdir.assign (dir);
+
+    return;
+}
+
+
+bool
+GenerateCode::getOverwrite () {
+    return overwrite;
+}
+
+
+void
+GenerateCode::setOverwrite (bool over) {
+    overwrite = over;
+
+    return;
+}
+
+
+bool
+GenerateCode::getBuildTree () {
+    return buildtree;
+}
+
+
+void
+GenerateCode::setBuildTree (bool build) {
+    buildtree = build;
+
+    return;
 }
 
 
@@ -67,7 +133,7 @@ GenerateCode::open_outfile (char *filename)
     static char outfilename[BIG_BUFFER];
     int tmpdirlgth, tmpfilelgth;
 
-    tmpdirlgth = strlen (dia.getOutdir ());
+    tmpdirlgth = outdir.length ();
     tmpfilelgth = strlen (filename);
 
     /* This prevents buffer overflows */
@@ -77,7 +143,7 @@ GenerateCode::open_outfile (char *filename)
         exit (1);
     }
 
-    sprintf (outfilename, "%s/%s", dia.getOutdir (), filename);
+    sprintf (outfilename, "%s/%s", outdir.c_str (), filename);
     file = fopen (outfilename, "r");
     if (file != NULL && !overwrite) {
         fclose (file);
@@ -91,6 +157,46 @@ GenerateCode::open_outfile (char *filename)
     return;
 }
 
+/**
+ * create a directory hierarchy for the package name 
+ * batch.outdir is taken as root directory 
+ * works with java-like package naming convention 
+ * the directory path is stored in pkg->directory
+ * eg. org.foo.bar will create directory tree org/foo/bar
+ * @param the current batch
+ * @param the package pointer
+ * @return the full directory path eg. "<outdir>/org/foo/bar"
+ * 
+ */
+char *
+GenerateCode::create_package_dir (umlpackage *pkg )
+{
+    char *fulldirname, *dirname, fulldirnamedup[BIG_BUFFER];
+    /* created directories permissions */
+    mode_t dir_mask = S_IRUSR | S_IWUSR | S_IXUSR |S_IRGRP | S_IXGRP;
+    if (pkg == NULL) {
+        return NULL;
+    }
+    if (buildtree == 0 || pkg->name == NULL) {
+        pkg->directory = outdir.c_str ();
+    } else {
+        fulldirname = (char*)my_malloc(BIG_BUFFER);
+        sprintf(fulldirname, "%s", outdir.c_str ());
+        dirname = strdup(pkg->name);
+        dirname = strtok( dirname, "." );
+        while (dirname != NULL) {
+            sprintf( fulldirnamedup, "%s/%s", fulldirname, dirname );
+            sprintf( fulldirname, "%s", fulldirnamedup );
+            /* TODO : should create only if not existent */
+            mkdir( fulldirname, dir_mask );
+            dirname = strtok( NULL, "." );
+        }
+        /* set the package directory used later for source file creation */
+        pkg->directory = fulldirname;
+    }
+    return pkg->directory;
+}
+
 
 void
 GenerateCode::generate_code ()
@@ -100,8 +206,8 @@ GenerateCode::generate_code ()
     FILE *licensefile = NULL;
 
     /* open license file */
-    if (getDia ().getLicense () != NULL) {
-        licensefile = fopen (getDia ().getLicense (), "r");
+    if (!license.empty ()) {
+        licensefile = fopen (license.c_str (), "r");
         if (!licensefile) {
             fprintf (stderr, "Can't open the license file.\n");
             exit (1);
@@ -128,8 +234,8 @@ GenerateCode::generate_code ()
         }
         sprintf (filename, "%s.%s", name, getFileExt ());
 
-        spec = getDia ().open_outfile (filename);
-        if (spec == NULL) {
+        open_outfile (filename);
+        if (file == NULL) {
             d = d->next;
             continue;
         }
@@ -139,7 +245,7 @@ GenerateCode::generate_code ()
         print("#define %s__H\n\n", tmpname);
 
         /* add license to the header */
-        if (getDia ().getLicense ()) {
+        if (!license.empty ()) {
             int lc;
             rewind (licensefile);
             while ((lc = fgetc (licensefile)) != EOF)
@@ -161,7 +267,7 @@ GenerateCode::generate_code ()
         gen_decl (d);
 
         print("#endif\n");
-        fclose (spec);
+        fclose (file);
 
         d = d->next;
     }

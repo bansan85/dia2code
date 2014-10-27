@@ -25,10 +25,18 @@ class GenerateCode {
     private:
         // Diagram to generate into code.
         DiaGram &   dia;
+        // License file.
+        std::string license;
+        // Output directory.
+        std::string outdir;
         std::string file_ext;
         FILE *      file;
-        uint8_t indent : 3;
-        uint8_t indentlevel : 3;
+        uint8_t     indent : 3;
+        uint8_t     indentlevel : 3;
+        // Overwrite files while generating code.
+        bool        overwrite : 1;
+        // Convert package names to a directory tree.
+        bool        buildtree : 1;
         
         int pass_by_reference (umlclass *cl);
         void gen_class (umlclassnode *node);
@@ -40,6 +48,7 @@ class GenerateCode {
         void emit (char *msg, ...);
         void eboth (char *msg, ...);
         void open_outfile (char *filename);
+        char * create_package_dir (umlpackage *pkg);
     public:
         GenerateCode (DiaGram & diagram, const char * ext);
 
@@ -52,6 +61,20 @@ class GenerateCode {
         uint32_t getIndent ();
         void     setIndent (uint32_t spaces);
 
+        char * getLicense ();
+        void   setLicense (char * lic);
+
+        char * getOutdir ();
+        const  std::string * getOutdirS ();
+        void   setOutdir (char * dir);
+
+        bool getOverwrite ();
+        void setOverwrite (bool over);
+
+        bool getBuildTree ();
+        void setBuildTree (bool build);
+
+        
         void print (char *msg, ...);
         void gen_decl (declaration *d);
         

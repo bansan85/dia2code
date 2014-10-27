@@ -19,6 +19,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef DIA2CODE_H
 #define DIA2CODE_H
 
+#include "config.h"
+
 #include <list>
 #include <string>
 #include <cstring>
@@ -33,8 +35,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 /* libxml[2] headers */
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-
-#define VERSION "0.9.0"
 
 #ifdef DSO
 #include <dlfcn.h>
