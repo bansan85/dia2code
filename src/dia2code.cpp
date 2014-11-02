@@ -25,45 +25,68 @@ int generate_backup;
 
 static int DBG_LEVEL = 4;
 
-void dia2code_initializations()
-{
-}
-
 void debug_setlevel( int newlevel )
 {
     DBG_LEVEL = newlevel;
 }
+
+std::string
+format (const std::string fmt,
+        va_list marker)
+{
+  size_t      size = 1024;
+  bool        b = false;
+  char *ttt;
+  std::string s;
+  
+  while (!b)
+  {
+    int32_t n;
+    
+    ttt = malloc (sizeof (char)*size);
+//    s.resize (size);
+    n = vsnprintf (ttt,
+                   size,
+                   fmt.c_str (),
+                   marker);
+    if ((b = (static_cast <size_t> (n) < size)) == true)
+    {
+    }
+    else
+    {
+      size = size * 2;
+    }
+  }
+  s.assign (ttt);
+  free (ttt);
+  return s;
+}
+
 
 /* 
  * a dummy logger / debugger function
  */
 void debug( int level, char *fmt, ... )
 {
-    static char debug_buffer[HUGE_BUFFER];
+    static std::string debug_buffer;
     va_list argptr;
-    //printf( "debug call\n" );
     if( level != DBG_LEVEL ) 
         return;
     va_start(argptr, fmt);
-    vsprintf(debug_buffer, fmt, argptr);
+    debug_buffer = format(fmt, argptr);
     va_end(argptr);
-    fprintf( stderr, "DBG %d: %s\n", level, debug_buffer );
+    fprintf( stderr, "DBG %d: %s\n", level, debug_buffer.c_str ());
     fflush( stderr);
-    //printf( "END debug call\n" );
 }
 
 /**
  * This function returns the upper case char* of the one taken on input
  * The char * received may be freed by the caller
 */
-char *strtoupper(char *s) {
-    char *tmp = strdup(s);
+std::string strtoupper(std::string s) {
+    std::string tmp (s);
     int i, n;
-    if (tmp == NULL) {
-        fprintf(stderr, "Out of memory\n");
-        exit(1);
-    }
-    n = strlen(tmp);
+    n = tmp.length ();
     for (i = 0; i < n; i++) {
         tmp[i] = toupper(tmp[i]);
     }
@@ -93,23 +116,16 @@ char *strtolower(char *s) {
   * character in upper case and the rest unchanged.
   * The char * received may be freed by the caller
 */
-char *strtoupperfirst(char *s) {
-    char *tmp = strdup(s);
+std::string strtoupperfirst(std::string s) {
+    std::string tmp (s);
     int i, n;
-    if (tmp == NULL) {
-        fprintf(stderr, "Out of memory\n");
-        exit(1);
-    }
-    n = strlen(tmp);
+    n = tmp.length ();
     tmp[0] = toupper(tmp[0]);
-    for (i = 1; i < n; i++) {
-        tmp[i] = tmp[i];
-    }
     return tmp;
 }
 
 
-std::list <std::string> parse_class_names (const char *s) {
+std::list <std::string> parse_class_names (char *s) {
     char *token;
     const char *delim = ",";
     std::list <std::string> list;
@@ -125,7 +141,7 @@ std::list <std::string> parse_class_names (const char *s) {
 
 int is_present(std::list <std::string> list, const char *name) {
     for (std::string str : list) {
-        char *namei = str.c_str ();
+        const char *namei = str.c_str ();
         int len;
         char* mask;
         if ( ! strcmp(namei, name) ) {
@@ -147,19 +163,6 @@ int is_present(std::list <std::string> list, const char *name) {
     return 0;
 }
 
-void * my_malloc( size_t size ) {
-    void * tmp;
-    tmp = malloc(size);
-    if (tmp == NULL) {
-        fprintf(stderr, "Out of memory\n");
-        exit(1);
-    }
-    /* safer zone */
-    memset (tmp, 0, size);
-    return tmp;
-}
-
-
 /*
     Builds a package list from the hierarchy of parents of package.
     The topmost package will be the first on the list and the initial
@@ -169,7 +172,7 @@ umlpackagelist make_package_list(umlpackage * package){
     umlpackagelist dummylist, tmplist=NULL;
 
     while ( package != NULL ){
-        dummylist = NEW (umlpackagenode);
+        dummylist = new umlpackagenode;
         dummylist->next = tmplist;
         tmplist = dummylist;
         tmplist->key = package;
@@ -184,7 +187,7 @@ umlattrlist copy_attributes(umlattrlist src)
 
     while (src != NULL)
     {
-        umlattrlist tmp = NEW (umlattrnode);
+        umlattrlist tmp = new umlattrnode;
         tmp->key = src->key;
         if (cpy == NULL) {
             cpy = tmp;
@@ -208,13 +211,13 @@ void ebody (char *msg, ...)
 {
     var_arg_to_str (msg);
     if (body != NULL)
-        fputs (str, body);
+        fputs (str.c_str (), body);
 }
 
 char *body_file_ext = NULL;
 
 int
-is_enum_stereo (char *stereo)
+is_enum_stereo (const char *stereo)
 {
     return (!strcasecmp(stereo, "enum") ||
             !strcasecmp (stereo, "enumeration") ||
@@ -222,7 +225,7 @@ is_enum_stereo (char *stereo)
 }
 
 int
-is_struct_stereo (char *stereo)
+is_struct_stereo (const char *stereo)
 {
     return (!strcasecmp(stereo, "struct") ||
             !strcasecmp (stereo, "structure") ||
@@ -230,14 +233,14 @@ is_struct_stereo (char *stereo)
 }
 
 int
-is_typedef_stereo (char *stereo)
+is_typedef_stereo (const char *stereo)
 {
     return (!strcasecmp(stereo, "typedef") ||
             !strcmp (stereo, "CORBATypedef"));
 }
 
 int
-is_const_stereo (char *stereo)
+is_const_stereo (const char *stereo)
 {
     return (!strcasecmp(stereo, "const") ||
             !strcasecmp (stereo, "constant") ||
@@ -261,53 +264,8 @@ struct endless_string
 };
 typedef struct endless_string endless_string;
 
-void dump_endless_string(FILE *f, endless_string *es)
-{
-    endless_string_buf *esb = es->start;
-    while (esb != NULL)
-    {
-        fprintf(f, "%s", esb->buf); /* We do not d2c_fprintf the buffer, cause it's read in indented. */
-        esb = esb->next;
-    }
-}
-
-endless_string * new_endless_string()
-{
-    endless_string *es = NEW (endless_string);
-    es->start = NULL;
-    es->end = NULL;
-    return es;
-}
-
-void destroy_endless_string(endless_string * es)
-{
-    endless_string_buf *esb = es->start;
-    endless_string_buf *esb_next;
-    while (esb != NULL)
-    {
-        if (esb->buf != NULL)
-            free(esb->buf);
-        esb_next = esb->next;
-        free(esb);
-        esb = esb_next;
-    }
-    free (es);
-}
-
-void append_endless_string(endless_string * es, char *s)
-{
-    endless_string_buf *esb = NEW (endless_string_buf);
-    esb->buf = strdup(s);
-    esb->next = NULL;
-    if (es->start == NULL)
-        es->start = esb;
-    if (es->end != NULL)
-        es->end->next = esb;
-    es->end = esb;
-}
-
 struct d2c_impl{
-    char name[SMALL_BUFFER];
+    std::string name;
     endless_string *impl;
     int impl_len;
     int in_source;
@@ -317,269 +275,6 @@ struct d2c_impl{
 
 typedef struct d2c_impl d2c_impl;
 d2c_impl *d2c_impl_list = NULL;
-
-void d2c_impl_list_destroy()
-{
-    d2c_impl *p = d2c_impl_list;
-    while (p != NULL)
-    {
-        destroy_endless_string(p->impl);
-        d2c_impl_list = p;
-        p = p->next;
-        free(d2c_impl_list);
-    }
-    d2c_impl_list = NULL;
-}
-
-d2c_impl * d2c_impl_add(char *name)
-{
-    d2c_impl *d2ci = NEW (d2c_impl);
-    strcpy(d2ci->name, name);
-    d2ci->impl = new_endless_string();
-    d2ci->impl_len = 0;
-    d2ci->in_source = 0;
-    d2ci->in_class = 0;
-    d2ci->next = d2c_impl_list;
-    d2c_impl_list = d2ci;
-
-    return d2ci;
-}
-
-d2c_impl* d2c_impl_find(char *name)
-{
-    d2c_impl *p = d2c_impl_list;
-    while (p != NULL)
-    {
-        if (strcmp(p->name, name) == 0)
-            return p;
-        p = p->next;
-    }
-    return NULL;
-}
-
-d2c_impl *d2c_impl_find_or_add(char *name)
-{
-    d2c_impl *p = d2c_impl_find(name);
-    if (p == NULL)
-        p = d2c_impl_add(name);
-
-    return p;
-}
-
-#define IMPLEMENTATION "Implementation"
-
-void d2c_impl_comment(FILE *f, char *nm, char *range, int preserve, char *comment_start, char *comment_end)
-{
-    d2c_fprintf(f, "%s ## %s %spreserve %s class %s %s\n",
-                   comment_start, IMPLEMENTATION, preserve?"":"no", range, nm, comment_end);
-}
-
-#if defined (USE_DUMPIMPL)
-void d2c_dump_impl(FILE *f, char *section, char *name)
-{
-    char nm[LARGE_BUFFER];
-    d2c_impl *d2ci;
-
-    sprintf(nm, "%s.%s", section, name);
-    d2ci = d2c_impl_find_or_add(nm);
-
-    d2ci->in_class = 1;
-
-    d2c_impl_comment(f, nm, "start", 1, "//", "");
-    dump_endless_string(f, d2ci->impl);
-    d2c_impl_comment(f, nm, "end", 1, "//", "");
-}
-#else
-void d2c_dump_impl(FILE *f, char *section, char *name)
-{
-}
-#endif
-
-void d2c_deprecate_impl(FILE *f, char *comment_start, char *comment_end)
-{
-    d2c_impl *p = d2c_impl_list;
-    int cnt = 0;
-    endless_string_buf *esb;
-
-    while (p != NULL)
-    {
-        if (p->in_class == 0 && p->in_source == 1)
-        {
-            fprintf(stderr, "Deprecating implementation %s\n", p->name);
-
-            if (cnt == 0)
-            {
-                d2c_fprintf(f, "\n%s WARNING: %s\n", comment_start, comment_end);
-                d2c_fprintf(f, "%s The following code blocks will be deleted the next time code is generated. %s\n\n", comment_start, comment_end);
-            }
-            d2c_impl_comment(f, p->name, "start", 0, comment_start, comment_end);
-            esb = p->impl->start;
-            while (esb != NULL)
-            {
-                /* We do not d2c_fprintf the buffer, cause it's read in indented. */
-                fprintf(f, "// %s", esb->buf);
-                esb = esb->next;
-            }
-
-            d2c_impl_comment(f, p->name, "end", 0, comment_start, comment_end);
-            cnt++;
-        }
-        p = p->next;
-    }
-    if (cnt > 0)
-        fprintf(stderr, "Warning: %d implementation blocks have been deprecated; examime source files.\n", cnt);
-}
-
-static char *sscanfmt(int size)
-{
-    static char buf[10];
-    sprintf (buf, " %%%ds", size - 1);
-    return buf;
-}
-
-void d2c_parse_impl(FILE *f, char *cmt_start, char *cmt_end)
-{
-#define IN_SOURCE 0
-#define START_IMPL 1
-#define IN_IMPL 2
-#define END_IMPL 3
-
-#define STATE_WARNING(s) fprintf(stderr, "Warning: line %ld %s, state=%d, %p, %s\n", line, (s), state, d2ci, ((d2ci != NULL) ? d2ci->name : "<no section>"));
-
-    char s[HUGE_BUFFER];
-    char s_comment[LARGE_BUFFER], s_dbl_hash[SMALL_BUFFER], s_implementation[BIG_BUFFER],
-         s_preserve[SMALL_BUFFER], s_marker[SMALL_BUFFER], s_class[LARGE_BUFFER], s_name[LARGE_BUFFER];
-    int state = IN_SOURCE;
-    int count;
-    d2c_impl *d2ci=NULL;
-    endless_string *es=NULL;
-    long line = 0;
-    int preserve=0;
-    char fmtbuf[SMALL_BUFFER];
-
-    d2c_impl_list_destroy();
-
-    while (fgets(s, HUGE_BUFFER - 1, f) != NULL)
-    {
-        line++;
-        if (state == START_IMPL) state = IN_IMPL;
-        if (state == END_IMPL) state = IN_SOURCE;
-	fmtbuf[0] = '\0';
-	strcat (fmtbuf, sscanfmt (sizeof(s_comment)));
-	strcat (fmtbuf, sscanfmt (sizeof(s_dbl_hash)));
-	strcat (fmtbuf, sscanfmt (sizeof(s_implementation)));
-	strcat (fmtbuf, sscanfmt (sizeof(s_preserve)));
-	strcat (fmtbuf, sscanfmt (sizeof(s_marker)));
-	strcat (fmtbuf, sscanfmt (sizeof(s_class)));
-	strcat (fmtbuf, sscanfmt (sizeof(s_name)));
-        count = sscanf(s, fmtbuf,
-                       s_comment, s_dbl_hash, s_implementation, s_preserve, s_marker, s_class, s_name);
-        if (count == 7 &&
-            (strncmp(s_comment, cmt_start, sizeof(s_comment)) == 0) &&
-            (strncmp(s_dbl_hash, "##", sizeof(s_dbl_hash)) == 0) &&
-            (strncmp(s_implementation, IMPLEMENTATION, sizeof(s_implementation)) == 0))
-        {
-            if (strncmp(s_marker, "start", sizeof(s_marker)) == 0)
-            {
-                if (state != IN_SOURCE)
-                {
-                    STATE_WARNING("found a nested implementation comment")
-                }
-                preserve = strcmp(s_preserve, "preserve") ? 0 : 1;
-                state = START_IMPL;
-                d2ci = d2c_impl_find_or_add(s_name);
-                es = d2ci->impl;
-            }
-            else if (strncmp(s_marker, "end", sizeof(s_marker)) == 0)
-            {
-                if (state != IN_IMPL)
-                {
-                    STATE_WARNING("found an end implemenataion comment without matching start")
-                }
-                if (d2ci && strcmp(d2ci->name, s_name) != 0)
-                {
-                    STATE_WARNING("end implementation comment does not match start implementation comment")
-                }
-                state = END_IMPL;
-                d2ci = NULL;
-                es = NULL;
-            }
-            else
-            {
-                STATE_WARNING("unrecognized state marker")
-            }
-        }
-
-        if (state == IN_IMPL && preserve)
-        {
-            append_endless_string(es, s);
-            d2ci->in_source= 1;
-        }
-    }
-    if (state != IN_SOURCE && state != END_IMPL)
-        STATE_WARNING("found start implementation comment without end comment")
-}
-
-/* This function takes a UML Operation and mangles it for implementation comments.
-   Because it uses an internal buffer to store and return, repeated calls to this
-   function will overwrite previous values.
-*/
-char *d2c_operation_mangle_name(umloperation *ope)
-{
-    static char d2c_mangle_name[LARGE_BUFFER];
-    umlattrlist params = ope->parameters;
-    char *p;
-
-    sprintf(d2c_mangle_name, "%s@%s@@", ope->attr.name, ope->attr.type);
-    while (params != NULL)
-    {
-        strcat(d2c_mangle_name, "@");
-        strcat(d2c_mangle_name, params->key.type);
-        params = params->next;
-    }
-
-    /* Convert whitespace to underbars */
-    for (p = d2c_mangle_name; *p != '\0'; p++)
-    {
-        if (*p == ' ' || *p == '\t') *p = '_';
-    }
-    return d2c_mangle_name;
-}
-
-int d2c_backup(char *filename)
-{
-    /* This is not necessarily portable. (requires ability to just
-     * tag-on four more characters - not DOS-friendly)
-     * But I'll admit to being a bit out-of-the loop here.
-     */
-    char *backup_filename = (void *)my_malloc(strlen(filename) + 4);
-    strcpy(backup_filename, filename);
-    strcat(backup_filename, ".bak");
-
-    if (generate_backup)
-    {
-        if (remove(backup_filename))
-        {
-            if (errno != ENOENT)
-            {
-                fprintf(stderr, "Error %d while trying to delete file %s\n", errno, backup_filename);
-                free(backup_filename);
-                return -1;
-            }
-        }
-        if (rename(filename, backup_filename))
-        {
-            if (errno != ENOENT)
-            {
-                fprintf(stderr, "Error %d while trying to rename %s to %s\n", errno, filename, backup_filename);
-                free(backup_filename);
-                return -1;
-            }
-        }
-    }
-    free(backup_filename);
-    return 0;
-}
 
 /* Todo on auto-indentation:
    1. Define meta-characters that are converted to braces
@@ -666,7 +361,7 @@ int _d2c_fputs(const char *s, FILE *f)
     return 1;
 }
 
-char d2c_fprintf_buf[HUGE_BUFFER * 2];
+std::string d2c_fprintf_buf;
 
 int _d2c_fprintf(FILE *f, char *fmt, ...)
 {
@@ -676,7 +371,7 @@ int _d2c_fprintf(FILE *f, char *fmt, ...)
     int i;
 
     va_start(argptr, fmt);
-    cnt = vsprintf(d2c_fprintf_buf, fmt, argptr);
+    d2c_fprintf_buf = format (fmt, argptr);
     va_end(argptr);
 
     extern_cnt = cnt;
@@ -689,6 +384,15 @@ int _d2c_fprintf(FILE *f, char *fmt, ...)
     }
     return extern_cnt;
 }
+
+void d2c_indentate( FILE *f)
+{
+    int i;
+    for ( i = 0; i < d2c_indentposition; i++) {
+        fputs( d2c_indentstring, f);
+    }
+}
+
 
 int d2c_directprintf(FILE *f, char *fmt, ...)
 {
@@ -728,20 +432,20 @@ void param_list_destroy()
     param_list *p = d2c_parameters;
     while (p != NULL)
     {
-        free(p->name);
-        free(p->value);
         d2c_parameters = p;
         p = p->next;
-        free(d2c_parameters);
+        delete d2c_parameters;
     }
     d2c_parameters = NULL;
 }
 
 param_list * d2c_parameter_add(char *name, char *value)
 {
-    param_list *entry = my_malloc (sizeof(d2c_parameters));
-    entry->name = strdup(name);
-    entry->value = value ? strdup(value) : NULL;
+    param_list *entry = new param_list;
+    if (name != NULL)
+        entry->name.assign (name);
+    if (value != NULL)
+        entry->value.assign (value);
     entry->next = d2c_parameters;
     d2c_parameters = entry;
 
@@ -755,19 +459,10 @@ param_list * d2c_parameter_set(char *name, char *value)
         entry=d2c_parameter_add(name, value);
     else
     {
-        free(entry->value);
-        entry->value = value ? strdup(value) : NULL;
+        entry->value.assign (value);
     }
 
     return entry;
-}
-
-char * d2c_parameter_value(char *name)
-{
-    param_list *entry = d2c_parameter_find(name);
-    if (entry != NULL)
-        return entry->value;
-    return NULL;
 }
 
 param_list *d2c_parameter_find(char *name)
@@ -775,20 +470,11 @@ param_list *d2c_parameter_find(char *name)
     param_list *p = d2c_parameters;
     while (p != NULL)
     {
-        if (strcmp(p->name, name) == 0)
+        if (p->name.compare (name) == 0)
             return p;
         p = p->next;
     }
     return NULL;
-}
-
-
-void d2c_indentate( FILE *f)
-{
-    int i;
-    for ( i = 0; i < d2c_indentposition; i++) {
-        fputs( d2c_indentstring, f);
-    }
 }
 
 
@@ -824,7 +510,7 @@ void d2c_unshift_code()
 */
 char *find_diaoid( const char *buf, char **newpos  )
 {
-    static const char *oidtag = "@diaoid";
+    const char *oidtag = "@diaoid";
     char *cp, *ep; // current pos, diaoid ending position
     char *oidp=NULL;
     debug( DBG_CORE, "find_diaoid()" );

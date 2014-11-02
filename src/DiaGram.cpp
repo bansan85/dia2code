@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2014-2014
+Copyright (C) 2014-2014 Vincent Le Garrec <legarrec.vincent@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -129,8 +129,8 @@ DiaGram::find_classes (umlclasslist current_class) {
 
     umla = current_class->key->attributes;
     while ( umla != NULL) {
-        if (is_present(classes, umla->key.type)
-                && !is_present(result, umla->key.type)) {
+        if (is_present(classes, umla->key.type.c_str ())
+                && !is_present(result, umla->key.type.c_str ())) {
             result.push_back (umla->key.type);
         }
         umla = umla->next;
@@ -138,14 +138,14 @@ DiaGram::find_classes (umlclasslist current_class) {
 
     umlo = current_class->key->operations;
     while ( umlo != NULL) {
-        if (is_present(classes, umlo->key.attr.type)
-                && !is_present(result, umlo->key.attr.type)) {
+        if (is_present(classes, umlo->key.attr.type.c_str ())
+                && !is_present(result, umlo->key.attr.type.c_str ())) {
             result.push_back (umlo->key.attr.type);
         }
         tmpa = umlo->key.parameters;
         while (tmpa != NULL) {
-            if (is_present(classes, tmpa->key.type)
-                    && !is_present(result, tmpa->key.type)) {
+            if (is_present(classes, tmpa->key.type.c_str ())
+                    && !is_present(result, tmpa->key.type.c_str ())) {
                 result.push_back (tmpa->key.type);
             }
             tmpa = tmpa->next;
@@ -156,8 +156,8 @@ DiaGram::find_classes (umlclasslist current_class) {
 
     parents = current_class->parents;
     while ( parents != NULL ) {
-        if ( is_present(classes, parents->key->name)
-                && ! is_present(result, parents->key->name) ) {
+        if ( is_present(classes, parents->key->name.c_str ())
+                && ! is_present(result, parents->key->name.c_str ()) ) {
             result.push_back (parents->key->name);
         }
         parents = parents->next;
@@ -165,8 +165,8 @@ DiaGram::find_classes (umlclasslist current_class) {
 
     dependencies = current_class->dependencies;
     while (dependencies != NULL) {
-        if ( is_present(classes, dependencies->key->name)
-                && ! is_present(result, dependencies->key->name) ) {
+        if ( is_present(classes, dependencies->key->name.c_str ())
+                && ! is_present(result, dependencies->key->name.c_str ()) ) {
             result.push_back (dependencies->key->name);
         }
         dependencies = dependencies->next;
@@ -174,8 +174,8 @@ DiaGram::find_classes (umlclasslist current_class) {
 
     associations = current_class->associations;
     while (associations != NULL) {
-        if ( is_present(classes, associations->key->name)
-                && ! is_present(result, associations->key->name ) ) {
+        if ( is_present(classes, associations->key->name.c_str ())
+                && ! is_present(result, associations->key->name.c_str ()) ) {
             result.push_back (associations->key->name);
         }
         associations = associations->next;
@@ -190,7 +190,7 @@ umlclasslist append ( umlclasslist list, umlclassnode * class_ ) {
     umlclasslist tmplist = list;
     umlclassnode *tmpnode = NULL;
 
-    tmpnode = (umlclassnode*) my_malloc ( sizeof(umlclassnode) );
+    tmpnode = new umlclassnode;
     tmpnode->key = class_->key;
     tmpnode->parents = class_->parents;
     tmpnode->associations = class_->associations;
@@ -223,9 +223,9 @@ DiaGram::list_classes(umlclasslist current_class) {
 
     umla = current_class->key->attributes;
     while ( umla != NULL) {
-        if ( strlen(umla->key.type) > 0 ) {
-            tmpnode = find_by_name(classes, umla->key.type);
-            if ( tmpnode && ! find_by_name(result, umla->key.type)) {
+        if (!umla->key.type.empty ()) {
+            tmpnode = find_by_name(classes, umla->key.type.c_str ());
+            if ( tmpnode && ! find_by_name(result, umla->key.type.c_str ())) {
                 result = append(result, tmpnode);
             }
         }
@@ -234,14 +234,14 @@ DiaGram::list_classes(umlclasslist current_class) {
 
     umlo = current_class->key->operations;
     while ( umlo != NULL) {
-        tmpnode = find_by_name(classes, umlo->key.attr.type);
-        if ( tmpnode && ! find_by_name(result, umlo->key.attr.type)) {
+        tmpnode = find_by_name(classes, umlo->key.attr.type.c_str ());
+        if ( tmpnode && ! find_by_name(result, umlo->key.attr.type.c_str ())) {
             result = append(result, tmpnode);
         }
         tmpa = umlo->key.parameters;
         while (tmpa != NULL) {
-            tmpnode = find_by_name(classes, tmpa->key.type);
-            if ( tmpnode && ! find_by_name(result, tmpa->key.type)) {
+            tmpnode = find_by_name(classes, tmpa->key.type.c_str ());
+            if ( tmpnode && ! find_by_name(result, tmpa->key.type.c_str ())) {
                 result = append(result, tmpnode);
             }
             tmpa = tmpa->next;
@@ -251,8 +251,8 @@ DiaGram::list_classes(umlclasslist current_class) {
 
     parents = current_class->parents;
     while ( parents != NULL ) {
-        tmpnode = find_by_name(classes, parents->key->name);
-        if ( tmpnode && ! find_by_name(result, parents->key->name) ) {
+        tmpnode = find_by_name(classes, parents->key->name.c_str ());
+        if ( tmpnode && ! find_by_name(result, parents->key->name.c_str ()) ) {
             result = append(result, tmpnode);
         }
         parents = parents->next;
@@ -260,8 +260,8 @@ DiaGram::list_classes(umlclasslist current_class) {
 
     dependencies = current_class->dependencies;
     while (dependencies != NULL) {
-        tmpnode = find_by_name(classes, dependencies->key->name);
-        if ( tmpnode && ! find_by_name(result, dependencies->key->name) ) {
+        tmpnode = find_by_name(classes, dependencies->key->name.c_str ());
+        if ( tmpnode && ! find_by_name(result, dependencies->key->name.c_str ()) ) {
             result = append(result, tmpnode);
         }
         dependencies = dependencies->next;
@@ -269,8 +269,8 @@ DiaGram::list_classes(umlclasslist current_class) {
 
     associations = current_class->associations;
     while (associations != NULL) {
-        tmpnode = find_by_name(classes, associations->key->name);
-        if ( tmpnode && ! find_by_name(result, associations->key->name ) ) {
+        tmpnode = find_by_name(classes, associations->key->name.c_str ());
+        if ( tmpnode && ! find_by_name(result, associations->key->name.c_str ()) ) {
             result = append(result, tmpnode);
         }
         associations = associations->next;
@@ -298,8 +298,8 @@ DiaGram::push (umlclassnode *node)
     tmpnode = used_classes;
     while (tmpnode != NULL) {
         /* don't push this class !*/
-        if (! !strcmp (node->key->name, tmpnode->key->name) &&
-            ! (is_present (tmp_classes, tmpnode->key->name) ^ invertsel)) {
+        if (! !node->key->name.compare (tmpnode->key->name) &&
+            ! (is_present (tmp_classes, tmpnode->key->name.c_str ()) ^ invertsel)) {
             push (tmpnode);
         }
         tmpnode = tmpnode->next;
@@ -309,7 +309,7 @@ DiaGram::push (umlclassnode *node)
         umlpackagelist pkglist = make_package_list (node->key->package);
         m = find_or_add_module (&decls, pkglist);
         if (m->contents == NULL) {
-            m->contents = NEW (declaration);
+            m->contents = new declaration;
             d = m->contents;
             d->prev = NULL;
         } else {
@@ -319,7 +319,7 @@ DiaGram::push (umlclassnode *node)
         }
     } else {
         if (decls == NULL) {
-            decls = NEW (declaration);
+            decls = new declaration;
             d = decls;
             d->prev = NULL;
         } else {
@@ -330,15 +330,15 @@ DiaGram::push (umlclassnode *node)
     }
     d->decl_kind = dk_class;
     d->next = NULL;
-    d->u.this_class = NEW (umlclassnode);
+    d->u.this_class = new umlclassnode;
     memcpy (d->u.this_class, node, sizeof(umlclassnode));
-    if (strncmp (node->key->stereotype, "CORBA", 5) == 0)
+    if (node->key->stereotype.compare (0, 5, "CORBA") == 0)
         usecorba = true;
 }
 
 
 int
-DiaGram::have_include (char *name)
+DiaGram::have_include (const char *name)
 {
     for (std::string inc : includes) {
         if (!inc.compare (name)) {
@@ -349,7 +349,7 @@ DiaGram::have_include (char *name)
 }
 
 void
-DiaGram::add_include (char *name)
+DiaGram::add_include (const char *name)
 {
     if (have_include (name))
         return;
@@ -362,9 +362,9 @@ DiaGram::push_include (umlclassnode *node)
 {
     if (node->key->package != NULL) {
         umlpackagelist pkglist = make_package_list (node->key->package);
-        add_include (pkglist->key->name);
+        add_include (pkglist->key->name.c_str ());
     } else {
-        add_include (node->key->name);
+        add_include (node->key->name.c_str ());
     }
 }
 
@@ -408,14 +408,14 @@ DiaGram::source_preserve(umlclass *class_, const char *filename, sourcecode *sou
     umloplist umlo;
     sourceblock *srcblock = NULL;
     debug( 4, "preserve_source(filename=%s)", filename);
-    source = (sourcecode*) my_malloc( sizeof(sourcecode));
+    source = new sourcecode;
     source->buffer = NULL;
     source->blocks = NULL;
     
     //open the file in read only 
     FILE * rofile = fopen(filename, "r");
     if( ! rofile ) {
-        debug( DBG_SOURCE, "no existing file %s for class %s", filename, class_->name );
+        debug( DBG_SOURCE, "no existing file %s for class %s", filename, class_->name.c_str ());
         return;
     }
     /* from here, the file exists, we transfer the content in a buffer and parse the source */
@@ -428,8 +428,8 @@ DiaGram::source_preserve(umlclass *class_, const char *filename, sourcecode *sou
         umlo = class_->operations;
         while( umlo != NULL ) {
             /* is there a diaoid hidden in the operation comment ? */
-            if( (diaoid=find_diaoid(umlo->key.attr.comment,NULL)) != NULL) {
-                debug( DBG_SOURCE,"diaoid:%s found in comment for method %s", diaoid, umlo->key.attr.name );
+            if( (diaoid=find_diaoid(umlo->key.attr.comment.c_str (),NULL)) != NULL) {
+                debug( DBG_SOURCE,"diaoid:%s found in comment for method %s", diaoid, umlo->key.attr.name.c_str () );
                 /* now try to find the implementation block in the sourcebuffer */
                 srcblock = sourceblock_find( source->blocks, diaoid );
                 // srcblock->spos poitns the implementation of lengtjh srcblock->len
@@ -454,18 +454,18 @@ DiaGram::generate_operation_comment( FILE *outfile, umloperation *ope )
 {
     umlattrlist  tmpa;
     d2c_fprintf(outfile, "/**\n");
-    d2c_fprintf(outfile, " * Operation %s\n", ope->attr.name );
-    if( ope->attr.comment[0] != 0 ) {
-        d2c_fprintf(outfile, " * %s\n", ope->attr.comment );
+    d2c_fprintf(outfile, " * Operation %s\n", ope->attr.name.c_str () );
+    if (!ope->attr.comment.empty ()) {
+        d2c_fprintf(outfile, " * %s\n", ope->attr.comment.c_str () );
     }
     d2c_fprintf(outfile, " *\n");
      tmpa = ope->parameters;
     while (tmpa != NULL) {
-        d2c_fprintf(outfile, " * @param %s - %s\n", tmpa->key.name, tmpa->key.comment );
+        d2c_fprintf(outfile, " * @param %s - %s\n", tmpa->key.name.c_str (), tmpa->key.comment.c_str () );
         tmpa = tmpa->next;
     }
-    if(strcmp(ope->attr.type, "void")) {
-        d2c_fprintf(outfile, " * @return %s\n", ope->attr.type);
+    if(ope->attr.type.compare ("void") != 0) {
+        d2c_fprintf(outfile, " * @return %s\n", ope->attr.type.c_str ());
     }
     d2c_fprintf(outfile, " */\n");
 }
@@ -479,7 +479,7 @@ void
 DiaGram::generate_attribute_comment( FILE *outfile, umlattribute *attr )
 {
     d2c_fprintf(outfile, "/**\n");
-    d2c_fprintf(outfile, " * %s\n", attr->comment );
+    d2c_fprintf(outfile, " * %s\n", attr->comment.c_str () );
     d2c_fprintf(outfile, " */\n");
 }
 

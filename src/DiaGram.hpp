@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2014-2014
+Copyright (C) 2014-2014 Vincent Le Garrec <legarrec.vincent@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -48,8 +48,8 @@ class DiaGram {
          * open_outfile() returns NULL if the file exists and is not rewritten
          * due to a clobber prohibition. Does an exit(1) if serious problems happen.
         */
-        int have_include (char *name);
-        void add_include (char *name);
+        int have_include (const char *name);
+        void add_include (const char *name);
         void push_include (umlclassnode *node);
 
         void source_preserve(umlclass *class_, const char *filename, sourcecode *source );

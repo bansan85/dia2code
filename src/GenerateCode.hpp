@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2014-2014
+Copyright (C) 2014-2014 Javier O'Hara - Oliver Kellogg
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -19,6 +19,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef GENERATE_CODE_HPP
 #define GENERATE_CODE_HPP
 
+#include <fstream>
+
 #include "DiaGram.hpp"
 
 class GenerateCode {
@@ -30,7 +32,7 @@ class GenerateCode {
         // Output directory.
         std::string outdir;
         std::string file_ext;
-        FILE *      file;
+        std::ofstream file;
         uint8_t     indent : 3;
         uint8_t     indentlevel : 3;
         // Overwrite files while generating code.
@@ -41,31 +43,27 @@ class GenerateCode {
         
         int pass_by_reference (umlclass *cl);
         void gen_class (umlclassnode *node);
-        char * cppname (char *name);
+        const char * cppname (std::string name);
         void check_visibility (int *curr_vis, int new_vis);
-        void pbody (char *msg, ...);
-        void pboth (char *msg, ...);
-        char * spc();
-        void emit (char *msg, ...);
-        void eboth (char *msg, ...);
-        void open_outfile (char *filename);
-        char * create_package_dir (umlpackage *pkg);
+        std::string spc();
+        void open_outfile (const char *filename);
+        const char * create_package_dir (umlpackage *pkg);
     public:
         GenerateCode (DiaGram & diagram, const char * ext);
 
         DiaGram & getDia ();
         void generate_code ();
         
-        char * getFileExt ();
+        const char * getFileExt ();
         void   setFileExt (char * ext);
 
         uint32_t getIndent ();
         void     setIndent (uint32_t spaces);
 
-        char * getLicense ();
+        const char * getLicense ();
         void   setLicense (char * lic);
 
-        char * getOutdir ();
+        const char * getOutdir ();
         const  std::string * getOutdirS ();
         void   setOutdir (char * dir);
 
@@ -78,7 +76,6 @@ class GenerateCode {
         bool getOpenBraceOnNewline ();
         void setOpenBraceOnNewline (bool newline);
 
-        void print (char *msg, ...);
         void gen_decl (declaration *d);
         
         virtual ~GenerateCode ();

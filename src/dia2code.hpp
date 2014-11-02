@@ -38,12 +38,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #define kind_str(A)   ((A)=='1'?"in":((A)=='2'?"in/out":((A)=='3'?"out":"???")))
 
+std::string
+format (const std::string fmt,
+        va_list marker);
+
 /* Auxiliary define for the emit/print functions  */
 #define var_arg_to_str(first_arg) \
     va_list vargu; \
-    char str[LARGE_BUFFER]; \
+    std::string str; \
     va_start (vargu, first_arg); \
-    vsnprintf (str, LARGE_BUFFER, first_arg, vargu); \
+    str = format (first_arg, vargu); \
     va_end (vargu)
 
 /* constants for scope / visibilities */
@@ -57,16 +61,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define DBG_GENCODE    6
 #define DBG_CORE       8
 
-#define SMALL_BUFFER    80
-#define BIG_BUFFER     512
-#define LARGE_BUFFER  4096
-#define HUGE_BUFFER  16384
-
 struct umlattribute {
-    char name[SMALL_BUFFER];
-    char value[SMALL_BUFFER];
-    char type [SMALL_BUFFER];
-    char comment [LARGE_BUFFER];
+    std::string name;
+    std::string value;
+    std::string type;
+    std::string comment;
     char visibility;
     char isabstract;
     char isstatic;
@@ -87,7 +86,7 @@ typedef umlattrnode *umlattrlist;
 struct umloperation {
     umlattribute attr;
     umlattrlist parameters;
-    char *implementation; /* the previous source code of the method - parsed from existing file */
+    std::string implementation;
 };
 typedef struct umloperation umloperation;
 
@@ -100,8 +99,8 @@ typedef struct umlopnode umlopnode;
 typedef umlopnode *umloplist;
 
 struct umltemplate {
-    char name[SMALL_BUFFER];
-    char type[SMALL_BUFFER];
+    std::string name;
+    std::string type;
 };
 typedef struct umltemplate umltemplate;
 
@@ -122,11 +121,11 @@ struct geometry {
 typedef struct geometry geometry;
 
 struct umlpackage {
-    char id[SMALL_BUFFER];
-    char name[SMALL_BUFFER];
+    std::string id;
+    std::string name;
     geometry geom;
     struct umlpackage * parent;
-    char *directory;
+    std::string directory;
 };
 typedef struct umlpackage umlpackage;
 
@@ -139,10 +138,10 @@ typedef struct umlpackagenode umlpackagenode;
 typedef umlpackagenode * umlpackagelist;
 
 struct umlclass {
-    char id[SMALL_BUFFER];
-    char name[SMALL_BUFFER];
-    char stereotype[SMALL_BUFFER];
-    char comment[LARGE_BUFFER];
+    std::string id;
+    std::string name;
+    std::string stereotype;
+    std::string comment;
     int isabstract;
     umlattrlist attributes;
     umloplist operations;
@@ -154,7 +153,7 @@ typedef struct umlclass umlclass;
 
 struct umlassocnode {
     umlclass * key;
-    char name[SMALL_BUFFER];
+    std::string name;
     char composite;
     struct umlassocnode * next;
     char multiplicity[10]; /* association can declare multiplicity */
@@ -177,23 +176,19 @@ typedef umlclassnode * umlclasslist;
 void debug_setlevel( int newlevel );
 void debug( int level, char *fmt, ... );
 
-char *strtoupper(char *s);
+std::string strtoupper(std::string s);
 char *strtolower(char *s);
-char *strtoupperfirst(char *s);
-std::list <std::string> parse_class_names (const char *s);
+std::string strtoupperfirst(std::string s);
+std::list <std::string> parse_class_names (char *s);
 int is_present(std::list <std::string> list, const char *name);
 umlclasslist find_by_name(umlclasslist list, const char * name);
 
-int is_enum_stereo (char * stereo);
-int is_struct_stereo (char * stereo);
-int is_typedef_stereo (char * stereo);
-int is_const_stereo (char * stereo);
+int is_enum_stereo (const char * stereo);
+int is_struct_stereo (const char * stereo);
+int is_typedef_stereo (const char * stereo);
+int is_const_stereo (const char * stereo);
 
 umlattrlist copy_attributes(umlattrlist src);
-
-void * my_malloc( size_t size );
-
-#define NEW(c) ((c*)my_malloc(sizeof(c)))
 
 umlpackagelist make_package_list( umlpackage * package);
 
@@ -202,7 +197,6 @@ extern char *body_file_ext;  /* Set by switch "-bext". Language specific
 
 /* Returns a string consisting of (indentlevel *
    number_of_spaces_for_one_indentation) spaces.  */
-void d2c_indentate(FILE *f);
 int d2c_directprintf(FILE *f, char *fmt, ...);
 
 /**
@@ -215,14 +209,6 @@ extern FILE *body;
 extern int d2c_indentposition;
 
 void dia2code_initializations();
-
-/* Emitters for file output  */
-void emit  (char *msg, ...);  /* print verbatim to spec */
-void ebody (char *msg, ...);  /* print verbatim to body (e stands for emit) */
-void eboth (char *msg, ...);  /* print verbatim to both spec and body */
-void print (char *msg, ...);  /* print with leading indentation to spec */
-void pbody (char *msg, ...);  /* print with leading indentation to body */
-void pboth (char *msg, ...);  /* print with leading indentation to both */
 
 #define NEW_AUTO_INDENT 1
 #ifdef NEW_AUTO_INDENT
@@ -243,23 +229,18 @@ int _d2c_fprintf(FILE *f, char *fmt, ...);
 /* void d2c_set_braces(char *open, char *close); */
 void d2c_open_brace(FILE *outfile, char *suffix);
 void d2c_close_brace(FILE *outfile, char *suffix);
-void d2c_parse_impl(FILE *f, char *cmt_start, char *cmt_end);
-void d2c_dump_impl(FILE *f, char *section, char *name);
-void d2c_deprecate_impl(FILE *f, char *comment_start, char *comment_end);
-char *d2c_operation_mangle_name(umloperation *op);
 void d2c_shift_code();
 void d2c_unshift_code();
 
 char *find_diaoid( const char *buf, char **newpos  );
-int d2c_backup(char *filename);
 void d2c_log( int level, char * msg );
 
 #define TAG fprintf(stderr, "%s %d\n", __FILE__, __LINE__);
 
 struct param_list
 {
-  char *name;
-  char *value;
+  std::string name;
+  std::string value;
   struct param_list *next;
 };
 
@@ -268,7 +249,6 @@ typedef struct param_list param_list;
 void param_list_destroy();
 param_list * d2c_parameter_add(char *name, char *value);
 param_list * d2c_parameter_set(char *name, char *value);
-char * d2c_parameter_value(char *name);
 param_list *d2c_parameter_find(char *name);
 
 extern int indent_count;

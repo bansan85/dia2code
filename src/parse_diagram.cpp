@@ -26,17 +26,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
    "unnamed_" followed by the anon_cnt converted to string:  */
 static unsigned anon_cnt = 0;
 
-static char *sscanfmt()
-{
-    static char buf[16];
-    sprintf (buf, "#%%%d[^#]#", SMALL_BUFFER - 1);
-    return buf;
-}
-
 umlclasslist find(umlclasslist list, char *id ) {
     if ( id != NULL ) {
         while ( list != NULL ) {
-            if ( !strcmp(id, list->key->id) ) {
+            if (list->key->id.compare (id) == 0) {
                 return list;
             }
             list = list->next;
@@ -45,24 +38,20 @@ umlclasslist find(umlclasslist list, char *id ) {
     return NULL;
 }
 
-/* the buffer must have room for SMALL_BUFFER characters */
-void parse_dia_string(xmlNodePtr stringnode, char *buffer) {
-    xmlChar *content;
-
-    content = xmlNodeGetContent(stringnode);
-    if (sscanf(content, sscanfmt(), buffer) == 0) {
-        buffer[0] = 0;
-    }
-    free(content);
+void parse_dia_string(char * stringnode, std::string &buffer) {
+    buffer.assign (stringnode, 1, strlen(stringnode) - 2);
 }
 
-/* the buffer must have room for LARGE_BUFFER characters */
-void parse_dia_string_large(xmlNodePtr stringnode, char *buffer) {
+void parse_dia_node(xmlNodePtr stringnode, std::string &buffer) {
     xmlChar *content;
-    char fmt[16];
 
     content = xmlNodeGetContent(stringnode);
-    strncpy (buffer, content + 1, MIN(strlen(content) - 2, LARGE_BUFFER - 1));
+    buffer.assign (content, 1, strlen(content) - 2);
+    if (buffer.compare ("0") == 0)
+    {
+        free(content);
+        return;
+    }
     free(content);
 }
 
@@ -83,16 +72,22 @@ int parse_boolean(xmlNodePtr booleannode) {
 
 void addparent(umlclasslist base, umlclasslist derived) {
     umlclasslist tmp;
-    tmp = NEW (umlclassnode);
+    tmp = new umlclassnode;
     tmp->key = base->key;
+    tmp->parents = NULL;
+    tmp->associations = NULL;
+    tmp->dependencies = NULL;
     tmp->next = derived->parents;
     derived->parents = tmp;
 }
 
 void adddependency(umlclasslist dependent, umlclasslist dependee) {
     umlclasslist tmp;
-    tmp = NEW (umlclassnode);
+    tmp = new umlclassnode;
     tmp->key = dependent->key;
+    tmp->parents = NULL;
+    tmp->associations = NULL;
+    tmp->dependencies = NULL;
     tmp->next = dependee->dependencies;
     dependee->dependencies = tmp;
 }
@@ -100,11 +95,11 @@ void adddependency(umlclasslist dependent, umlclasslist dependee) {
 void addaggregate(char *name, char composite, umlclasslist base,
                   umlclasslist associate, char *multiplicity) {
     umlassoclist tmp;
-    tmp = NEW (umlassocnode);
+    tmp = new umlassocnode;
     if (name != NULL && strlen (name) > 2)
-        sscanf(name, sscanfmt(), tmp->name);
+        parse_dia_string(name, tmp->name);
     if (multiplicity != NULL)
-        sscanf(multiplicity, sscanfmt(), tmp->multiplicity);
+        strncpy (tmp->multiplicity, multiplicity+1, strlen (multiplicity)-2);
     else
         sprintf(tmp->multiplicity, "1");
     tmp->key = base->key;
@@ -188,29 +183,32 @@ void parse_attribute(xmlNodePtr node, umlattribute *tmp) {
     xmlChar *nodename;
     xmlChar *attrval;
 
-    tmp->value[0] = 0;
-    tmp->value[1] = 0;
+    tmp->name.clear ();
+    tmp->value.clear ();
+    tmp->type.clear ();
+    tmp->comment.clear ();
     tmp->visibility = '0';
     tmp->kind     = '0';
     while ( node != NULL ) {
         nodename = xmlGetProp(node, "name");
+
         if ( !strcmp("name", nodename) ) {
-            parse_dia_string(node->xmlChildrenNode, tmp->name);
+            parse_dia_node(node->xmlChildrenNode, tmp->name);
         } else if ( !strcmp("value", nodename)) {
             if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-                parse_dia_string(node->xmlChildrenNode, tmp->value);
+                parse_dia_node(node->xmlChildrenNode, tmp->value);
             }
         } else if ( !strcmp("type", nodename)) {
             if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-                parse_dia_string(node->xmlChildrenNode, tmp->type);
+                parse_dia_node(node->xmlChildrenNode, tmp->type);
             } else {
-                tmp->type[0] = 0;
+                tmp->type.clear ();
             }
         } else if ( !strcmp("comment", nodename)) {
             if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-               parse_dia_string_large(node->xmlChildrenNode, tmp->comment);
+               parse_dia_node(node->xmlChildrenNode, tmp->comment);
             } else {
-               tmp->comment[0] = 0;
+               tmp->comment.clear ();
           }
         } else if ( !strcmp("kind", nodename)) {
             attrval = xmlGetProp(node->xmlChildrenNode, "val");
@@ -227,6 +225,7 @@ void parse_attribute(xmlNodePtr node, umlattribute *tmp) {
         } else if ( !strcmp("query", nodename)) {
             tmp->isconstant = parse_boolean(node->xmlChildrenNode);
         }
+
         free(nodename);
         node = node->next;
     }
@@ -235,7 +234,7 @@ void parse_attribute(xmlNodePtr node, umlattribute *tmp) {
 umlattrlist parse_attributes(xmlNodePtr node) {
     umlattrlist list = NULL, an;
     while ( node != NULL ) {
-        an = NEW (umlattrnode);
+        an = new umlattrnode;
         an->next = NULL;
         parse_attribute(node->xmlChildrenNode, &(an->key));
         list = insert_attribute(an, list);
@@ -260,9 +259,9 @@ void parse_operation(xmlNodePtr node, umloperation *tmp) {
 umloplist parse_operations(xmlNodePtr node) {
     umloplist list = NULL, on;
     while ( node != NULL ) {
-        on = NEW (umlopnode);
+        on = new umlopnode;
         on->next = NULL;
-        on->key.implementation = NULL;
+        on->key.implementation.clear ();
         parse_operation(node->xmlChildrenNode, &(on->key));
         list = insert_operation(on, list);
         node = node->next;
@@ -271,8 +270,8 @@ umloplist parse_operations(xmlNodePtr node) {
 }
 
 void parse_template(xmlNodePtr node, umltemplate *tmp) {
-    sscanf(node->xmlChildrenNode->xmlChildrenNode->content, sscanfmt(), tmp->name);
-    sscanf(node->next->xmlChildrenNode->xmlChildrenNode->content, sscanfmt(), tmp->type);
+    parse_dia_string(node->xmlChildrenNode->xmlChildrenNode->content, tmp->name);
+    parse_dia_string(node->next->xmlChildrenNode->xmlChildrenNode->content, tmp->type);
 }
 
 umltemplatelist parse_templates(xmlNodePtr node) {
@@ -280,7 +279,7 @@ umltemplatelist parse_templates(xmlNodePtr node) {
     while ( node != NULL) {
         if ( node->xmlChildrenNode->xmlChildrenNode->xmlChildrenNode != NULL &&
                 node->xmlChildrenNode->next->xmlChildrenNode->xmlChildrenNode != NULL ) {
-            tn = NEW (umltemplatenode);
+            tn = new umltemplatenode;
             tn->next = NULL;
             parse_template(node->xmlChildrenNode, &(tn->key));
             list = insert_template(tn, list);
@@ -295,7 +294,7 @@ umltemplatelist parse_templates(xmlNodePtr node) {
   * myself MUST be != null
 */
 void make_javabean_methods(umlclass *myself) {
-    char *tmpname;
+    std::string tmpname;
     umloplist operation;
     umlattrlist attrlist, parameter;
 
@@ -303,12 +302,12 @@ void make_javabean_methods(umlclass *myself) {
     while (attrlist != NULL) {
         if ( ! attrlist->key.isabstract) {
             /* The SET method */
-            operation = NEW (umlopnode);
-            parameter = NEW (umlattrnode);
+            operation = new umlopnode;
+            parameter = new umlattrnode;
 
-            sprintf(parameter->key.name, "value");
-            strncpy(parameter->key.type, attrlist->key.type, SMALL_BUFFER);
-            parameter->key.value[0] = 0;
+            parameter->key.name.assign ("value");
+            parameter->key.type.assign (attrlist->key.type);
+            parameter->key.value.clear ();
             parameter->key.isstatic = 0;
             parameter->key.isconstant = 0;
             parameter->key.isabstract = 0;
@@ -316,48 +315,45 @@ void make_javabean_methods(umlclass *myself) {
             parameter->next = NULL;
             operation->key.parameters = parameter;
 
-            operation->key.implementation = (char*) my_malloc (BIG_BUFFER);
-            sprintf(operation->key.implementation, "    ");
-            strcat(operation->key.implementation, attrlist->key.name);
-            strcat(operation->key.implementation, " = value;");
+            operation->key.implementation.clear ();
+            operation->key.implementation.append ("    ");
+            operation->key.implementation.append (attrlist->key.name);
+            operation->key.implementation.append (" = value;");
 
             tmpname = strtoupperfirst(attrlist->key.name);
-            sprintf(operation->key.attr.name, "set");
-            strncat(operation->key.attr.name, tmpname, SMALL_BUFFER - 1);
-            free(tmpname);
+            operation->key.attr.name.append ("set");
+            operation->key.attr.name.append (tmpname);
             operation->key.attr.isabstract = 0;
             operation->key.attr.isstatic = 0;
             operation->key.attr.isconstant = 0;
             operation->key.attr.visibility = '0';
-            operation->key.attr.value[0] = 0;
-            sprintf(operation->key.attr.type, "void");
+            operation->key.attr.value.clear ();
+            operation->key.attr.type.assign ("void");
             operation->next = NULL;
 
             myself->operations = insert_operation(operation, myself->operations);
 
             /* The GET or IS method */
-            operation = NEW (umlopnode);
+            operation = new umlopnode;
             operation->key.parameters = NULL;
             tmpname = strtoupperfirst(attrlist->key.name);
-            if ( !strcmp(attrlist->key.type, "boolean") ) {
-                sprintf(operation->key.attr.name, "is");
+            if ( attrlist->key.type.compare ("boolean") == 0) {
+                operation->key.attr.name.assign ("is");
             } else {
-                sprintf(operation->key.attr.name, "get");
+                operation->key.attr.name.assign ("get");
             }
-            strncat(operation->key.attr.name, tmpname, SMALL_BUFFER - 1);
-            free(tmpname);
+            operation->key.attr.name.append (tmpname);
 
-            operation->key.implementation = (char*) my_malloc (BIG_BUFFER);
-            sprintf(operation->key.implementation, "    return ");
-            strcat(operation->key.implementation, attrlist->key.name);
-            strcat(operation->key.implementation, ";");
+            operation->key.implementation.assign ("    return ");
+            operation->key.implementation.append (attrlist->key.name);
+            operation->key.implementation.append (";");
 
             operation->key.attr.isabstract = 0;
             operation->key.attr.isstatic = 0;
             operation->key.attr.isconstant = 0;
             operation->key.attr.visibility = '0';
-            operation->key.attr.value[0] = 0;
-            strncpy(operation->key.attr.type, attrlist->key.type, SMALL_BUFFER - 1);
+            operation->key.attr.value.clear ();
+            operation->key.attr.type.assign (attrlist->key.type);
             operation->next = NULL;
 
             myself->operations = insert_operation(operation, myself->operations);
@@ -404,10 +400,9 @@ umlpackagelist parse_package(xmlNodePtr package) {
     umlpackagelist listmyself;
     umlpackage *myself;
     xmlChar *attrname;
-    //debug( 4, "parse_package %s", package->name );
 
-    listmyself = NEW (umlpackagenode);
-    myself = NEW (umlpackage);
+    listmyself = new umlpackagenode;
+    myself = new umlpackage;
 
     myself->parent = NULL;
 
@@ -420,7 +415,7 @@ umlpackagelist parse_package(xmlNodePtr package) {
         /* fix a segfault - dia files contains *also* some rare tags without any "name" attribute : <dia:parent  for ex.  */
         if( attrname != NULL ) {
             if ( !strcmp("name", attrname) ) {
-                parse_dia_string(attribute->xmlChildrenNode, myself->name);
+                parse_dia_node(attribute->xmlChildrenNode, myself->name);
                 //debug( 4, "name is %s \n", myself->name );
             } else if ( !strcmp ( "obj_pos", attrname ) ) {
                 parse_geom_position(attribute->xmlChildrenNode, &myself->geom );
@@ -441,8 +436,8 @@ umlclasslist parse_class(xmlNodePtr class_) {
     umlclasslist listmyself;
     umlclass *myself;
 
-    listmyself = NEW (umlclassnode);
-    myself = NEW (umlclass);
+    listmyself = new umlclassnode;
+    myself = new umlclass;
     myself->package = NULL;
 
     listmyself->key = myself;
@@ -460,7 +455,7 @@ umlclasslist parse_class(xmlNodePtr class_) {
             continue;
         }
         if ( !strcmp("name", attrname) ) {
-            parse_dia_string(attribute->xmlChildrenNode, myself->name);
+            parse_dia_node(attribute->xmlChildrenNode, myself->name);
         } else if ( !strcmp ( "obj_pos", attrname ) ) {
             parse_geom_position(attribute->xmlChildrenNode, &myself->geom );
         } else if ( !strcmp ( "elem_width", attrname ) ) {
@@ -469,15 +464,15 @@ umlclasslist parse_class(xmlNodePtr class_) {
             parse_geom_height(attribute->xmlChildrenNode, &myself->geom );
         } else if ( !strcmp("comment", attrname))  {
             if (attribute->xmlChildrenNode->xmlChildrenNode != NULL) {
-               parse_dia_string_large(attribute->xmlChildrenNode, myself->comment);
+               parse_dia_node(attribute->xmlChildrenNode, myself->comment);
             }  else {
-               myself->comment[0] = 0;
+               myself->comment.clear ();
             }
         } else if ( !strcmp("stereotype", attrname) ) {
             if ( attribute->xmlChildrenNode->xmlChildrenNode != NULL ) {
-                parse_dia_string(attribute->xmlChildrenNode, myself->stereotype);
+                parse_dia_node(attribute->xmlChildrenNode, myself->stereotype);
             } else {
-                myself->stereotype[0] = 0;
+                myself->stereotype.clear ();
             }
         } else if ( !strcmp("abstract", attrname) ) {
             myself->isabstract = parse_boolean(attribute->xmlChildrenNode);
@@ -485,7 +480,7 @@ umlclasslist parse_class(xmlNodePtr class_) {
             myself->attributes = parse_attributes(attribute->xmlChildrenNode);
         } else if ( !strcmp("operations", attrname) ) {
             myself->operations = parse_operations(attribute->xmlChildrenNode);
-            if ( !strcmp(myself->stereotype, "JavaBean")) {
+            if ( myself->stereotype.compare ("JavaBean") == 0) {
                 /* Javabean: we should now add a get() and set() methods
                 for each attribute */
                 make_javabean_methods(myself);
@@ -532,13 +527,13 @@ void lolipop_implementation(umlclasslist classlist, xmlNodePtr object) {
     implementator = find(classlist, id);
     free(id);
     if (implementator != NULL && name != NULL && strlen(name) > 2) {
-        interface = NEW (umlclassnode);
-        interface->key = NEW (umlclass);
+        interface = new umlclassnode;
+        interface->key = new umlclass;
         interface->parents = NULL;
         interface->next = NULL;
-        sprintf(interface->key->id, "00");
-        sscanf(name, sscanfmt(), interface->key->name);
-        sprintf(interface->key->stereotype, "Interface");
+        interface->key->id.assign ("00");
+        parse_dia_string (name, interface->key->name);
+        interface->key->stereotype.assign ("Interface");
         interface->key->isabstract = 1;
         interface->key->attributes = NULL;
         interface->key->operations = NULL;
@@ -613,38 +608,36 @@ umlclasslist parse_diagram(char *diafile) {
         exit(2);
     }
 
-    /* we search for the first "object" node */
+    // we search for the first "object" node
     recursive_search( ptr->xmlRootNode->xmlChildrenNode->next, &object );
 
     while (object != NULL) {
         xmlChar *objtype = xmlGetProp(object, "type");
-        /* Here we have a Dia object */
-        if ( !strcmp("UML - Class", objtype) ) {
-            /* Here we have a class definition */
+        // Here we have a Dia object 
+        if (strcmp("UML - Class", objtype) == 0) {
+            // Here we have a class definition
             umlclasslist tmplist = parse_class(object);
-            if (tmplist != NULL) {
-                /* We get the ID of the object here*/
-                xmlChar *objid = xmlGetProp(object, "id");
-                sscanf(objid, "%79s", tmplist->key->id);
-                free(objid);
+            // We get the ID of the object here
+            xmlChar *objid = xmlGetProp(object, "id");
+            tmplist->key->id.assign (objid);
+            free(objid);
 
-                /* We insert it here*/
-                if ( classlist == NULL ) {
-                    classlist = endlist = tmplist;
-                } else {
-                    endlist->next = tmplist;
-                    endlist = tmplist;
-                }
+            // We insert it here
+            if ( classlist == NULL ) {
+                classlist = endlist = tmplist;
+            } else {
+                endlist->next = tmplist;
+                endlist = tmplist;
             }
         } else if ( !strcmp("UML - LargePackage", objtype) || !strcmp("UML - SmallPackage", objtype) ) {
             umlpackagelist tmppcklist = parse_package(object);
             if ( tmppcklist != NULL ) {
-                /* We get the ID of the object here*/
+                // We get the ID of the object here
                 xmlChar *objid = xmlGetProp(object, "id");
-                sscanf(objid, "%79s", tmppcklist->key->id);
+                tmppcklist->key->id.assign (objid);
                 free(objid);
             }
-            /* We insert it here*/
+            // We insert it here
             if ( packagelist == NULL ) {
                 packagelist = endpcklist = tmppcklist;
             } else {
@@ -720,9 +713,9 @@ umlclasslist parse_diagram(char *diafile) {
                         } 
                         else if ( !strcmp(attrtype, "ends") ) {
                             if ( !strcmp(child->name, "composite") ) {
-				while (grandchild) {
+                                while (grandchild) {
                                     xmlNodePtr ggchild = grandchild->xmlChildrenNode;
-				    if (ggchild->xmlChildrenNode) {
+                                    if (ggchild->xmlChildrenNode) {
                                         attrtype = xmlGetProp(grandchild, "name");
                                         if ( !strcmp(attrtype, "role") ) {
                                             name_a = ggchild->xmlChildrenNode->content;
@@ -734,15 +727,15 @@ umlclasslist parse_diagram(char *diafile) {
                                             /* todo */
                                         }
                                     }
-				    grandchild = grandchild->next;
+                                    grandchild = grandchild->next;
                                 }
                             }
                             child = child->next;
                             if ( child != NULL && !strcmp(child->name, "composite") ) {
                                 grandchild = child->xmlChildrenNode;
-				while (grandchild) {
+                                while (grandchild) {
                                     xmlNodePtr ggchild = grandchild->xmlChildrenNode;
-				    if (ggchild->xmlChildrenNode) {
+                                    if (ggchild->xmlChildrenNode) {
                                         attrtype = xmlGetProp(grandchild, "name");
                                         if ( !strcmp(attrtype, "role") ) {
                                             name_b = ggchild->xmlChildrenNode->content;
@@ -754,7 +747,7 @@ umlclasslist parse_diagram(char *diafile) {
                                             /* todo */
                                         }
                                     }
-				    grandchild = grandchild->next;
+                                    grandchild = grandchild->next;
                                 }
                             }
                         }
@@ -882,7 +875,6 @@ umlclasslist parse_diagram(char *diafile) {
         }
         dummypcklist = dummypcklist->next;
     }
-
     return classlist;
 }
 

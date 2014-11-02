@@ -29,10 +29,10 @@ create_nested_modules_from_pkglist (umlpackagelist pkglist,
     /* Expects pkglist and m to be non-NULL and m->contents to be NULL.
        Returns a reference to the innermost module created.  */
     while (pkglist->next != NULL) {
-        declaration *d = NEW (declaration);
+        declaration *d = new declaration;
         d->decl_kind = dk_module;
         d->prev = d->next = NULL;
-        d->u.this_module = NEW (module);
+        d->u.this_module = new module;
         m->contents = d;
         pkglist = pkglist->next;
         m = d->u.this_module;
@@ -53,13 +53,13 @@ find_or_add_module (declaration  **dptr,
     if (pkglist == NULL)
         return NULL;
     if (d == NULL) {
-        *dptr = NEW (declaration);
+        *dptr = new declaration;
         d = *dptr;
     } else {
         declaration *dprev = NULL;
         while (d != NULL) {
             if (d->decl_kind == dk_module &&
-                !strcmp (d->u.this_module->pkg->name, pkglist->key->name)) {
+                d->u.this_module->pkg->name.compare (pkglist->key->name) == 0) {
                 m = d->u.this_module;
                 if (pkglist->next == NULL)
                     return m;
@@ -72,13 +72,13 @@ find_or_add_module (declaration  **dptr,
             d = d->next;
         }
         if (dprev != NULL) {
-            dprev->next = NEW (declaration);
+            dprev->next = new declaration;
             d = dprev->next;
         }
     }
     d->decl_kind = dk_module;
     d->next = NULL;
-    d->u.this_module = NEW (module);
+    d->u.this_module = new module;
     m = d->u.this_module;
     m->pkg = pkglist->key;
     m->contents = NULL;
@@ -93,7 +93,7 @@ find_module (declaration   *d,
     while (d != NULL) {
         if (d->decl_kind == dk_module) {
             module *m = d->u.this_module;
-            if (!strcmp (m->pkg->name, pkglist->key->name)) {
+            if (m->pkg->name.compare (pkglist->key->name) == 0) {
                 if (pkglist->next != NULL)
                     return find_module (m->contents, pkglist->next);
                 else
@@ -124,7 +124,7 @@ find_class (umlclassnode *node)
     while (d != NULL) {
         if (d->decl_kind == dk_class) {
             umlclassnode *cl = d->u.this_class;
-            if (!strcmp (cl->key->name, node->key->name))
+            if (cl->key->name.compare (node->key->name) == 0)
                 return d;
         }
         d = d->next;
@@ -139,7 +139,7 @@ append_decl (declaration *d)
     while (d->next != NULL) {
         d = d->next;
     }
-    d->next = NEW (declaration);
+    d->next = new declaration;
     d->next->prev = d;
     d = d->next;
     return d;

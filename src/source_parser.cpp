@@ -150,7 +150,7 @@ char *source_loadfromfile(const char *filename )
     if( ! fi  ) {
        return NULL;
     }
-    buf = my_malloc(sizeof(char)*sz + 2 );
+    buf = malloc (sizeof(char)*(sz + 2));
     read( fi, buf, sz );
     close(fi);
     buf[sz]= '\0';

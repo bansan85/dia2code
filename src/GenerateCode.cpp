@@ -34,7 +34,7 @@ GenerateCode::GenerateCode (DiaGram    & diagram,
     license (),
     outdir ("."),
     file_ext (ext),
-    file (NULL),
+    file (),
     indent (4),
     indentlevel (0),
     overwrite (true),
@@ -49,7 +49,7 @@ GenerateCode::getDia () {
 }
 
 
-char *
+const char *
 GenerateCode::getLicense () {
     return license.c_str ();
 }
@@ -63,7 +63,7 @@ GenerateCode::setLicense (char * lic) {
 }
 
 
-char *
+const char *
 GenerateCode::getOutdir () {
     return outdir.c_str ();
 }
@@ -126,48 +126,23 @@ GenerateCode::setOpenBraceOnNewline (bool newline) {
 
 
 void
-GenerateCode::emit (char *msg, ...)
+GenerateCode::open_outfile (const char *filename)
 {
-    var_arg_to_str (msg);
-    fputs (str, file);
-}
-
-void
-GenerateCode::eboth (char *msg, ...)
-{
-    var_arg_to_str (msg);
-    fputs (str, file);
-    if (body != NULL)
-        fputs (str, body);
-}
-
-
-void
-GenerateCode::open_outfile (char *filename)
-{
-    static char outfilename[BIG_BUFFER];
+    static std::string outfilename;
     int tmpdirlgth, tmpfilelgth;
 
     tmpdirlgth = outdir.length ();
     tmpfilelgth = strlen (filename);
 
-    /* This prevents buffer overflows */
-    if (tmpfilelgth + tmpdirlgth > sizeof(outfilename) - 2) {
-        fprintf (stderr, "Sorry, name of file too long ...\n"
-                    "Try a smaller dir name\n");
+    outfilename.assign (outdir);
+    outfilename.append ("/");
+    outfilename.append (filename);
+    file.open (outfilename.c_str ());
+    if (file.is_open () && !overwrite) {
+        fprintf (stderr, "Failed to overwrite %s.\n", outfilename.c_str ());
+        file.close ();
         exit (1);
-    }
-
-    sprintf (outfilename, "%s/%s", outdir.c_str (), filename);
-    file = fopen (outfilename, "r");
-    if (file != NULL && !overwrite) {
-        fclose (file);
         return;
-    }
-    file = fopen (outfilename, "w");
-    if (file == NULL) {
-        fprintf (stderr, "Can't open file %s for writing\n", outfilename);
-        exit (1);
     }
     return;
 }
@@ -183,33 +158,32 @@ GenerateCode::open_outfile (char *filename)
  * @return the full directory path eg. "<outdir>/org/foo/bar"
  * 
  */
-char *
+const char *
 GenerateCode::create_package_dir (umlpackage *pkg )
 {
-    char *fulldirname, *dirname, fulldirnamedup[BIG_BUFFER];
+    std::string fulldirname;
+    const char *dirname;
     /* created directories permissions */
     mode_t dir_mask = S_IRUSR | S_IWUSR | S_IXUSR |S_IRGRP | S_IXGRP;
     if (pkg == NULL) {
         return NULL;
     }
-    if (buildtree == 0 || pkg->name == NULL) {
+    if (buildtree == 0 || pkg->name.empty()) {
         pkg->directory = outdir.c_str ();
     } else {
-        fulldirname = (char*)my_malloc(BIG_BUFFER);
-        sprintf(fulldirname, "%s", outdir.c_str ());
-        dirname = strdup(pkg->name);
-        dirname = strtok( dirname, "." );
+        fulldirname.assign (outdir);
+        dirname = strtok(pkg->name.c_str (), "." );
         while (dirname != NULL) {
-            sprintf( fulldirnamedup, "%s/%s", fulldirname, dirname );
-            sprintf( fulldirname, "%s", fulldirnamedup );
+            fulldirname.append ("/");
+            fulldirname.append (dirname);
             /* TODO : should create only if not existent */
-            mkdir( fulldirname, dir_mask );
+            mkdir( fulldirname.c_str (), dir_mask );
             dirname = strtok( NULL, "." );
         }
         /* set the package directory used later for source file creation */
         pkg->directory = fulldirname;
     }
-    return pkg->directory;
+    return pkg->directory.c_str ();
 }
 
 
@@ -230,7 +204,7 @@ GenerateCode::generate_code ()
     }
 
     while (tmplist != NULL) {
-        if (! (is_present (getDia ().getGenClasses (), tmplist->key->name) ^ getDia ().getInvertSel ())) {
+        if (! (is_present (getDia ().getGenClasses (), tmplist->key->name.c_str ()) ^ getDia ().getInvertSel ())) {
             getDia ().push (tmplist);
         }
         tmplist = tmplist->next;
@@ -239,56 +213,54 @@ GenerateCode::generate_code ()
     /* Generate a file for each outer declaration.  */
     d = decls;
     while (d != NULL) {
-        char *name, *tmpname;
-        char filename[BIG_BUFFER];
+        std::string name, tmpname;
+        std::string filename;
 
         if (d->decl_kind == dk_module) {
             name = d->u.this_module->pkg->name;
         } else {         /* dk_class */
             name = d->u.this_class->key->name;
         }
-        sprintf (filename, "%s.%s", name, getFileExt ());
+        filename.assign (name);
+        filename.append (".");
+        filename.append (getFileExt ());
 
-        open_outfile (filename);
-        if (file == NULL) {
-            d = d->next;
-            continue;
-        }
+        open_outfile (filename.c_str ());
 
         tmpname = strtoupper(name);
-        print("#ifndef %s__H\n", tmpname);
-        print("#define %s__H\n\n", tmpname);
+        file << spc () << "#ifndef " << tmpname.c_str () << "__HPP\n";
+        file << spc () << "#define " << tmpname.c_str () << "__HPP\n\n";
 
         /* add license to the header */
         if (!license.empty ()) {
             int lc;
             rewind (licensefile);
             while ((lc = fgetc (licensefile)) != EOF)
-                print ("%c", (char) lc);
+                file << (char) lc;
         }
 
         getDia ().cleanIncludes ();
         getDia ().determine_includes (d);
         if (getDia ().getUseCorba ())
-            print ("#include <p_orb.h>\n\n");
+            file << "#include <p_orb.h>\n\n";
         std::list <std::string> incfile = getDia ().getIncludes ();
         for (std::string namei : incfile) {
             if (namei.compare (name)) {
-                print ("#include \"%s.%s\"\n", namei.c_str (), getFileExt ());
+                file << "#include \"" << namei.c_str () << "." << getFileExt () << "\"\n";
             }
         }
-        print ("\n");
+        file << "\n";
 
         gen_decl (d);
 
-        print("#endif\n");
-        fclose (file);
+        file << "#endif\n";
+        file.close ();
 
         d = d->next;
     }
 }
 
-char *
+const char *
 GenerateCode::getFileExt () {
     return file_ext.c_str ();
 }
@@ -303,17 +275,17 @@ GenerateCode::setFileExt (char * ext) {
 
 
 static void
-check_umlattr (umlattribute *u, char *typename_)
+check_umlattr (umlattribute *u, const char *typename_)
 {
     /* Check settings that don't make sense for C++ generation.  */
     if (u->visibility == '1')
-        fprintf (stderr, "%s/%s: ignoring non-visibility\n", typename_, u->name);
+        fprintf (stderr, "%s/%s: ignoring non-visibility\n", typename_, u->name.c_str ());
     if (u->isstatic)
-        fprintf (stderr, "%s/%s: ignoring staticness\n", typename_, u->name);
+        fprintf (stderr, "%s/%s: ignoring staticness\n", typename_, u->name.c_str ());
 }
 
-static char *
-subst (char *str, char search, char replace)
+const char *
+subst (const char *str, const char search, char replace)
 {
     char *p;
     while ((p = strchr (str, search)) != NULL)
@@ -321,8 +293,8 @@ subst (char *str, char search, char replace)
     return str;
 }
 
-static char *
-nospc (char *str)
+const char *
+nospc (const char *str)
 {
     return subst (str, ' ', '_');
 }
@@ -330,14 +302,14 @@ nospc (char *str)
 int
 GenerateCode::pass_by_reference (umlclass *cl)
 {
-    char *st;
+    const char *st;
     if (cl == NULL)
         return 0;
-    st = cl->stereotype;
+    st = cl->stereotype.c_str ();
     if (strlen (st) == 0)
         return 1;
     if (is_typedef_stereo (st)) {
-        umlclassnode *ref = find_by_name (dia.getUml (), cl->name);
+        umlclassnode *ref = find_by_name (dia.getUml (), cl->name.c_str ());
         if (ref == NULL)
             return 0;
         return pass_by_reference (ref->key);
@@ -349,10 +321,10 @@ GenerateCode::pass_by_reference (umlclass *cl)
 static int
 is_oo_class (umlclass *cl)
 {
-    char *st;
+    const char *st;
     if (cl == NULL)
         return 0;
-    st = cl->stereotype;
+    st = cl->stereotype.c_str ();
     if (strlen (st) == 0)
         return 1;
     return (!is_const_stereo (st) &&
@@ -379,59 +351,60 @@ has_oo_class (declaration *d)
     return 0;
 }
 
-char *
-GenerateCode::cppname (char *name)
+const char *
+GenerateCode::cppname (std::string name)
 {
-    static char buf[SMALL_BUFFER];
+    static std::string buf;
     if (dia.getUseCorba ()) {
-        if (eq (name, "boolean") ||
-            eq (name, "char") ||
-            eq (name, "octet") ||
-            eq (name, "short") ||
-            eq (name, "long") ||
-            eq (name, "float") ||
-            eq (name, "double") ||
-            eq (name, "string") ||
-            eq (name, "any")) {
-            sprintf (buf, "CORBA::%s", nospc (strtoupperfirst (name)));
-        } else if (eq (name, "long long")) {
-            sprintf (buf, "CORBA::LongLong");
-        } else if (eq (name, "unsigned short")) {
-            sprintf (buf, "CORBA::UShort");
-        } else if (eq (name, "unsigned long")) {
-            sprintf (buf, "CORBA::ULong");
-        } else if (eq (name, "unsigned long long")) {
-            sprintf (buf, "CORBA::ULongLong");
+        if (name.compare ("boolean") == 0 ||
+            name.compare ("char") == 0 ||
+            name.compare ("octet") == 0 ||
+            name.compare ("short") == 0 ||
+            name.compare ("long") == 0 ||
+            name.compare ("float") == 0 ||
+            name.compare ("double") == 0 ||
+            name.compare ("string") == 0 ||
+            name.compare ("any") == 0) {
+                buf.assign ("CORBA::");
+                buf.append (nospc (strtoupperfirst (name).c_str ()));
+        } else if (name.compare ("long long") == 0) {
+            buf.assign ("CORBA::LongLong");
+        } else if (name.compare ("unsigned short") == 0) {
+            buf.assign ("CORBA::UShort");
+        } else if (name.compare ("unsigned long") == 0) {
+            buf.assign ("CORBA::ULong");
+        } else if (name.compare ("unsigned long long") == 0) {
+            buf.assign ("CORBA::ULongLong");
         } else {
-            strcpy (buf, name);
+            buf.assign (name);
         }
     } else {
-        strcpy (buf, name);
+        buf.assign (name);
     }
-    return buf;
+    return buf.c_str ();
 }
 
 
-static char *
-fqname (umlclassnode *node, int use_ref_type)
+const char *
+fqname (umlclassnode *node, bool use_ref_type)
 {
-    static char buf[BIG_BUFFER];
+    static std::string buf;
 
-    buf[0] = '\0';
+    buf.clear ();
     if (node == NULL)
-        return buf;
+        return "";
     if (node->key->package != NULL) {
         umlpackagelist pkglist = make_package_list (node->key->package);
         while (pkglist != NULL) {
-            strcat (buf, pkglist->key->name);
-            strcat (buf, "::");
+            buf.append (pkglist->key->name);
+            buf.append ("::");
             pkglist = pkglist->next;
         }
     }
-    strcat (buf, node->key->name);
+    buf.append (node->key->name);
     if (use_ref_type)
-        strcat (buf, "*");
-    return buf;
+        buf.append ("*");
+    return buf.c_str ();
 }
 
 void
@@ -442,13 +415,13 @@ GenerateCode::check_visibility (int *curr_vis, int new_vis)
     indentlevel--;
     switch (new_vis) {
       case '0':
-        print ("public:\n");
+        file << spc () << "public:\n";
         break;
       case '1':
-        print ("private:\n");
+        file << spc () << "private:\n";
         break;
       case '2':
-        print ("protected:\n");
+        file << spc () << "protected:\n";
         break;
     }
     *curr_vis = new_vis;
@@ -458,57 +431,57 @@ GenerateCode::check_visibility (int *curr_vis, int new_vis)
 void
 GenerateCode::gen_class (umlclassnode *node)
 {
-    char *name = node->key->name;
-    char *stype = node->key->stereotype;
+    const char *name = node->key->name.c_str ();
+    const char *stype = node->key->stereotype.c_str ();
     int is_valuetype = 0;
 
     if (strlen (stype) > 0) {
-        print ("// %s\n", stype);
+        file << spc () << "// " << stype << "\n";
         is_valuetype = eq (stype, "CORBAValue");
     }
 
-    print("/// class %s - %s\n", name, node->key->comment);
+    file << spc () << "/// class " << name << " - " << node->key->comment.c_str () << "\n";
 
     if (node->key->templates != NULL) {
         umltemplatelist template_ = node->key->templates;
         if (is_valuetype) {
             fprintf (stderr, "CORBAValue %s: template ignored\n", name);
         } else {
-            print ("template <");
+            file << spc () << "template <";
             while (template_ != NULL) {
-                print ("%s %s", template_->key.type, template_->key.name);
+                file << template_->key.type.c_str () << " " << template_->key.name.c_str ();
                 template_ = template_->next;
                 if (template_ != NULL)
-                    emit (", ");
+                    file << ", ";
             }
-            emit (">\n");
+            file << ">\n";
         }
     }
 
-    print ("class %s", name);
+    file << spc () << "class " << name;
     if (node->parents != NULL) {
         umlclasslist parent = node->parents;
-        emit (" : ");
+        file << " : ";
         while (parent != NULL) {
-            emit ("public %s", fqname (parent, 0));
+            file << "public " << fqname (parent, false);
             parent = parent->next;
             if (parent != NULL)
-                emit (", ");
+                file << ", ";
         }
     } else if (is_valuetype) {
-        emit (" : CORBA::ValueBase");
+        file << " : CORBA::ValueBase";
     }
     if (bOpenBraceOnNewline) {
-        emit ("\n{\n");
+        file << "\n{\n";
     }
     else {
-        emit (" {\n");
+        file << " {\n";
     }
     indentlevel++;
 
     if (node->associations != NULL) {
         umlassoclist assoc = node->associations;
-        print ("// Associations\n");
+        file << spc () << "// Associations\n";
         /*
          * The associations are mapped as private members.
          * Is that really what we want?
@@ -517,15 +490,14 @@ GenerateCode::gen_class (umlclassnode *node)
         */
         while (assoc != NULL) {
             umlclassnode *ref;
-            if (assoc->name[0] != '\0')
+            if (!assoc->name.empty ())
             {
-                ref = find_by_name (dia.getUml (), assoc->key->name);
-                print ("");
+                ref = find_by_name (dia.getUml (), assoc->key->name.c_str ());
                 if (ref != NULL)
-                    emit ("%s", fqname (ref, !assoc->composite));
+                    file << spc () << fqname (ref, !assoc->composite);
                 else
-                    emit ("%s", cppname (assoc->key->name));
-                emit (" %s;\n", assoc->name);
+                    file << spc () << cppname (assoc->key->name);
+                file << " " << assoc->name.c_str () << ";\n";
             }
             assoc = assoc->next;
         }
@@ -534,76 +506,78 @@ GenerateCode::gen_class (umlclassnode *node)
     if (node->key->attributes != NULL) {
         umlattrlist umla = node->key->attributes;
         if (is_valuetype) {
-            print ("// Public state members\n");
+            file << spc () << "// Public state members\n";
             indentlevel--;
-            print ("public:\n");
+            file << spc () << "public:\n";
             indentlevel++;
             while (umla != NULL) {
-                char *member = umla->key.name;
+                const char *member = umla->key.name.c_str ();
                 umlclassnode *ref;
                 if (umla->key.visibility != '0') {
                     umla = umla->next;
                     continue;
                 }
-                print ("");
                 if (umla->key.isstatic) {
                     fprintf (stderr, "CORBAValue %s/%s: static not supported\n",
                                      name, member);
                 }
-                ref = find_by_name (dia.getUml (), umla->key.type);
+                ref = find_by_name (dia.getUml (), umla->key.type.c_str ());
                 if (ref != NULL)
-                    eboth ("%s", fqname (ref, 1));
+                    file << spc () << fqname (ref, true);
                 else
-                    eboth ("%s", cppname (umla->key.type));
+                    file << spc () << cppname (umla->key.type);
                 if (!bOpenBraceOnNewline) {
-                    emit (" %s () { return _%s; }\n", member, member);
+                    file << " " << member << " () { return _" << member << "; }\n";
                 }
                 else {
-                    emit (" %s ()\n", member);
-                    print ("{\n");
+                    file << " " << member << " ()\n";
+                    file << spc () << "{\n";
                     indentlevel++;
-                    print ("return _%s;\n",member);
+                    file << spc () << "return _" << member << ";\n";
                     indentlevel--;
-                    print ("}\n",member);
+                    file << spc () << "}\n";
                 }
-                print ("void %s (", member);
+                file << spc () << "void " << member << " (";
                 if (ref != NULL) {
                     int by_ref = pass_by_reference (ref->key);
                     if (by_ref)
-                        emit ("const ");
-                    emit ("%s", fqname (ref, 1));
+                        file << "const ";
+                    file << fqname (ref, true);
                     if (by_ref)
-                        emit ("&");
+                        file << "&";
                 } else {
-                    emit ("%s", cppname (umla->key.type));
+                    file << cppname (umla->key.type);
                 }
                 if (!bOpenBraceOnNewline) {
-                    emit (" value_) { _%s = value_; }\n", member);
+                    file << " value_) { _" << member << " = value_; }\n";
                 }
                 else {
-                    emit (" value_)\n");
-                    print ("{\n");
+                    file << " value_)\n";
+                    file << spc () << "{\n";
                     indentlevel++;
-                    print ("_%s = value_;", member);
+                    file << spc () << "_" << member << " = value_;";
                     indentlevel--;
-                    print ("}\n");
+                    file << spc () << "}\n";
                 }
                 umla = umla->next;
             }
         } else {
             int tmpv = -1;
-            print ("// Attributes\n");
+            file << spc () << "// Attributes\n";
             while (umla != NULL) {
                 check_visibility (&tmpv, umla->key.visibility);
-                if (strlen(umla->key.comment)) {
-                    print("/// %s\n", umla->key.comment);
+                if (!umla->key.comment.empty ()) {
+                    file << spc () << "/// " << umla->key.comment.c_str () << "\n";
                 }
-                print ("");
+                file << spc ();
                 if (umla->key.isstatic) {
-                    emit ("static ");
+                    file << spc () << "static " << umla->key.type.c_str () << " " << umla->key.name.c_str ();
                 }
-                emit ("%s %s", umla->key.type, umla->key.name);
-                emit (";\n");
+                else
+                {
+                    file << spc () << umla->key.type.c_str () << " " << umla->key.name.c_str () << "";
+                }
+                file << ";\n";
                 umla = umla->next;
             }
         }
@@ -612,10 +586,10 @@ GenerateCode::gen_class (umlclassnode *node)
     if (node->key->operations != NULL) {
         umloplist umlo = node->key->operations;
         int tmpv = -1;
-        print ("// Operations\n");
+        file << spc () << "// Operations\n";
         if (is_valuetype) {
             indentlevel--;
-            print ("public:\n");
+            file << spc () << "public:\n";
             indentlevel++;
         }
         while (umlo != NULL) {
@@ -623,102 +597,99 @@ GenerateCode::gen_class (umlclassnode *node)
             if (is_valuetype) {
                 if (umlo->key.attr.visibility != '0')
                     fprintf (stderr, "CORBAValue %s/%s: must be public\n",
-                                     name, umlo->key.attr.name);
+                                     name, umlo->key.attr.name.c_str ());
             } else {
                 check_visibility (&tmpv, umlo->key.attr.visibility);
             }
 
             /* print comments on operation */
-            if (strlen(umlo->key.attr.comment)) {
-                print("/// %s\n", umlo->key.attr.comment);
+            if (!umlo->key.attr.comment.empty ()) {
+                file << spc () << "/// " << umlo->key.attr.comment.c_str () << "\n";
                 tmpa = umlo->key.parameters;
                 while (tmpa != NULL) {
-                     print("/// @param %s\t\t(%s) %s\n",
-                           tmpa->key.name,
-                           kind_str(tmpa->key.kind),
-                           tmpa->key.comment);
-                           tmpa = tmpa->next;
+                     file << spc () << "/// @param " << tmpa->key.name.c_str () << "\t(" << kind_str(tmpa->key.kind) << ") " << tmpa->key.comment.c_str () << "\n";
+                     tmpa = tmpa->next;
                 }
             }
             /* print operation */
-            print ("");
+            file << spc ();
             if (umlo->key.attr.isabstract || is_valuetype) {
-                emit ("virtual ");
-                umlo->key.attr.value[0] = '0';
+                file << "virtual ";
+                umlo->key.attr.value.clear ();
             }
             if (umlo->key.attr.isstatic) {
                 if (is_valuetype)
                     fprintf (stderr, "CORBAValue %s/%s: static not supported\n",
-                                     name, umlo->key.attr.name);
+                                     name, umlo->key.attr.name.c_str ());
                 else
-                    emit ("static ");
+                    file << "static ";
             }
-            if (strlen (umlo->key.attr.type) > 0) {
-                emit ("%s ", cppname (umlo->key.attr.type));
+            if (!umlo->key.attr.type.empty ()) {
+                file << cppname (umlo->key.attr.type.c_str ()) << " ";
             }
-            emit ("%s (", umlo->key.attr.name);
+            file << umlo->key.attr.name.c_str () << " (";
             tmpa = umlo->key.parameters;
             while (tmpa != NULL) {
-                emit ("%s %s", tmpa->key.type, tmpa->key.name);
-                if (tmpa->key.value[0] != 0) {
+                file << tmpa->key.type.c_str () << " " << tmpa->key.name.c_str ();
+                if (!tmpa->key.value.empty ()) {
                     if (is_valuetype)
                         fprintf (stderr, "CORBAValue %s/%s: param default "
-                                 "not supported\n", name, umlo->key.attr.name);
+                                 "not supported\n", name, umlo->key.attr.name.c_str ());
                     else
-                       emit (" = %s", tmpa->key.value);
+                       file << " = " << tmpa->key.value.c_str ();
                 }
                 tmpa = tmpa->next;
                 if (tmpa != NULL) {
-                    emit (", ");
+                    file << ", ";
                 }
             }
-            emit (")");
+            file << ")";
             if (umlo->key.attr.isconstant) {
-                emit (" const");
+                file << " const";
             }
-            if (umlo->key.attr.value[0]) {
+            if (umlo->key.attr.value.empty ()) {
                 // virtual
                 if ((umlo->key.attr.isabstract || is_valuetype) &&
                     umlo->key.attr.name[0] != '~')
-                    emit (" = %s", umlo->key.attr.value);
+                    file << " = 0";
             }
-            emit (";\n");
+            file << ";\n";
             umlo = umlo->next;
         }
     }
 
     if (node->key->attributes != NULL && is_valuetype) {
         umlattrlist umla = node->key->attributes;
-        emit ("\n");
+        file << "\n";
         indentlevel--;
-        print ("private:  // State member implementation\n");
+        file << spc () << "private:  // State member implementation\n";
         indentlevel++;
         while (umla != NULL) {
-            umlclassnode *ref = find_by_name (dia.getUml (), umla->key.type);
-            print ("");
+            umlclassnode *ref = find_by_name (dia.getUml (), umla->key.type.c_str ());
+            file << spc ();
             if (ref != NULL) {
-                emit ("%s", fqname (ref, is_oo_class (ref->key)));
+                file << fqname (ref, is_oo_class (ref->key));
                 /*
                  * FIXME: Find a better way to decide whether to use
                  * a pointer.
                 */
             } else
-                emit ("%s", cppname (umla->key.type));
-            emit (" _%s;\n", umla->key.name);
+                file << cppname (umla->key.type);
+            file << " _" << umla->key.name.c_str () << ";\n";
             umla = umla->next;
         }
     }
 
     indentlevel--;
-    print ("};\n\n");
+    file << "};\n\n";
 }
 
 
 void
 GenerateCode::gen_decl (declaration *d)
 {
-    char *name;
-    char *stype;
+    const char *name;
+    const char *stype;
     umlclassnode *node;
     umlattrlist umla;
 
@@ -726,14 +697,14 @@ GenerateCode::gen_decl (declaration *d)
         return;
 
     if (d->decl_kind == dk_module) {
-        name = d->u.this_module->pkg->name;
+        name = d->u.this_module->pkg->name.c_str ();
         if (bOpenBraceOnNewline) {
-            print ("namespace %s\n", name);
-            print ("{\n\n");
+            file << spc () << "namespace " << name << "\n";
+            file << spc () << "{\n\n";
         }
         else
         {
-            print ("namespace %s {\n\n", name);
+            file << spc () << "namespace " << name << " {\n\n";
         }
         indentlevel++;
         d = d->u.this_module->contents;
@@ -742,13 +713,13 @@ GenerateCode::gen_decl (declaration *d)
             d = d->next;
         }
         indentlevel--;
-        print ("};\n\n", name);
+        file << spc () << "};\n\n";
         return;
     }
 
     node = d->u.this_class;
-    stype = node->key->stereotype;
-    name = node->key->name;
+    stype = node->key->stereotype.c_str ();
+    name = node->key->name.c_str ();
     umla = node->key->attributes;
 
     if (strlen (stype) == 0) {
@@ -757,66 +728,65 @@ GenerateCode::gen_decl (declaration *d)
     }
 
     if (eq (stype, "CORBANative")) {
-        print ("// CORBANative: %s \n\n", name);
+        file << spc () << "// CORBANative: " << name << " \n\n";
 
     } else if (is_const_stereo (stype)) {
         if (umla == NULL) {
             fprintf (stderr, "Error: first attribute not set at %s\n", name);
             exit (1);
         }
-        if (strlen (umla->key.name) > 0)
+        if (!umla->key.name.empty ())
             fprintf (stderr, "Warning: ignoring attribute name at %s\n", name);
 
-        print ("const %s %s = %s;\n\n", cppname (umla->key.type), name,
-                                                 umla->key.value);
+        file << spc () << "const " << cppname (umla->key.type) << " " << name << " = " << umla->key.value.c_str () << ";\n\n";
 
     } else if (is_enum_stereo (stype)) {
         if (bOpenBraceOnNewline) {
-            print ("enum %s\n", name);
-            print ("{\n");
+            file << spc () << "enum " << name << "\n";
+            file << spc () << "{\n";
         }
         else
         {
-            print ("enum %s {\n", name);
+            file << spc () << "enum " << name << " {\n";
         }
         indentlevel++;
         while (umla != NULL) {
-            char *literal = umla->key.name;
+            const char *literal = umla->key.name.c_str ();
             check_umlattr (&umla->key, name);
-            if (strlen (umla->key.type) > 0)
+            if (!umla->key.type.empty ())
                 fprintf (stderr, "%s/%s: ignoring type\n", name, literal);
-            print ("%s", literal);
-            if (strlen (umla->key.value) > 0)
-                print (" = %s", umla->key.value);
+            file << spc () << literal;
+            if (!umla->key.value.empty ())
+                file << " = " << umla->key.value.c_str ();
             if (umla->next)
-                emit (",");
-            emit ("\n");
+                file << ",";
+            file << "\n";
             umla = umla->next;
         }
         indentlevel--;
-        print ("};\n\n");
+        file << spc () << "};\n\n";
 
     } else if (is_struct_stereo (stype)) {
         if (bOpenBraceOnNewline) {
-            print ("struct %s\n", name);
-            print ("{\n");
+            file << spc () << "struct " << name << "\n";
+            file << spc () << "{\n";
         }
         else
         {
-            print ("struct %s {\n", name);
+            file << spc () << "struct " << name << " {\n";
         }
         indentlevel++;
         while (umla != NULL) {
             check_umlattr (&umla->key, name);
-            print ("%s %s", cppname (umla->key.type), umla->key.name);
-            if (strlen (umla->key.value) > 0)
+            file << spc () << cppname (umla->key.type) << " " << umla->key.name.c_str ();
+            if (!umla->key.value.empty ())
                 fprintf (stderr, "%s/%s: ignoring value\n",
-                                 name, umla->key.name);
-            emit (";\n");
+                                 name, umla->key.name.c_str ());
+            file << ";\n";
             umla = umla->next;
         }
         indentlevel--;
-        print ("};\n\n");
+        file << spc () << "};\n\n";
 
     } else if (eq (stype, "CORBAException")) {
         fprintf (stderr, "%s: CORBAException not yet implemented\n", name);
@@ -829,27 +799,25 @@ GenerateCode::gen_decl (declaration *d)
         }
         fprintf (stderr, "%s: CORBAUnion not yet fully implemented\n", name);
         if (bOpenBraceOnNewline) {
-            print ("class %s\n", name);
-            print ("{ // CORBAUnion\n");
+            file << spc () << "class " << name << "\n";
+            file << spc () << "{ // CORBAUnion\n";
         }
         else
         {
-            print ("class %s { // CORBAUnion\n", name);
+            file << spc () << "class " << name << " { // CORBAUnion\n";
         }
-        print ("public:\n", name);
+        file << spc () << "public:\n";
         indentlevel++;
-        print ("%s _d();  // body TBD\n\n", umla->key.type);
+        file << spc () << umla->key.type.c_str () << " _d();  // body TBD\n\n";
         umla = umla->next;
         while (umla != NULL) {
             check_umlattr (&umla->key, name);
-            print ("%s %s ();  // body TBD\n",
-                   cppname (umla->key.type), umla->key.name);
-            print ("void %s (%s _value);  // body TBD\n\n", umla->key.name,
-                   cppname (umla->key.type));
+            file << spc () << cppname (umla->key.type) << " " << umla->key.name.c_str () << " ();  // body TBD\n";
+            file << spc () << "void " << umla->key.name.c_str () << " (" << cppname (umla->key.type) << " _value);  // body TBD\n\n";
             umla = umla->next;
         }
         indentlevel--;
-        print ("};\n\n");
+        file << spc () << "};\n\n";
 
     } else if (is_typedef_stereo (stype)) {
         /* Conventions for CORBATypedef:
@@ -865,62 +833,34 @@ GenerateCode::gen_decl (declaration *d)
                              "at typedef %s\n", name);
             exit (1);
         }
-        if (strlen (umla->key.name) > 0)  {
+        if (!umla->key.name.empty ())  {
             fprintf (stderr, "Warning: typedef %s: ignoring name field "
                         "in implementation type attribute\n", name);
         }
-        print ("typedef %s %s%s;\n\n", cppname (umla->key.type), name,
-                                                umla->key.value);
+        file << spc () << "typedef " << cppname (umla->key.type) << " " << name << umla->key.value.c_str () << ";\n\n";
     } else {
         gen_class (node);
     }
 }
 
 
-char *
+std::string
 GenerateCode::spc()
 {
-   static char spcbuf[BIG_BUFFER];
-   int n_spaces = indent * indentlevel;
-   if (n_spaces >= sizeof(spcbuf)) {
-       fprintf (stderr, "spc(): spaces buffer overflow\n");
-       exit (1);
-   }
-   memset (spcbuf, ' ', n_spaces);
-   spcbuf[n_spaces] = '\0';
-   return spcbuf;
+    std::string spcbuf ("");
+    int n_spaces = indent * indentlevel, i;
+    
+    
+    for (i=0; i<n_spaces; i++)
+        spcbuf.append (" ");
+    
+    return spcbuf;
 }
 
 
 uint32_t
 GenerateCode::getIndent () {
     return indent;
-}
-
-
-void
-GenerateCode::print (char *msg, ...)
-{
-    var_arg_to_str (msg);
-    fprintf (file, "%s%s", spc(), str);
-}
-
-
-void
-GenerateCode::pbody (char *msg, ...)
-{
-    var_arg_to_str (msg);
-    if (body != NULL)
-        fprintf (body, "%s%s", spc(), str);
-}
-
-void
-GenerateCode::pboth (char *msg, ...)
-{
-    var_arg_to_str (msg);
-    fprintf (file, "%s%s", spc(), str);
-    if (body != NULL)
-        fprintf (body, "%s%s", spc(), str);
 }
 
 

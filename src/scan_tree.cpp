@@ -17,12 +17,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include "dia2code.hpp"
-#define NEW_KLASS(c) ((c*)malloc(sizeof(c)))
 
 umlclasslist find_by_name(umlclasslist list, const char * name ) {
     if ( name != NULL && strlen(name) > 0 ) {
         while ( list != NULL ) {
-            if ( ! strcmp(name, list->key->name) ) {
+            if ( list->key->name.compare (name) == 0) {
                 return list;
             }
             list = list->next;

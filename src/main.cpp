@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "DiaGram.hpp"
 
-int process_initialization_file(char *filename, int exit_if_not_found);
+int process_initialization_file(const char *filename, int exit_if_not_found);
 
 enum ParseType {
     PARSE_TYPE_FUNCTION = 0,
@@ -49,9 +49,9 @@ int main(int argc, char **argv) {
     /* put to 1 in the params loop if the generator accepts buildtree option */
     int generator_buildtree = 0;
     int iniParameterProcessed;
-    char inifile[BIG_BUFFER];
+    std::string inifile;
     
-    int     tab;
+    int     tab = 4;
     char *  ext = NULL, *outdir = NULL, *license = NULL;
     bool    overwrite = true, buildtree = false, newline = false;
 
@@ -97,9 +97,6 @@ under certain conditions; read the COPYING file for details.\n";
     --debug <level>      Show debugging messages of this level.\n\
     <diagramfile>        The Dia file that holds the diagram to be read.\n\n\
     Note: parameters can be specified in any order.";
-
-    /* initialise stuff like global variables to their default values */
-    dia2code_initializations();
 
     generator = NULL;
 
@@ -238,14 +235,14 @@ under certain conditions; read the COPYING file for details.\n";
         {
 #ifdef WIN32
             if (getenv("HOME") == NULL)
-                strcpy(inifile, "c:");
+                inifile.assign ("c:");
             else
-                strcpy(inifile, getenv("HOME"));
-            strcat(inifile, "\\dia2code\\dia2code.ini");
+                inifile.assign ("HOME"));
+            inifile.append ("\\dia2code\\dia2code.ini");
 #else
-            strcpy(inifile, "~/.dia2code/dia2code.ini");
+            inifile.assign ("~/.dia2code/dia2code.ini");
 #endif
-            process_initialization_file(inifile, 0);           
+            process_initialization_file(inifile.c_str (), 0);
         }
     }
 
@@ -257,10 +254,10 @@ under certain conditions; read the COPYING file for details.\n";
     LIBXML_TEST_VERSION;
     xmlKeepBlanksDefault(0);
 
-    /* We build the class list from the dia file here */
+    // We build the class list from the dia file here
     diagram.setUml (parse_diagram(infile));
 
-    /* Code generation */
+    // Code generation
     if ( !generator ) {
         fprintf( stderr,"error : no generator specify.\n" );
         exit (1);
@@ -366,12 +363,12 @@ void parse_command(char *name, char *value)
     }
 }
 
-int process_initialization_file(char *filename, int exit_if_not_found)
+int process_initialization_file(const char *filename, int exit_if_not_found)
 {
     FILE *f = fopen(filename, "r");
     int line = 0;
     int slen;
-    char s[LARGE_BUFFER];
+    char s[16384];
     
     if (f == NULL)
     if (exit_if_not_found)
@@ -382,7 +379,7 @@ int process_initialization_file(char *filename, int exit_if_not_found)
     else
         return 0;
 
-    while (fgets(s, LARGE_BUFFER - 1, f) != NULL)
+    while (fgets(s, 16384 - 1, f) != NULL)
     {
         char *name = s;
         char *param = strchr(s, '=');

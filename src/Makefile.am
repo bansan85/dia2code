@@ -1,6 +1,6 @@
 bin_PROGRAMS = dia2code
 dia2code_CPPFLAGS = @XML_CFLAGS@
-dia2code_CXXFLAGS = @XML_CFLAGS@ -fpermissive -std=c++11
+dia2code_CXXFLAGS = @XML_CFLAGS@ -fpermissive -std=c++11 -Wno-write-strings
 dia2code_LDADD    = @XML_LIBS@
 dia2code_SOURCES  = dia2code.cpp main.cpp parse_diagram.cpp scan_tree.cpp decls.cpp source_parser.cpp DiaGram.cpp GenerateCodeCpp.cpp GenerateCode.cpp
 
