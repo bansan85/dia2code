@@ -52,21 +52,6 @@ DiaGram::addGenClasses (std::list <std::string> classes) {
 }
 
 
-bool
-DiaGram::genGenClasses (char * class_) {
-    if (genClasses.empty ())
-        return true;
-
-    for (std::string nom : genClasses) {
-        if (nom.compare (class_) == 0) {
-            return true ^ invertsel;
-        }
-    }
-
-    return false ^ invertsel;
-}
-
-
 std::list <std::string>
 DiaGram::getGenClasses () {
     return genClasses;
@@ -115,74 +100,6 @@ DiaGram::scan_tree_classes () {
     return result;
 }
 
-
-/* Returns a list with all the classes declared in the diagram that current
- * class references */
-std::list <std::string>
-DiaGram::find_classes (umlclasslist current_class) {
-    umlclasslist parents, dependencies;
-    umlassoclist associations;
-    umlattrlist umla, tmpa;
-    umloplist umlo;
-    std::list <std::string> result;
-    std::list <std::string> classes = scan_tree_classes();
-
-    umla = current_class->key->attributes;
-    while ( umla != NULL) {
-        if (is_present(classes, umla->key.type.c_str ())
-                && !is_present(result, umla->key.type.c_str ())) {
-            result.push_back (umla->key.type);
-        }
-        umla = umla->next;
-    }
-
-    umlo = current_class->key->operations;
-    while ( umlo != NULL) {
-        if (is_present(classes, umlo->key.attr.type.c_str ())
-                && !is_present(result, umlo->key.attr.type.c_str ())) {
-            result.push_back (umlo->key.attr.type);
-        }
-        tmpa = umlo->key.parameters;
-        while (tmpa != NULL) {
-            if (is_present(classes, tmpa->key.type.c_str ())
-                    && !is_present(result, tmpa->key.type.c_str ())) {
-                result.push_back (tmpa->key.type);
-            }
-            tmpa = tmpa->next;
-        }
-
-        umlo = umlo->next;
-    }
-
-    parents = current_class->parents;
-    while ( parents != NULL ) {
-        if ( is_present(classes, parents->key->name.c_str ())
-                && ! is_present(result, parents->key->name.c_str ()) ) {
-            result.push_back (parents->key->name);
-        }
-        parents = parents->next;
-    }
-
-    dependencies = current_class->dependencies;
-    while (dependencies != NULL) {
-        if ( is_present(classes, dependencies->key->name.c_str ())
-                && ! is_present(result, dependencies->key->name.c_str ()) ) {
-            result.push_back (dependencies->key->name);
-        }
-        dependencies = dependencies->next;
-    }
-
-    associations = current_class->associations;
-    while (associations != NULL) {
-        if ( is_present(classes, associations->key->name.c_str ())
-                && ! is_present(result, associations->key->name.c_str ()) ) {
-            result.push_back (associations->key->name);
-        }
-        associations = associations->next;
-    }
-
-    return result;
-}
 
 /* Creates a new umlclassnode with class as the key, then appends it to
   the end of list */
@@ -396,93 +313,6 @@ DiaGram::determine_includes (declaration *d)
         }
     }
 }
-
-/*
- * test a file existence and extract the source and the blocks
- * source is allocated and initialised with the source code buffer and the blocks markers
- */
-void
-DiaGram::source_preserve(umlclass *class_, const char *filename, sourcecode *source )
-{
-    char *diaoid = NULL;
-    umloplist umlo;
-    sourceblock *srcblock = NULL;
-    debug( 4, "preserve_source(filename=%s)", filename);
-    source = new sourcecode;
-    source->buffer = NULL;
-    source->blocks = NULL;
-    
-    //open the file in read only 
-    FILE * rofile = fopen(filename, "r");
-    if( ! rofile ) {
-        debug( DBG_SOURCE, "no existing file %s for class %s", filename, class_->name.c_str ());
-        return;
-    }
-    /* from here, the file exists, we transfer the content in a buffer and parse the source */
-    source->buffer = source_loadfromfile( filename );
-    if( source->buffer == NULL ) {
-        debug( 4, "warning: NULL sourcebuffer from file" );
-    } else {
-        source->blocks  = source_parse( source->buffer );
-        /* copy source blocks found to method->implementation */
-        umlo = class_->operations;
-        while( umlo != NULL ) {
-            /* is there a diaoid hidden in the operation comment ? */
-            if( (diaoid=find_diaoid(umlo->key.attr.comment.c_str (),NULL)) != NULL) {
-                debug( DBG_SOURCE,"diaoid:%s found in comment for method %s", diaoid, umlo->key.attr.name.c_str () );
-                /* now try to find the implementation block in the sourcebuffer */
-                srcblock = sourceblock_find( source->blocks, diaoid );
-                // srcblock->spos poitns the implementation of lengtjh srcblock->len
-                if( srcblock != NULL ) {
-                    umlo->key.implementation = (char*) strndup( srcblock->spos, srcblock->len );
-                }
-            } else {
-                debug( DBG_SOURCE, "diaoid %s not found in source", diaoid );
-            }
-            umlo = umlo->next;
-        } // while
-    }
-    fclose(rofile);
-}
-
-/**
- * generate a comment block for an operation
- *
- */
-void
-DiaGram::generate_operation_comment( FILE *outfile, umloperation *ope )
-{
-    umlattrlist  tmpa;
-    d2c_fprintf(outfile, "/**\n");
-    d2c_fprintf(outfile, " * Operation %s\n", ope->attr.name.c_str () );
-    if (!ope->attr.comment.empty ()) {
-        d2c_fprintf(outfile, " * %s\n", ope->attr.comment.c_str () );
-    }
-    d2c_fprintf(outfile, " *\n");
-     tmpa = ope->parameters;
-    while (tmpa != NULL) {
-        d2c_fprintf(outfile, " * @param %s - %s\n", tmpa->key.name.c_str (), tmpa->key.comment.c_str () );
-        tmpa = tmpa->next;
-    }
-    if(ope->attr.type.compare ("void") != 0) {
-        d2c_fprintf(outfile, " * @return %s\n", ope->attr.type.c_str ());
-    }
-    d2c_fprintf(outfile, " */\n");
-}
-
-
-/**
- * generate a comment block for an UML attribute
- *
- */
-void
-DiaGram::generate_attribute_comment( FILE *outfile, umlattribute *attr )
-{
-    d2c_fprintf(outfile, "/**\n");
-    d2c_fprintf(outfile, " * %s\n", attr->comment.c_str () );
-    d2c_fprintf(outfile, " */\n");
-}
-
 
 DiaGram::~DiaGram () {
 }

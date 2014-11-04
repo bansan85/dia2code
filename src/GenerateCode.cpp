@@ -147,46 +147,6 @@ GenerateCode::open_outfile (const char *filename)
     return;
 }
 
-/**
- * create a directory hierarchy for the package name 
- * batch.outdir is taken as root directory 
- * works with java-like package naming convention 
- * the directory path is stored in pkg->directory
- * eg. org.foo.bar will create directory tree org/foo/bar
- * @param the current batch
- * @param the package pointer
- * @return the full directory path eg. "<outdir>/org/foo/bar"
- * 
- */
-const char *
-GenerateCode::create_package_dir (umlpackage *pkg )
-{
-    std::string fulldirname;
-    const char *dirname;
-    /* created directories permissions */
-    mode_t dir_mask = S_IRUSR | S_IWUSR | S_IXUSR |S_IRGRP | S_IXGRP;
-    if (pkg == NULL) {
-        return NULL;
-    }
-    if (buildtree == 0 || pkg->name.empty()) {
-        pkg->directory = outdir.c_str ();
-    } else {
-        fulldirname.assign (outdir);
-        dirname = strtok(pkg->name.c_str (), "." );
-        while (dirname != NULL) {
-            fulldirname.append ("/");
-            fulldirname.append (dirname);
-            /* TODO : should create only if not existent */
-            mkdir( fulldirname.c_str (), dir_mask );
-            dirname = strtok( NULL, "." );
-        }
-        /* set the package directory used later for source file creation */
-        pkg->directory = fulldirname;
-    }
-    return pkg->directory.c_str ();
-}
-
-
 void
 GenerateCode::generate_code ()
 {
@@ -269,6 +229,20 @@ GenerateCode::getFileExt () {
 void
 GenerateCode::setFileExt (char * ext) {
     file_ext.assign (ext);
+
+    return;
+}
+
+
+const char *
+GenerateCode::getBodyFileExt () {
+    return body_file_ext.c_str ();
+}
+
+
+void
+GenerateCode::setBodyFileExt (char * ext) {
+    body_file_ext.assign (ext);
 
     return;
 }
@@ -873,7 +847,6 @@ GenerateCode::setIndent (uint32_t spaces) {
 
     return;
 }
-
 
 
 GenerateCode::~GenerateCode () {

@@ -2,7 +2,7 @@ bin_PROGRAMS = dia2code
 dia2code_CPPFLAGS = @XML_CFLAGS@
 dia2code_CXXFLAGS = @XML_CFLAGS@ -fpermissive -std=c++11 -Wno-write-strings
 dia2code_LDADD    = @XML_LIBS@
-dia2code_SOURCES  = dia2code.cpp main.cpp parse_diagram.cpp scan_tree.cpp decls.cpp source_parser.cpp DiaGram.cpp GenerateCodeCpp.cpp GenerateCode.cpp
+dia2code_SOURCES  = dia2code.cpp main.cpp parse_diagram.cpp scan_tree.cpp decls.cpp DiaGram.cpp GenerateCodeCpp.cpp GenerateCode.cpp
 
 
 #generate_code_c.cpp \
@@ -10,5 +10,5 @@ dia2code_SOURCES  = dia2code.cpp main.cpp parse_diagram.cpp scan_tree.cpp decls.
 #generate_code_python.cpp generate_code_php.cpp generate_code_shp.cpp generate_code_idl.cpp \
 #generate_code_csharp.cpp generate_code_php_five.cpp generate_code_ruby.cpp generate_code_as3.cpp
 
-EXTRA_DIST = decls.hpp dia2code.hpp parse_diagram.hpp source_parser.hpp DiaGram.hpp GenerateCodeCpp.hpp GenerateCode.hpp
+EXTRA_DIST = decls.hpp dia2code.hpp parse_diagram.hpp DiaGram.hpp GenerateCodeCpp.hpp GenerateCode.hpp
 

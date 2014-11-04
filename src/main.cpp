@@ -22,25 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "DiaGram.hpp"
 
-int process_initialization_file(const char *filename, int exit_if_not_found);
-
-enum ParseType {
-    PARSE_TYPE_FUNCTION = 0,
-    PARSE_TYPE_INT = 1,
-    PARSE_TYPE_STRCPY = 2,
-    PARSE_TYPE_STRDUP = 3,
-    PARSE_TYPE_YESNO = 4,
-    PARSE_TYPE_TRUEFALSE = 5
-};
-
-typedef struct ini_parse_command {
-    char *    name;
-    ParseType type;
-    void *    ref;
-} ini_parse_command;
-
-ini_parse_command *ini_parse_commands;
-
 int main(int argc, char **argv) {
     DiaGram diagram;
     int i;
@@ -48,11 +29,9 @@ int main(int argc, char **argv) {
     int parameter = 0;
     /* put to 1 in the params loop if the generator accepts buildtree option */
     int generator_buildtree = 0;
-    int iniParameterProcessed;
-    std::string inifile;
     
     int     tab = 4;
-    char *  ext = NULL, *outdir = NULL, *license = NULL;
+    char   *ext = NULL, *bext = NULL, *outdir = NULL, *license = NULL;
     bool    overwrite = true, buildtree = false, newline = false;
 
     GenerateCodeCpp *generator;
@@ -65,7 +44,7 @@ under certain conditions; read the COPYING file for details.\n";
 
     char *help = "[-h|--help] [-d <dir>] [-nc] [-cl <classlist>]\n\
        [-t (ada|c|cpp|csharp|idl|java|php|php5|python|ruby|shp|sql|as3)] [-v]\n\
-       [-l <license file>] [-ini <initialization file>] <diagramfile>";
+       [-l <license file>] <diagramfile>";
 
     char *bighelp = "\
     -h --help            Print this help and exit.\n\
@@ -92,9 +71,7 @@ under certain conditions; read the COPYING file for details.\n";
                          extension. Currently only applies only to ada.\n\
                          Here are the defaults:\n\
                          ada:\"adb\"\n\
-    -ini <file>          Can be used instead of command-line parameters.\n\
     -nl                  Create new line on new brace. Default no.\n\
-    --debug <level>      Show debugging messages of this level.\n\
     <diagramfile>        The Dia file that holds the diagram to be read.\n\n\
     Note: parameters can be specified in any order.";
 
@@ -105,8 +82,6 @@ under certain conditions; read the COPYING file for details.\n";
         fprintf(stderr, "%s\nUsage: %s %s\n", notice, argv[0], help);
         exit(2);
     }
-
-    iniParameterProcessed = 0;
 
     /* Argument parsing: rewritten from scratch */
     for (i = 1; i < argc; i++) {
@@ -126,14 +101,10 @@ under certain conditions; read the COPYING file for details.\n";
                 parameter = 5;
             } else if ( !strcmp (argv[i], "-bext") ) {
                 parameter = 6;
-            } else if ( !strcmp (argv[i], "-ini") ) {
-                parameter = 7;
             } else if ( !strcmp (argv[i], "-v") ) {
                 diagram.setInvertSel (!diagram.getInvertSel ());
-            } else if ( !strcmp (argv[i], "--debug") ) {
-                parameter = 8;
             } else if ( !strcmp (argv[i], "--tab") ) {
-                parameter = 9;
+                parameter = 8;
             } else if ( !strcmp (argv[i], "-nl") ) {
                 newline = true;
             } else if ( !strcmp("-h", argv[i]) || !strcmp("--help", argv[i]) ) {
@@ -196,20 +167,11 @@ under certain conditions; read the COPYING file for details.\n";
             ext = argv[i];
             parameter = 0;
             break;
-        case 6:   /* Which implementation file extension */
-            body_file_ext = argv[i];
+        case 6:   /* Which file extension for body file */
+            bext = argv[i];
             parameter = 0;
             break;
-        case 7:   /* Use initialization file */
-            process_initialization_file (argv[i], 1);
-            iniParameterProcessed = 1;
-            parameter = 0;
-            break;
-        case 8:   /* Debug level */
-            debug_setlevel (atoi (argv[i]));
-            parameter = 0;
-            break;
-        case 9: {  /* Number of spaces for one indentation */
+        case 8: {  /* Number of spaces for one indentation */
             int num = atoi( argv[i] );
             if ((num < 1) || (num > 8)) {
                 fprintf (stderr, "The number of spaces for one indentation must be between 1 and 8.\n");
@@ -229,23 +191,6 @@ under certain conditions; read the COPYING file for details.\n";
         exit (2);
     }
 
-    if (iniParameterProcessed == 0)
-    {
-        if (!process_initialization_file("dia2code.ini", 0))
-        {
-#ifdef WIN32
-            if (getenv("HOME") == NULL)
-                inifile.assign ("c:");
-            else
-                inifile.assign ("HOME"));
-            inifile.append ("\\dia2code\\dia2code.ini");
-#else
-            inifile.assign ("~/.dia2code/dia2code.ini");
-#endif
-            process_initialization_file(inifile.c_str (), 0);
-        }
-    }
-
     if (generator_buildtree == 0 && buildtree) {
         buildtree = false;
         fprintf( stderr,"warning: this generator does not support building tree yet. disabled \n" );
@@ -263,30 +208,14 @@ under certain conditions; read the COPYING file for details.\n";
         exit (1);
     }
     
-    ini_parse_command ini_parse_commands[] = {
-        {"file.outdir",
-         PARSE_TYPE_STRDUP,
-         generator->getOutdirS ()},
-        {"indent.brace.newline",
-         PARSE_TYPE_YESNO,
-         &indent_open_brace_on_newline},
-        {"indent.size",
-         PARSE_TYPE_INT,
-         &indent_count},
-        {"generate.backup",
-         PARSE_TYPE_YESNO,
-         &generate_backup},
-        {NULL,
-         -1,
-         NULL}
-    };
-
     generator->setIndent (tab);
     generator->setOverwrite (overwrite);
     generator->setBuildTree (buildtree);
     generator->setOpenBraceOnNewline (newline);
     if (ext != NULL)
         generator->setFileExt (ext);
+    if (bext != NULL)
+        generator->setBodyFileExt (bext);
     if (outdir != NULL)
         generator->setOutdir (outdir);
     if (license != NULL)
@@ -294,119 +223,7 @@ under certain conditions; read the COPYING file for details.\n";
     generator->generate_code ();
     delete generator;
 
-    param_list_destroy();
     return 0;
-}
-
-void parse_command(char *name, char *value)
-{
-    int i = 0;
-    void (*method)(char *, char *);
-
-    while (1)
-    {
-        ini_parse_command *cmd = &ini_parse_commands[i];
-        if(cmd->name == NULL)
-            break;
-        if (strcmp(cmd->name, name) != 0)
-        {
-            i++;
-            continue;
-        }
-        switch(cmd->type)
-        {
-        case PARSE_TYPE_FUNCTION:
-            method = cmd->ref;
-            (*method)(name, value);
-            break;
-
-        case PARSE_TYPE_INT:
-            *(int *)(cmd->ref) = atoi(value);
-            break;
-
-        case PARSE_TYPE_STRCPY:
-            strcpy(value, (char *)cmd->ref);
-            break;
-
-        case PARSE_TYPE_STRDUP:
-        {
-            std::string *css = (std::string *)cmd->ref;
-            css->assign (value);
-            break;
-        }
-        
-        case PARSE_TYPE_YESNO:
-            switch(tolower(value[0]))
-            {
-            case 'y': *(int *)(cmd->ref) = 1; break;
-            case 'n': *(int *)(cmd->ref) = 0; break;
-            default:
-                fprintf(stderr, "Invalid yes/no value for %s(%s)\n", name, value);
-            }
-            break;
-
-        case PARSE_TYPE_TRUEFALSE:
-            switch(tolower(value[0]))
-            {
-            case 't': *(int *)(cmd->ref) = 1; break;
-            case 'f': *(int *)(cmd->ref) = 0; break;
-            default:
-                fprintf(stderr, "Invalid true/false value for %s(%s)\n", name, value);
-            }
-            break;
-
-
-        default:
-            break;
-        }
-        return;
-    }
-}
-
-int process_initialization_file(const char *filename, int exit_if_not_found)
-{
-    FILE *f = fopen(filename, "r");
-    int line = 0;
-    int slen;
-    char s[16384];
-    
-    if (f == NULL)
-    if (exit_if_not_found)
-    {
-        fprintf(stderr, "Could not open initialization file %s\n", filename);
-        exit(-1);
-    }
-    else
-        return 0;
-
-    while (fgets(s, 16384 - 1, f) != NULL)
-    {
-        char *name = s;
-        char *param = strchr(s, '=');
-
-        line++;
-        if (s[0] == '#')
-            continue;
-
-        if (param == NULL)
-        {
-            fprintf(stderr, "Invalid parameter entry in %s:%d\n", filename, line);
-        }
-        else
-        {
-            *(param++) = '\0';
-            slen = strlen(param) - 1;
-            while (param[slen] == '\n' || param[slen] == '\r')
-            {
-                param[slen--] = '\0';
-            }
-        }
-        d2c_parameter_set(name, param);
-        parse_command(name, param);
-    }
-    fclose(f);
-    
-    return 1;
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

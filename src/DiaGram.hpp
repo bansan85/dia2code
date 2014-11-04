@@ -41,7 +41,6 @@ class DiaGram {
         std::list <std::string> includes;
         
         std::list <std::string> scan_tree_classes ();
-        std::list <std::string> find_classes (umlclasslist current_class);
         umlclasslist            list_classes (umlclasslist current_class);
 
         /**
@@ -51,10 +50,6 @@ class DiaGram {
         int have_include (const char *name);
         void add_include (const char *name);
         void push_include (umlclassnode *node);
-
-        void source_preserve(umlclass *class_, const char *filename, sourcecode *source );
-        void generate_operation_comment( FILE *outfile, umloperation *ope );
-        void generate_attribute_comment( FILE *outfile, umlattribute *attr );
     public:
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;
@@ -63,7 +58,6 @@ class DiaGram {
         void setUml (umlclasslist diagram);
 
         void addGenClasses (std::list <std::string> classes);
-        bool genGenClasses (char * class_);
         std::list <std::string> getGenClasses ();
 
         bool getInvertSel ();

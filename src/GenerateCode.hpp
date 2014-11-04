@@ -32,6 +32,7 @@ class GenerateCode {
         // Output directory.
         std::string outdir;
         std::string file_ext;
+        std::string body_file_ext;
         std::ofstream file;
         uint8_t     indent : 3;
         uint8_t     indentlevel : 3;
@@ -47,7 +48,6 @@ class GenerateCode {
         void check_visibility (int *curr_vis, int new_vis);
         std::string spc();
         void open_outfile (const char *filename);
-        const char * create_package_dir (umlpackage *pkg);
     public:
         GenerateCode (DiaGram & diagram, const char * ext);
 
@@ -56,6 +56,9 @@ class GenerateCode {
         
         const char * getFileExt ();
         void   setFileExt (char * ext);
+
+        const char * getBodyFileExt ();
+        void   setBodyFileExt (char * ext);
 
         uint32_t getIndent ();
         void     setIndent (uint32_t spaces);

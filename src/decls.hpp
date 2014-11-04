@@ -40,8 +40,6 @@ struct module {  /* UML package = IDL module
     struct declaration *contents;
 };
 
-typedef struct module module;
-
 typedef enum { dk_module, dk_class } decl_kind_t;
 
 struct declaration {
@@ -57,22 +55,18 @@ struct declaration {
     struct declaration *prev, *next;  /* other declarations in this scope */
 };
 
-typedef struct declaration declaration;
-
 extern declaration *decls;
 
 /* Utilities for building the global `decls' from umlclassnodes and
    their parents.  (`decls' contains everything in ascending order of
    interdependence.)  */
 
-extern module *
-       find_or_add_module (declaration **dptr, umlpackagelist pkglist);
+module *
+find_or_add_module (declaration **dptr, umlpackagelist pkglist);
 
-extern module * find_module (declaration *d, umlpackagelist pkglist);
+declaration * find_class (umlclassnode *node);
 
-extern declaration * find_class (umlclassnode *node);
-
-extern declaration * append_decl (declaration *d);
+declaration * append_decl (declaration *d);
 
 #endif  /* DECLS_H */
 
