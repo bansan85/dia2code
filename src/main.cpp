@@ -17,6 +17,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include "dia2code.hpp"
+
+#include <libxml/tree.h>
+
 #include "parse_diagram.hpp"
 #include "GenerateCodeCpp.hpp"
 

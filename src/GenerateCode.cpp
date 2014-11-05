@@ -258,8 +258,8 @@ check_umlattr (umlattribute *u, const char *typename_)
         fprintf (stderr, "%s/%s: ignoring staticness\n", typename_, u->name.c_str ());
 }
 
-const char *
-subst (const char *str, const char search, char replace)
+char *
+subst (char *str, const char search, char replace)
 {
     char *p;
     while ((p = strchr (str, search)) != NULL)
@@ -267,8 +267,8 @@ subst (const char *str, const char search, char replace)
     return str;
 }
 
-const char *
-nospc (const char *str)
+char *
+nospc (char *str)
 {
     return subst (str, ' ', '_');
 }
@@ -340,7 +340,7 @@ GenerateCode::cppname (std::string name)
             name.compare ("string") == 0 ||
             name.compare ("any") == 0) {
                 buf.assign ("CORBA::");
-                buf.append (nospc (strtoupperfirst (name).c_str ()));
+                buf.append (nospc (const_cast <char *> (strtoupperfirst (name).c_str ())));
         } else if (name.compare ("long long") == 0) {
             buf.assign ("CORBA::LongLong");
         } else if (name.compare ("unsigned short") == 0) {

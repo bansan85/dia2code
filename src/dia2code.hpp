@@ -29,10 +29,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <sys/types.h>
 #include <sys/stat.h>
 
-/* libxml[2] headers */
-#include <libxml/parser.h>
-#include <libxml/tree.h>
-
 #define kind_str(A)   ((A)=='1'?"in":((A)=='2'?"in/out":((A)=='3'?"out":"???")))
 
 struct umlattribute {

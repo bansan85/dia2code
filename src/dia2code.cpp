@@ -69,7 +69,7 @@ int is_present(std::list <std::string> list, const char *name) {
     for (std::string str : list) {
         const char *namei = str.c_str ();
         int len;
-        char* mask;
+        const char* mask;
         if ( ! strcmp(namei, name) ) {
             return 1;
         }
@@ -153,7 +153,7 @@ char *find_diaoid( const char *buf, char **newpos  )
     if( buf == NULL ) {
         return NULL;
     }
-    cp = strstr( buf, oidtag );
+    cp = const_cast <char *> (strstr( buf, oidtag ));
     if( cp == NULL )
         return NULL;
     cp += strlen(oidtag)+1;
