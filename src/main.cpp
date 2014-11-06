@@ -226,6 +226,8 @@ under certain conditions; read the COPYING file for details.\n";
     generator->generate_code ();
     delete generator;
 
+    xmlCleanupParser();
+
     return 0;
 }
 

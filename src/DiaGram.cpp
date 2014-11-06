@@ -222,6 +222,12 @@ DiaGram::push (umlclassnode *node)
         tmpnode = tmpnode->next;
     }
 
+    while (used_classes != NULL) {
+        tmpnode = used_classes->next;
+        delete used_classes;
+        used_classes = tmpnode;
+    }
+
     if (node->key->package != NULL) {
         umlpackagelist pkglist = make_package_list (node->key->package);
         m = find_or_add_module (&decls, pkglist);
@@ -307,14 +313,51 @@ DiaGram::determine_includes (declaration *d)
         }
     } else {
         umlclasslist cl = list_classes (d->u.this_class);
+        umlclasslist tmp = cl;
         while (cl != NULL) {
             push_include (cl);
             cl = cl->next;
+        }
+        cl = tmp;
+        while (cl != NULL) {
+            tmp = cl->next;
+            delete cl;
+            cl = tmp;
         }
     }
 }
 
 DiaGram::~DiaGram () {
+    umlclasslist tmplist = uml;
+    
+    while ( tmplist != NULL ) {
+        umlclasslist tmplist2 = tmplist;
+        delete tmplist->key;
+
+        umlclasslist list2 = tmplist->parents;
+        while (list2 != NULL) {
+            umlclasslist list2_ = list2;
+            list2 = list2->next;
+            delete list2_;
+        }
+
+        umlassoclist list3 = tmplist->associations;
+        while (list3 != NULL) {
+            umlassoclist list3_ = list3;
+            list3 = list3->next;
+            delete list3_;
+        }
+
+        list2 = tmplist->dependencies;
+        while (list2 != NULL) {
+            umlclasslist list2_ = list2;
+            list2 = list2->next;
+            delete list2_;
+        }
+
+        tmplist = tmplist->next;
+        delete tmplist2;
+    }
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

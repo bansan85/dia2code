@@ -218,6 +218,7 @@ GenerateCode::generate_code ()
 
         d = d->next;
     }
+    fclose (licensefile);
 }
 
 const char *

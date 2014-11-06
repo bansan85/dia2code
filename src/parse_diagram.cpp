@@ -52,12 +52,7 @@ void parse_dia_node(xmlNodePtr stringnode, std::string &buffer) {
 
     content = xmlNodeGetContent(stringnode);
     buffer.assign (BAD_TSAC2 (content), 1, strlen(BAD_TSAC2 (content)) - 2);
-    if (buffer.compare ("0") == 0)
-    {
-        free(content);
-        return;
-    }
-    free(content);
+    xmlFree (content);
 }
 
 int parse_boolean(xmlNodePtr booleannode) {
@@ -375,18 +370,21 @@ void parse_geom_position(xmlNodePtr attribute, geometry * geom ) {
     sscanf ( token, "%f", &(geom->pos_x) );
     token = strtok(NULL,",");
     sscanf ( token, "%f", &(geom->pos_y) );
+    xmlFree (val);
 }
 
 void parse_geom_width(xmlNodePtr attribute, geometry * geom ) {
     xmlChar *val;
     val = xmlGetProp(attribute, BAD_CAST2 ("val"));
     sscanf ( BAD_TSAC2 (val), "%f", &(geom->width) );
+    xmlFree (val);
 }
 
 void parse_geom_height(xmlNodePtr attribute, geometry * geom ) {
     xmlChar *val;
     val = xmlGetProp(attribute, BAD_CAST2 ("val"));
     sscanf ( BAD_TSAC2 (val), "%f", &(geom->height) );
+    xmlFree (val);
 }
 
 
@@ -623,6 +621,7 @@ umlclasslist parse_diagram(char *diafile) {
         if (strcmp("UML - Class", BAD_TSAC2 (objtype)) == 0) {
             // Here we have a class definition
             umlclasslist tmplist = parse_class(object);
+            umlclasslist tmpfree = tmplist;
             // We get the ID of the object here
             xmlChar *objid = xmlGetProp(object, BAD_CAST2 ("id"));
             tmplist->key->id.assign (BAD_TSAC2 (objid));
@@ -884,6 +883,9 @@ umlclasslist parse_diagram(char *diafile) {
         }
         dummypcklist = dummypcklist->next;
     }
+    
+    xmlFreeDoc (ptr);
+    
     return classlist;
 }
 
