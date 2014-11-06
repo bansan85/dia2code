@@ -27,10 +27,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define MIN(x, y) (x < y ? x : y)
 #endif
 
-/* In case of unnamed associations, the attribute will get the name
-   "unnamed_" followed by the anon_cnt converted to string:  */
-static unsigned anon_cnt = 0;
-
 umlclasslist find(umlclasslist list, const char *id ) {
     if ( id != NULL ) {
         while ( list != NULL ) {
@@ -55,7 +51,7 @@ void parse_dia_node(xmlNodePtr stringnode, std::string &buffer) {
     xmlFree (content);
 }
 
-int parse_boolean(xmlNodePtr booleannode) {
+bool parse_boolean(xmlNodePtr booleannode) {
     xmlChar *val;
     int result;
 
@@ -621,7 +617,6 @@ umlclasslist parse_diagram(char *diafile) {
         if (strcmp("UML - Class", BAD_TSAC2 (objtype)) == 0) {
             // Here we have a class definition
             umlclasslist tmplist = parse_class(object);
-            umlclasslist tmpfree = tmplist;
             // We get the ID of the object here
             xmlChar *objid = xmlGetProp(object, BAD_CAST2 ("id"));
             tmplist->key->id.assign (BAD_TSAC2 (objid));

@@ -37,9 +37,9 @@ struct umlattribute {
     std::string type;
     std::string comment;
     char visibility;
-    char isabstract;
-    char isstatic;
-    char isconstant;
+    bool isabstract : 1;
+    bool isstatic : 1;
+    bool isconstant : 1;
     char kind;
     char diaoid[10];
 };

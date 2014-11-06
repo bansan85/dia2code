@@ -33,23 +33,23 @@ int main(int argc, char **argv) {
     /* put to 1 in the params loop if the generator accepts buildtree option */
     int generator_buildtree = 0;
     
-    int     tab = 4;
+    uint8_t tab = 4;
     char   *ext = NULL, *bext = NULL, *outdir = NULL, *license = NULL;
     bool    overwrite = true, buildtree = false, newline = false;
 
     GenerateCodeCpp *generator;
 
-    char * notice = "\
+    const char * notice = "\
 dia2code version " VERSION ", Copyright (C) 2000-2014 Javier O'Hara\n\
 Dia2Code comes with ABSOLUTELY NO WARRANTY\n\
 This is free software, and you are welcome to redistribute it\n\
 under certain conditions; read the COPYING file for details.\n";
 
-    char *help = "[-h|--help] [-d <dir>] [-nc] [-cl <classlist>]\n\
+    const char *help = "[-h|--help] [-d <dir>] [-nc] [-cl <classlist>]\n\
        [-t (ada|c|cpp|csharp|idl|java|php|php5|python|ruby|shp|sql|as3)] [-v]\n\
        [-l <license file>] <diagramfile>";
 
-    char *bighelp = "\
+    const char *bighelp = "\
     -h --help            Print this help and exit.\n\
     -t <target>          Selects the output language. <target> can be\n\
                          one of: ada,c,cpp,idl,java,php,php5,python,ruby,shp,sql,as3 or csharp. \n\
@@ -180,10 +180,13 @@ under certain conditions; read the COPYING file for details.\n";
                 fprintf (stderr, "The number of spaces for one indentation must be between 1 and 8.\n");
             }
             else {
-                tab = num;
+                tab = static_cast <uint8_t> (num);
             }
             parameter = 0;
             break;
+        }
+        default : {
+            fprintf (stderr, "Unknown parameter : %s.\n", argv[i]);
         }
         }
     }

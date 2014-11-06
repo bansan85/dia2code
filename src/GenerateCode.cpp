@@ -129,10 +129,6 @@ void
 GenerateCode::open_outfile (const char *filename)
 {
     static std::string outfilename;
-    int tmpdirlgth, tmpfilelgth;
-
-    tmpdirlgth = outdir.length ();
-    tmpfilelgth = strlen (filename);
 
     outfilename.assign (outdir);
     outfilename.append ("/");
@@ -196,7 +192,7 @@ GenerateCode::generate_code ()
             int lc;
             rewind (licensefile);
             while ((lc = fgetc (licensefile)) != EOF)
-                file << (char) lc;
+                file << static_cast <char> (lc);
         }
 
         getDia ().cleanIncludes ();
@@ -310,22 +306,6 @@ is_oo_class (umlclass *cl)
             !eq (st, "CORBAException"));
 }
 
-static int
-has_oo_class (declaration *d)
-{
-    while (d != NULL) {
-        if (d->decl_kind == dk_module) {
-            if (has_oo_class (d->u.this_module->contents))
-                return 1;
-        } else {         /* dk_class */
-            if (is_oo_class (d->u.this_class->key))
-                return 1;
-        }
-        d = d->next;
-    }
-    return 0;
-}
-
 const char *
 GenerateCode::cppname (std::string name)
 {
@@ -389,15 +369,18 @@ GenerateCode::check_visibility (int *curr_vis, int new_vis)
         return;
     indentlevel--;
     switch (new_vis) {
-      case '0':
-        file << spc () << "public:\n";
-        break;
-      case '1':
-        file << spc () << "private:\n";
-        break;
-      case '2':
-        file << spc () << "protected:\n";
-        break;
+        case '0':
+            file << spc () << "public:\n";
+            break;
+        case '1':
+            file << spc () << "private:\n";
+            break;
+        case '2':
+            file << spc () << "protected:\n";
+            break;
+        default :
+            fprintf (stderr, "Unknown visibility %d\n", new_vis);
+            break;
     }
     *curr_vis = new_vis;
     indentlevel++;
@@ -840,11 +823,11 @@ GenerateCode::getIndent () {
 
 
 void
-GenerateCode::setIndent (uint32_t spaces) {
+GenerateCode::setIndent (uint8_t spaces) {
     if ((spaces < 1) || (spaces > 8))
         return;
     
-    indent = spaces;
+    indent = spaces & 15;
 
     return;
 }

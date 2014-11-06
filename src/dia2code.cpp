@@ -28,10 +28,10 @@ int generate_backup;
 */
 std::string strtoupper(std::string s) {
     std::string tmp (s);
-    int i, n;
+    size_t i, n;
     n = tmp.length ();
     for (i = 0; i < n; i++) {
-        tmp[i] = toupper(tmp[i]);
+        tmp[i] = static_cast <char> (toupper(tmp[i]));
     }
     return tmp;
 }
@@ -43,10 +43,9 @@ std::string strtoupper(std::string s) {
 */
 std::string strtoupperfirst(std::string s) {
     std::string tmp (s);
-    int i;
     if (s.empty ())
         return s;
-    tmp[0] = toupper(tmp[0]);
+    tmp[0] = static_cast <char> (toupper(tmp[0]));
     return tmp;
 }
 
@@ -68,7 +67,7 @@ std::list <std::string> parse_class_names (char *s) {
 int is_present(std::list <std::string> list, const char *name) {
     for (std::string str : list) {
         const char *namei = str.c_str ();
-        int len;
+        size_t len;
         const char* mask;
         if ( ! strcmp(namei, name) ) {
             return 1;
@@ -160,9 +159,9 @@ char *find_diaoid( const char *buf, char **newpos  )
     /* get the oid */
     ep = strpbrk( cp, " \t\n\r" );
     if( ep == NULL ) {
-        oidp = strdup(cp);
+        oidp = strdup (cp);
     } else {
-        oidp= (char*) strndup( cp, (size_t) ( ep-cp));
+        oidp= strndup (cp, static_cast <size_t> (ep-cp));
     }
     /* caller want the new position : we set it */
     if( newpos != NULL ) {

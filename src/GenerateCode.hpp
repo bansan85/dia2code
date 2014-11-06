@@ -34,7 +34,7 @@ class GenerateCode {
         std::string file_ext;
         std::string body_file_ext;
         std::ofstream file;
-        uint8_t     indent : 3;
+        uint8_t     indent : 4;
         uint8_t     indentlevel : 3;
         // Overwrite files while generating code.
         bool        overwrite : 1;
@@ -61,7 +61,7 @@ class GenerateCode {
         void   setBodyFileExt (char * ext);
 
         uint32_t getIndent ();
-        void     setIndent (uint32_t spaces);
+        void     setIndent (uint8_t spaces);
 
         const char * getLicense ();
         void   setLicense (char * lic);
