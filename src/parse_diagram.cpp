@@ -423,6 +423,7 @@ umlpackagelist parse_package(xmlNodePtr package) {
             } else if ( !strcmp ( "elem_height", BAD_TSAC2 (attrname) ) ) {
                 parse_geom_height(attribute->xmlChildrenNode, &myself->geom );
             }
+            xmlFree (attrname);
         }
         attribute = attribute->next;
     }
