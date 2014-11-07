@@ -66,10 +66,10 @@ bool parse_boolean(xmlNodePtr booleannode) {
 }
 
 
-void addparent(umlclasslist base, umlclasslist derived) {
+void addparent(umlclass * key, umlclasslist derived) {
     umlclasslist tmp;
     tmp = new umlclassnode;
-    tmp->key = base->key;
+    tmp->key = key;
     tmp->parents = NULL;
     tmp->associations = NULL;
     tmp->dependencies = NULL;
@@ -109,7 +109,7 @@ void inherit_realize ( umlclasslist classlist, const char * base, const char * d
     umlbase = find(classlist, base);
     umlderived = find(classlist, derived);
     if ( umlbase != NULL && umlderived != NULL ) {
-        addparent(umlbase, umlderived);
+        addparent(umlbase->key, umlderived);
     }
 }
 
@@ -506,7 +506,7 @@ void lolipop_implementation(umlclasslist classlist, xmlNodePtr object) {
     xmlChar *id = NULL;
     const char *name = NULL;
     xmlChar *attrname;
-    umlclasslist interface, implementator;
+    umlclasslist implementator;
 
     attribute = object->xmlChildrenNode;
     while ( attribute != NULL ) {
@@ -527,18 +527,14 @@ void lolipop_implementation(umlclasslist classlist, xmlNodePtr object) {
     implementator = find(classlist, BAD_TSAC2 (id));
     free(id);
     if (implementator != NULL && name != NULL && strlen(name) > 2) {
-        interface = new umlclassnode;
-        interface->key = new umlclass;
-        interface->parents = NULL;
-        interface->next = NULL;
-        interface->key->id.assign ("00");
-        parse_dia_string (name, interface->key->name);
-        interface->key->stereotype.assign ("Interface");
-        interface->key->isabstract = 1;
-        interface->key->attributes = NULL;
-        interface->key->operations = NULL;
-        addparent(interface, implementator);
-        /* we MUST NOT free interface at this point */
+        umlclass * key = new umlclass;
+        key->id.assign ("00");
+        parse_dia_string (name, key->name);
+        key->stereotype.assign ("Interface");
+        key->isabstract = 1;
+        key->attributes = NULL;
+        key->operations = NULL;
+        addparent(key, implementator);
     }
 }
 
