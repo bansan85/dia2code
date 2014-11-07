@@ -214,7 +214,8 @@ GenerateCode::generate_code ()
 
         d = d->next;
     }
-    fclose (licensefile);
+    if (licensefile != NULL)
+        fclose (licensefile);
 }
 
 const char *
@@ -639,7 +640,7 @@ GenerateCode::gen_class (umlclassnode *node)
     }
 
     indentlevel--;
-    file << "};\n\n";
+    file << spc () << "};\n\n";
 }
 
 
