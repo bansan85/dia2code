@@ -876,6 +876,21 @@ umlclasslist parse_diagram(char *diafile) {
         dummypcklist = dummypcklist->next;
     }
     
+    while (classlist != NULL)
+    {
+        endlist = classlist->next;
+        delete classlist;
+        classlist = endlist;
+    }
+
+    while (packagelist != NULL)
+    {
+        endpcklist = packagelist->next;
+        delete packagelist;
+        packagelist = endpcklist;
+    }
+
+
     xmlFreeDoc (ptr);
     
     return classlist;
