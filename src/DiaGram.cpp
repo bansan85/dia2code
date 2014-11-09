@@ -332,7 +332,6 @@ DiaGram::~DiaGram () {
     
     while ( tmplist != NULL ) {
         umlclasslist tmplist2 = tmplist;
-        delete tmplist->key;
 
         umlclasslist list2 = tmplist->parents;
         while (list2 != NULL) {
@@ -356,6 +355,7 @@ DiaGram::~DiaGram () {
         }
 
         tmplist = tmplist->next;
+        delete tmplist2->key;
         delete tmplist2;
     }
 }

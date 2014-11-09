@@ -876,18 +876,9 @@ umlclasslist parse_diagram(char *diafile) {
         dummypcklist = dummypcklist->next;
     }
     
-    while (classlist != NULL)
-    {
-        endlist = classlist->next;
-        delete classlist->key;
-        delete classlist;
-        classlist = endlist;
-    }
-
     while (packagelist != NULL)
     {
         endpcklist = packagelist->next;
-        delete packagelist->key;
         delete packagelist;
         packagelist = endpcklist;
     }
