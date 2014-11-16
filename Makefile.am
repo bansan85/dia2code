@@ -1,6 +1,6 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
-SUBDIRS = src
+SUBDIRS = src tests
 
 EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README TODO Makefile.am aclocal.m4 configure.ac dia.ico dia1.bmp dia2.bmp README.win32
 

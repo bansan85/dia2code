@@ -46,14 +46,13 @@ This is free software, and you are welcome to redistribute it\n\
 under certain conditions; read the COPYING file for details.\n";
 
     const char *help = "[-h|--help] [-d <dir>] [-nc] [-cl <classlist>]\n\
-       [-t (ada|c|cpp|csharp|idl|java|php|php5|python|ruby|shp|sql|as3)] [-v]\n\
+       <-t (ada|c|cpp|csharp|idl|java|php|php5|python|ruby|shp|sql|as3)> [-v]\n\
        [-l <license file>] <diagramfile>";
 
     const char *bighelp = "\
     -h --help            Print this help and exit.\n\
     -t <target>          Selects the output language. <target> can be\n\
                          one of: ada,c,cpp,idl,java,php,php5,python,ruby,shp,sql,as3 or csharp. \n\
-                         Default is C++.\n\
     -d <dir>             Output generated files to <dir>, default is \".\" \n\
     --buildtree          Convert package names to a directory tree. off by default.\n\
     -l <license>         License file to prepend to generated files.\n\
@@ -64,7 +63,7 @@ under certain conditions; read the COPYING file for details.\n";
     -v                   Invert the class list selection.  When used \n\
                          without -cl prevents any file from being created.\n\
     --tab <number>       Set numbre of spaces for one indentation.\n\
-                         Default: 4. Maximum: 8.\
+                         Default: 4. Maximum: 8.\n\
     -ext <extension>     Use <extension> as the file extension.\n\
                          Here are the defaults:\n\
                          ada:\"ads\", c:\"h\", cpp:\"h\", idl:\"idl\",\n\
