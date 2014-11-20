@@ -43,18 +43,10 @@ struct umlattribute {
     char kind;
     char diaoid[10];
 };
-typedef struct umlattribute umlattribute;
-
-struct umlattrnode {
-    umlattribute key;
-    struct umlattrnode *next;
-};
-
-typedef umlattrnode *umlattrlist;
 
 struct umloperation {
     umlattribute attr;
-    umlattrlist parameters;
+    std::list <umlattribute> parameters;
     std::string implementation;
 };
 
@@ -105,7 +97,7 @@ struct umlclass {
     std::string stereotype;
     std::string comment;
     int isabstract;
-    umlattrlist attributes;
+    std::list <umlattribute> attributes;
     umloplist operations;
     umltemplatelist templates;
     umlpackage * package;

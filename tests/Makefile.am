@@ -1,5 +1,5 @@
 TESTS = tests.sh
 
-CLEANFILES = *.hpp result.txt
+CLEANFILES = tests/*.hpp result.txt
 
 EXTRA_DIST = tests.sh

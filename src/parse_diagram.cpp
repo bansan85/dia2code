@@ -135,17 +135,24 @@ void make_depend ( umlclasslist classlist, const char * dependent, const char * 
 /**
   * Inserts "n" into the list "l", in orderly fashion
 */
-umlattrlist insert_attribute(umlattrlist n, umlattrlist l) {
-    if ( l != NULL ) {
-        if ( l->key.visibility <= n->key.visibility ) {
-            l->next = insert_attribute(n, l->next);
-            return l;
-        } else {
-            n->next = l;
-            return n;
+void insert_attribute(umlattribute &n, std::list <umlattribute> &l) {
+    std::list <umlattribute>::iterator itl;
+    
+    itl = l.begin ();
+    
+    if (itl == l.end ()) {
+        l.push_back (n);
+    }
+    else {
+        while ((itl != l.end ()) && ((*itl).visibility >= n.visibility)) {
+            ++itl;
         }
-    } else {
-        return n;
+        if (itl == l.end ()) {
+            l.push_back (n);
+        }
+        else {
+            l.insert (std::next (itl), n);
+        }
     }
 }
 
@@ -175,51 +182,51 @@ umltemplatelist insert_template(umltemplatelist n, umltemplatelist l) {
     }
 }
 
-void parse_attribute(xmlNodePtr node, umlattribute *tmp) {
+void parse_attribute(xmlNodePtr node, umlattribute &tmp) {
     xmlChar *nodename;
     xmlChar *attrval;
 
-    tmp->name.clear ();
-    tmp->value.clear ();
-    tmp->type.clear ();
-    tmp->comment.clear ();
-    tmp->visibility = '0';
-    tmp->kind     = '0';
+    tmp.name.clear ();
+    tmp.value.clear ();
+    tmp.type.clear ();
+    tmp.comment.clear ();
+    tmp.visibility = '0';
+    tmp.kind     = '0';
     while ( node != NULL ) {
         nodename = xmlGetProp(node, BAD_CAST2 ("name"));
 
         if ( !strcmp("name", BAD_TSAC2 (nodename)) ) {
-            parse_dia_node(node->xmlChildrenNode, tmp->name);
+            parse_dia_node(node->xmlChildrenNode, tmp.name);
         } else if ( !strcmp("value", BAD_TSAC2 (nodename))) {
             if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-                parse_dia_node(node->xmlChildrenNode, tmp->value);
+                parse_dia_node(node->xmlChildrenNode, tmp.value);
             }
         } else if ( !strcmp("type", BAD_TSAC2 (nodename))) {
             if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-                parse_dia_node(node->xmlChildrenNode, tmp->type);
+                parse_dia_node(node->xmlChildrenNode, tmp.type);
             } else {
-                tmp->type.clear ();
+                tmp.type.clear ();
             }
         } else if ( !strcmp("comment", BAD_TSAC2 (nodename))) {
             if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-               parse_dia_node(node->xmlChildrenNode, tmp->comment);
+               parse_dia_node(node->xmlChildrenNode, tmp.comment);
             } else {
-               tmp->comment.clear ();
+               tmp.comment.clear ();
           }
         } else if ( !strcmp("kind", BAD_TSAC2 (nodename))) {
             attrval = xmlGetProp(node->xmlChildrenNode, BAD_CAST2 ("val"));
-            sscanf(BAD_TSAC2 (attrval), "%c", &(tmp->kind));
+            sscanf(BAD_TSAC2 (attrval), "%c", &(tmp.kind));
             free(attrval);
         } else if ( !strcmp("visibility", BAD_TSAC2 (nodename))) {
             attrval = xmlGetProp(node->xmlChildrenNode, BAD_CAST2 ("val"));
-            sscanf(BAD_TSAC2 (attrval), "%c", &(tmp->visibility));
+            sscanf(BAD_TSAC2 (attrval), "%c", &(tmp.visibility));
             free(attrval);
         } else if ( !strcmp("abstract", BAD_TSAC2 (nodename))) {
-            tmp->isabstract = parse_boolean(node->xmlChildrenNode);
+            tmp.isabstract = parse_boolean(node->xmlChildrenNode);
         } else if ( !strcmp("class_scope", BAD_TSAC2 (nodename))) {
-            tmp->isstatic = parse_boolean(node->xmlChildrenNode);
+            tmp.isstatic = parse_boolean(node->xmlChildrenNode);
         } else if ( !strcmp("query", BAD_TSAC2 (nodename))) {
-            tmp->isconstant = parse_boolean(node->xmlChildrenNode);
+            tmp.isconstant = parse_boolean(node->xmlChildrenNode);
         }
 
         free(nodename);
@@ -227,25 +234,22 @@ void parse_attribute(xmlNodePtr node, umlattribute *tmp) {
     }
 }
 
-umlattrlist parse_attributes(xmlNodePtr node) {
-    umlattrlist list = NULL, an;
+void parse_attributes(xmlNodePtr node, std::list <umlattribute> &retour) {
     while ( node != NULL ) {
-        an = new umlattrnode;
-        an->next = NULL;
-        parse_attribute(node->xmlChildrenNode, &(an->key));
-        list = insert_attribute(an, list);
+        umlattribute an;
+        parse_attribute(node->xmlChildrenNode, an);
+        insert_attribute(an, retour);
         node = node->next;
     }
-    return list;
 }
 
 void parse_operation(xmlNodePtr node, umloperation *tmp) {
     xmlChar *nodename;
-    parse_attribute(node, &(tmp->attr));
+    parse_attribute(node, tmp->attr);
     while ( node != NULL ) {
         nodename = xmlGetProp(node, BAD_CAST2 ("name"));
         if ( !strcmp("parameters", BAD_TSAC2 (nodename)) ) {
-            tmp->parameters = parse_attributes(node->xmlChildrenNode);
+            parse_attributes(node->xmlChildrenNode, tmp->parameters);
         }
         free(nodename);
         node = node->next;
@@ -283,79 +287,6 @@ umltemplatelist parse_templates(xmlNodePtr node) {
         node = node->next;
     }
     return list;
-}
-
-/**
-  * Adds get() (or is()) and set() methods for each attribute
-  * myself MUST be != null
-*/
-void make_javabean_methods(umlclass *myself) {
-    std::string tmpname;
-    umloplist operation;
-    umlattrlist attrlist, parameter;
-
-    attrlist = myself->attributes;
-    while (attrlist != NULL) {
-        if ( ! attrlist->key.isabstract) {
-            /* The SET method */
-            operation = new umlopnode;
-            parameter = new umlattrnode;
-
-            parameter->key.name.assign ("value");
-            parameter->key.type.assign (attrlist->key.type);
-            parameter->key.value.clear ();
-            parameter->key.isstatic = 0;
-            parameter->key.isconstant = 0;
-            parameter->key.isabstract = 0;
-            parameter->key.visibility = '0';
-            parameter->next = NULL;
-            operation->key.parameters = parameter;
-
-            operation->key.implementation.clear ();
-            operation->key.implementation.append ("    ");
-            operation->key.implementation.append (attrlist->key.name);
-            operation->key.implementation.append (" = value;");
-
-            tmpname = strtoupperfirst(attrlist->key.name);
-            operation->key.attr.name.append ("set");
-            operation->key.attr.name.append (tmpname);
-            operation->key.attr.isabstract = 0;
-            operation->key.attr.isstatic = 0;
-            operation->key.attr.isconstant = 0;
-            operation->key.attr.visibility = '0';
-            operation->key.attr.value.clear ();
-            operation->key.attr.type.assign ("void");
-            operation->next = NULL;
-
-            myself->operations = insert_operation(operation, myself->operations);
-
-            /* The GET or IS method */
-            operation = new umlopnode;
-            operation->key.parameters = NULL;
-            tmpname = strtoupperfirst(attrlist->key.name);
-            if ( attrlist->key.type.compare ("boolean") == 0) {
-                operation->key.attr.name.assign ("is");
-            } else {
-                operation->key.attr.name.assign ("get");
-            }
-            operation->key.attr.name.append (tmpname);
-
-            operation->key.implementation.assign ("    return ");
-            operation->key.implementation.append (attrlist->key.name);
-            operation->key.implementation.append (";");
-
-            operation->key.attr.isabstract = 0;
-            operation->key.attr.isstatic = 0;
-            operation->key.attr.isconstant = 0;
-            operation->key.attr.visibility = '0';
-            operation->key.attr.value.clear ();
-            operation->key.attr.type.assign (attrlist->key.type);
-            operation->next = NULL;
-
-            myself->operations = insert_operation(operation, myself->operations);
-        }
-        attrlist = attrlist->next;
-    }
 }
 
 void parse_geom_position(xmlNodePtr attribute, geometry * geom ) {
@@ -477,14 +408,9 @@ umlclasslist parse_class(xmlNodePtr class_) {
         } else if ( !strcmp("abstract", BAD_TSAC2 (attrname)) ) {
             myself->isabstract = parse_boolean(attribute->xmlChildrenNode);
         } else if ( !strcmp("attributes", BAD_TSAC2 (attrname)) ) {
-            myself->attributes = parse_attributes(attribute->xmlChildrenNode);
+            parse_attributes(attribute->xmlChildrenNode, myself->attributes);
         } else if ( !strcmp("operations", BAD_TSAC2 (attrname)) ) {
             myself->operations = parse_operations(attribute->xmlChildrenNode);
-            if ( myself->stereotype.compare ("JavaBean") == 0) {
-                /* Javabean: we should now add a get() and set() methods
-                for each attribute */
-                make_javabean_methods(myself);
-            }
         } else if ( !strcmp("templates", BAD_TSAC2 (attrname)) ) {
             myself->templates = parse_templates(attribute->xmlChildrenNode);
         }
@@ -533,7 +459,6 @@ void lolipop_implementation(umlclasslist classlist, xmlNodePtr object) {
         parse_dia_string (name, key->name);
         key->stereotype.assign ("Interface");
         key->isabstract = 1;
-        key->attributes = NULL;
         key->operations = NULL;
         addparent(key, implementator);
     }
