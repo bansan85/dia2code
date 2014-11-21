@@ -289,6 +289,77 @@ umltemplatelist parse_templates(xmlNodePtr node) {
     return list;
 }
 
+/**
+  * Adds get() (or is()) and set() methods for each attribute
+  * myself MUST be != null
+*/
+void make_getset_methods(umlclass &myself) {
+    std::string tmpname;
+    umloplist operation;
+    std::list <umlattribute>::iterator attrlist;
+
+    attrlist = myself.attributes.begin ();
+    while (attrlist != myself.attributes.end ()) {
+        if ( ! (*attrlist).isabstract) {
+            umlattribute parameter;
+            /* The SET method */
+            operation = new umlopnode;
+
+            parameter.name.assign ("value");
+            parameter.type.assign ((*attrlist).type);
+            parameter.value.clear ();
+            parameter.isstatic = 0;
+            parameter.isconstant = 0;
+            parameter.isabstract = 0;
+            parameter.visibility = '0';
+            operation->key.parameters.push_back (parameter);
+
+            operation->key.implementation.clear ();
+            operation->key.implementation.append ("    ");
+            operation->key.implementation.append ((*attrlist).name);
+            operation->key.implementation.append (" = value;");
+
+            tmpname = strtoupperfirst((*attrlist).name);
+            operation->key.attr.name.append ("set");
+            operation->key.attr.name.append (tmpname);
+            operation->key.attr.isabstract = 0;
+            operation->key.attr.isstatic = 0;
+            operation->key.attr.isconstant = 0;
+            operation->key.attr.visibility = '0';
+            operation->key.attr.value.clear ();
+            operation->key.attr.type.assign ("void");
+            operation->next = NULL;
+
+            myself.operations = insert_operation(operation, myself.operations);
+
+            /* The GET or IS method */
+            operation = new umlopnode;
+            tmpname = strtoupperfirst((*attrlist).name);
+            if ( (*attrlist).type.compare ("boolean") == 0) {
+                operation->key.attr.name.assign ("is");
+            } else {
+                operation->key.attr.name.assign ("get");
+            }
+            operation->key.attr.name.append (tmpname);
+
+            operation->key.implementation.assign ("    return ");
+            operation->key.implementation.append ((*attrlist).name);
+            operation->key.implementation.append (";");
+
+            operation->key.attr.isabstract = 0;
+            operation->key.attr.isstatic = 0;
+            operation->key.attr.isconstant = 0;
+            operation->key.attr.visibility = '0';
+            operation->key.attr.value.clear ();
+            operation->key.attr.type.assign ((*attrlist).type);
+            operation->next = NULL;
+
+            myself.operations = insert_operation(operation, myself.operations);
+        }
+        ++attrlist;
+    }
+ }
+
 void parse_geom_position(xmlNodePtr attribute, geometry * geom ) {
     xmlChar *val;
     char * token;
@@ -411,6 +482,9 @@ umlclasslist parse_class(xmlNodePtr class_) {
             parse_attributes(attribute->xmlChildrenNode, myself->attributes);
         } else if ( !strcmp("operations", BAD_TSAC2 (attrname)) ) {
             myself->operations = parse_operations(attribute->xmlChildrenNode);
+            if ( myself->stereotype.compare ("getset") == 0) {
+                make_getset_methods(*myself);
+            }
         } else if ( !strcmp("templates", BAD_TSAC2 (attrname)) ) {
             myself->templates = parse_templates(attribute->xmlChildrenNode);
         }
