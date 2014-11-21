@@ -401,16 +401,16 @@ GenerateCode::gen_class (umlclassnode *node)
 
     file << spc () << "/// class " << name << " - " << node->key->comment.c_str () << "\n";
 
-    if (node->key->templates != NULL) {
-        umltemplatelist template_ = node->key->templates;
+    if (!node->key->templates.empty ()) {
+        std::list <umltemplate>::iterator template_ = node->key->templates.begin ();
         if (is_valuetype) {
             fprintf (stderr, "CORBAValue %s: template ignored\n", name);
         } else {
             file << spc () << "template <";
-            while (template_ != NULL) {
-                file << template_->key.type.c_str () << " " << template_->key.name.c_str ();
-                template_ = template_->next;
-                if (template_ != NULL)
+            while (template_ != node->key->templates.end ()) {
+                file << (*template_).type.c_str () << " " << (*template_).name.c_str ();
+                ++template_;
+                if (template_ != node->key->templates.end ())
                     file << ", ";
             }
             file << ">\n";

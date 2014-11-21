@@ -180,13 +180,8 @@ void insert_operation(umloperation &n, std::list <umloperation> &l) {
     }
 }
 
-umltemplatelist insert_template(umltemplatelist n, umltemplatelist l) {
-    if ( l != NULL) {
-        n->next = l;
-        return n;
-    } else {
-        return n;
-    }
+void insert_template(umltemplate &n, std::list <umltemplate> &l) {
+    l.push_back (n);
 }
 
 void parse_attribute(xmlNodePtr node, umlattribute &tmp) {
@@ -278,19 +273,17 @@ void parse_template(xmlNodePtr node, umltemplate *tmp) {
     parse_dia_string(BAD_TSAC2 (node->next->xmlChildrenNode->xmlChildrenNode->content), tmp->type);
 }
 
-umltemplatelist parse_templates(xmlNodePtr node) {
-    umltemplatelist list = NULL, tn;
+void parse_templates(xmlNodePtr node, std::list <umltemplate> &res) {
     while ( node != NULL) {
         if ( node->xmlChildrenNode->xmlChildrenNode->xmlChildrenNode != NULL &&
                 node->xmlChildrenNode->next->xmlChildrenNode->xmlChildrenNode != NULL ) {
-            tn = new umltemplatenode;
-            tn->next = NULL;
-            parse_template(node->xmlChildrenNode, &(tn->key));
-            list = insert_template(tn, list);
+            umltemplate tn;
+            parse_template(node->xmlChildrenNode, &tn);
+            insert_template(tn, res);
         }
         node = node->next;
     }
-    return list;
+    return;
 }
 
 /**
@@ -486,7 +479,7 @@ umlclasslist parse_class(xmlNodePtr class_) {
                 make_getset_methods(*myself);
             }
         } else if ( !strcmp("templates", BAD_TSAC2 (attrname)) ) {
-            myself->templates = parse_templates(attribute->xmlChildrenNode);
+            parse_templates(attribute->xmlChildrenNode, myself->templates);
         }
         free(attrname);
         attribute = attribute->next;

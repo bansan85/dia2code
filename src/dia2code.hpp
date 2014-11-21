@@ -55,12 +55,6 @@ struct umltemplate {
     std::string type;
 };
 
-struct umltemplatenode {
-        umltemplate key;
-        struct umltemplatenode *next;
-};
-
-typedef umltemplatenode *umltemplatelist;
 
 struct geometry {
     float pos_x;
@@ -92,7 +86,7 @@ struct umlclass {
     int isabstract;
     std::list <umlattribute> attributes;
     std::list <umloperation> operations;
-    umltemplatelist templates;
+    std::list <umltemplate> templates;
     umlpackage * package;
     geometry geom;
 };
