@@ -542,8 +542,8 @@ GenerateCode::gen_class (umlclassnode *node)
         }
     }
 
-    if (node->key->operations != NULL) {
-        umloplist umlo = node->key->operations;
+    if (!node->key->operations.empty ()) {
+        std::list <umloperation>::iterator umlo = node->key->operations.begin ();
         int tmpv = -1;
         file << spc () << "// Operations\n";
         if (is_valuetype) {
@@ -551,69 +551,69 @@ GenerateCode::gen_class (umlclassnode *node)
             file << spc () << "public:\n";
             indentlevel++;
         }
-        while (umlo != NULL) {
+        while (umlo != node->key->operations.end ()) {
             std::list <umlattribute>::iterator tmpa;
             if (is_valuetype) {
-                if (umlo->key.attr.visibility != '0')
+                if ((*umlo).attr.visibility != '0')
                     fprintf (stderr, "CORBAValue %s/%s: must be public\n",
-                                     name, umlo->key.attr.name.c_str ());
+                                     name, (*umlo).attr.name.c_str ());
             } else {
-                check_visibility (&tmpv, umlo->key.attr.visibility);
+                check_visibility (&tmpv, (*umlo).attr.visibility);
             }
 
             /* print comments on operation */
-            if (!umlo->key.attr.comment.empty ()) {
-                file << spc () << "/// " << umlo->key.attr.comment.c_str () << "\n";
-                tmpa = umlo->key.parameters.begin ();
-                while (tmpa != umlo->key.parameters.end ()) {
+            if (!(*umlo).attr.comment.empty ()) {
+                file << spc () << "/// " << (*umlo).attr.comment.c_str () << "\n";
+                tmpa = (*umlo).parameters.begin ();
+                while (tmpa != (*umlo).parameters.end ()) {
                      file << spc () << "/// @param " << (*tmpa).name.c_str () << "\t(" << kind_str((*tmpa).kind) << ") " << (*tmpa).comment.c_str () << "\n";
                      ++tmpa;
                 }
             }
             /* print operation */
             file << spc ();
-            if (umlo->key.attr.isabstract || is_valuetype) {
+            if ((*umlo).attr.isabstract || is_valuetype) {
                 file << "virtual ";
-                umlo->key.attr.value.clear ();
+                (*umlo).attr.value.clear ();
             }
-            if (umlo->key.attr.isstatic) {
+            if ((*umlo).attr.isstatic) {
                 if (is_valuetype)
                     fprintf (stderr, "CORBAValue %s/%s: static not supported\n",
-                                     name, umlo->key.attr.name.c_str ());
+                                     name, (*umlo).attr.name.c_str ());
                 else
                     file << "static ";
             }
-            if (!umlo->key.attr.type.empty ()) {
-                file << cppname (umlo->key.attr.type.c_str ()) << " ";
+            if (!(*umlo).attr.type.empty ()) {
+                file << cppname ((*umlo).attr.type.c_str ()) << " ";
             }
-            file << umlo->key.attr.name.c_str () << " (";
-            tmpa = umlo->key.parameters.begin ();
-            while (tmpa != umlo->key.parameters.end ()) {
+            file << (*umlo).attr.name.c_str () << " (";
+            tmpa = (*umlo).parameters.begin ();
+            while (tmpa != (*umlo).parameters.end ()) {
                 file << (*tmpa).type.c_str () << " " << (*tmpa).name.c_str ();
                 if (!(*tmpa).value.empty ()) {
                     if (is_valuetype)
                         fprintf (stderr, "CORBAValue %s/%s: param default "
-                                 "not supported\n", name, umlo->key.attr.name.c_str ());
+                                 "not supported\n", name, (*umlo).attr.name.c_str ());
                     else
                        file << " = " << (*tmpa).value.c_str ();
                 }
                 ++tmpa;
-                if (tmpa != umlo->key.parameters.end ()) {
+                if (tmpa != (*umlo).parameters.end ()) {
                     file << ", ";
                 }
             }
             file << ")";
-            if (umlo->key.attr.isconstant) {
+            if ((*umlo).attr.isconstant) {
                 file << " const";
             }
-            if (umlo->key.attr.value.empty ()) {
+            if ((*umlo).attr.value.empty ()) {
                 // virtual
-                if ((umlo->key.attr.isabstract || is_valuetype) &&
-                    umlo->key.attr.name[0] != '~')
+                if (((*umlo).attr.isabstract || is_valuetype) &&
+                    (*umlo).attr.name[0] != '~')
                     file << " = 0";
             }
             file << ";\n";
-            umlo = umlo->next;
+            ++umlo;
         }
     }
 

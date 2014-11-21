@@ -50,13 +50,6 @@ struct umloperation {
     std::string implementation;
 };
 
-struct umlopnode {
-    umloperation key;
-    struct umlopnode *next;
-};
-
-typedef umlopnode *umloplist;
-
 struct umltemplate {
     std::string name;
     std::string type;
@@ -98,7 +91,7 @@ struct umlclass {
     std::string comment;
     int isabstract;
     std::list <umlattribute> attributes;
-    umloplist operations;
+    std::list <umloperation> operations;
     umltemplatelist templates;
     umlpackage * package;
     geometry geom;

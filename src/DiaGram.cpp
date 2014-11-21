@@ -133,7 +133,7 @@ DiaGram::list_classes(umlclasslist current_class) {
     umlclasslist parents, dependencies;
     umlassoclist associations;
     std::list <umlattribute>::iterator umla;
-    umloplist umlo;
+    std::list <umloperation>::iterator umlo;
     umlclasslist result = NULL;
     umlclasslist classes = uml;
     umlclasslist tmpnode = NULL;
@@ -149,21 +149,21 @@ DiaGram::list_classes(umlclasslist current_class) {
         ++umla;
     }
 
-    umlo = current_class->key->operations;
-    while ( umlo != NULL) {
-        tmpnode = find_by_name(classes, umlo->key.attr.type.c_str ());
-        if ( tmpnode && ! find_by_name(result, umlo->key.attr.type.c_str ())) {
+    umlo = current_class->key->operations.begin ();
+    while ( umlo != current_class->key->operations.end ()) {
+        tmpnode = find_by_name(classes, (*umlo).attr.type.c_str ());
+        if ( tmpnode && ! find_by_name(result, (*umlo).attr.type.c_str ())) {
             result = append(result, tmpnode);
         }
-        umla = umlo->key.parameters.begin ();
-        while (umla != umlo->key.parameters.end ()) {
+        umla = (*umlo).parameters.begin ();
+        while (umla != (*umlo).parameters.end ()) {
             tmpnode = find_by_name(classes, (*umla).type.c_str ());
             if ( tmpnode && ! find_by_name(result, (*umla).type.c_str ())) {
                 result = append(result, tmpnode);
             }
             ++umla;
         }
-        umlo = umlo->next;
+        ++umlo;
     }
 
     parents = current_class->parents;

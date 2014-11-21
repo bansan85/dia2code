@@ -159,17 +159,24 @@ void insert_attribute(umlattribute &n, std::list <umlattribute> &l) {
 /**
   * Inserts "n" into the list "l", in orderly fashion
 */
-umloplist insert_operation(umloplist n, umloplist l) {
-    if ( l != NULL ) {
-        if ( l->key.attr.visibility <= n->key.attr.visibility ) {
-            l->next = insert_operation(n, l->next);
-            return l;
-        } else {
-            n->next = l;
-            return n;
+void insert_operation(umloperation &n, std::list <umloperation> &l) {
+    std::list <umloperation>::iterator itl;
+    
+    itl = l.begin ();
+    
+    if (itl == l.end ()) {
+        l.push_back (n);
+    }
+    else {
+        while ((itl != l.end ()) && ((*itl).attr.visibility >= n.attr.visibility)) {
+            ++itl;
         }
-    } else {
-        return n;
+        if (itl == l.end ()) {
+            l.push_back (n);
+        }
+        else {
+            l.insert (std::next (itl), n);
+        }
     }
 }
 
@@ -243,30 +250,27 @@ void parse_attributes(xmlNodePtr node, std::list <umlattribute> &retour) {
     }
 }
 
-void parse_operation(xmlNodePtr node, umloperation *tmp) {
+void parse_operation(xmlNodePtr node, umloperation &tmp) {
     xmlChar *nodename;
-    parse_attribute(node, tmp->attr);
+    parse_attribute(node, tmp.attr);
     while ( node != NULL ) {
         nodename = xmlGetProp(node, BAD_CAST2 ("name"));
         if ( !strcmp("parameters", BAD_TSAC2 (nodename)) ) {
-            parse_attributes(node->xmlChildrenNode, tmp->parameters);
+            parse_attributes(node->xmlChildrenNode, tmp.parameters);
         }
         free(nodename);
         node = node->next;
     }
 }
 
-umloplist parse_operations(xmlNodePtr node) {
-    umloplist list = NULL, on;
+void parse_operations(xmlNodePtr node, std::list <umloperation> &res) {
     while ( node != NULL ) {
-        on = new umlopnode;
-        on->next = NULL;
-        on->key.implementation.clear ();
-        parse_operation(node->xmlChildrenNode, &(on->key));
-        list = insert_operation(on, list);
+        umloperation on;
+        parse_operation (node->xmlChildrenNode, on);
+        insert_operation(on, res);
         node = node->next;
     }
-    return list;
+    return;
 }
 
 void parse_template(xmlNodePtr node, umltemplate *tmp) {
@@ -295,7 +299,6 @@ umltemplatelist parse_templates(xmlNodePtr node) {
 */
 void make_getset_methods(umlclass &myself) {
     std::string tmpname;
-    umloplist operation;
     std::list <umlattribute>::iterator attrlist;
 
     attrlist = myself.attributes.begin ();
@@ -303,7 +306,7 @@ void make_getset_methods(umlclass &myself) {
         if ( ! (*attrlist).isabstract) {
             umlattribute parameter;
             /* The SET method */
-            operation = new umlopnode;
+            umloperation operation;
 
             parameter.name.assign ("value");
             parameter.type.assign ((*attrlist).type);
@@ -312,49 +315,46 @@ void make_getset_methods(umlclass &myself) {
             parameter.isconstant = 0;
             parameter.isabstract = 0;
             parameter.visibility = '0';
-            operation->key.parameters.push_back (parameter);
+            operation.parameters.push_back (parameter);
 
-            operation->key.implementation.clear ();
-            operation->key.implementation.append ("    ");
-            operation->key.implementation.append ((*attrlist).name);
-            operation->key.implementation.append (" = value;");
+            operation.implementation.clear ();
+            operation.implementation.append ("    ");
+            operation.implementation.append ((*attrlist).name);
+            operation.implementation.append (" = value;");
 
             tmpname = strtoupperfirst((*attrlist).name);
-            operation->key.attr.name.append ("set");
-            operation->key.attr.name.append (tmpname);
-            operation->key.attr.isabstract = 0;
-            operation->key.attr.isstatic = 0;
-            operation->key.attr.isconstant = 0;
-            operation->key.attr.visibility = '0';
-            operation->key.attr.value.clear ();
-            operation->key.attr.type.assign ("void");
-            operation->next = NULL;
+            operation.attr.name.append ("set");
+            operation.attr.name.append (tmpname);
+            operation.attr.isabstract = 0;
+            operation.attr.isstatic = 0;
+            operation.attr.isconstant = 0;
+            operation.attr.visibility = '0';
+            operation.attr.value.clear ();
+            operation.attr.type.assign ("void");
 
-            myself.operations = insert_operation(operation, myself.operations);
+            insert_operation(operation, myself.operations);
 
             /* The GET or IS method */
-            operation = new umlopnode;
             tmpname = strtoupperfirst((*attrlist).name);
             if ( (*attrlist).type.compare ("boolean") == 0) {
-                operation->key.attr.name.assign ("is");
+                operation.attr.name.assign ("is");
             } else {
-                operation->key.attr.name.assign ("get");
+                operation.attr.name.assign ("get");
             }
-            operation->key.attr.name.append (tmpname);
+            operation.attr.name.append (tmpname);
 
-            operation->key.implementation.assign ("    return ");
-            operation->key.implementation.append ((*attrlist).name);
-            operation->key.implementation.append (";");
+            operation.implementation.assign ("    return ");
+            operation.implementation.append ((*attrlist).name);
+            operation.implementation.append (";");
 
-            operation->key.attr.isabstract = 0;
-            operation->key.attr.isstatic = 0;
-            operation->key.attr.isconstant = 0;
-            operation->key.attr.visibility = '0';
-            operation->key.attr.value.clear ();
-            operation->key.attr.type.assign ((*attrlist).type);
-            operation->next = NULL;
+            operation.attr.isabstract = 0;
+            operation.attr.isstatic = 0;
+            operation.attr.isconstant = 0;
+            operation.attr.visibility = '0';
+            operation.attr.value.clear ();
+            operation.attr.type.assign ((*attrlist).type);
 
-            myself.operations = insert_operation(operation, myself.operations);
+            insert_operation(operation, myself.operations);
         }
         ++attrlist;
     }
@@ -481,7 +481,7 @@ umlclasslist parse_class(xmlNodePtr class_) {
         } else if ( !strcmp("attributes", BAD_TSAC2 (attrname)) ) {
             parse_attributes(attribute->xmlChildrenNode, myself->attributes);
         } else if ( !strcmp("operations", BAD_TSAC2 (attrname)) ) {
-            myself->operations = parse_operations(attribute->xmlChildrenNode);
+            parse_operations(attribute->xmlChildrenNode, myself->operations);
             if ( myself->stereotype.compare ("getset") == 0) {
                 make_getset_methods(*myself);
             }
@@ -533,7 +533,6 @@ void lolipop_implementation(umlclasslist classlist, xmlNodePtr object) {
         parse_dia_string (name, key->name);
         key->stereotype.assign ("Interface");
         key->isabstract = 1;
-        key->operations = NULL;
         addparent(key, implementator);
     }
 }
