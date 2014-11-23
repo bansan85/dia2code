@@ -83,7 +83,7 @@ void
 DiaGram::scan_tree_classes (std::list <std::string> &res) {
     std::list <umlclassnode>::iterator it = uml.begin ();
     
-    while ( it != uml.begin () ) {
+    while ( it != uml.end () ) {
         res.push_back ((*it).key.name);
         ++it;
     }
@@ -95,7 +95,6 @@ DiaGram::scan_tree_classes (std::list <std::string> &res) {
 /* Creates a new umlclassnode with class as the key, then appends it to
   the end of list */
 void append ( std::list <umlclassnode> & list, umlclassnode & class_ ) {
-    std::list <umlclassnode>::iterator it = list.begin ();
     umlclassnode tmpnode;
 
     tmpnode.key = class_.key;

@@ -331,7 +331,7 @@ void make_getset_methods(umlclass &myself) {
 
             operation.attr.isabstract = 0;
             operation.attr.isstatic = 0;
-            operation.attr.isconstant = 0;
+            operation.attr.isconstant = 1;
             operation.attr.visibility = '0';
             operation.attr.value.clear ();
             operation.attr.type.assign ((*attrlist).type);
