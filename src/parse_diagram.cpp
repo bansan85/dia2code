@@ -389,40 +389,30 @@ int is_inside(const geometry * geom1, const geometry * geom2) {
 
 }
 
-umlpackagelist parse_package(xmlNodePtr package) {
+void parse_package(xmlNodePtr package, umlpackage &res) {
     xmlNodePtr attribute;
-    umlpackagelist listmyself;
-    umlpackage *myself;
     xmlChar *attrname;
 
-    listmyself = new umlpackagenode;
-    myself = new umlpackage;
-
-    myself->parent = NULL;
-
-    listmyself->next = NULL;
-    listmyself->key = myself;
+    res.parent = NULL;
 
     attribute = package->xmlChildrenNode;
     while ( attribute != NULL ) {
         attrname = xmlGetProp(attribute, BAD_CAST2 ("name"));
-        /* fix a segfault - dia files contains *also* some rare tags without any "name" attribute : <dia:parent  for ex.  */
         if( attrname != NULL ) {
             if ( !strcmp("name", BAD_TSAC2 (attrname)) ) {
-                parse_dia_node(attribute->xmlChildrenNode, myself->name);
-                //debug( 4, "name is %s \n", myself->name );
+                parse_dia_node(attribute->xmlChildrenNode, res.name);
             } else if ( !strcmp ( "obj_pos", BAD_TSAC2 (attrname) ) ) {
-                parse_geom_position(attribute->xmlChildrenNode, &myself->geom );
+                parse_geom_position(attribute->xmlChildrenNode, &res.geom );
             } else if ( !strcmp ( "elem_width", BAD_TSAC2 (attrname) ) ) {
-                parse_geom_width(attribute->xmlChildrenNode, &myself->geom );
+                parse_geom_width(attribute->xmlChildrenNode, &res.geom );
             } else if ( !strcmp ( "elem_height", BAD_TSAC2 (attrname) ) ) {
-                parse_geom_height(attribute->xmlChildrenNode, &myself->geom );
+                parse_geom_height(attribute->xmlChildrenNode, &res.geom );
             }
             xmlFree (attrname);
         }
         attribute = attribute->next;
     }
-    return listmyself;
+    return;
 }
 
 umlclasslist parse_class(xmlNodePtr class_) {
@@ -433,7 +423,7 @@ umlclasslist parse_class(xmlNodePtr class_) {
 
     listmyself = new umlclassnode;
     myself = new umlclass;
-    myself->package = NULL;
+    myself->packages = NULL;
 
     listmyself->key = myself;
     listmyself->parents = NULL;
@@ -522,6 +512,7 @@ void lolipop_implementation(umlclasslist classlist, xmlNodePtr object) {
     free(id);
     if (implementator != NULL && name != NULL && strlen(name) > 2) {
         umlclass * key = new umlclass;
+        key->packages = NULL;
         key->id.assign ("00");
         parse_dia_string (name, key->name);
         key->stereotype.assign ("Interface");
@@ -587,7 +578,8 @@ umlclasslist parse_diagram(char *diafile) {
 
     xmlNodePtr object = NULL;
     umlclasslist classlist = NULL, endlist = NULL;
-    umlpackagelist packagelist = NULL, dummypcklist, endpcklist = NULL;
+    std::list <umlpackage>::iterator dummypcklst;
+    std::list <umlpackage> packagelst;
 
     ptr = xmlParseFile(diafile);
 
@@ -618,21 +610,15 @@ umlclasslist parse_diagram(char *diafile) {
                 endlist = tmplist;
             }
         } else if ( !strcmp("UML - LargePackage", BAD_TSAC2 (objtype)) || !strcmp("UML - SmallPackage", BAD_TSAC2 (objtype)) ) {
-            umlpackagelist tmppcklist = parse_package(object);
-            if ( tmppcklist != NULL ) {
-                // We get the ID of the object here
-                xmlChar *objid = xmlGetProp(object, BAD_CAST2 ("id"));
-                tmppcklist->key->id.assign (BAD_TSAC2 (objid));
-                free(objid);
-            }
-            // We insert it here
-            if ( packagelist == NULL ) {
-                packagelist = endpcklist = tmppcklist;
-            } else {
-                endpcklist->next = tmppcklist;
-                endpcklist = tmppcklist;
-            }
+            umlpackage tmppck;
+            parse_package(object, tmppck);
 
+            xmlChar *objid = xmlGetProp(object, BAD_CAST2 ("id"));
+            tmppck.id.assign (BAD_TSAC2 (objid));
+            free(objid);
+
+            // We insert it here
+            packagelst.push_back (tmppck);
         }
         free(objtype);
         object = getNextObject(object);
@@ -830,51 +816,47 @@ umlclasslist parse_diagram(char *diafile) {
        FIXME: maybe we can do both in the same pass */
 
     /* Build the relationships between packages */
-    dummypcklist = packagelist;
-    while ( dummypcklist != NULL ) {
-        umlpackagelist tmppcklist = packagelist;
-        while ( tmppcklist != NULL ) {
-            if ( is_inside(&dummypcklist->key->geom, &tmppcklist->key->geom) ) {
-                if ( tmppcklist->key->parent == NULL ) {
-                    tmppcklist->key->parent = dummypcklist->key;
-                } else {
-                    if ( ! is_inside ( &dummypcklist->key->geom, &tmppcklist->key->parent->geom ) ) {
-                        tmppcklist->key->parent = dummypcklist->key;
-                    }
+    dummypcklst = packagelst.begin ();
+    while ( dummypcklst != packagelst.end () ) {
+        std::list <umlpackage>::iterator tmppcklst = packagelst.begin ();
+        while ( tmppcklst != packagelst.end () ) {
+            if ( is_inside(&(*dummypcklst).geom, &(*tmppcklst).geom) ) {
+                if ( ((*tmppcklst).parent == NULL) ||
+                     (! is_inside ( &(*dummypcklst).geom, &(*tmppcklst).parent->geom ))) {
+                    (*tmppcklst).parent = new umlpackage;
+                    (*tmppcklst).parent->id = (*dummypcklst).id;
+                    (*tmppcklst).parent->name = (*dummypcklst).name;
+                    (*tmppcklst).parent->geom = (*dummypcklst).geom;
+                    (*tmppcklst).parent->parent = (*dummypcklst).parent;
+                    (*tmppcklst).parent->directory = (*dummypcklst).directory;
                 }
             }
-            tmppcklist = tmppcklist->next;
+            ++tmppcklst;
         }
-        dummypcklist = dummypcklist->next;
+        ++dummypcklst;
     }
 
     /* Associate packages to classes */
-    dummypcklist = packagelist;
-    while ( dummypcklist != NULL ) {
+    dummypcklst = packagelst.begin ();
+    while ( dummypcklst != packagelst.end () ) {
         umlclasslist tmplist = classlist;
         while ( tmplist != NULL ) {
-            if ( is_inside(&dummypcklist->key->geom,&tmplist->key->geom) ) {
-                if ( tmplist->key->package == NULL ) {
-                    tmplist->key->package = dummypcklist->key;
-                } else {
-                    if ( ! is_inside ( &dummypcklist->key->geom, &tmplist->key->package->geom ) ) {
-                        tmplist->key->package = dummypcklist->key;
-                    }
+            if ( is_inside(&(*dummypcklst).geom,&tmplist->key->geom) ) {
+                if ( (tmplist->key->packages == NULL) ||
+                     (! is_inside ( &(*dummypcklst).geom, &tmplist->key->packages->geom ))) {
+                    tmplist->key->packages = new umlpackage;
+                    tmplist->key->packages->id = (*dummypcklst).id;
+                    tmplist->key->packages->name = (*dummypcklst).name;
+                    tmplist->key->packages->geom = (*dummypcklst).geom;
+                    tmplist->key->packages->parent = (*dummypcklst).parent;
+                    tmplist->key->packages->directory = (*dummypcklst).directory;
                 }
             }
             tmplist = tmplist->next;
         }
-        dummypcklist = dummypcklist->next;
+        ++dummypcklst;
     }
     
-    while (packagelist != NULL)
-    {
-        endpcklist = packagelist->next;
-        delete packagelist;
-        packagelist = endpcklist;
-    }
-
-
     xmlFreeDoc (ptr);
     
     return classlist;

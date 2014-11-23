@@ -67,16 +67,9 @@ struct umlpackage {
     std::string id;
     std::string name;
     geometry geom;
-    struct umlpackage * parent;
+    struct umlpackage *parent;
     std::string directory;
 };
-
-struct umlpackagenode {
-    umlpackage *key;
-    struct umlpackagenode * next;
-};
-
-typedef umlpackagenode * umlpackagelist;
 
 struct umlclass {
     std::string id;
@@ -87,7 +80,7 @@ struct umlclass {
     std::list <umlattribute> attributes;
     std::list <umloperation> operations;
     std::list <umltemplate> templates;
-    umlpackage * package;
+    umlpackage *packages;
     geometry geom;
 };
 
@@ -122,7 +115,7 @@ int is_struct_stereo (const char * stereo);
 int is_typedef_stereo (const char * stereo);
 int is_const_stereo (const char * stereo);
 
-umlpackagelist make_package_list( umlpackage * package);
+void make_package_list(umlpackage *package, std::list <umlpackage> &res);
 
 char *find_diaoid( const char *buf, char **newpos  );
 void d2c_log( int level, char * msg );

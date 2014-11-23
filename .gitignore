@@ -17,3 +17,7 @@ stamp-h2
 aclocal.m4
 test-driver
 tests/result
+tests/result.txt
+tests/test-suite.log
+tests/tests.sh.log
+tests/tests.sh.trs

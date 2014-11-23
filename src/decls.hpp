@@ -36,7 +36,7 @@ struct declaration;
 struct module {  /* UML package = IDL module
                     What we call `module' equally applies to C++ (namespace)
                     and Ada (package.) I don't know about other languages.  */
-    umlpackage *pkg;
+    umlpackage pkg;
     struct declaration *contents;
 };
 
@@ -62,7 +62,7 @@ extern declaration *decls;
    interdependence.)  */
 
 module *
-find_or_add_module (declaration **dptr, umlpackagelist pkglist);
+find_or_add_module (declaration **dptr, std::list <umlpackage> &pkglist);
 
 declaration * find_class (umlclassnode *node);
 

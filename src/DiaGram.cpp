@@ -228,8 +228,9 @@ DiaGram::push (umlclassnode *node)
         used_classes = tmpnode;
     }
 
-    if (node->key->package != NULL) {
-        umlpackagelist pkglist = make_package_list (node->key->package);
+    if (node->key->packages != NULL) {
+        std::list <umlpackage> pkglist;
+        make_package_list (node->key->packages, pkglist);
         m = find_or_add_module (&decls, pkglist);
         if (m->contents == NULL) {
             m->contents = new declaration;
@@ -283,9 +284,10 @@ DiaGram::add_include (const char *name)
 void
 DiaGram::push_include (umlclassnode *node)
 {
-    if (node->key->package != NULL) {
-        umlpackagelist pkglist = make_package_list (node->key->package);
-        add_include (pkglist->key->name.c_str ());
+    if (node->key->packages != NULL) {
+        std::list <umlpackage> pkglist;
+        make_package_list (node->key->packages, pkglist);
+        add_include ((*pkglist.begin ()).name.c_str ());
     } else {
         add_include (node->key->name.c_str ());
     }

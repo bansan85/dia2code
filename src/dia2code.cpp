@@ -93,17 +93,18 @@ int is_present(std::list <std::string> list, const char *name) {
     The topmost package will be the first on the list and the initial
     package will be the last.
 */
-umlpackagelist make_package_list(umlpackage * package){
-    umlpackagelist dummylist, tmplist=NULL;
-
-    while ( package != NULL ){
-        dummylist = new umlpackagenode;
-        dummylist->next = tmplist;
-        tmplist = dummylist;
-        tmplist->key = package;
-        package = package->parent;
+void make_package_list(umlpackage *package, std::list <umlpackage> &res){
+    umlpackage *par;
+    
+    if (package == NULL)
+        return;
+    res.push_back (*package);
+    par = package->parent;
+    while ( par != NULL){
+        res.push_back (*par);
+        par = par->parent;
     }
-    return tmplist;
+    return;
 }
 
 int
