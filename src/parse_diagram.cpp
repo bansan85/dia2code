@@ -71,7 +71,6 @@ void addparent(umlclass * key, umlclasslist derived) {
     tmp = new umlclassnode;
     tmp->key = key;
     tmp->parents = NULL;
-    tmp->associations = NULL;
     tmp->dependencies = NULL;
     tmp->next = derived->parents;
     derived->parents = tmp;
@@ -82,7 +81,6 @@ void adddependency(umlclasslist dependent, umlclasslist dependee) {
     tmp = new umlclassnode;
     tmp->key = dependent->key;
     tmp->parents = NULL;
-    tmp->associations = NULL;
     tmp->dependencies = NULL;
     tmp->next = dependee->dependencies;
     dependee->dependencies = tmp;
@@ -90,18 +88,16 @@ void adddependency(umlclasslist dependent, umlclasslist dependee) {
 
 void addaggregate(const char *name, char composite, umlclasslist base,
                   umlclasslist associate, const char *multiplicity) {
-    umlassoclist tmp;
-    tmp = new umlassocnode;
+    umlassoc tmp;
     if (name != NULL && strlen (name) > 2)
-        parse_dia_string(name, tmp->name);
+        parse_dia_string(name, tmp.name);
     if (multiplicity != NULL)
-        strncpy (tmp->multiplicity, multiplicity+1, strlen (multiplicity)-2);
+        strncpy (tmp.multiplicity, multiplicity+1, strlen (multiplicity)-2);
     else
-        sprintf(tmp->multiplicity, "1");
-    tmp->key = base->key;
-    tmp->composite = composite;
-    tmp->next = associate->associations;
-    associate->associations = tmp;
+        sprintf(tmp.multiplicity, "1");
+    tmp.key = base->key;
+    tmp.composite = composite;
+    associate->associations.push_front (tmp);
 }
 
 void inherit_realize ( umlclasslist classlist, const char * base, const char * derived ) {
@@ -427,7 +423,6 @@ umlclasslist parse_class(xmlNodePtr class_) {
 
     listmyself->key = myself;
     listmyself->parents = NULL;
-    listmyself->associations = NULL;
     listmyself->dependencies = NULL;
     listmyself->next = NULL;
 

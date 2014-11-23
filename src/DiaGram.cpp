@@ -131,7 +131,7 @@ umlclasslist append ( umlclasslist list, umlclassnode * class_ ) {
 umlclasslist
 DiaGram::list_classes(umlclasslist current_class) {
     umlclasslist parents, dependencies;
-    umlassoclist associations;
+    std::list <umlassoc>::iterator associations;
     std::list <umlattribute>::iterator umla;
     std::list <umloperation>::iterator umlo;
     umlclasslist result = NULL;
@@ -184,13 +184,13 @@ DiaGram::list_classes(umlclasslist current_class) {
         dependencies = dependencies->next;
     }
 
-    associations = current_class->associations;
-    while (associations != NULL) {
-        tmpnode = find_by_name(classes, associations->key->name.c_str ());
-        if ( tmpnode && ! find_by_name(result, associations->key->name.c_str ()) ) {
+    associations = current_class->associations.begin ();
+    while (associations != current_class->associations.end ()) {
+        tmpnode = find_by_name(classes, (*associations).key->name.c_str ());
+        if ( tmpnode && ! find_by_name(result, (*associations).key->name.c_str ()) ) {
             result = append(result, tmpnode);
         }
-        associations = associations->next;
+        ++associations;
     }
 
     return result;
@@ -340,13 +340,6 @@ DiaGram::~DiaGram () {
             umlclasslist list2_ = list2;
             list2 = list2->next;
             delete list2_;
-        }
-
-        umlassoclist list3 = tmplist->associations;
-        while (list3 != NULL) {
-            umlassoclist list3_ = list3;
-            list3 = list3->next;
-            delete list3_;
         }
 
         list2 = tmplist->dependencies;

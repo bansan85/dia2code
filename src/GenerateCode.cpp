@@ -441,8 +441,8 @@ GenerateCode::gen_class (umlclassnode *node)
     }
     indentlevel++;
 
-    if (node->associations != NULL) {
-        umlassoclist assoc = node->associations;
+    if (!node->associations.empty ()) {
+        std::list <umlassoc>::iterator assoc = node->associations.begin ();
         file << spc () << "// Associations\n";
         /*
          * The associations are mapped as private members.
@@ -450,18 +450,18 @@ GenerateCode::gen_class (umlclassnode *node)
          * (For example, other UML tools additionally generate
          * setters/getters.)  Ideas and comments welcome.
         */
-        while (assoc != NULL) {
+        while (assoc != node->associations.end ()) {
             umlclassnode *ref;
-            if (!assoc->name.empty ())
+            if (!(*assoc).name.empty ())
             {
-                ref = find_by_name (dia.getUml (), assoc->key->name.c_str ());
+                ref = find_by_name (dia.getUml (), (*assoc).key->name.c_str ());
                 if (ref != NULL)
-                    file << spc () << fqname (ref, !assoc->composite);
+                    file << spc () << fqname (ref, !(*assoc).composite);
                 else
-                    file << spc () << cppname (assoc->key->name);
-                file << " " << assoc->name.c_str () << ";\n";
+                    file << spc () << cppname ((*assoc).key->name);
+                file << " " << (*assoc).name.c_str () << ";\n";
             }
-            assoc = assoc->next;
+            ++assoc;
         }
     }
 

@@ -84,20 +84,17 @@ struct umlclass {
     geometry geom;
 };
 
-struct umlassocnode {
+struct umlassoc {
     umlclass * key;
     std::string name;
     char composite;
-    struct umlassocnode * next;
     char multiplicity[10]; /* association can declare multiplicity */
 };
-
-typedef umlassocnode * umlassoclist;
 
 struct umlclassnode {
     umlclass * key;
     struct umlclassnode * parents;
-    struct umlassocnode * associations;
+    std::list <umlassoc> associations;
     struct umlclassnode * dependencies;
     struct umlclassnode * next;
 };
