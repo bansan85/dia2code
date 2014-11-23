@@ -33,6 +33,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 struct declaration;
 
+extern declaration *decls;
+
 struct module {  /* UML package = IDL module
                     What we call `module' equally applies to C++ (namespace)
                     and Ada (package.) I don't know about other languages.  */
@@ -55,8 +57,6 @@ struct declaration {
     struct declaration *prev, *next;  /* other declarations in this scope */
 };
 
-extern declaration *decls;
-
 /* Utilities for building the global `decls' from umlclassnodes and
    their parents.  (`decls' contains everything in ascending order of
    interdependence.)  */
@@ -64,7 +64,7 @@ extern declaration *decls;
 module *
 find_or_add_module (declaration **dptr, std::list <umlpackage> &pkglist);
 
-declaration * find_class (umlclassnode *node);
+declaration * find_class (umlclassnode &node);
 
 declaration * append_decl (declaration *d);
 

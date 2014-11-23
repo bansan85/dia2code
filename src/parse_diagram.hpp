@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <list>
 
 
-umlclasslist parse_diagram(char *diafile);
+void parse_diagram(char *diafile, std::list <umlclassnode> & res);
 void insert_attribute(std::list <umlattribute> &n, std::list <umlattribute> &l);
 
 #endif

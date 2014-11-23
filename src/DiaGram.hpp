@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class DiaGram {
     private:
         // Diagram under uml format.
-        umlclasslist uml;
+        std::list <umlclassnode> uml;
         // Selection of classes to generate code for.
         std::list <std::string> genClasses;
         // Flag that inverts the above selection.
@@ -39,8 +39,8 @@ class DiaGram {
         std::list <std::string> tmp_classes;
         std::list <std::string> includes;
         
-        std::list <std::string> scan_tree_classes ();
-        umlclasslist            list_classes (umlclasslist current_class);
+        void scan_tree_classes (std::list <std::string> &res);
+        void list_classes (umlclassnode & current_class, std::list <umlclassnode> & res);
 
         /**
          * open_outfile() returns NULL if the file exists and is not rewritten
@@ -48,13 +48,12 @@ class DiaGram {
         */
         int have_include (const char *name);
         void add_include (const char *name);
-        void push_include (umlclassnode *node);
+        void push_include (umlclassnode & node);
     public:
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;
 
-        umlclasslist getUml ();
-        void setUml (umlclasslist diagram);
+        std::list <umlclassnode> & getUml ();
 
         void addGenClasses (std::list <std::string> classes);
         std::list <std::string> getGenClasses ();
@@ -65,7 +64,7 @@ class DiaGram {
         bool getUseCorba ();
         void setUseCorba (bool corba);
 
-        void push (umlclassnode *node);
+        void push (umlclassnode &node);
         std::list <std::string> getIncludes ();
         void cleanIncludes ();
         void determine_includes (declaration *d);

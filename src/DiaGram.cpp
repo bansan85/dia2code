@@ -30,17 +30,9 @@ DiaGram::DiaGram () :
 }
 
 
-umlclasslist
+std::list <umlclassnode> &
 DiaGram::getUml () {
     return uml;
-}
-
-
-void
-DiaGram::setUml (umlclasslist diagram) {
-    uml = diagram;
-
-    return;
 }
 
 
@@ -87,150 +79,132 @@ DiaGram::setUseCorba (bool corba) {
 
 
 /* Returns a list with all the classes declared in the diagram */
-std::list <std::string>
-DiaGram::scan_tree_classes () {
-    std::list <std::string> result;
-    umlclasslist tmplist = uml;
+void
+DiaGram::scan_tree_classes (std::list <std::string> &res) {
+    std::list <umlclassnode>::iterator it = uml.begin ();
     
-    while ( tmplist != NULL ) {
-        result.push_back (tmplist->key->name);
-        tmplist = tmplist->next;
+    while ( it != uml.begin () ) {
+        res.push_back ((*it).key.name);
+        ++it;
     }
     
-    return result;
+    return;
 }
 
 
 /* Creates a new umlclassnode with class as the key, then appends it to
   the end of list */
-umlclasslist append ( umlclasslist list, umlclassnode * class_ ) {
-    umlclasslist tmplist = list;
-    umlclassnode *tmpnode = NULL;
+void append ( std::list <umlclassnode> & list, umlclassnode & class_ ) {
+    std::list <umlclassnode>::iterator it = list.begin ();
+    umlclassnode tmpnode;
 
-    tmpnode = new umlclassnode;
-    tmpnode->key = class_->key;
-    tmpnode->parents = class_->parents;
-    tmpnode->associations = class_->associations;
-    tmpnode->dependencies = class_->dependencies;
-    tmpnode->next = NULL;
+    tmpnode.key = class_.key;
+    tmpnode.parents = class_.parents;
+    tmpnode.associations = class_.associations;
+    tmpnode.dependencies = class_.dependencies;
 
-    if ( tmplist != NULL ) {
-        while ( tmplist->next != NULL ) {
-            tmplist = tmplist->next;
-        }
-        tmplist->next = tmpnode;
-        return list;
-    } else {
-        return tmpnode;
-    }
+    list.push_back (tmpnode);
 }
 
 /* Returns a freshly constructed list of the classes that are used
    by the given class AND are themselves in the classlist of the
    given batch */
-umlclasslist
-DiaGram::list_classes(umlclasslist current_class) {
-    umlclasslist parents, dependencies;
+void
+DiaGram::list_classes(umlclassnode & current_class, std::list <umlclassnode> & res) {
+    std::list <umlclassnode>::iterator classit;
     std::list <umlassoc>::iterator associations;
     std::list <umlattribute>::iterator umla;
     std::list <umloperation>::iterator umlo;
-    umlclasslist result = NULL;
-    umlclasslist classes = uml;
-    umlclasslist tmpnode = NULL;
+    std::list <umlclassnode> classes = getUml ();
+    umlclassnode * tmpnode;
 
-    umla = current_class->key->attributes.begin ();
-    while (umla != current_class->key->attributes.end ()) {
+    umla = current_class.key.attributes.begin ();
+    while (umla != current_class.key.attributes.end ()) {
         if (!(*umla).type.empty ()) {
             tmpnode = find_by_name(classes, (*umla).type.c_str ());
-            if ( tmpnode && ! find_by_name(result, (*umla).type.c_str ())) {
-                result = append(result, tmpnode);
+            if ( tmpnode && ! find_by_name(res, (*umla).type.c_str ())) {
+                append(res, *tmpnode);
             }
         }
         ++umla;
     }
 
-    umlo = current_class->key->operations.begin ();
-    while ( umlo != current_class->key->operations.end ()) {
+    umlo = current_class.key.operations.begin ();
+    while ( umlo != current_class.key.operations.end ()) {
         tmpnode = find_by_name(classes, (*umlo).attr.type.c_str ());
-        if ( tmpnode && ! find_by_name(result, (*umlo).attr.type.c_str ())) {
-            result = append(result, tmpnode);
+        if ( tmpnode && ! find_by_name(res, (*umlo).attr.type.c_str ())) {
+            append(res, *tmpnode);
         }
         umla = (*umlo).parameters.begin ();
         while (umla != (*umlo).parameters.end ()) {
             tmpnode = find_by_name(classes, (*umla).type.c_str ());
-            if ( tmpnode && ! find_by_name(result, (*umla).type.c_str ())) {
-                result = append(result, tmpnode);
+            if ( tmpnode && ! find_by_name(res, (*umla).type.c_str ())) {
+                append(res, *tmpnode);
             }
             ++umla;
         }
         ++umlo;
     }
 
-    parents = current_class->parents;
-    while ( parents != NULL ) {
-        tmpnode = find_by_name(classes, parents->key->name.c_str ());
-        if ( tmpnode && ! find_by_name(result, parents->key->name.c_str ()) ) {
-            result = append(result, tmpnode);
+    classit = current_class.parents.begin ();
+    while ( classit != current_class.parents.end () ) {
+        tmpnode = find_by_name(classes, (*classit).key.name.c_str ());
+        if ( tmpnode && ! find_by_name(res, (*classit).key.name.c_str ()) ) {
+            append(res, *tmpnode);
         }
-        parents = parents->next;
+        ++classit;
     }
 
-    dependencies = current_class->dependencies;
-    while (dependencies != NULL) {
-        tmpnode = find_by_name(classes, dependencies->key->name.c_str ());
-        if ( tmpnode && ! find_by_name(result, dependencies->key->name.c_str ()) ) {
-            result = append(result, tmpnode);
+    classit = current_class.dependencies.begin ();
+    while (classit != current_class.dependencies.end ()) {
+        tmpnode = find_by_name(classes, (*classit).key.name.c_str ());
+        if ( tmpnode && ! find_by_name(res, (*classit).key.name.c_str ()) ) {
+            append(res, *tmpnode);
         }
-        dependencies = dependencies->next;
+        ++classit;
     }
 
-    associations = current_class->associations.begin ();
-    while (associations != current_class->associations.end ()) {
-        tmpnode = find_by_name(classes, (*associations).key->name.c_str ());
-        if ( tmpnode && ! find_by_name(result, (*associations).key->name.c_str ()) ) {
-            result = append(result, tmpnode);
+    associations = current_class.associations.begin ();
+    while (associations != current_class.associations.end ()) {
+        tmpnode = find_by_name(classes, (*associations).key.name.c_str ());
+        if ( tmpnode && ! find_by_name(res, (*associations).key.name.c_str ()) ) {
+            append(res, *tmpnode);
         }
         ++associations;
     }
 
-    return result;
-
+    return;
 }
 
 void
-DiaGram::push (umlclassnode *node)
+DiaGram::push (umlclassnode & node)
 {
-    umlclasslist used_classes, tmpnode;
+    std::list <umlclassnode> used_classes;
+    std::list <umlclassnode>::iterator it;
     module *m;
     declaration *d;
 
-    if (node == NULL || find_class (node) != NULL) {
+    if (find_class (node) != NULL) {
         return;
     }
 
-    tmp_classes.push_back (node->key->name);
+    tmp_classes.push_back (node.key.name);
     
-    used_classes = list_classes (node);
+    list_classes (node, used_classes);
     /* Make sure all classes that this one depends on are already pushed. */
-    tmpnode = used_classes;
-    while (tmpnode != NULL) {
+    it = used_classes.begin ();
+    while (it != used_classes.end ()) {
         /* don't push this class !*/
-        if (! !node->key->name.compare (tmpnode->key->name) &&
-            ! (is_present (tmp_classes, tmpnode->key->name.c_str ()) ^ invertsel)) {
-            push (tmpnode);
+        if (! !node.key.name.compare ((*it).key.name) &&
+            ! (is_present (tmp_classes, (*it).key.name.c_str ()) ^ invertsel)) {
+            push (*it);
         }
-        tmpnode = tmpnode->next;
+        ++it;
     }
 
-    while (used_classes != NULL) {
-        tmpnode = used_classes->next;
-        delete used_classes;
-        used_classes = tmpnode;
-    }
-
-    if (node->key->packages != NULL) {
+    if (node.key.package != NULL) {
         std::list <umlpackage> pkglist;
-        make_package_list (node->key->packages, pkglist);
+        make_package_list (node.key.package, pkglist);
         m = find_or_add_module (&decls, pkglist);
         if (m->contents == NULL) {
             m->contents = new declaration;
@@ -255,8 +229,11 @@ DiaGram::push (umlclassnode *node)
     d->decl_kind = dk_class;
     d->next = NULL;
     d->u.this_class = new umlclassnode;
-    memcpy (d->u.this_class, node, sizeof(umlclassnode));
-    if (node->key->stereotype.compare (0, 5, "CORBA") == 0)
+    d->u.this_class->key = node.key;
+    d->u.this_class->parents = node.parents;
+    d->u.this_class->associations = node.associations;
+    d->u.this_class->dependencies = node.dependencies;
+    if (node.key.stereotype.compare (0, 5, "CORBA") == 0)
         usecorba = true;
 }
 
@@ -282,14 +259,14 @@ DiaGram::add_include (const char *name)
 }
 
 void
-DiaGram::push_include (umlclassnode *node)
+DiaGram::push_include (umlclassnode &node)
 {
-    if (node->key->packages != NULL) {
+    if (node.key.package != NULL) {
         std::list <umlpackage> pkglist;
-        make_package_list (node->key->packages, pkglist);
+        make_package_list (node.key.package, pkglist);
         add_include ((*pkglist.begin ()).name.c_str ());
     } else {
-        add_include (node->key->name.c_str ());
+        add_include (node.key.name.c_str ());
     }
 }
 
@@ -314,45 +291,17 @@ DiaGram::determine_includes (declaration *d)
             inner = inner->next;
         }
     } else {
-        umlclasslist cl = list_classes (d->u.this_class);
-        umlclasslist tmp = cl;
-        while (cl != NULL) {
-            push_include (cl);
-            cl = cl->next;
-        }
-        cl = tmp;
-        while (cl != NULL) {
-            tmp = cl->next;
-            delete cl;
-            cl = tmp;
+        std::list <umlclassnode> cl;
+        list_classes (*d->u.this_class, cl);
+        std::list <umlclassnode>::iterator it = cl.begin ();
+        while (it != cl.end ()) {
+            push_include (*it);
+            ++it;
         }
     }
 }
 
 DiaGram::~DiaGram () {
-    umlclasslist tmplist = uml;
-    
-    while ( tmplist != NULL ) {
-        umlclasslist tmplist2 = tmplist;
-
-        umlclasslist list2 = tmplist->parents;
-        while (list2 != NULL) {
-            umlclasslist list2_ = list2;
-            list2 = list2->next;
-            delete list2_;
-        }
-
-        list2 = tmplist->dependencies;
-        while (list2 != NULL) {
-            umlclasslist list2_ = list2;
-            list2 = list2->next;
-            delete list2_;
-        }
-
-        tmplist = tmplist->next;
-        delete tmplist2->key;
-        delete tmplist2;
-    }
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

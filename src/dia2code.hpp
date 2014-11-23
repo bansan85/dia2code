@@ -80,32 +80,29 @@ struct umlclass {
     std::list <umlattribute> attributes;
     std::list <umloperation> operations;
     std::list <umltemplate> templates;
-    umlpackage *packages;
+    umlpackage *package;
     geometry geom;
 };
 
 struct umlassoc {
-    umlclass * key;
+    umlclass key;
     std::string name;
     char composite;
     char multiplicity[10]; /* association can declare multiplicity */
 };
 
 struct umlclassnode {
-    umlclass * key;
-    struct umlclassnode * parents;
+    umlclass key;
+    std::list <umlclassnode> parents;
     std::list <umlassoc> associations;
-    struct umlclassnode * dependencies;
-    struct umlclassnode * next;
+    std::list <umlclassnode> dependencies;
 };
-
-typedef umlclassnode * umlclasslist;
 
 std::string strtoupper(std::string s);
 std::string strtoupperfirst(std::string s);
 std::list <std::string> parse_class_names (char *s);
 int is_present(std::list <std::string> list, const char *name);
-umlclasslist find_by_name(umlclasslist list, const char * name);
+umlclassnode * find_by_name(std::list <umlclassnode> & list, const char * name);
 
 int is_enum_stereo (const char * stereo);
 int is_struct_stereo (const char * stereo);

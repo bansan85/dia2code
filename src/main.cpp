@@ -205,7 +205,7 @@ under certain conditions; read the COPYING file for details.\n";
     xmlKeepBlanksDefault(0);
 
     // We build the class list from the dia file here
-    diagram.setUml (parse_diagram(infile));
+    parse_diagram(infile, diagram.getUml ());
 
     // Code generation
     if ( !generator ) {

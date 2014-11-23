@@ -27,13 +27,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define MIN(x, y) (x < y ? x : y)
 #endif
 
-umlclasslist find(umlclasslist list, const char *id ) {
+umlclassnode * find(std::list <umlclassnode> & list, const char *id ) {
     if ( id != NULL ) {
-        while ( list != NULL ) {
-            if (list->key->id.compare (id) == 0) {
-                return list;
+        std::list <umlclassnode>::iterator it = list.begin ();
+        while ( it != list.end () ) {
+            if ((*it).key.id.compare (id) == 0) {
+                return &(*it);
             }
-            list = list->next;
+            ++it;
         }
     }
     return NULL;
@@ -66,28 +67,20 @@ bool parse_boolean(xmlNodePtr booleannode) {
 }
 
 
-void addparent(umlclass * key, umlclasslist derived) {
-    umlclasslist tmp;
-    tmp = new umlclassnode;
-    tmp->key = key;
-    tmp->parents = NULL;
-    tmp->dependencies = NULL;
-    tmp->next = derived->parents;
-    derived->parents = tmp;
+void addparent(umlclass & key, umlclassnode & derived) {
+    umlclassnode tmp;
+    tmp.key = key;
+    derived.parents.push_front (tmp);
 }
 
-void adddependency(umlclasslist dependent, umlclasslist dependee) {
-    umlclasslist tmp;
-    tmp = new umlclassnode;
-    tmp->key = dependent->key;
-    tmp->parents = NULL;
-    tmp->dependencies = NULL;
-    tmp->next = dependee->dependencies;
-    dependee->dependencies = tmp;
+void adddependency(umlclassnode & dependent, umlclassnode & dependee) {
+    umlclassnode tmp;
+    tmp.key = dependent.key;
+    dependee.dependencies.push_front (tmp);
 }
 
-void addaggregate(const char *name, char composite, umlclasslist base,
-                  umlclasslist associate, const char *multiplicity) {
+void addaggregate(const char *name, char composite, umlclassnode & base,
+                  umlclassnode & associate, const char *multiplicity) {
     umlassoc tmp;
     if (name != NULL && strlen (name) > 2)
         parse_dia_string(name, tmp.name);
@@ -95,36 +88,36 @@ void addaggregate(const char *name, char composite, umlclasslist base,
         strncpy (tmp.multiplicity, multiplicity+1, strlen (multiplicity)-2);
     else
         sprintf(tmp.multiplicity, "1");
-    tmp.key = base->key;
+    tmp.key = base.key;
     tmp.composite = composite;
-    associate->associations.push_front (tmp);
+    associate.associations.push_front (tmp);
 }
 
-void inherit_realize ( umlclasslist classlist, const char * base, const char * derived ) {
-    umlclasslist umlbase, umlderived;
+void inherit_realize ( std::list <umlclassnode> & classlist, const char * base, const char * derived ) {
+    umlclassnode *umlbase, *umlderived;
     umlbase = find(classlist, base);
     umlderived = find(classlist, derived);
     if ( umlbase != NULL && umlderived != NULL ) {
-        addparent(umlbase->key, umlderived);
+        addparent(umlbase->key, *umlderived);
     }
 }
 
-void associate ( umlclasslist classlist, const char * name, char composite,
+void associate ( std::list <umlclassnode> & classlist, const char * name, char composite,
                  const char * base, const char * aggregate, const char *multiplicity) {
-    umlclasslist umlbase, umlaggregate;
+    umlclassnode *umlbase, *umlaggregate;
     umlbase = find(classlist, base);
     umlaggregate = find(classlist, aggregate);
     if ( umlbase != NULL && umlaggregate != NULL) {
-        addaggregate(name, composite, umlbase, umlaggregate, multiplicity);
+        addaggregate(name, composite, *umlbase, *umlaggregate, multiplicity);
     }
 }
 
-void make_depend ( umlclasslist classlist, const char * dependent, const char * dependee) {
-    umlclasslist umldependent, umldependee;
+void make_depend ( std::list <umlclassnode> & classlist, const char * dependent, const char * dependee) {
+    umlclassnode *umldependent, *umldependee;
     umldependent = find(classlist, dependent);
     umldependee = find(classlist, dependee);
     if ( umldependent != NULL && umldependee != NULL) {
-        adddependency(umldependent, umldependee);
+        adddependency(*umldependent, *umldependee);
     }
 }
 
@@ -411,20 +404,11 @@ void parse_package(xmlNodePtr package, umlpackage &res) {
     return;
 }
 
-umlclasslist parse_class(xmlNodePtr class_) {
+void parse_class(xmlNodePtr class_, umlclassnode & res) {
     xmlNodePtr attribute;
     xmlChar *attrname;
-    umlclasslist listmyself;
-    umlclass *myself;
 
-    listmyself = new umlclassnode;
-    myself = new umlclass;
-    myself->packages = NULL;
-
-    listmyself->key = myself;
-    listmyself->parents = NULL;
-    listmyself->dependencies = NULL;
-    listmyself->next = NULL;
+    res.key.package = NULL;
 
     attribute = class_->xmlChildrenNode;
     while ( attribute != NULL ) {
@@ -435,41 +419,41 @@ umlclasslist parse_class(xmlNodePtr class_) {
             continue;
         }
         if ( !strcmp("name", BAD_TSAC2 (attrname)) ) {
-            parse_dia_node(attribute->xmlChildrenNode, myself->name);
+            parse_dia_node(attribute->xmlChildrenNode, res.key.name);
         } else if ( !strcmp ( "obj_pos", BAD_TSAC2 (attrname) ) ) {
-            parse_geom_position(attribute->xmlChildrenNode, &myself->geom );
+            parse_geom_position(attribute->xmlChildrenNode, &res.key.geom );
         } else if ( !strcmp ( "elem_width", BAD_TSAC2 (attrname) ) ) {
-            parse_geom_width(attribute->xmlChildrenNode, &myself->geom );
+            parse_geom_width(attribute->xmlChildrenNode, &res.key.geom );
         } else if ( !strcmp ( "elem_height", BAD_TSAC2 (attrname )) ) {
-            parse_geom_height(attribute->xmlChildrenNode, &myself->geom );
+            parse_geom_height(attribute->xmlChildrenNode, &res.key.geom );
         } else if ( !strcmp("comment", BAD_TSAC2 (attrname)))  {
             if (attribute->xmlChildrenNode->xmlChildrenNode != NULL) {
-               parse_dia_node(attribute->xmlChildrenNode, myself->comment);
+               parse_dia_node(attribute->xmlChildrenNode, res.key.comment);
             }  else {
-               myself->comment.clear ();
+               res.key.comment.clear ();
             }
         } else if ( !strcmp("stereotype", BAD_TSAC2 (attrname)) ) {
             if ( attribute->xmlChildrenNode->xmlChildrenNode != NULL ) {
-                parse_dia_node(attribute->xmlChildrenNode, myself->stereotype);
+                parse_dia_node(attribute->xmlChildrenNode, res.key.stereotype);
             } else {
-                myself->stereotype.clear ();
+                res.key.stereotype.clear ();
             }
         } else if ( !strcmp("abstract", BAD_TSAC2 (attrname)) ) {
-            myself->isabstract = parse_boolean(attribute->xmlChildrenNode);
+            res.key.isabstract = parse_boolean(attribute->xmlChildrenNode);
         } else if ( !strcmp("attributes", BAD_TSAC2 (attrname)) ) {
-            parse_attributes(attribute->xmlChildrenNode, myself->attributes);
+            parse_attributes(attribute->xmlChildrenNode, res.key.attributes);
         } else if ( !strcmp("operations", BAD_TSAC2 (attrname)) ) {
-            parse_operations(attribute->xmlChildrenNode, myself->operations);
-            if ( myself->stereotype.compare ("getset") == 0) {
-                make_getset_methods(*myself);
+            parse_operations(attribute->xmlChildrenNode, res.key.operations);
+            if ( res.key.stereotype.compare ("getset") == 0) {
+                make_getset_methods(res.key);
             }
         } else if ( !strcmp("templates", BAD_TSAC2 (attrname)) ) {
-            parse_templates(attribute->xmlChildrenNode, myself->templates);
+            parse_templates(attribute->xmlChildrenNode, res.key.templates);
         }
         free(attrname);
         attribute = attribute->next;
     }
-    return listmyself;
+    return;
 }
 
 /**
@@ -480,12 +464,12 @@ umlclasslist parse_class(xmlNodePtr class_) {
   name, but the interface itself will not be inserted
   into the classlist, so no code can be generated for it.
 */
-void lolipop_implementation(umlclasslist classlist, xmlNodePtr object) {
+void lolipop_implementation(std::list <umlclassnode> & classlist, xmlNodePtr object) {
     xmlNodePtr attribute;
     xmlChar *id = NULL;
     const char *name = NULL;
     xmlChar *attrname;
-    umlclasslist implementator;
+    umlclassnode * implementator;
 
     attribute = object->xmlChildrenNode;
     while ( attribute != NULL ) {
@@ -506,13 +490,13 @@ void lolipop_implementation(umlclasslist classlist, xmlNodePtr object) {
     implementator = find(classlist, BAD_TSAC2 (id));
     free(id);
     if (implementator != NULL && name != NULL && strlen(name) > 2) {
-        umlclass * key = new umlclass;
-        key->packages = NULL;
-        key->id.assign ("00");
-        parse_dia_string (name, key->name);
-        key->stereotype.assign ("Interface");
-        key->isabstract = 1;
-        addparent(key, implementator);
+        umlclass key;
+        key.package = NULL;
+        key.id.assign ("00");
+        parse_dia_string (name, key.name);
+        key.stereotype.assign ("Interface");
+        key.isabstract = 1;
+        addparent(key, *implementator);
     }
 }
 
@@ -566,13 +550,12 @@ xmlNodePtr getNextObject(xmlNodePtr from) {
     return NULL;
 }
 
-umlclasslist parse_diagram(char *diafile) {
+void parse_diagram(char *diafile, std::list <umlclassnode> & res) {
     xmlDocPtr ptr;
     xmlChar *end1 = NULL;
     xmlChar *end2 = NULL;
 
     xmlNodePtr object = NULL;
-    umlclasslist classlist = NULL, endlist = NULL;
     std::list <umlpackage>::iterator dummypcklst;
     std::list <umlpackage> packagelst;
 
@@ -591,19 +574,15 @@ umlclasslist parse_diagram(char *diafile) {
         // Here we have a Dia object 
         if (strcmp("UML - Class", BAD_TSAC2 (objtype)) == 0) {
             // Here we have a class definition
-            umlclasslist tmplist = parse_class(object);
+            umlclassnode tmplist;
+            parse_class(object, tmplist);
             // We get the ID of the object here
             xmlChar *objid = xmlGetProp(object, BAD_CAST2 ("id"));
-            tmplist->key->id.assign (BAD_TSAC2 (objid));
+            tmplist.key.id.assign (BAD_TSAC2 (objid));
             free(objid);
 
             // We insert it here
-            if ( classlist == NULL ) {
-                classlist = endlist = tmplist;
-            } else {
-                endlist->next = tmplist;
-                endlist = tmplist;
-            }
+            res.push_back (tmplist);
         } else if ( !strcmp("UML - LargePackage", BAD_TSAC2 (objtype)) || !strcmp("UML - SmallPackage", BAD_TSAC2 (objtype)) ) {
             umlpackage tmppck;
             parse_package(object, tmppck);
@@ -739,14 +718,16 @@ umlclasslist parse_diagram(char *diafile) {
                 if (direction == 1) {
                     if (thisname == NULL || !*thisname || !strcmp("##", thisname))
                         thisname = name_a;
-                    associate(classlist, thisname, composite, BAD_TSAC2 (end1), BAD_TSAC2 (end2), multiplicity_a);
+                    associate(res, thisname, composite, BAD_TSAC2 (end1), BAD_TSAC2 (end2), multiplicity_a);
                 } else {
                     if (thisname == NULL || !*thisname || !strcmp("##", thisname))
                         thisname = name_b;
-                    associate(classlist, thisname, composite, BAD_TSAC2 (end2), BAD_TSAC2(end1), multiplicity_b);
+                    associate(res, thisname, composite, BAD_TSAC2 (end2), BAD_TSAC2(end1), multiplicity_b);
                 }
                 free(end1);
+                end1 = NULL;
                 free(end2);
+                end2 = NULL;
             }
 
         } else if ( !strcmp("UML - Dependency", BAD_TSAC2 (objtype)) ) {
@@ -755,7 +736,7 @@ umlclasslist parse_diagram(char *diafile) {
                 if ( !strcmp("connections", BAD_TSAC2 (attribute->name)) ) {
                     end1 = xmlGetProp(attribute->xmlChildrenNode, BAD_CAST2 ("to"));
                     end2 = xmlGetProp(attribute->xmlChildrenNode->next, BAD_CAST2 ("to"));
-                    make_depend(classlist, BAD_TSAC2 (end1), BAD_TSAC2 (end2));
+                    make_depend(res, BAD_TSAC2 (end1), BAD_TSAC2 (end2));
                     free(end1);
                     free(end2);
                 }
@@ -767,14 +748,14 @@ umlclasslist parse_diagram(char *diafile) {
                 if ( !strcmp("connections", BAD_TSAC2 (attribute->name)) ) {
                     end1 = xmlGetProp(attribute->xmlChildrenNode, BAD_CAST2 ("to"));
                     end2 = xmlGetProp(attribute->xmlChildrenNode->next, BAD_CAST2 ("to"));
-                    inherit_realize(classlist, BAD_TSAC2 (end1), BAD_TSAC2(end2));
+                    inherit_realize(res, BAD_TSAC2 (end1), BAD_TSAC2(end2));
                     free(end2);
                     free(end1);
                 }
                 attribute = attribute->next;
             }
         } else if ( !strcmp("UML - Implements", BAD_TSAC2 (objtype)) ) {
-            lolipop_implementation(classlist, object);
+            lolipop_implementation(res, object);
         }
         free(objtype);
         object = getNextObject(object);
@@ -792,7 +773,7 @@ umlclasslist parse_diagram(char *diafile) {
                 if ( !strcmp("connections", BAD_TSAC2 (attribute->name)) ) {
                     end1 = xmlGetProp(attribute->xmlChildrenNode, BAD_CAST2 ("to"));
                     end2 = xmlGetProp(attribute->xmlChildrenNode->next, BAD_CAST2 ("to"));
-                    inherit_realize(classlist, BAD_TSAC2 (end1), BAD_TSAC2(end2));
+                    inherit_realize(res, BAD_TSAC2 (end1), BAD_TSAC2(end2));
                     free(end2);
                     free(end1);
                 }
@@ -803,9 +784,9 @@ umlclasslist parse_diagram(char *diafile) {
         object = getNextObject(object);
     }
 
-    /* Packages: we should scan the packagelist and then the classlist.
+    /* Packages: we should scan the packagelist and then the res.
        Scanning the packagelist we'll build all relationships between
-       packages.  Scanning the classlist we'll associate its own package
+       packages.  Scanning the res we'll associate its own package
        to each class.
 
        FIXME: maybe we can do both in the same pass */
@@ -834,27 +815,28 @@ umlclasslist parse_diagram(char *diafile) {
     /* Associate packages to classes */
     dummypcklst = packagelst.begin ();
     while ( dummypcklst != packagelst.end () ) {
-        umlclasslist tmplist = classlist;
-        while ( tmplist != NULL ) {
-            if ( is_inside(&(*dummypcklst).geom,&tmplist->key->geom) ) {
-                if ( (tmplist->key->packages == NULL) ||
-                     (! is_inside ( &(*dummypcklst).geom, &tmplist->key->packages->geom ))) {
-                    tmplist->key->packages = new umlpackage;
-                    tmplist->key->packages->id = (*dummypcklst).id;
-                    tmplist->key->packages->name = (*dummypcklst).name;
-                    tmplist->key->packages->geom = (*dummypcklst).geom;
-                    tmplist->key->packages->parent = (*dummypcklst).parent;
-                    tmplist->key->packages->directory = (*dummypcklst).directory;
+        std::list <umlclassnode>::iterator it = res.begin ();
+        while ( it != res.end () ) {
+            if ( is_inside(&(*dummypcklst).geom,&(*it).key.geom) ) {
+                if ( ((*it).key.package == NULL) ||
+                     (! is_inside ( &(*dummypcklst).geom, &(*it).key.package->geom ))) {
+                    free ((*it).key.package);
+                    (*it).key.package = new umlpackage;
+                    (*it).key.package->id = (*dummypcklst).id;
+                    (*it).key.package->name = (*dummypcklst).name;
+                    (*it).key.package->geom = (*dummypcklst).geom;
+                    (*it).key.package->parent = (*dummypcklst).parent;
+                    (*it).key.package->directory = (*dummypcklst).directory;
                 }
             }
-            tmplist = tmplist->next;
+            ++it;
         }
         ++dummypcklst;
     }
     
     xmlFreeDoc (ptr);
     
-    return classlist;
+    return;
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

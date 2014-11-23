@@ -42,12 +42,13 @@ class GenerateCode {
         bool        buildtree : 1;
         bool        bOpenBraceOnNewline : 1;
         
-        int pass_by_reference (umlclass *cl);
+        int pass_by_reference (umlclass &cl);
         void gen_class (umlclassnode *node);
         const char * cppname (std::string name);
         void check_visibility (int *curr_vis, int new_vis);
         std::string spc();
         void open_outfile (const char *filename);
+        void gen_decl (declaration *d);
     public:
         GenerateCode (DiaGram & diagram, const char * ext);
 
@@ -79,8 +80,6 @@ class GenerateCode {
         bool getOpenBraceOnNewline ();
         void setOpenBraceOnNewline (bool newline);
 
-        void gen_decl (declaration *d);
-        
         virtual ~GenerateCode ();
 };
 

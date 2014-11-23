@@ -147,7 +147,9 @@ void
 GenerateCode::generate_code ()
 {
     declaration *d;
-    umlclasslist tmplist = getDia ().getUml ();
+    std::list <umlclassnode> tmplist = getDia ().getUml ();
+    std::list <umlclassnode>::iterator it = tmplist.begin ();
+    
     FILE *licensefile = NULL;
 
     /* open license file */
@@ -159,11 +161,11 @@ GenerateCode::generate_code ()
         }
     }
 
-    while (tmplist != NULL) {
-        if (! (is_present (getDia ().getGenClasses (), tmplist->key->name.c_str ()) ^ getDia ().getInvertSel ())) {
-            getDia ().push (tmplist);
+    while (it != tmplist.end ()) {
+        if (! (is_present (getDia ().getGenClasses (), (*it).key.name.c_str ()) ^ getDia ().getInvertSel ())) {
+            getDia ().push (*it);
         }
-        tmplist = tmplist->next;
+        ++it;
     }
 
     /* Generate a file for each outer declaration.  */
@@ -175,7 +177,7 @@ GenerateCode::generate_code ()
         if (d->decl_kind == dk_module) {
             name = d->u.this_module->pkg.name;
         } else {         /* dk_class */
-            name = d->u.this_class->key->name;
+            name = d->u.this_class->key.name;
         }
         filename.assign (name);
         filename.append (".");
@@ -272,16 +274,14 @@ nospc (char *str)
 }
 
 int
-GenerateCode::pass_by_reference (umlclass *cl)
+GenerateCode::pass_by_reference (umlclass &cl)
 {
     const char *st;
-    if (cl == NULL)
-        return 0;
-    st = cl->stereotype.c_str ();
+    st = cl.stereotype.c_str ();
     if (strlen (st) == 0)
         return 1;
     if (is_typedef_stereo (st)) {
-        umlclassnode *ref = find_by_name (dia.getUml (), cl->name.c_str ());
+        umlclassnode *ref = find_by_name (dia.getUml (), cl.name.c_str ());
         if (ref == NULL)
             return 0;
         return pass_by_reference (ref->key);
@@ -291,12 +291,10 @@ GenerateCode::pass_by_reference (umlclass *cl)
 }
 
 static int
-is_oo_class (umlclass *cl)
+is_oo_class (umlclass &cl)
 {
     const char *st;
-    if (cl == NULL)
-        return 0;
-    st = cl->stereotype.c_str ();
+    st = cl.stereotype.c_str ();
     if (strlen (st) == 0)
         return 1;
     return (!is_const_stereo (st) &&
@@ -342,17 +340,15 @@ GenerateCode::cppname (std::string name)
 
 
 const char *
-fqname (umlclassnode *node, bool use_ref_type)
+fqname (umlclassnode &node, bool use_ref_type)
 {
     static std::string buf;
 
     buf.clear ();
-    if (node == NULL)
-        return "";
-    if (node->key->packages != NULL) {
+    if (node.key.package != NULL) {
         std::list <umlpackage> pkglist;
         std::list <umlpackage>::iterator it;
-        make_package_list (node->key->packages, pkglist);
+        make_package_list (node.key.package, pkglist);
         it = pkglist.begin ();
         while (it != pkglist.end ()) {
             buf.append ((*it).name);
@@ -360,7 +356,7 @@ fqname (umlclassnode *node, bool use_ref_type)
             ++it;
         }
     }
-    buf.append (node->key->name);
+    buf.append (node.key.name);
     if (use_ref_type)
         buf.append ("*");
     return buf.c_str ();
@@ -393,8 +389,8 @@ GenerateCode::check_visibility (int *curr_vis, int new_vis)
 void
 GenerateCode::gen_class (umlclassnode *node)
 {
-    const char *name = node->key->name.c_str ();
-    const char *stype = node->key->stereotype.c_str ();
+    const char *name = node->key.name.c_str ();
+    const char *stype = node->key.stereotype.c_str ();
     int is_valuetype = 0;
 
     if (strlen (stype) > 0) {
@@ -402,18 +398,18 @@ GenerateCode::gen_class (umlclassnode *node)
         is_valuetype = eq (stype, "CORBAValue");
     }
 
-    file << spc () << "/// class " << name << " - " << node->key->comment.c_str () << "\n";
+    file << spc () << "/// class " << name << " - " << node->key.comment.c_str () << "\n";
 
-    if (!node->key->templates.empty ()) {
-        std::list <umltemplate>::iterator template_ = node->key->templates.begin ();
+    if (!node->key.templates.empty ()) {
+        std::list <umltemplate>::iterator template_ = node->key.templates.begin ();
         if (is_valuetype) {
             fprintf (stderr, "CORBAValue %s: template ignored\n", name);
         } else {
             file << spc () << "template <";
-            while (template_ != node->key->templates.end ()) {
+            while (template_ != node->key.templates.end ()) {
                 file << (*template_).type.c_str () << " " << (*template_).name.c_str ();
                 ++template_;
-                if (template_ != node->key->templates.end ())
+                if (template_ != node->key.templates.end ())
                     file << ", ";
             }
             file << ">\n";
@@ -421,13 +417,13 @@ GenerateCode::gen_class (umlclassnode *node)
     }
 
     file << spc () << "class " << name;
-    if (node->parents != NULL) {
-        umlclasslist parent = node->parents;
+    if (!node->parents.empty ()) {
+        std::list <umlclassnode>::iterator parent = node->parents.begin ();
         file << " : ";
-        while (parent != NULL) {
-            file << "public " << fqname (parent, false);
-            parent = parent->next;
-            if (parent != NULL)
+        while (parent != node->parents.end ()) {
+            file << "public " << fqname (*parent, false);
+            ++parent;
+            if (parent != node->parents.end ())
                 file << ", ";
         }
     } else if (is_valuetype) {
@@ -454,25 +450,25 @@ GenerateCode::gen_class (umlclassnode *node)
             umlclassnode *ref;
             if (!(*assoc).name.empty ())
             {
-                ref = find_by_name (dia.getUml (), (*assoc).key->name.c_str ());
+                ref = find_by_name (dia.getUml (), (*assoc).key.name.c_str ());
                 if (ref != NULL)
-                    file << spc () << fqname (ref, !(*assoc).composite);
+                    file << spc () << fqname (*ref, !(*assoc).composite);
                 else
-                    file << spc () << cppname ((*assoc).key->name);
+                    file << spc () << cppname ((*assoc).key.name);
                 file << " " << (*assoc).name.c_str () << ";\n";
             }
             ++assoc;
         }
     }
 
-    if (!node->key->attributes.empty ()) {
-        std::list <umlattribute>::iterator umla = node->key->attributes.begin ();
+    if (!node->key.attributes.empty ()) {
+        std::list <umlattribute>::iterator umla = node->key.attributes.begin ();
         if (is_valuetype) {
             file << spc () << "// Public state members\n";
             indentlevel--;
             file << spc () << "public:\n";
             indentlevel++;
-            while (umla != node->key->attributes.end ()) {
+            while (umla != node->key.attributes.end ()) {
                 const char *member = (*umla).name.c_str ();
                 umlclassnode *ref;
                 if ((*umla).visibility != '0') {
@@ -485,7 +481,7 @@ GenerateCode::gen_class (umlclassnode *node)
                 }
                 ref = find_by_name (dia.getUml (), (*umla).type.c_str ());
                 if (ref != NULL)
-                    file << spc () << fqname (ref, true);
+                    file << spc () << fqname (*ref, true);
                 else
                     file << spc () << cppname ((*umla).type);
                 if (!bOpenBraceOnNewline) {
@@ -504,7 +500,7 @@ GenerateCode::gen_class (umlclassnode *node)
                     int by_ref = pass_by_reference (ref->key);
                     if (by_ref)
                         file << "const ";
-                    file << fqname (ref, true);
+                    file << fqname (*ref, true);
                     if (by_ref)
                         file << "&";
                 } else {
@@ -526,7 +522,7 @@ GenerateCode::gen_class (umlclassnode *node)
         } else {
             int tmpv = -1;
             file << spc () << "// Attributes\n";
-            while (umla != node->key->attributes.end ()) {
+            while (umla != node->key.attributes.end ()) {
                 check_visibility (&tmpv, (*umla).visibility);
                 if (!(*umla).comment.empty ()) {
                     file << spc () << "/// " << (*umla).comment.c_str () << "\n";
@@ -545,8 +541,8 @@ GenerateCode::gen_class (umlclassnode *node)
         }
     }
 
-    if (!node->key->operations.empty ()) {
-        std::list <umloperation>::iterator umlo = node->key->operations.begin ();
+    if (!node->key.operations.empty ()) {
+        std::list <umloperation>::iterator umlo = node->key.operations.begin ();
         int tmpv = -1;
         file << spc () << "// Operations\n";
         if (is_valuetype) {
@@ -554,7 +550,7 @@ GenerateCode::gen_class (umlclassnode *node)
             file << spc () << "public:\n";
             indentlevel++;
         }
-        while (umlo != node->key->operations.end ()) {
+        while (umlo != node->key.operations.end ()) {
             std::list <umlattribute>::iterator tmpa;
             if (is_valuetype) {
                 if ((*umlo).attr.visibility != '0')
@@ -620,17 +616,17 @@ GenerateCode::gen_class (umlclassnode *node)
         }
     }
 
-    if ((!node->key->attributes.empty ()) && (is_valuetype)) {
-        std::list <umlattribute>::iterator umla = node->key->attributes.begin ();
+    if ((!node->key.attributes.empty ()) && (is_valuetype)) {
+        std::list <umlattribute>::iterator umla = node->key.attributes.begin ();
         file << "\n";
         indentlevel--;
         file << spc () << "private:  // State member implementation\n";
         indentlevel++;
-        while (umla != node->key->attributes.end ()) {
+        while (umla != node->key.attributes.end ()) {
             umlclassnode *ref = find_by_name (dia.getUml (), (*umla).type.c_str ());
             file << spc ();
             if (ref != NULL) {
-                file << fqname (ref, is_oo_class (ref->key));
+                file << fqname (*ref, is_oo_class (ref->key));
                 /*
                  * FIXME: Find a better way to decide whether to use
                  * a pointer.
@@ -680,9 +676,9 @@ GenerateCode::gen_decl (declaration *d)
     }
 
     node = d->u.this_class;
-    stype = node->key->stereotype.c_str ();
-    name = node->key->name.c_str ();
-    umla = node->key->attributes.begin ();
+    stype = node->key.stereotype.c_str ();
+    name = node->key.name.c_str ();
+    umla = node->key.attributes.begin ();
 
     if (strlen (stype) == 0) {
         gen_class (node);
@@ -693,7 +689,7 @@ GenerateCode::gen_decl (declaration *d)
         file << spc () << "// CORBANative: " << name << " \n\n";
 
     } else if (is_const_stereo (stype)) {
-        if (umla == node->key->attributes.end ()) {
+        if (umla == node->key.attributes.end ()) {
             fprintf (stderr, "Error: first attribute not set at %s\n", name);
             exit (1);
         }
@@ -712,7 +708,7 @@ GenerateCode::gen_decl (declaration *d)
             file << spc () << "enum " << name << " {\n";
         }
         indentlevel++;
-        while (umla != node->key->attributes.end ()) {
+        while (umla != node->key.attributes.end ()) {
             const char *literal = (*umla).name.c_str ();
             check_umlattr (*umla, name);
             if (!(*umla).type.empty ())
@@ -721,7 +717,7 @@ GenerateCode::gen_decl (declaration *d)
             if (!(*umla).value.empty ())
                 file << " = " << (*umla).value.c_str ();
             ++umla;
-            if (umla != node->key->attributes.end ())
+            if (umla != node->key.attributes.end ())
                 file << ",";
             file << "\n";
         }
@@ -738,7 +734,7 @@ GenerateCode::gen_decl (declaration *d)
             file << spc () << "struct " << name << " {\n";
         }
         indentlevel++;
-        while (umla != node->key->attributes.end ()) {
+        while (umla != node->key.attributes.end ()) {
             check_umlattr (*umla, name);
             file << spc () << cppname ((*umla).type) << " " << (*umla).name.c_str ();
             if (!(*umla).value.empty ())
@@ -754,7 +750,7 @@ GenerateCode::gen_decl (declaration *d)
         fprintf (stderr, "%s: CORBAException not yet implemented\n", name);
 
     } else if (eq (stype, "CORBAUnion")) {
-        if (umla == node->key->attributes.end ()) {
+        if (umla == node->key.attributes.end ()) {
             fprintf (stderr, "Error: attributes not set at union %s\n", name);
             exit (1);
         }
@@ -771,7 +767,7 @@ GenerateCode::gen_decl (declaration *d)
         indentlevel++;
         file << spc () << (*umla).type.c_str () << " _d();  // body TBD\n\n";
         ++umla;
-        while (umla != node->key->attributes.end ()) {
+        while (umla != node->key.attributes.end ()) {
             check_umlattr (*umla, name);
             file << spc () << cppname ((*umla).type) << " " << (*umla).name.c_str () << " ();  // body TBD\n";
             file << spc () << "void " << (*umla).name.c_str () << " (" << cppname ((*umla).type) << " _value);  // body TBD\n\n";
@@ -789,7 +785,7 @@ GenerateCode::gen_decl (declaration *d)
                    These dimensions are given in square brackets, e.g.
                    [3][10]
          */
-        if (umla == node->key->attributes.end ()) {
+        if (umla == node->key.attributes.end ()) {
             fprintf (stderr, "Error: first attribute (impl type) not set "
                              "at typedef %s\n", name);
             exit (1);

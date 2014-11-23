@@ -18,13 +18,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "dia2code.hpp"
 
-umlclasslist find_by_name(umlclasslist list, const char * name ) {
+umlclassnode * find_by_name(std::list <umlclassnode> & list, const char * name ) {
     if ( name != NULL && strlen(name) > 0 ) {
-        while ( list != NULL ) {
-            if ( list->key->name.compare (name) == 0) {
-                return list;
+        std::list <umlclassnode>::iterator it = list.begin ();
+        while ( it != list.end () ) {
+            if ( (*it).key.name.compare (name) == 0) {
+                return &*it;
             }
-            list = list->next;
+            ++it;
         }
     }
     return NULL;
