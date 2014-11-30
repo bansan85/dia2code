@@ -29,8 +29,6 @@ int main(int argc, char **argv) {
     int i;
     char *infile = NULL;    /* The input file */
     int parameter = 0;
-    /* put to 1 in the params loop if the generator accepts buildtree option */
-    int generator_buildtree = 0;
     
     uint8_t tab = 4;
     char   *ext = NULL, *bext = NULL, *outdir = NULL, *license = NULL;
@@ -126,7 +124,6 @@ under certain conditions; read the COPYING file for details.\n";
                 generator = new GenerateCodeCpp (diagram);
             } else if ( !strcmp (argv[i], "java") ) {
 //                generator = generators[1];
-                generator_buildtree = 1;
             } else if ( !strcmp (argv[i], "c") ) {
 //                generator = generators[2];
             } else if ( !strcmp (argv[i], "sql") ) {
@@ -137,7 +134,6 @@ under certain conditions; read the COPYING file for details.\n";
 //                generator = generators[5];
             } else if ( !strcmp (argv[i], "php") ) {
 //                generator = generators[6];
-                generator_buildtree = 1;
             } else if ( !strcmp (argv[i], "shp") ) {
 //                generator = generators[7];
             } else if ( !strcmp (argv[i], "idl") ) {
@@ -150,7 +146,6 @@ under certain conditions; read the COPYING file for details.\n";
 //                generator = generators[11];
             } else if ( !strcmp(argv[i], "as3") ) {
 //                generator = generators[12];
-                generator_buildtree = 1;
             } else {
                 parameter = -1;
             }
@@ -196,11 +191,6 @@ under certain conditions; read the COPYING file for details.\n";
     if ( parameter != 0 || infile == NULL ) {
         printf ("%s\nUsage: %s %s\n\n%s\n", notice, argv[0], help, bighelp);
         exit (2);
-    }
-
-    if (generator_buildtree == 0 && buildtree) {
-        buildtree = false;
-        fprintf( stderr,"warning: this generator does not support building tree yet. disabled \n" );
     }
 
     LIBXML_TEST_VERSION;
