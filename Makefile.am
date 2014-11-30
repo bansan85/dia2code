@@ -9,4 +9,4 @@ AUTOMAKE_OPTIONS = foreign
 
 ACLOCAL_AMFLAGS	=	-I m4
 
-CLEANFILES = stamp-h2 dia2code-*.tar.gz
+CLEANFILES = stamp-h2 dia2code-*.tar.gz *.log cov-*.tgz
