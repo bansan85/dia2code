@@ -138,38 +138,4 @@ is_const_stereo (const char *stereo)
             !strcmp (stereo, "CORBAConstant"));
 }
 
-/* 
-* find a diaoid token in a string
-* the diaoid must be formatted as @diaoid <oid> where oid is a string without space
-* @param the NULL terminated string buffer to look in 
-* @param (out) a pointer located on the first oid charater - NULL is allowed if you dont need this pointer
-* @return the diaoid found or NULL if none is found 
-*/
-char *find_diaoid( const char *buf, char **newpos  )
-{
-    const char *oidtag = "@diaoid";
-    char *cp, *ep; // current pos, diaoid ending position
-    char *oidp=NULL;
-    if( buf == NULL ) {
-        return NULL;
-    }
-    cp = const_cast <char *> (strstr( buf, oidtag ));
-    if( cp == NULL )
-        return NULL;
-    cp += strlen(oidtag)+1;
-    /* get the oid */
-    ep = strpbrk( cp, " \t\n\r" );
-    if( ep == NULL ) {
-        oidp = strdup (cp);
-    } else {
-        oidp= strndup (cp, static_cast <size_t> (ep-cp));
-    }
-    /* caller want the new position : we set it */
-    if( newpos != NULL ) {
-        (*newpos) = cp;
-    }
-    return oidp;
-}
-
-
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

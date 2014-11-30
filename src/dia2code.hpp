@@ -111,18 +111,6 @@ int is_const_stereo (const char * stereo);
 
 void make_package_list(umlpackage *package, std::list <umlpackage> &res);
 
-char *find_diaoid( const char *buf, char **newpos  );
-void d2c_log( int level, char * msg );
-
-struct param_list
-{
-  std::string name;
-  std::string value;
-  struct param_list *next;
-};
-
-extern int indent_count;
-extern int indent_open_brace_on_newline;
 extern int generate_backup;
 
 #endif
