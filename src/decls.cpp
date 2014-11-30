@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "decls.hpp"
 
-declaration *decls = NULL;
+std::list <declaration> decls;
 
 module *
 create_nested_modules_from_pkglist (std::list <umlpackage> &pkglist,
@@ -28,14 +28,12 @@ create_nested_modules_from_pkglist (std::list <umlpackage> &pkglist,
     /* Expects pkglist and m to be non-NULL and m->contents to be NULL.
        Returns a reference to the innermost module created.  */
     while (it != pkglist.end ()) {
-        declaration *d = new declaration;
-        d->decl_kind = dk_module;
-        d->prev = d->next = NULL;
-        d->u.this_module = new module;
-        m->contents = d;
-        m = d->u.this_module;
+        declaration d;
+        d.decl_kind = dk_module;
+        d.u.this_module = new module;
+        m->contents.push_back(d);
+        m = d.u.this_module;
         m->pkg = *it;
-        m->contents = NULL;
         ++it;
     }
     return m;
@@ -43,64 +41,67 @@ create_nested_modules_from_pkglist (std::list <umlpackage> &pkglist,
 
 
 module *
-find_or_add_module (declaration  **dptr,
+find_or_add_module (std::list <declaration> &dptr,
                     std::list <umlpackage> &pkglist)
 {
-    declaration *d = *dptr;
+    declaration d;
+    std::list <declaration>::iterator it;
     module *m;
 
     if (pkglist.empty ())
         return NULL;
-    if (d == NULL) {
-        *dptr = new declaration;
-        d = *dptr;
-    } else {
-        declaration *dprev = NULL;
-        while (d != NULL) {
-            if (d->decl_kind == dk_module &&
-                d->u.this_module->pkg.name.compare ((*pkglist.begin ()).name) == 0) {
-                m = d->u.this_module;
-                if (pkglist.size () == 1)
-                    return m;
-                if (m->contents == NULL) {
-                    return create_nested_modules_from_pkglist (pkglist, m);
-                }
-                return find_or_add_module (&m->contents, pkglist);
+    
+    it = dptr.begin ();
+    while (it != dptr.end ()) {
+        if ((*it).decl_kind == dk_module &&
+            (*it).u.this_module->pkg.name.compare ((*pkglist.begin ()).name) == 0) {
+            m = (*it).u.this_module;
+            if (pkglist.size () == 1)
+                return m;
+            if (m->contents.empty ()) {
+                return create_nested_modules_from_pkglist (pkglist, m);
             }
-            dprev = d;
-            d = d->next;
+            return find_or_add_module (m->contents, pkglist);
         }
-        if (dprev != NULL) {
-            dprev->next = new declaration;
-            d = dprev->next;
-        }
+        ++it;
     }
-    d->decl_kind = dk_module;
-    d->next = NULL;
-    d->u.this_module = new module;
-    m = d->u.this_module;
+    d.decl_kind = dk_module;
+    d.u.this_module = new module;
+    m = d.u.this_module;
     m->pkg = *pkglist.begin ();
-    m->contents = NULL;
+    dptr.push_back (d);
+
     return create_nested_modules_from_pkglist (pkglist, m);
 }
 
 
 module *
-find_module (declaration   *d,
+find_module (std::list <declaration> &dptr,
              std::list <umlpackage>::iterator begin,
              std::list <umlpackage>::iterator end)
 {
-    while (d != NULL) {
-        if (d->decl_kind == dk_module) {
-            module *m = d->u.this_module;
+    std::list <declaration>::iterator it = dptr.begin ();
+    while (it != dptr.end ()) {
+        if ((*it).decl_kind == dk_module) {
+            module *m = (*it).u.this_module;
             if (m->pkg.name.compare ((*begin).name) == 0) {
                 if (std::next (begin) != end)
-                    return find_module (m->contents, std::next (begin), end);
+                {
+                    std::list<declaration> liste;
+
+                    if (m->contents.empty ())
+                        return NULL;
+                    else
+                    {
+                        liste.push_back (*m->contents.begin ());
+                        return find_module (liste, std::next (begin), end);
+                    }
+                }
                 else
                     return m;
             }
         }
-        d = d->next;
+        ++it;
     }
     return NULL;
 }
@@ -109,41 +110,30 @@ find_module (declaration   *d,
 declaration *
 find_class (umlclassnode &node)
 {
-    declaration *d;
+    std::list <declaration> *d;
+    std::list <declaration>::iterator it;
 
     if (node.key.package) {
         std::list <umlpackage> pkglist;
         make_package_list (node.key.package, pkglist);
         module *m = find_module (decls, pkglist.begin (), pkglist.end ());
-        if (m == NULL || m->contents == NULL)
+        if (m == NULL || m->contents.empty ())
             return 0;
-        d = m->contents;
+        d = &m->contents;
     } else {
-        d = decls;
+        d = &decls;
     }
 
-    while (d != NULL) {
-        if (d->decl_kind == dk_class) {
-            umlclassnode *cl = d->u.this_class;
+    it = d->begin ();
+    while (it != d->end ()) {
+        if ((*it).decl_kind == dk_class) {
+            umlclassnode *cl = (*it).u.this_class;
             if (cl->key.name.compare (node.key.name) == 0)
-                return d;
+                return (&*it);
         }
-        d = d->next;
+        ++it;
     }
     return NULL;
-}
-
-
-declaration *
-append_decl (declaration *d)
-{
-    while (d->next != NULL) {
-        d = d->next;
-    }
-    d->next = new declaration;
-    d->next->prev = d;
-    d = d->next;
-    return d;
 }
 
 

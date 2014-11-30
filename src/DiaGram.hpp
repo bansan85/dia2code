@@ -67,7 +67,7 @@ class DiaGram {
         void push (umlclassnode &node);
         std::list <std::string> getIncludes ();
         void cleanIncludes ();
-        void determine_includes (declaration *d);
+        void determine_includes (declaration &d);
         
         ~DiaGram ();
 };

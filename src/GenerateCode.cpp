@@ -146,7 +146,7 @@ GenerateCode::open_outfile (const char *filename)
 void
 GenerateCode::generate_code ()
 {
-    declaration *d;
+    std::list <declaration>::iterator it2;
     std::list <umlclassnode> tmplist = getDia ().getUml ();
     std::list <umlclassnode>::iterator it = tmplist.begin ();
     
@@ -169,15 +169,15 @@ GenerateCode::generate_code ()
     }
 
     /* Generate a file for each outer declaration.  */
-    d = decls;
-    while (d != NULL) {
+    it2 = decls.begin ();
+    while (it2 != decls.end ()) {
         std::string name, tmpname;
         std::string filename;
 
-        if (d->decl_kind == dk_module) {
-            name = d->u.this_module->pkg.name;
+        if ((*it2).decl_kind == dk_module) {
+            name = (*it2).u.this_module->pkg.name;
         } else {         /* dk_class */
-            name = d->u.this_class->key.name;
+            name = (*it2).u.this_class->key.name;
         }
         filename.assign (name);
         filename.append (".");
@@ -198,7 +198,7 @@ GenerateCode::generate_code ()
         }
 
         getDia ().cleanIncludes ();
-        getDia ().determine_includes (d);
+        getDia ().determine_includes (*it2);
         if (getDia ().getUseCorba ())
             file << "#include <p_orb.h>\n\n";
         std::list <std::string> incfile = getDia ().getIncludes ();
@@ -209,12 +209,12 @@ GenerateCode::generate_code ()
         }
         file << "\n";
 
-        gen_decl (d);
+        gen_decl (*it2);
 
         file << "#endif\n";
         file.close ();
 
-        d = d->next;
+        ++it2;
     }
     if (licensefile != NULL)
         fclose (licensefile);
@@ -644,18 +644,16 @@ GenerateCode::gen_class (umlclassnode *node)
 
 
 void
-GenerateCode::gen_decl (declaration *d)
+GenerateCode::gen_decl (declaration &d)
 {
     const char *name;
     const char *stype;
     umlclassnode *node;
     std::list <umlattribute>::iterator umla;
 
-    if (d == NULL)
-        return;
-
-    if (d->decl_kind == dk_module) {
-        name = d->u.this_module->pkg.name.c_str ();
+    if (d.decl_kind == dk_module) {
+        std::list <declaration>::iterator it;
+        name = d.u.this_module->pkg.name.c_str ();
         if (bOpenBraceOnNewline) {
             file << spc () << "namespace " << name << "\n";
             file << spc () << "{\n\n";
@@ -665,17 +663,17 @@ GenerateCode::gen_decl (declaration *d)
             file << spc () << "namespace " << name << " {\n\n";
         }
         indentlevel++;
-        d = d->u.this_module->contents;
-        while (d != NULL) {
-            gen_decl (d);
-            d = d->next;
+        it = d.u.this_module->contents.begin ();
+        while (it != d.u.this_module->contents.end ()) {
+            gen_decl (*it);
+            ++it;
         }
         indentlevel--;
         file << spc () << "};\n\n";
         return;
     }
 
-    node = d->u.this_class;
+    node = d.u.this_class;
     stype = node->key.stereotype.c_str ();
     name = node->key.name.c_str ();
     umla = node->key.attributes.begin ();

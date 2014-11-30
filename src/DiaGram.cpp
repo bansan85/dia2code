@@ -181,7 +181,7 @@ DiaGram::push (umlclassnode & node)
     std::list <umlclassnode> used_classes;
     std::list <umlclassnode>::iterator it;
     module *m;
-    declaration *d;
+    declaration d;
 
     if (find_class (node) != NULL) {
         return;
@@ -201,37 +201,22 @@ DiaGram::push (umlclassnode & node)
         ++it;
     }
 
+    d.decl_kind = dk_class;
+    d.u.this_class = new umlclassnode;
+    d.u.this_class->key = node.key;
+    d.u.this_class->parents = node.parents;
+    d.u.this_class->associations = node.associations;
+    d.u.this_class->dependencies = node.dependencies;
+
     if (node.key.package != NULL) {
         std::list <umlpackage> pkglist;
         make_package_list (node.key.package, pkglist);
-        m = find_or_add_module (&decls, pkglist);
-        if (m->contents == NULL) {
-            m->contents = new declaration;
-            d = m->contents;
-            d->prev = NULL;
-        } else {
-            /* We can simply append because all classes that we depend on
-               are already pushed. */
-            d = append_decl (m->contents);
-        }
+        m = find_or_add_module (decls, pkglist);
+        m->contents.push_back (d);
     } else {
-        if (decls == NULL) {
-            decls = new declaration;
-            d = decls;
-            d->prev = NULL;
-        } else {
-            d = append_decl (decls);
-            /* We can simply append because all classes that we depend on
-               are already pushed. */
-        }
+        decls.push_back (d);
     }
-    d->decl_kind = dk_class;
-    d->next = NULL;
-    d->u.this_class = new umlclassnode;
-    d->u.this_class->key = node.key;
-    d->u.this_class->parents = node.parents;
-    d->u.this_class->associations = node.associations;
-    d->u.this_class->dependencies = node.dependencies;
+
     if (node.key.stereotype.compare (0, 5, "CORBA") == 0)
         usecorba = true;
 }
@@ -281,17 +266,17 @@ DiaGram::cleanIncludes () {
 }
 
 void
-DiaGram::determine_includes (declaration *d)
+DiaGram::determine_includes (declaration &d)
 {
-    if (d->decl_kind == dk_module) {
-        declaration *inner = d->u.this_module->contents;
-        while (inner != NULL) {
-            determine_includes (inner);
-            inner = inner->next;
+    if (d.decl_kind == dk_module) {
+        std::list <declaration>::iterator it = d.u.this_module->contents.begin ();
+        while (it != d.u.this_module->contents.end ()) {
+            determine_includes (*it);
+            --it;
         }
     } else {
         std::list <umlclassnode> cl;
-        list_classes (*d->u.this_class, cl);
+        list_classes (*d.u.this_class, cl);
         std::list <umlclassnode>::iterator it = cl.begin ();
         while (it != cl.end ()) {
             push_include (*it);

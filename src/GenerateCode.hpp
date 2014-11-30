@@ -48,7 +48,7 @@ class GenerateCode {
         void check_visibility (int *curr_vis, int new_vis);
         std::string spc();
         void open_outfile (const char *filename);
-        void gen_decl (declaration *d);
+        void gen_decl (declaration &d);
     public:
         GenerateCode (DiaGram & diagram, const char * ext);
 
