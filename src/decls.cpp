@@ -24,7 +24,7 @@ module *
 create_nested_modules_from_pkglist (std::list <umlpackage> &pkglist,
                                     module        *m)
 {
-    std::list <umlpackage>::iterator it = std::next (std::next (pkglist.begin ()));
+    std::list <umlpackage>::iterator it = std::next (pkglist.begin ());
     /* Expects pkglist and m to be non-NULL and m->contents to be NULL.
        Returns a reference to the innermost module created.  */
     while (it != pkglist.end ()) {

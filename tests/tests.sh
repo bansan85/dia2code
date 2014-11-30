@@ -1,6 +1,7 @@
 #!/bin/sh
 
 mkdir result
+rm result/*
 ../src/dia2code -t cpp package.dia -d result
 if [[ ! -a result/pack.hpp ]] ; then
 exit 1

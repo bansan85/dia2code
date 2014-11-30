@@ -101,7 +101,7 @@ void make_package_list(umlpackage *package, std::list <umlpackage> &res){
     res.push_back (*package);
     par = package->parent;
     while ( par != NULL){
-        res.push_back (*par);
+        res.push_front (*par);
         par = par->parent;
     }
     return;

@@ -4,8 +4,16 @@
 
 namespace pack {
 
-    /// class Classe - 
-    class Classe {
+    namespace pack2 {
+
+        namespace pack3 {
+
+            /// class Classe - 
+            class Classe {
+            };
+
+        };
+
     };
 
 };
