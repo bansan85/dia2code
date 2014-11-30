@@ -18,7 +18,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #ifndef PARSE_DIAGRAM_HPP
 #define PARSE_DIAGRAM_HPP
+
 #include "dia2code.hpp"
+
 #include <list>
 
 

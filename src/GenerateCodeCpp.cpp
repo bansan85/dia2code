@@ -19,8 +19,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 /* NB: If you use CORBA stereotypes, you will need the file p_orb.h
    found in the runtime/cpp directory.  */
 
-#include "dia2code.hpp"
-#include "decls.hpp"
 #include "GenerateCodeCpp.hpp"
 
 #define SPEC_EXT "h"

@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <string>
 #include <list>
 
-#include "dia2code.hpp"
 #include "decls.hpp"
 
 class DiaGram {

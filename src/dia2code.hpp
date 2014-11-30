@@ -41,7 +41,6 @@ struct umlattribute {
     bool isstatic : 1;
     bool isconstant : 1;
     char kind;
-    char diaoid[10];
 };
 
 struct umloperation {
@@ -88,7 +87,8 @@ struct umlassoc {
     umlclass key;
     std::string name;
     char composite;
-    char multiplicity[10]; /* association can declare multiplicity */
+    // Unused
+    char multiplicity[10];
 };
 
 struct umlclassnode {

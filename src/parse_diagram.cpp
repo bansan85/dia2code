@@ -16,9 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include "parse_diagram.hpp"
-
 #include <libxml/tree.h>
+
+#include "parse_diagram.hpp"
 
 #define BAD_CAST2 reinterpret_cast <const xmlChar *>
 #define BAD_TSAC2 reinterpret_cast <const char *>

@@ -23,8 +23,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "parse_diagram.hpp"
 #include "GenerateCodeCpp.hpp"
 
-#include "DiaGram.hpp"
-
 int main(int argc, char **argv) {
     DiaGram diagram;
     int i;

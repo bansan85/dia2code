@@ -19,7 +19,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef GENERATE_CODE_CPP_HPP
 #define GENERATE_CODE_CPP_HPP
 
-#include "DiaGram.hpp"
 #include "GenerateCode.hpp"
 
 class GenerateCodeCpp : public GenerateCode {
