@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dia2code.hpp"
 
 #include <libxml/tree.h>
+#include <iostream>
 
 #include "parse_diagram.hpp"
 #include "GenerateCodeCpp.hpp"
@@ -60,6 +61,7 @@ under certain conditions; read the COPYING file for details.\n";
                          E.g: Base,Derived.\n\
     -v                   Invert the class list selection.  When used \n\
                          without -cl prevents any file from being created.\n\
+    --version            Show version x.y.z.\n\
     --tab <number>       Set numbre of spaces for one indentation.\n\
                          Default: 4. Maximum: 8.\n\
     -ext <extension>     Use <extension> as the file extension.\n\
@@ -103,6 +105,8 @@ under certain conditions; read the COPYING file for details.\n";
                 parameter = 6;
             } else if ( !strcmp (argv[i], "-v") ) {
                 diagram.setInvertSel (!diagram.getInvertSel ());
+            } else if ( !strcmp (argv[i], "--version") ) {
+                std::cout << PACKAGE_VERSION << std::endl ;
             } else if ( !strcmp (argv[i], "--tab") ) {
                 parameter = 8;
             } else if ( !strcmp (argv[i], "-nl") ) {
