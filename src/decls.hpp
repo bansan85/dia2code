@@ -54,8 +54,6 @@ struct declaration {
     } u;
 };
 
-extern std::list <declaration> decls;
-
 /* Utilities for building the global `decls' from umlclassnodes and
    their parents.  (`decls' contains everything in ascending order of
    interdependence.)  */
@@ -63,7 +61,7 @@ extern std::list <declaration> decls;
 module *
 find_or_add_module (std::list <declaration> &dptr, std::list <umlpackage> &pkglist);
 
-declaration * find_class (umlclassnode &node);
+declaration * find_class (umlclassnode &node, std::list <declaration> &decl);
 
 #endif  /* DECLS_H */
 

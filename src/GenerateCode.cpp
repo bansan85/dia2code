@@ -169,8 +169,8 @@ GenerateCode::generate_code ()
     }
 
     /* Generate a file for each outer declaration.  */
-    it2 = decls.begin ();
-    while (it2 != decls.end ()) {
+    it2 = getDia ().getDeclBegin ();
+    while (it2 != getDia ().getDeclEnd ()) {
         std::string name, tmpname;
         std::string filename;
 

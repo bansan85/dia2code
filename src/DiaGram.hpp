@@ -38,6 +38,7 @@ class DiaGram {
         
         std::list <std::string> tmp_classes;
         std::list <std::string> includes;
+        std::list <declaration> decl;
         
         void scan_tree_classes (std::list <std::string> &res);
         void list_classes (umlclassnode & current_class, std::list <umlclassnode> & res);
@@ -69,6 +70,8 @@ class DiaGram {
         void cleanIncludes ();
         void determine_includes (declaration &d);
         
+        std::list <declaration>::iterator getDeclBegin ();
+        std::list <declaration>::iterator getDeclEnd ();
         ~DiaGram ();
 };
 

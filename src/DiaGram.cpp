@@ -26,7 +26,8 @@ DiaGram::DiaGram () :
     invertsel (false),
     usecorba (false),
     tmp_classes (),
-    includes () {
+    includes (),
+    decl (){
 }
 
 
@@ -183,7 +184,7 @@ DiaGram::push (umlclassnode & node)
     module *m;
     declaration d;
 
-    if (find_class (node) != NULL) {
+    if (find_class (node, decl) != NULL) {
         return;
     }
 
@@ -211,10 +212,10 @@ DiaGram::push (umlclassnode & node)
     if (node.key.package != NULL) {
         std::list <umlpackage> pkglist;
         make_package_list (node.key.package, pkglist);
-        m = find_or_add_module (decls, pkglist);
+        m = find_or_add_module (decl, pkglist);
         m->contents.push_back (d);
     } else {
-        decls.push_back (d);
+        decl.push_back (d);
     }
 
     if (node.key.stereotype.compare (0, 5, "CORBA") == 0)
@@ -283,6 +284,18 @@ DiaGram::determine_includes (declaration &d)
             ++it;
         }
     }
+}
+
+std::list <declaration>::iterator
+DiaGram::getDeclBegin ()
+{
+    return decl.begin ();
+}
+
+std::list <declaration>::iterator
+DiaGram::getDeclEnd ()
+{
+    return decl.end ();
 }
 
 DiaGram::~DiaGram () {

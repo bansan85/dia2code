@@ -18,8 +18,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "decls.hpp"
 
-std::list <declaration> decls;
-
 module *
 create_nested_modules_from_pkglist (std::list <umlpackage> &pkglist,
                                     module        *m)
@@ -108,7 +106,7 @@ find_module (std::list <declaration> &dptr,
 
 
 declaration *
-find_class (umlclassnode &node)
+find_class (umlclassnode &node, std::list <declaration> &decl)
 {
     std::list <declaration> *d;
     std::list <declaration>::iterator it;
@@ -116,12 +114,12 @@ find_class (umlclassnode &node)
     if (node.key.package) {
         std::list <umlpackage> pkglist;
         make_package_list (node.key.package, pkglist);
-        module *m = find_module (decls, pkglist.begin (), pkglist.end ());
+        module *m = find_module (decl, pkglist.begin (), pkglist.end ());
         if (m == NULL || m->contents.empty ())
             return 0;
         d = &m->contents;
     } else {
-        d = &decls;
+        d = &decl;
     }
 
     it = d->begin ();
