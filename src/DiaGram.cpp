@@ -113,16 +113,16 @@ void
 DiaGram::list_classes(umlclassnode & current_class, std::list <umlclassnode> & res) {
     std::list <umlclassnode>::iterator classit;
     std::list <umlassoc>::iterator associations;
-    std::list <umlattribute>::iterator umla;
+    std::list <umlAttribute>::iterator umla;
     std::list <umloperation>::iterator umlo;
     std::list <umlclassnode> classes = getUml ();
     umlclassnode * tmpnode;
 
     umla = current_class.key.attributes.begin ();
     while (umla != current_class.key.attributes.end ()) {
-        if (!(*umla).type.empty ()) {
-            tmpnode = find_by_name(classes, (*umla).type.c_str ());
-            if ( tmpnode && ! find_by_name(res, (*umla).type.c_str ())) {
+        if (!(*umla).getType ().empty ()) {
+            tmpnode = find_by_name(classes, (*umla).getType ().c_str ());
+            if ( tmpnode && ! find_by_name(res, (*umla).getType ().c_str ())) {
                 append(res, *tmpnode);
             }
         }
@@ -131,14 +131,14 @@ DiaGram::list_classes(umlclassnode & current_class, std::list <umlclassnode> & r
 
     umlo = current_class.key.operations.begin ();
     while ( umlo != current_class.key.operations.end ()) {
-        tmpnode = find_by_name(classes, (*umlo).attr.type.c_str ());
-        if ( tmpnode && ! find_by_name(res, (*umlo).attr.type.c_str ())) {
+        tmpnode = find_by_name(classes, (*umlo).attr.getType ().c_str ());
+        if ( tmpnode && ! find_by_name(res, (*umlo).attr.getType ().c_str ())) {
             append(res, *tmpnode);
         }
         umla = (*umlo).parameters.begin ();
         while (umla != (*umlo).parameters.end ()) {
-            tmpnode = find_by_name(classes, (*umla).type.c_str ());
-            if ( tmpnode && ! find_by_name(res, (*umla).type.c_str ())) {
+            tmpnode = find_by_name(classes, (*umla).getType ().c_str ());
+            if ( tmpnode && ! find_by_name(res, (*umla).getType ().c_str ())) {
                 append(res, *tmpnode);
             }
             ++umla;

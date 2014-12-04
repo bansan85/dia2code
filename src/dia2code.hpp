@@ -30,23 +30,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define kind_str(A)   ((A)=='1'?"in":((A)=='2'?"in/out":((A)=='3'?"out":"???")))
+#include "umlAttribute.hpp"
 
-struct umlattribute {
-    std::string name;
-    std::string value;
-    std::string type;
-    std::string comment;
-    char visibility;
-    bool isabstract : 1;
-    bool isstatic : 1;
-    bool isconstant : 1;
-    char kind;
-};
+#define kind_str(A)   ((A)=='1'?"in":((A)=='2'?"in/out":((A)=='3'?"out":"???")))
+#define BAD_CAST2 reinterpret_cast <const xmlChar *>
+#define BAD_TSAC2 reinterpret_cast <const char *>
 
 struct umloperation {
-    umlattribute attr;
-    std::list <umlattribute> parameters;
+    umlAttribute attr;
+    std::list <umlAttribute> parameters;
     std::string implementation;
 };
 
@@ -77,7 +69,7 @@ struct umlclass {
     std::string stereotype;
     std::string comment;
     int isabstract;
-    std::list <umlattribute> attributes;
+    std::list <umlAttribute> attributes;
     std::list <umloperation> operations;
     std::list <umltemplate> templates;
     umlpackage *package;

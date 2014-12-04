@@ -26,7 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 void parse_diagram(char *diafile, std::list <umlclassnode> & res);
-void insert_attribute(std::list <umlattribute> &n, std::list <umlattribute> &l);
+void parse_dia_node(xmlNodePtr stringnode, std::string &buffer);
+bool parse_boolean(xmlNodePtr booleannode);
 
 #endif
 

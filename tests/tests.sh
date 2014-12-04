@@ -20,5 +20,14 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
+../src/dia2code -t cpp operations.dia -d result
+if [[ ! -a result/operations.hpp ]] ; then
+exit 1
+fi ;
+diff -pu result/operations.hpp operations.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 
 exit 0

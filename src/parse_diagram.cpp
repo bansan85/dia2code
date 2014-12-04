@@ -21,9 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "parse_diagram.hpp"
 
-#define BAD_CAST2 reinterpret_cast <const xmlChar *>
-#define BAD_TSAC2 reinterpret_cast <const char *>
-
 #ifndef MIN
 #define MIN(x, y) (x < y ? x : y)
 #endif
@@ -59,9 +56,9 @@ bool parse_boolean(xmlNodePtr booleannode) {
 
     val = xmlGetProp(booleannode, BAD_CAST2 ("val"));
     if ( val != NULL && !strcmp(BAD_TSAC2 (val), "true")) {
-        result = 1;
+        result = true;
     } else {
-        result = 0;
+        result = false;
     }
     free(val);
     return result;
@@ -125,30 +122,6 @@ void make_depend ( std::list <umlclassnode> & classlist, const char * dependent,
 /**
   * Inserts "n" into the list "l", in orderly fashion
 */
-void insert_attribute(umlattribute &n, std::list <umlattribute> &l) {
-    std::list <umlattribute>::iterator itl;
-    
-    itl = l.begin ();
-    
-    if (itl == l.end ()) {
-        l.push_back (n);
-    }
-    else {
-        while ((itl != l.end ()) && ((*itl).visibility >= n.visibility)) {
-            ++itl;
-        }
-        if (itl == l.end ()) {
-            l.push_back (n);
-        }
-        else {
-            l.insert (std::next (itl), n);
-        }
-    }
-}
-
-/**
-  * Inserts "n" into the list "l", in orderly fashion
-*/
 void insert_operation(umloperation &n, std::list <umloperation> &l) {
     std::list <umloperation>::iterator itl;
     
@@ -158,7 +131,7 @@ void insert_operation(umloperation &n, std::list <umloperation> &l) {
         l.push_back (n);
     }
     else {
-        while ((itl != l.end ()) && ((*itl).attr.visibility >= n.attr.visibility)) {
+        while ((itl != l.end ()) && ((*itl).attr.getVisibility () >= n.attr.getVisibility ())) {
             ++itl;
         }
         if (itl == l.end ()) {
@@ -174,70 +147,19 @@ void insert_template(umltemplate &n, std::list <umltemplate> &l) {
     l.push_back (n);
 }
 
-void parse_attribute(xmlNodePtr node, umlattribute &tmp) {
-    xmlChar *nodename;
-    xmlChar *attrval;
 
-    tmp.name.clear ();
-    tmp.value.clear ();
-    tmp.type.clear ();
-    tmp.comment.clear ();
-    tmp.visibility = '0';
-    tmp.kind     = '0';
+void parse_attributes(xmlNodePtr node, std::list <umlAttribute> &retour) {
     while ( node != NULL ) {
-        nodename = xmlGetProp(node, BAD_CAST2 ("name"));
-
-        if ( !strcmp("name", BAD_TSAC2 (nodename)) ) {
-            parse_dia_node(node->xmlChildrenNode, tmp.name);
-        } else if ( !strcmp("value", BAD_TSAC2 (nodename))) {
-            if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-                parse_dia_node(node->xmlChildrenNode, tmp.value);
-            }
-        } else if ( !strcmp("type", BAD_TSAC2 (nodename))) {
-            if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-                parse_dia_node(node->xmlChildrenNode, tmp.type);
-            } else {
-                tmp.type.clear ();
-            }
-        } else if ( !strcmp("comment", BAD_TSAC2 (nodename))) {
-            if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-               parse_dia_node(node->xmlChildrenNode, tmp.comment);
-            } else {
-               tmp.comment.clear ();
-          }
-        } else if ( !strcmp("kind", BAD_TSAC2 (nodename))) {
-            attrval = xmlGetProp(node->xmlChildrenNode, BAD_CAST2 ("val"));
-            sscanf(BAD_TSAC2 (attrval), "%c", &(tmp.kind));
-            free(attrval);
-        } else if ( !strcmp("visibility", BAD_TSAC2 (nodename))) {
-            attrval = xmlGetProp(node->xmlChildrenNode, BAD_CAST2 ("val"));
-            sscanf(BAD_TSAC2 (attrval), "%c", &(tmp.visibility));
-            free(attrval);
-        } else if ( !strcmp("abstract", BAD_TSAC2 (nodename))) {
-            tmp.isabstract = parse_boolean(node->xmlChildrenNode);
-        } else if ( !strcmp("class_scope", BAD_TSAC2 (nodename))) {
-            tmp.isstatic = parse_boolean(node->xmlChildrenNode);
-        } else if ( !strcmp("query", BAD_TSAC2 (nodename))) {
-            tmp.isconstant = parse_boolean(node->xmlChildrenNode);
-        }
-
-        free(nodename);
-        node = node->next;
-    }
-}
-
-void parse_attributes(xmlNodePtr node, std::list <umlattribute> &retour) {
-    while ( node != NULL ) {
-        umlattribute an;
-        parse_attribute(node->xmlChildrenNode, an);
-        insert_attribute(an, retour);
+        umlAttribute an;
+        an.parse(node->xmlChildrenNode);
+        an.insert(retour);
         node = node->next;
     }
 }
 
 void parse_operation(xmlNodePtr node, umloperation &tmp) {
     xmlChar *nodename;
-    parse_attribute(node, tmp.attr);
+    tmp.attr.parse(node);
     while ( node != NULL ) {
         nodename = xmlGetProp(node, BAD_CAST2 ("name"));
         if ( !strcmp("parameters", BAD_TSAC2 (nodename)) ) {
@@ -282,61 +204,57 @@ void parse_templates(xmlNodePtr node, std::list <umltemplate> &res) {
 */
 void make_getset_methods(umlclass &myself) {
     std::string tmpname;
-    std::list <umlattribute>::iterator attrlist;
+    std::list <umlAttribute>::iterator attrlist;
 
     attrlist = myself.attributes.begin ();
     while (attrlist != myself.attributes.end ()) {
-        if ( ! (*attrlist).isabstract) {
-            umlattribute parameter;
+        if ( ! (*attrlist).isAbstract ()) {
+            umlAttribute parameter;
             /* The SET method */
             umloperation operation;
 
-            parameter.name.assign ("value");
-            parameter.type.assign ((*attrlist).type);
-            parameter.value.clear ();
-            parameter.isstatic = 0;
-            parameter.isconstant = 0;
-            parameter.isabstract = 0;
-            parameter.visibility = '0';
+            parameter.assign ("value",
+                              "",
+                              (*attrlist).getType (),
+                              "",
+                              '0',
+                              false,
+                              false,
+                              false,
+                              '1');
             operation.parameters.push_back (parameter);
 
             operation.implementation.clear ();
             operation.implementation.append ("    ");
-            operation.implementation.append ((*attrlist).name);
+            operation.implementation.append ((*attrlist).getName ());
             operation.implementation.append (" = value;");
 
-            tmpname = strtoupperfirst((*attrlist).name);
-            operation.attr.name.append ("set");
-            operation.attr.name.append (tmpname);
-            operation.attr.isabstract = 0;
-            operation.attr.isstatic = 0;
-            operation.attr.isconstant = 0;
-            operation.attr.visibility = '0';
-            operation.attr.value.clear ();
-            operation.attr.type.assign ("void");
-
+            tmpname.assign ("set");
+            tmpname.append (strtoupperfirst((*attrlist).getName ()));
+            operation.attr.assign (tmpname,
+                                   "",
+                                   "void",
+                                   "",
+                                   '0',
+                                   false,
+                                   false,
+                                   false,
+                                   '1');
             insert_operation(operation, myself.operations);
 
-            /* The GET or IS method */
-            tmpname = strtoupperfirst((*attrlist).name);
-            if ( (*attrlist).type.compare ("boolean") == 0) {
-                operation.attr.name.assign ("is");
-            } else {
-                operation.attr.name.assign ("get");
-            }
-            operation.attr.name.append (tmpname);
-
             operation.implementation.assign ("    return ");
-            operation.implementation.append ((*attrlist).name);
+            operation.implementation.append ((*attrlist).getName ());
             operation.implementation.append (";");
-
-            operation.attr.isabstract = 0;
-            operation.attr.isstatic = 0;
-            operation.attr.isconstant = 1;
-            operation.attr.visibility = '0';
-            operation.attr.value.clear ();
-            operation.attr.type.assign ((*attrlist).type);
-
+            /* The GET or IS method */
+            if ( (*attrlist).getType ().compare ("boolean") == 0) {
+                tmpname.assign ("is");
+            } else {
+                tmpname.assign ("get");
+            }
+            tmpname.append (strtoupperfirst((*attrlist).getName ()));
+            
+            operation.attr.assign (tmpname, "", (*attrlist).getType (),
+                                   "", '0', false, false, true, '1');
             insert_operation(operation, myself.operations);
         }
         ++attrlist;
@@ -825,7 +743,7 @@ void parse_diagram(char *diafile, std::list <umlclassnode> & res) {
             if ( is_inside(&(*dummypcklst).geom,&(*it).key.geom) ) {
                 if ( ((*it).key.package == NULL) ||
                      (! is_inside ( &(*dummypcklst).geom, &(*it).key.package->geom ))) {
-                    free ((*it).key.package);
+                    delete (*it).key.package;
                     (*it).key.package = new umlpackage;
                     (*it).key.package->id = (*dummypcklst).id;
                     (*it).key.package->name = (*dummypcklst).name;
