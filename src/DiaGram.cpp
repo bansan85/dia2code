@@ -82,11 +82,8 @@ DiaGram::setUseCorba (bool corba) {
 /* Returns a list with all the classes declared in the diagram */
 void
 DiaGram::scan_tree_classes (std::list <std::string> &res) {
-    std::list <umlclassnode>::iterator it = uml.begin ();
-    
-    while ( it != uml.end () ) {
-        res.push_back ((*it).key.name);
-        ++it;
+    for (umlclassnode & it : uml) {
+        res.push_back (it.key.name);
     }
     
     return;
@@ -111,66 +108,50 @@ void append ( std::list <umlclassnode> & list, umlclassnode & class_ ) {
    given batch */
 void
 DiaGram::list_classes(umlclassnode & current_class, std::list <umlclassnode> & res) {
-    std::list <umlclassnode>::iterator classit;
-    std::list <umlassoc>::iterator associations;
-    std::list <umlAttribute>::iterator umla;
-    std::list <umloperation>::iterator umlo;
     std::list <umlclassnode> classes = getUml ();
     umlclassnode * tmpnode;
 
-    umla = current_class.key.attributes.begin ();
-    while (umla != current_class.key.attributes.end ()) {
-        if (!(*umla).getType ().empty ()) {
-            tmpnode = find_by_name(classes, (*umla).getType ().c_str ());
-            if ( tmpnode && ! find_by_name(res, (*umla).getType ().c_str ())) {
+    for (umlAttribute & umla : current_class.key.attributes) {
+        if (!umla.getType ().empty ()) {
+            tmpnode = find_by_name(classes, umla.getType ().c_str ());
+            if ( tmpnode && ! find_by_name(res, umla.getType ().c_str ())) {
                 append(res, *tmpnode);
             }
         }
-        ++umla;
     }
 
-    umlo = current_class.key.operations.begin ();
-    while ( umlo != current_class.key.operations.end ()) {
-        tmpnode = find_by_name(classes, (*umlo).attr.getType ().c_str ());
-        if ( tmpnode && ! find_by_name(res, (*umlo).attr.getType ().c_str ())) {
+    for (umloperation & umlo : current_class.key.operations) {
+        tmpnode = find_by_name(classes, umlo.attr.getType ().c_str ());
+        if ( tmpnode && ! find_by_name(res, umlo.attr.getType ().c_str ())) {
             append(res, *tmpnode);
         }
-        umla = (*umlo).parameters.begin ();
-        while (umla != (*umlo).parameters.end ()) {
-            tmpnode = find_by_name(classes, (*umla).getType ().c_str ());
-            if ( tmpnode && ! find_by_name(res, (*umla).getType ().c_str ())) {
+        for (umlAttribute & umla : umlo.parameters) {
+            tmpnode = find_by_name(classes, umla.getType ().c_str ());
+            if ( tmpnode && ! find_by_name(res, umla.getType ().c_str ())) {
                 append(res, *tmpnode);
             }
-            ++umla;
         }
-        ++umlo;
     }
 
-    classit = current_class.parents.begin ();
-    while ( classit != current_class.parents.end () ) {
-        tmpnode = find_by_name(classes, (*classit).key.name.c_str ());
-        if ( tmpnode && ! find_by_name(res, (*classit).key.name.c_str ()) ) {
+    for (umlclassnode & classit : current_class.parents) {
+        tmpnode = find_by_name(classes, classit.key.name.c_str ());
+        if ( tmpnode && ! find_by_name(res, classit.key.name.c_str ()) ) {
             append(res, *tmpnode);
         }
-        ++classit;
     }
 
-    classit = current_class.dependencies.begin ();
-    while (classit != current_class.dependencies.end ()) {
-        tmpnode = find_by_name(classes, (*classit).key.name.c_str ());
-        if ( tmpnode && ! find_by_name(res, (*classit).key.name.c_str ()) ) {
+    for (umlclassnode & classit : current_class.dependencies) {
+        tmpnode = find_by_name(classes, classit.key.name.c_str ());
+        if ( tmpnode && ! find_by_name(res, classit.key.name.c_str ()) ) {
             append(res, *tmpnode);
         }
-        ++classit;
     }
 
-    associations = current_class.associations.begin ();
-    while (associations != current_class.associations.end ()) {
-        tmpnode = find_by_name(classes, (*associations).key.name.c_str ());
-        if ( tmpnode && ! find_by_name(res, (*associations).key.name.c_str ()) ) {
+    for (umlassoc & associations : current_class.associations) {
+        tmpnode = find_by_name(classes, associations.key.name.c_str ());
+        if ( tmpnode && ! find_by_name(res, associations.key.name.c_str ()) ) {
             append(res, *tmpnode);
         }
-        ++associations;
     }
 
     return;
@@ -180,7 +161,6 @@ void
 DiaGram::push (umlclassnode & node)
 {
     std::list <umlclassnode> used_classes;
-    std::list <umlclassnode>::iterator it;
     module *m;
     declaration d;
 
@@ -192,14 +172,12 @@ DiaGram::push (umlclassnode & node)
     
     list_classes (node, used_classes);
     /* Make sure all classes that this one depends on are already pushed. */
-    it = used_classes.begin ();
-    while (it != used_classes.end ()) {
+    for (umlclassnode & it : used_classes) {
         /* don't push this class !*/
-        if (! !node.key.name.compare ((*it).key.name) &&
-            ! (is_present (tmp_classes, (*it).key.name.c_str ()) ^ invertsel)) {
-            push (*it);
+        if (! !node.key.name.compare (it.key.name) &&
+            ! (is_present (tmp_classes, it.key.name.c_str ()) ^ invertsel)) {
+            push (it);
         }
-        ++it;
     }
 
     d.decl_kind = dk_class;
@@ -270,18 +248,14 @@ void
 DiaGram::determine_includes (declaration &d)
 {
     if (d.decl_kind == dk_module) {
-        std::list <declaration>::iterator it = d.u.this_module->contents.begin ();
-        while (it != d.u.this_module->contents.end ()) {
-            determine_includes (*it);
-            --it;
+        for (declaration & it : d.u.this_module->contents) {
+            determine_includes (it);
         }
     } else {
         std::list <umlclassnode> cl;
         list_classes (*d.u.this_class, cl);
-        std::list <umlclassnode>::iterator it = cl.begin ();
-        while (it != cl.end ()) {
-            push_include (*it);
-            ++it;
+        for (umlclassnode & it : cl) {
+            push_include (it);
         }
     }
 }

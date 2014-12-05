@@ -21,12 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 umlclassnode * find_by_name(std::list <umlclassnode> & list, const char * name ) {
     if ( name != NULL && strlen(name) > 0 ) {
-        std::list <umlclassnode>::iterator it = list.begin ();
-        while ( it != list.end () ) {
-            if ( (*it).key.name.compare (name) == 0) {
-                return &*it;
+        for (umlclassnode & it : list) {
+            if ( it.key.name.compare (name) == 0) {
+                return &it;
             }
-            ++it;
         }
     }
     return NULL;

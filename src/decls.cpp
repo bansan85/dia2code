@@ -22,17 +22,21 @@ module *
 create_nested_modules_from_pkglist (std::list <umlpackage> &pkglist,
                                     module        *m)
 {
-    std::list <umlpackage>::iterator it = std::next (pkglist.begin ());
+    bool first = true;
     /* Expects pkglist and m to be non-NULL and m->contents to be NULL.
        Returns a reference to the innermost module created.  */
-    while (it != pkglist.end ()) {
+    for (umlpackage & it : pkglist) {
+        if (first)
+        {
+            first = false;
+            continue;
+        }
         declaration d;
         d.decl_kind = dk_module;
         d.u.this_module = new module;
         m->contents.push_back(d);
         m = d.u.this_module;
-        m->pkg = *it;
-        ++it;
+        m->pkg = it;
     }
     return m;
 }
@@ -43,17 +47,15 @@ find_or_add_module (std::list <declaration> &dptr,
                     std::list <umlpackage> &pkglist)
 {
     declaration d;
-    std::list <declaration>::iterator it;
     module *m;
 
     if (pkglist.empty ())
         return NULL;
     
-    it = dptr.begin ();
-    while (it != dptr.end ()) {
-        if ((*it).decl_kind == dk_module &&
-            (*it).u.this_module->pkg.name.compare ((*pkglist.begin ()).name) == 0) {
-            m = (*it).u.this_module;
+    for (declaration & it : dptr) {
+        if (it.decl_kind == dk_module &&
+            it.u.this_module->pkg.name.compare ((*pkglist.begin ()).name) == 0) {
+            m = it.u.this_module;
             if (pkglist.size () == 1)
                 return m;
             if (m->contents.empty ()) {
@@ -61,7 +63,6 @@ find_or_add_module (std::list <declaration> &dptr,
             }
             return find_or_add_module (m->contents, pkglist);
         }
-        ++it;
     }
     d.decl_kind = dk_module;
     d.u.this_module = new module;
@@ -109,7 +110,6 @@ declaration *
 find_class (umlclassnode &node, std::list <declaration> &decl)
 {
     std::list <declaration> *d;
-    std::list <declaration>::iterator it;
 
     if (node.key.package) {
         std::list <umlpackage> pkglist;
@@ -122,14 +122,12 @@ find_class (umlclassnode &node, std::list <declaration> &decl)
         d = &decl;
     }
 
-    it = d->begin ();
-    while (it != d->end ()) {
-        if ((*it).decl_kind == dk_class) {
-            umlclassnode *cl = (*it).u.this_class;
+    for (declaration & it : *d) {
+        if (it.decl_kind == dk_class) {
+            umlclassnode *cl = it.u.this_class;
             if (cl->key.name.compare (node.key.name) == 0)
-                return (&*it);
+                return &it;
         }
-        ++it;
     }
     return NULL;
 }

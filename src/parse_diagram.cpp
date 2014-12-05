@@ -27,12 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 umlclassnode * find(std::list <umlclassnode> & list, const char *id ) {
     if ( id != NULL ) {
-        std::list <umlclassnode>::iterator it = list.begin ();
-        while ( it != list.end () ) {
-            if ((*it).key.id.compare (id) == 0) {
-                return &(*it);
+        for (umlclassnode & it : list) {
+            if (it.key.id.compare (id) == 0) {
+                return &it;
             }
-            ++it;
         }
     }
     return NULL;
@@ -200,22 +198,19 @@ void parse_templates(xmlNodePtr node, std::list <umltemplate> &res) {
 
 /**
   * Adds get() (or is()) and set() methods for each attribute
-  * myself MUST be != null
 */
 void make_getset_methods(umlclass &myself) {
     std::string tmpname;
-    std::list <umlAttribute>::iterator attrlist;
 
-    attrlist = myself.attributes.begin ();
-    while (attrlist != myself.attributes.end ()) {
-        if ( ! (*attrlist).isAbstract ()) {
+    for (umlAttribute & attrlist : myself.attributes) {
+        if ( !attrlist.isAbstract ()) {
             umlAttribute parameter;
             /* The SET method */
             umloperation operation;
 
             parameter.assign ("value",
                               "",
-                              (*attrlist).getType (),
+                              attrlist.getType (),
                               "",
                               '0',
                               false,
@@ -226,11 +221,11 @@ void make_getset_methods(umlclass &myself) {
 
             operation.implementation.clear ();
             operation.implementation.append ("    ");
-            operation.implementation.append ((*attrlist).getName ());
+            operation.implementation.append (attrlist.getName ());
             operation.implementation.append (" = value;");
 
             tmpname.assign ("set");
-            tmpname.append (strtoupperfirst((*attrlist).getName ()));
+            tmpname.append (strtoupperfirst(attrlist.getName ()));
             operation.attr.assign (tmpname,
                                    "",
                                    "void",
@@ -243,21 +238,20 @@ void make_getset_methods(umlclass &myself) {
             insert_operation(operation, myself.operations);
 
             operation.implementation.assign ("    return ");
-            operation.implementation.append ((*attrlist).getName ());
+            operation.implementation.append (attrlist.getName ());
             operation.implementation.append (";");
             /* The GET or IS method */
-            if ( (*attrlist).getType ().compare ("boolean") == 0) {
+            if ( attrlist.getType ().compare ("boolean") == 0) {
                 tmpname.assign ("is");
             } else {
                 tmpname.assign ("get");
             }
-            tmpname.append (strtoupperfirst((*attrlist).getName ()));
+            tmpname.append (strtoupperfirst(attrlist.getName ()));
             
-            operation.attr.assign (tmpname, "", (*attrlist).getType (),
+            operation.attr.assign (tmpname, "", attrlist.getType (),
                                    "", '0', false, false, true, '1');
             insert_operation(operation, myself.operations);
         }
-        ++attrlist;
     }
  }
 
@@ -438,8 +432,7 @@ void recursive_search(xmlNodePtr node, xmlNodePtr * object) {
 }
 
 /* Gets the next "object" node. Basically, gets from->next.  When
-   it is null it checks for from->parent->next.
-   FIXME: the code is ugly */
+   it is null it checks for from->parent->next. */
 xmlNodePtr getNextObject(xmlNodePtr from) {
     xmlNodePtr next = NULL;
     if ( from->next != NULL ){
@@ -475,7 +468,6 @@ void parse_diagram(char *diafile, std::list <umlclassnode> & res) {
     xmlChar *end2 = NULL;
 
     xmlNodePtr object = NULL;
-    std::list <umlpackage>::iterator dummypcklst;
     std::list <umlpackage> packagelst;
 
     ptr = xmlParseFile(diafile);
@@ -710,51 +702,41 @@ void parse_diagram(char *diafile, std::list <umlclassnode> & res) {
     /* Packages: we should scan the packagelist and then the res.
        Scanning the packagelist we'll build all relationships between
        packages.  Scanning the res we'll associate its own package
-       to each class.
-
-       FIXME: maybe we can do both in the same pass */
+       to each class. */
 
     /* Build the relationships between packages */
-    dummypcklst = packagelst.begin ();
-    while ( dummypcklst != packagelst.end () ) {
-        std::list <umlpackage>::iterator tmppcklst = packagelst.begin ();
-        while ( tmppcklst != packagelst.end () ) {
-            if ( is_inside(&(*dummypcklst).geom, &(*tmppcklst).geom) ) {
-                if ( ((*tmppcklst).parent == NULL) ||
-                     (! is_inside ( &(*dummypcklst).geom, &(*tmppcklst).parent->geom ))) {
-                    (*tmppcklst).parent = new umlpackage;
-                    (*tmppcklst).parent->id = (*dummypcklst).id;
-                    (*tmppcklst).parent->name = (*dummypcklst).name;
-                    (*tmppcklst).parent->geom = (*dummypcklst).geom;
-                    (*tmppcklst).parent->parent = (*dummypcklst).parent;
-                    (*tmppcklst).parent->directory = (*dummypcklst).directory;
+    for (umlpackage & dummypcklst : packagelst) {
+        for (umlpackage & tmppcklst : packagelst) {
+            if ( is_inside(&dummypcklst.geom, &tmppcklst.geom) ) {
+                if ( (tmppcklst.parent == NULL) ||
+                     (! is_inside ( &dummypcklst.geom, &tmppcklst.parent->geom ))) {
+                    tmppcklst.parent = new umlpackage;
+                    tmppcklst.parent->id = dummypcklst.id;
+                    tmppcklst.parent->name = dummypcklst.name;
+                    tmppcklst.parent->geom = dummypcklst.geom;
+                    tmppcklst.parent->parent = dummypcklst.parent;
+                    tmppcklst.parent->directory = dummypcklst.directory;
                 }
             }
-            ++tmppcklst;
         }
-        ++dummypcklst;
     }
 
     /* Associate packages to classes */
-    dummypcklst = packagelst.begin ();
-    while ( dummypcklst != packagelst.end () ) {
-        std::list <umlclassnode>::iterator it = res.begin ();
-        while ( it != res.end () ) {
-            if ( is_inside(&(*dummypcklst).geom,&(*it).key.geom) ) {
-                if ( ((*it).key.package == NULL) ||
-                     (! is_inside ( &(*dummypcklst).geom, &(*it).key.package->geom ))) {
-                    delete (*it).key.package;
-                    (*it).key.package = new umlpackage;
-                    (*it).key.package->id = (*dummypcklst).id;
-                    (*it).key.package->name = (*dummypcklst).name;
-                    (*it).key.package->geom = (*dummypcklst).geom;
-                    (*it).key.package->parent = (*dummypcklst).parent;
-                    (*it).key.package->directory = (*dummypcklst).directory;
+    for (umlpackage & dummypcklst : packagelst) {
+        for (umlclassnode & it : res) {
+            if ( is_inside(&dummypcklst.geom,&it.key.geom) ) {
+                if ( (it.key.package == NULL) ||
+                     (! is_inside ( &dummypcklst.geom, &it.key.package->geom ))) {
+                    delete it.key.package;
+                    it.key.package = new umlpackage;
+                    it.key.package->id = dummypcklst.id;
+                    it.key.package->name = dummypcklst.name;
+                    it.key.package->geom = dummypcklst.geom;
+                    it.key.package->parent = dummypcklst.parent;
+                    it.key.package->directory = dummypcklst.directory;
                 }
             }
-            ++it;
         }
-        ++dummypcklst;
     }
     
     xmlFreeDoc (ptr);
