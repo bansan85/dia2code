@@ -120,12 +120,12 @@ DiaGram::list_classes(umlclassnode & current_class, std::list <umlclassnode> & r
         }
     }
 
-    for (umloperation & umlo : current_class.key.operations) {
-        tmpnode = find_by_name(classes, umlo.attr.getType ().c_str ());
-        if ( tmpnode && ! find_by_name(res, umlo.attr.getType ().c_str ())) {
+    for (umlOperation & umlo : current_class.key.operations) {
+        tmpnode = find_by_name(classes, umlo.getType ().c_str ());
+        if ( tmpnode && ! find_by_name(res, umlo.getType ().c_str ())) {
             append(res, *tmpnode);
         }
-        for (umlAttribute & umla : umlo.parameters) {
+        for (const umlAttribute & umla : umlo.getParameters ()) {
             tmpnode = find_by_name(classes, umla.getType ().c_str ());
             if ( tmpnode && ! find_by_name(res, umla.getType ().c_str ())) {
                 append(res, *tmpnode);

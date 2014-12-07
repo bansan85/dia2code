@@ -17,7 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "dia2code.hpp"
+
 #include "parse_diagram.hpp"
+#include "umlAttribute.hpp"
 
 umlAttribute::umlAttribute () :
     name (),
@@ -32,56 +34,77 @@ umlAttribute::umlAttribute () :
 {
 }
 
-std::string &
-umlAttribute::getName ()
+umlAttribute::umlAttribute (std::string name_,
+                            std::string value_,
+                            std::string type_,
+                            std::string comment_,
+                            char visibility_,
+                            unsigned char isabstract_,
+                            unsigned char isstatic_,
+                            unsigned char isconstant_,
+                            char kind_) :
+    name (name_),
+    value (value_),
+    type (type_),
+    comment (comment_),
+    visibility (visibility_),
+    isabstract (isabstract_),
+    isstatic (isstatic_),
+    isconstant (isconstant_),
+    kind (kind_)
+{
+}
+
+const std::string &
+umlAttribute::getName () const
 {
     return name;
 }
 
-std::string &
-umlAttribute::getValue ()
+const std::string &
+umlAttribute::getValue () const
 {
     return value;
 }
 
-std::string &
-umlAttribute::getType ()
+const std::string &
+umlAttribute::getType () const
 {
     return type;
 }
 
-std::string &
-umlAttribute::getComment ()
+const std::string &
+umlAttribute::getComment () const
 {
     return comment;
 }
 
 char
-umlAttribute::getVisibility ()
+umlAttribute::getVisibility () const
 {
     return visibility;
 }
 
 unsigned char
-umlAttribute::isAbstract ()
+umlAttribute::isAbstract () const
 {
     return isabstract;
 }
 
 unsigned char
-umlAttribute::isStatic ()
+umlAttribute::isStatic () const
 {
     return isstatic;
 }
 
 unsigned char
-umlAttribute::isConstant ()
+umlAttribute::isConstant () const
 {
     return isconstant;
 }
 
 char
-umlAttribute::getKind ()
+umlAttribute::getKind () const
 {
     return kind;
 }

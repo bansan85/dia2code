@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <libxml/tree.h>
 
 #include "parse_diagram.hpp"
+#include "umlOperation.hpp"
 
 #ifndef MIN
 #define MIN(x, y) (x < y ? x : y)
@@ -120,8 +121,8 @@ void make_depend ( std::list <umlclassnode> & classlist, const char * dependent,
 /**
   * Inserts "n" into the list "l", in orderly fashion
 */
-void insert_operation(umloperation &n, std::list <umloperation> &l) {
-    std::list <umloperation>::iterator itl;
+void insert_operation(umlOperation &n, std::list <umlOperation> &l) {
+    std::list <umlOperation>::iterator itl;
     
     itl = l.begin ();
     
@@ -129,7 +130,7 @@ void insert_operation(umloperation &n, std::list <umloperation> &l) {
         l.push_back (n);
     }
     else {
-        while ((itl != l.end ()) && ((*itl).attr.getVisibility () >= n.attr.getVisibility ())) {
+        while ((itl != l.end ()) && ((*itl).getVisibility () >= n.getVisibility ())) {
             ++itl;
         }
         if (itl == l.end ()) {
@@ -155,23 +156,9 @@ void parse_attributes(xmlNodePtr node, std::list <umlAttribute> &retour) {
     }
 }
 
-void parse_operation(xmlNodePtr node, umloperation &tmp) {
-    xmlChar *nodename;
-    tmp.attr.parse(node);
+void parse_operations(xmlNodePtr node, std::list <umlOperation> &res) {
     while ( node != NULL ) {
-        nodename = xmlGetProp(node, BAD_CAST2 ("name"));
-        if ( !strcmp("parameters", BAD_TSAC2 (nodename)) ) {
-            parse_attributes(node->xmlChildrenNode, tmp.parameters);
-        }
-        free(nodename);
-        node = node->next;
-    }
-}
-
-void parse_operations(xmlNodePtr node, std::list <umloperation> &res) {
-    while ( node != NULL ) {
-        umloperation on;
-        parse_operation (node->xmlChildrenNode, on);
+        umlOperation on (node->xmlChildrenNode);
         insert_operation(on, res);
         node = node->next;
     }
@@ -200,47 +187,44 @@ void parse_templates(xmlNodePtr node, std::list <umltemplate> &res) {
   * Adds get() (or is()) and set() methods for each attribute
 */
 void make_getset_methods(umlclass &myself) {
-    std::string tmpname;
-
     for (umlAttribute & attrlist : myself.attributes) {
         if ( !attrlist.isAbstract ()) {
-            umlAttribute parameter;
+            std::string tmpname, impl;
+
             /* The SET method */
-            umloperation operation;
-
-            parameter.assign ("value",
-                              "",
-                              attrlist.getType (),
-                              "",
-                              '0',
-                              false,
-                              false,
-                              false,
-                              '1');
-            operation.parameters.push_back (parameter);
-
-            operation.implementation.clear ();
-            operation.implementation.append ("    ");
-            operation.implementation.append (attrlist.getName ());
-            operation.implementation.append (" = value;");
+            umlAttribute parameter ("value",
+                                    "",
+                                    attrlist.getType (),
+                                    "",
+                                    '0',
+                                    false,
+                                    false,
+                                    false,
+                                    '1');
+            impl.assign ("    ");
+            impl.append (attrlist.getName ());
+            impl.append (" = value;");
 
             tmpname.assign ("set");
             tmpname.append (strtoupperfirst(attrlist.getName ()));
-            operation.attr.assign (tmpname,
-                                   "",
-                                   "void",
-                                   "",
-                                   '0',
-                                   false,
-                                   false,
-                                   false,
-                                   '1');
+            
+            umlOperation operation (tmpname,
+                                    "",
+                                    "void",
+                                    "",
+                                    '0',
+                                    false,
+                                    false,
+                                    false,
+                                    '1',
+                                    impl);
+            operation.addParameter (parameter);
             insert_operation(operation, myself.operations);
 
-            operation.implementation.assign ("    return ");
-            operation.implementation.append (attrlist.getName ());
-            operation.implementation.append (";");
             /* The GET or IS method */
+            impl.assign ("    return ");
+            impl.append (attrlist.getName ());
+            impl.append (";");
             if ( attrlist.getType ().compare ("boolean") == 0) {
                 tmpname.assign ("is");
             } else {
@@ -248,9 +232,9 @@ void make_getset_methods(umlclass &myself) {
             }
             tmpname.append (strtoupperfirst(attrlist.getName ()));
             
-            operation.attr.assign (tmpname, "", attrlist.getType (),
-                                   "", '0', false, false, true, '1');
-            insert_operation(operation, myself.operations);
+            umlOperation operation2 (tmpname, "", attrlist.getType (),
+                                   "", '0', false, false, true, '1', impl);
+            insert_operation(operation2, myself.operations);
         }
     }
  }

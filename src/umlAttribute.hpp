@@ -40,16 +40,25 @@ class umlAttribute {
         char kind;
     public :
         umlAttribute ();
+        umlAttribute (std::string name_,
+                      std::string value_,
+                      std::string type_,
+                      std::string comment_,
+                      char visibility_,
+                      unsigned char isabstract_,
+                      unsigned char isstatic_,
+                      unsigned char isconstant_,
+                      char kind_);
         
-        std::string & getName ();
-        std::string & getValue ();
-        std::string & getType ();
-        std::string & getComment ();
-        char getVisibility ();
-        unsigned char isAbstract ();
-        unsigned char isStatic ();
-        unsigned char isConstant ();
-        char getKind ();
+        const std::string & getName () const;
+        const std::string & getValue () const;
+        const std::string & getType () const;
+        const std::string & getComment () const;
+        char getVisibility () const;
+        unsigned char isAbstract () const;
+        unsigned char isStatic () const;
+        unsigned char isConstant () const;
+        char getKind () const;
 
         void assign (std::string name_,
                      std::string value_,

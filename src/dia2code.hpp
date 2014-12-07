@@ -31,16 +31,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/stat.h>
 
 #include "umlAttribute.hpp"
+#include "umlOperation.hpp"
 
 #define kind_str(A)   ((A)=='1'?"in":((A)=='2'?"in/out":((A)=='3'?"out":"???")))
 #define BAD_CAST2 reinterpret_cast <const xmlChar *>
 #define BAD_TSAC2 reinterpret_cast <const char *>
-
-struct umloperation {
-    umlAttribute attr;
-    std::list <umlAttribute> parameters;
-    std::string implementation;
-};
 
 struct umltemplate {
     std::string name;
@@ -70,7 +65,7 @@ struct umlclass {
     std::string comment;
     int isabstract;
     std::list <umlAttribute> attributes;
-    std::list <umloperation> operations;
+    std::list <umlOperation> operations;
     std::list <umltemplate> templates;
     umlpackage *package;
     geometry geom;

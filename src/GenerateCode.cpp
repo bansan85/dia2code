@@ -527,65 +527,62 @@ GenerateCode::gen_class (umlclassnode *node)
             file << spc () << "public:\n";
             indentlevel++;
         }
-        for (umloperation & umlo : node->key.operations) {
-            std::list <umlAttribute>::iterator tmpa;
+        for (umlOperation & umlo : node->key.operations) {
+            std::list <umlAttribute>::const_iterator tmpa;
             if (is_valuetype) {
-                if (umlo.attr.getVisibility () != '0')
+                if (umlo.getVisibility () != '0')
                     fprintf (stderr, "CORBAValue %s/%s: must be public\n",
-                                     name, umlo.attr.getName ().c_str ());
+                                     name, umlo.getName ().c_str ());
             } else {
-                check_visibility (&tmpv, umlo.attr.getVisibility ());
+                check_visibility (&tmpv, umlo.getVisibility ());
             }
 
             /* print comments on operation */
-            if (!umlo.attr.getComment ().empty ()) {
-                file << spc () << "/// " << umlo.attr.getComment () << "\n";
-                for (umlAttribute & tmpa2 : umlo.parameters) {
+            if (!umlo.getComment ().empty ()) {
+                file << spc () << "/// " << umlo.getComment () << "\n";
+                for (const umlAttribute & tmpa2 : umlo.getParameters ()) {
                      file << spc () << "/// @param " << tmpa2.getName () << "\t(" << kind_str(tmpa2.getKind ()) << ") " << tmpa2.getComment () << "\n";
                 }
             }
             /* print operation */
             file << spc ();
-            if (umlo.attr.isAbstract () || is_valuetype) {
+            if (umlo.isAbstract () || is_valuetype) {
                 file << "virtual ";
-                umlo.attr.getValue ().clear ();
             }
-            if (umlo.attr.isStatic ()) {
+            if (umlo.isStatic ()) {
                 if (is_valuetype)
                     fprintf (stderr, "CORBAValue %s/%s: static not supported\n",
-                                     name, umlo.attr.getName ().c_str ());
+                                     name, umlo.getName ().c_str ());
                 else
                     file << "static ";
             }
-            if (!umlo.attr.getType ().empty ()) {
-                file << cppname (umlo.attr.getType ()) << " ";
+            if (!umlo.getType ().empty ()) {
+                file << cppname (umlo.getType ()) << " ";
             }
-            file << umlo.attr.getName () << " (";
-            tmpa = umlo.parameters.begin ();
-            while (tmpa != umlo.parameters.end ()) {
+            file << umlo.getName () << " (";
+            tmpa = umlo.getParameters ().begin ();
+            while (tmpa != umlo.getParameters ().end ()) {
                 file << (*tmpa).getType () << " " << (*tmpa).getName ();
                 if (!(*tmpa).getValue ().empty ()) {
                     if (is_valuetype)
                         fprintf (stderr, "CORBAValue %s/%s: param default "
-                                 "not supported\n", name, umlo.attr.getName ().c_str ());
+                                 "not supported\n", name, umlo.getName ().c_str ());
                     else
                        file << " = " << (*tmpa).getValue ();
                 }
                 ++tmpa;
-                if (tmpa != umlo.parameters.end ()) {
+                if (tmpa != umlo.getParameters ().end ()) {
                     file << ", ";
                 }
             }
             file << ")";
-            if (umlo.attr.isConstant ()) {
+            if (umlo.isConstant ()) {
                 file << " const";
             }
-            if (umlo.attr.getValue ().empty ()) {
-                // virtual
-                if ((umlo.attr.isAbstract () || is_valuetype) &&
-                    umlo.attr.getName ()[0] != '~')
-                    file << " = 0";
-            }
+            // virtual
+            if ((umlo.isAbstract () || is_valuetype) &&
+                umlo.getName ()[0] != '~')
+                file << " = 0";
             file << ";\n";
         }
     }
