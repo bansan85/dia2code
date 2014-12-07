@@ -172,7 +172,7 @@ GenerateCode::generate_code ()
         std::string filename;
 
         if ((*it2).decl_kind == dk_module) {
-            name = (*it2).u.this_module->pkg.name;
+            name = (*it2).u.this_module->pkg.getName ();
         } else {         /* dk_class */
             name = (*it2).u.this_class->key.name;
         }
@@ -333,10 +333,10 @@ fqname (umlclassnode &node, bool use_ref_type)
 
     buf.clear ();
     if (node.key.package != NULL) {
-        std::list <umlpackage> pkglist;
-        make_package_list (node.key.package, pkglist);
-        for (umlpackage & it : pkglist) {
-            buf.append (it.name);
+        std::list <umlPackage> pkglist;
+        umlPackage::make_package_list (node.key.package, pkglist);
+        for (umlPackage & it : pkglist) {
+            buf.append (it.getName ());
             buf.append ("::");
         }
     }
@@ -621,7 +621,7 @@ GenerateCode::gen_decl (declaration &d)
     std::list <umlAttribute>::iterator umla;
 
     if (d.decl_kind == dk_module) {
-        name = d.u.this_module->pkg.name.c_str ();
+        name = d.u.this_module->pkg.getName ().c_str ();
         if (bOpenBraceOnNewline) {
             file << spc () << "namespace " << name << "\n";
             file << spc () << "{\n\n";

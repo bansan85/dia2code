@@ -37,8 +37,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BAD_CAST2 reinterpret_cast <const xmlChar *>
 #define BAD_TSAC2 reinterpret_cast <const char *>
 
-
-
 struct geometry {
     float pos_x;
     float pos_y;
@@ -46,13 +44,7 @@ struct geometry {
     float height;
 };
 
-struct umlpackage {
-    std::string id;
-    std::string name;
-    geometry geom;
-    struct umlpackage *parent;
-    std::string directory;
-};
+#include "umlPackage.hpp"
 
 struct umlclass {
     std::string id;
@@ -68,7 +60,7 @@ struct umlclass {
     std::string type;
 };*/
     std::list <std::pair <std::string, std::string> > templates;
-    umlpackage *package;
+    umlPackage *package;
     geometry geom;
 };
 
@@ -97,8 +89,6 @@ int is_enum_stereo (const char * stereo);
 int is_struct_stereo (const char * stereo);
 int is_typedef_stereo (const char * stereo);
 int is_const_stereo (const char * stereo);
-
-void make_package_list(umlpackage *package, std::list <umlpackage> &res);
 
 extern int generate_backup;
 

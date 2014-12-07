@@ -269,36 +269,10 @@ void parse_geom_height(xmlNodePtr attribute, geometry * geom ) {
    returns 1 if the position point of the object with geom2 is inside the object with geom1
            0 otherwise
 */
-int is_inside(const geometry * geom1, const geometry * geom2) {
-    return geom1->pos_x < geom2->pos_x && geom2->pos_x < (geom1->pos_x+geom1->width) &&
-           geom1->pos_y < geom2->pos_y && geom2->pos_y < (geom1->pos_y+geom1->height);
+int is_inside(const geometry & geom1, const geometry & geom2) {
+    return geom1.pos_x < geom2.pos_x && geom2.pos_x < (geom1.pos_x+geom1.width) &&
+           geom1.pos_y < geom2.pos_y && geom2.pos_y < (geom1.pos_y+geom1.height);
 
-}
-
-void parse_package(xmlNodePtr package, umlpackage &res) {
-    xmlNodePtr attribute;
-    xmlChar *attrname;
-
-    res.parent = NULL;
-
-    attribute = package->xmlChildrenNode;
-    while ( attribute != NULL ) {
-        attrname = xmlGetProp(attribute, BAD_CAST2 ("name"));
-        if( attrname != NULL ) {
-            if ( !strcmp("name", BAD_TSAC2 (attrname)) ) {
-                parse_dia_node(attribute->xmlChildrenNode, res.name);
-            } else if ( !strcmp ( "obj_pos", BAD_TSAC2 (attrname) ) ) {
-                parse_geom_position(attribute->xmlChildrenNode, &res.geom );
-            } else if ( !strcmp ( "elem_width", BAD_TSAC2 (attrname) ) ) {
-                parse_geom_width(attribute->xmlChildrenNode, &res.geom );
-            } else if ( !strcmp ( "elem_height", BAD_TSAC2 (attrname) ) ) {
-                parse_geom_height(attribute->xmlChildrenNode, &res.geom );
-            }
-            xmlFree (attrname);
-        }
-        attribute = attribute->next;
-    }
-    return;
 }
 
 void parse_class(xmlNodePtr class_, umlclassnode & res) {
@@ -452,7 +426,7 @@ void parse_diagram(char *diafile, std::list <umlclassnode> & res) {
     xmlChar *end2 = NULL;
 
     xmlNodePtr object = NULL;
-    std::list <umlpackage> packagelst;
+    std::list <umlPackage> packagelst;
 
     ptr = xmlParseFile(diafile);
 
@@ -479,11 +453,8 @@ void parse_diagram(char *diafile, std::list <umlclassnode> & res) {
             // We insert it here
             res.push_back (tmplist);
         } else if ( !strcmp("UML - LargePackage", BAD_TSAC2 (objtype)) || !strcmp("UML - SmallPackage", BAD_TSAC2 (objtype)) ) {
-            umlpackage tmppck;
-            parse_package(object, tmppck);
-
             xmlChar *objid = xmlGetProp(object, BAD_CAST2 ("id"));
-            tmppck.id.assign (BAD_TSAC2 (objid));
+            umlPackage tmppck (object, BAD_TSAC2 (objid));
             free(objid);
 
             // We insert it here
@@ -689,35 +660,25 @@ void parse_diagram(char *diafile, std::list <umlclassnode> & res) {
        to each class. */
 
     /* Build the relationships between packages */
-    for (umlpackage & dummypcklst : packagelst) {
-        for (umlpackage & tmppcklst : packagelst) {
-            if ( is_inside(&dummypcklst.geom, &tmppcklst.geom) ) {
-                if ( (tmppcklst.parent == NULL) ||
-                     (! is_inside ( &dummypcklst.geom, &tmppcklst.parent->geom ))) {
-                    tmppcklst.parent = new umlpackage;
-                    tmppcklst.parent->id = dummypcklst.id;
-                    tmppcklst.parent->name = dummypcklst.name;
-                    tmppcklst.parent->geom = dummypcklst.geom;
-                    tmppcklst.parent->parent = dummypcklst.parent;
-                    tmppcklst.parent->directory = dummypcklst.directory;
+    for (umlPackage & dummypcklst : packagelst) {
+        for (umlPackage & tmppcklst : packagelst) {
+            if ( is_inside(dummypcklst.getGeometry (), tmppcklst.getGeometry ()) ) {
+                if ( (tmppcklst.getParent () == NULL) ||
+                     (! is_inside (dummypcklst.getGeometry (), tmppcklst.getParent ()->getGeometry () ))) {
+                    tmppcklst.setParent (new umlPackage (dummypcklst));
                 }
             }
         }
     }
 
     /* Associate packages to classes */
-    for (umlpackage & dummypcklst : packagelst) {
+    for (umlPackage & dummypcklst : packagelst) {
         for (umlclassnode & it : res) {
-            if ( is_inside(&dummypcklst.geom,&it.key.geom) ) {
+            if ( is_inside(dummypcklst.getGeometry (),it.key.geom) ) {
                 if ( (it.key.package == NULL) ||
-                     (! is_inside ( &dummypcklst.geom, &it.key.package->geom ))) {
+                     (! is_inside ( dummypcklst.getGeometry (), it.key.package->getGeometry () ))) {
                     delete it.key.package;
-                    it.key.package = new umlpackage;
-                    it.key.package->id = dummypcklst.id;
-                    it.key.package->name = dummypcklst.name;
-                    it.key.package->geom = dummypcklst.geom;
-                    it.key.package->parent = dummypcklst.parent;
-                    it.key.package->directory = dummypcklst.directory;
+                    it.key.package = new umlPackage (dummypcklst);
                 }
             }
         }

@@ -188,8 +188,8 @@ DiaGram::push (umlclassnode & node)
     d.u.this_class->dependencies = node.dependencies;
 
     if (node.key.package != NULL) {
-        std::list <umlpackage> pkglist;
-        make_package_list (node.key.package, pkglist);
+        std::list <umlPackage> pkglist;
+        umlPackage::make_package_list (node.key.package, pkglist);
         m = find_or_add_module (decl, pkglist);
         m->contents.push_back (d);
     } else {
@@ -225,9 +225,9 @@ void
 DiaGram::push_include (umlclassnode &node)
 {
     if (node.key.package != NULL) {
-        std::list <umlpackage> pkglist;
-        make_package_list (node.key.package, pkglist);
-        add_include ((*pkglist.begin ()).name.c_str ());
+        std::list <umlPackage> pkglist;
+        umlPackage::make_package_list (node.key.package, pkglist);
+        add_include ((*pkglist.begin ()).getName ().c_str ());
     } else {
         add_include (node.key.name.c_str ());
     }

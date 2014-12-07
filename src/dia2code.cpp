@@ -88,25 +88,6 @@ int is_present(std::list <std::string> list, const char *name) {
     return 0;
 }
 
-/*
-    Builds a package list from the hierarchy of parents of package.
-    The topmost package will be the first on the list and the initial
-    package will be the last.
-*/
-void make_package_list(umlpackage *package, std::list <umlpackage> &res){
-    umlpackage *par;
-    
-    if (package == NULL)
-        return;
-    res.push_back (*package);
-    par = package->parent;
-    while ( par != NULL){
-        res.push_front (*par);
-        par = par->parent;
-    }
-    return;
-}
-
 int
 is_enum_stereo (const char *stereo)
 {

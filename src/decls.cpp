@@ -18,14 +18,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "decls.hpp"
 
+#include "umlPackage.hpp"
+
 module *
-create_nested_modules_from_pkglist (std::list <umlpackage> &pkglist,
+create_nested_modules_from_pkglist (std::list <umlPackage> &pkglist,
                                     module        *m)
 {
     bool first = true;
     /* Expects pkglist and m to be non-NULL and m->contents to be NULL.
        Returns a reference to the innermost module created.  */
-    for (umlpackage & it : pkglist) {
+    for (umlPackage & it : pkglist) {
         if (first)
         {
             first = false;
@@ -44,7 +46,7 @@ create_nested_modules_from_pkglist (std::list <umlpackage> &pkglist,
 
 module *
 find_or_add_module (std::list <declaration> &dptr,
-                    std::list <umlpackage> &pkglist)
+                    std::list <umlPackage> &pkglist)
 {
     declaration d;
     module *m;
@@ -54,7 +56,7 @@ find_or_add_module (std::list <declaration> &dptr,
     
     for (declaration & it : dptr) {
         if (it.decl_kind == dk_module &&
-            it.u.this_module->pkg.name.compare ((*pkglist.begin ()).name) == 0) {
+            it.u.this_module->pkg.getName ().compare ((*pkglist.begin ()).getName ()) == 0) {
             m = it.u.this_module;
             if (pkglist.size () == 1)
                 return m;
@@ -76,14 +78,14 @@ find_or_add_module (std::list <declaration> &dptr,
 
 module *
 find_module (std::list <declaration> &dptr,
-             std::list <umlpackage>::iterator begin,
-             std::list <umlpackage>::iterator end)
+             std::list <umlPackage>::iterator begin,
+             std::list <umlPackage>::iterator end)
 {
     std::list <declaration>::iterator it = dptr.begin ();
     while (it != dptr.end ()) {
         if ((*it).decl_kind == dk_module) {
             module *m = (*it).u.this_module;
-            if (m->pkg.name.compare ((*begin).name) == 0) {
+            if (m->pkg.getName ().compare ((*begin).getName ()) == 0) {
                 if (std::next (begin) != end)
                 {
                     std::list<declaration> liste;
@@ -112,8 +114,8 @@ find_class (umlclassnode &node, std::list <declaration> &decl)
     std::list <declaration> *d;
 
     if (node.key.package) {
-        std::list <umlpackage> pkglist;
-        make_package_list (node.key.package, pkglist);
+        std::list <umlPackage> pkglist;
+        umlPackage::make_package_list (node.key.package, pkglist);
         module *m = find_module (decl, pkglist.begin (), pkglist.end ());
         if (m == NULL || m->contents.empty ())
             return 0;
