@@ -142,7 +142,7 @@ void insert_operation(umlOperation &n, std::list <umlOperation> &l) {
     }
 }
 
-void insert_template(umltemplate &n, std::list <umltemplate> &l) {
+void insert_template(std::pair <std::string, std::string> &n, std::list <std::pair <std::string, std::string> > &l) {
     l.push_back (n);
 }
 
@@ -165,17 +165,17 @@ void parse_operations(xmlNodePtr node, std::list <umlOperation> &res) {
     return;
 }
 
-void parse_template(xmlNodePtr node, umltemplate *tmp) {
-    parse_dia_string(BAD_TSAC2 (node->xmlChildrenNode->xmlChildrenNode->content), tmp->name);
-    parse_dia_string(BAD_TSAC2 (node->next->xmlChildrenNode->xmlChildrenNode->content), tmp->type);
+void parse_template(xmlNodePtr node, std::pair <std::string, std::string> &tmp) {
+    parse_dia_string(BAD_TSAC2 (node->xmlChildrenNode->xmlChildrenNode->content), tmp.first);
+    parse_dia_string(BAD_TSAC2 (node->next->xmlChildrenNode->xmlChildrenNode->content), tmp.second);
 }
 
-void parse_templates(xmlNodePtr node, std::list <umltemplate> &res) {
+void parse_templates(xmlNodePtr node, std::list <std::pair <std::string, std::string>> &res) {
     while ( node != NULL) {
         if ( node->xmlChildrenNode->xmlChildrenNode->xmlChildrenNode != NULL &&
                 node->xmlChildrenNode->next->xmlChildrenNode->xmlChildrenNode != NULL ) {
-            umltemplate tn;
-            parse_template(node->xmlChildrenNode, &tn);
+            std::pair <std::string, std::string> tn;
+            parse_template(node->xmlChildrenNode, tn);
             insert_template(tn, res);
         }
         node = node->next;

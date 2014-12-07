@@ -37,10 +37,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BAD_CAST2 reinterpret_cast <const xmlChar *>
 #define BAD_TSAC2 reinterpret_cast <const char *>
 
-struct umltemplate {
-    std::string name;
-    std::string type;
-};
 
 
 struct geometry {
@@ -66,7 +62,12 @@ struct umlclass {
     int isabstract;
     std::list <umlAttribute> attributes;
     std::list <umlOperation> operations;
-    std::list <umltemplate> templates;
+/*
+ * struct umltemplate {
+    std::string name;
+    std::string type;
+};*/
+    std::list <std::pair <std::string, std::string> > templates;
     umlpackage *package;
     geometry geom;
 };

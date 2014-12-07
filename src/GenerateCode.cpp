@@ -388,10 +388,10 @@ GenerateCode::gen_class (umlclassnode *node)
         if (is_valuetype) {
             fprintf (stderr, "CORBAValue %s: template ignored\n", name);
         } else {
-            std::list <umltemplate>::iterator template_ = node->key.templates.begin ();
+            std::list <std::pair <std::string, std::string> >::iterator template_ = node->key.templates.begin ();
             file << spc () << "template <";
             while (template_ != node->key.templates.end ()) {
-                file << (*template_).type << " " << (*template_).name;
+                file << (*template_).second << " " << (*template_).first;
                 ++template_;
                 if (template_ != node->key.templates.end ())
                     file << ", ";
