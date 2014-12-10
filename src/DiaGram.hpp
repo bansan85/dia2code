@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class DiaGram {
     private:
         // Diagram under uml format.
-        std::list <umlclassnode> uml;
+        std::list <umlClassNode> uml;
         // Selection of classes to generate code for.
         std::list <std::string> genClasses;
         // Flag that inverts the above selection.
@@ -40,7 +40,7 @@ class DiaGram {
         std::list <std::string> includes;
         std::list <declaration> decl;
         
-        void list_classes (umlclassnode & current_class, std::list <umlclassnode> & res);
+        void list_classes (umlClassNode & current_class, std::list <umlClassNode> & res);
 
         /**
          * open_outfile() returns NULL if the file exists and is not rewritten
@@ -48,12 +48,12 @@ class DiaGram {
         */
         int have_include (const char *name) const;
         void add_include (const char *name);
-        void push_include (umlclassnode & node);
+        void push_include (umlClassNode & node);
     public:
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;
 
-        std::list <umlclassnode> & getUml ();
+        std::list <umlClassNode> & getUml ();
 
         void addGenClasses (std::list <std::string> classes);
         std::list <std::string> getGenClasses () const;
@@ -64,7 +64,7 @@ class DiaGram {
         bool getUseCorba () const;
         void setUseCorba (bool corba);
 
-        void push (umlclassnode &node);
+        void push (umlClassNode &node);
         std::list <std::string> getIncludes () const;
         void cleanIncludes ();
         void determine_includes (declaration &d);

@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 
 #include "DiaGram.hpp"
+#include "umlClass.hpp"
 
 class GenerateCode {
     private:
@@ -42,8 +43,8 @@ class GenerateCode {
         bool        buildtree : 1;
         bool        bOpenBraceOnNewline : 1;
         
-        int pass_by_reference (umlclass &cl);
-        void gen_class (umlclassnode *node);
+        int pass_by_reference (umlClass &cl);
+        void gen_class (umlClassNode *node);
         const char * cppname (std::string name) const;
         void check_visibility (int *curr_vis, int new_vis);
         std::string spc() const;

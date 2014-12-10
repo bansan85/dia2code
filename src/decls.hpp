@@ -17,10 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#ifndef DECLS_H
-#define DECLS_H
+#ifndef DECLS_HPP
+#define DECLS_HPP
 
-#include "dia2code.hpp"
+#include "umlPackage.hpp"
 
 /* Package processing auxiliary structure:
    "Declarations" are UML packages (which map to IDL module or C++
@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    to most.  We cannot handle circular dependencies yet.  */
 
 struct declaration;
+class umlClassNode;
 
 struct module {  /* UML package = IDL module
                     What we call `module' equally applies to C++ (namespace)
@@ -49,7 +50,7 @@ struct declaration {
     /* case dk_module: */
         module *this_module;
     /* case dk_class:  */
-        umlclassnode *this_class;
+        umlClassNode *this_class;
         /* In `this_class', `next' is not used since we use our own
            sequencing (see `prev' and `next' below.)  */
     } u;
@@ -61,8 +62,6 @@ struct declaration {
 
 module *
 find_or_add_module (std::list <declaration> &dptr, std::list <umlPackage> &pkglist);
-
-declaration * find_class (umlclassnode &node, std::list <declaration> &decl);
 
 #endif  /* DECLS_H */
 

@@ -24,14 +24,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <list>
 
+#include "umlClassNode.hpp"
 
-void parse_diagram(char *diafile, std::list <umlclassnode> & res);
 void parse_dia_node(xmlNodePtr stringnode, std::string &buffer);
 bool parse_boolean(xmlNodePtr booleannode);
 void parse_attributes(xmlNodePtr node, std::list <umlAttribute> &retour);
 void parse_geom_position(xmlNodePtr attribute, geometry * geom);
 void parse_geom_width(xmlNodePtr attribute, geometry * geom);
 void parse_geom_height(xmlNodePtr attribute, geometry * geom);
+void insert_operation(umlOperation &n, std::list <umlOperation> &l);
+umlClassNode * find(std::list <umlClassNode> & list, const char *id );
+void parse_dia_string(const char * stringnode, std::string &buffer);
+void recursive_search(xmlNodePtr node, xmlNodePtr * object);
+xmlNodePtr getNextObject(xmlNodePtr from);
+void parse_operations(xmlNodePtr node, std::list <umlOperation> &res);
+void parse_templates(xmlNodePtr node, std::list <std::pair <std::string, std::string>> &res);
 
 #endif
 

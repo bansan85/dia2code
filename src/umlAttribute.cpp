@@ -132,7 +132,7 @@ umlAttribute::assign (std::string name_,
 }
 
 void
-umlAttribute::check (const char *typename_)
+umlAttribute::check (const char *typename_) const
 {
     /* Check settings that don't make sense for C++ generation.  */
     if (visibility == '1')

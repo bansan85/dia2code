@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config.h"
 
 #include "DiaGram.hpp"
+#include "scan_tree.hpp"
 
 DiaGram::DiaGram () :
     uml (),
@@ -31,7 +32,7 @@ DiaGram::DiaGram () :
 }
 
 
-std::list <umlclassnode> &
+std::list <umlClassNode> &
 DiaGram::getUml () {
     return uml;
 }
@@ -79,67 +80,54 @@ DiaGram::setUseCorba (bool corba) {
 }
 
 
-/* Creates a new umlclassnode with class as the key, then appends it to
-  the end of list */
-void append ( std::list <umlclassnode> & list, umlclassnode & class_ ) {
-    umlclassnode tmpnode;
-
-    tmpnode.key = class_.key;
-    tmpnode.parents = class_.parents;
-    tmpnode.associations = class_.associations;
-    tmpnode.dependencies = class_.dependencies;
-
-    list.push_back (tmpnode);
-}
-
 /* Returns a freshly constructed list of the classes that are used
    by the given class AND are themselves in the classlist of the
    given batch */
 void
-DiaGram::list_classes(umlclassnode & current_class, std::list <umlclassnode> & res) {
-    std::list <umlclassnode> classes = getUml ();
-    umlclassnode * tmpnode;
+DiaGram::list_classes(umlClassNode & current_class, std::list <umlClassNode> & res) {
+    std::list <umlClassNode> classes = getUml ();
+    umlClassNode * tmpnode;
 
-    for (umlAttribute & umla : current_class.key.attributes) {
+    for (const umlAttribute & umla : current_class.getAttributes ()) {
         if (!umla.getType ().empty ()) {
             tmpnode = find_by_name(classes, umla.getType ().c_str ());
             if ( tmpnode && ! find_by_name(res, umla.getType ().c_str ())) {
-                append(res, *tmpnode);
+                res.push_back (*tmpnode);
             }
         }
     }
 
-    for (umlOperation & umlo : current_class.key.operations) {
+    for (const umlOperation & umlo : current_class.getOperations ()) {
         tmpnode = find_by_name(classes, umlo.getType ().c_str ());
         if ( tmpnode && ! find_by_name(res, umlo.getType ().c_str ())) {
-            append(res, *tmpnode);
+            res.push_back (*tmpnode);
         }
         for (const umlAttribute & umla : umlo.getParameters ()) {
             tmpnode = find_by_name(classes, umla.getType ().c_str ());
             if ( tmpnode && ! find_by_name(res, umla.getType ().c_str ())) {
-                append(res, *tmpnode);
+                res.push_back (*tmpnode);
             }
         }
     }
 
-    for (umlclassnode & classit : current_class.parents) {
-        tmpnode = find_by_name(classes, classit.key.name.c_str ());
-        if ( tmpnode && ! find_by_name(res, classit.key.name.c_str ()) ) {
-            append(res, *tmpnode);
+    for (const umlClassNode & classit : current_class.getParents ()) {
+        tmpnode = find_by_name(classes, classit.getName().c_str ());
+        if ( tmpnode && ! find_by_name(res, classit.getName().c_str ()) ) {
+            res.push_back (*tmpnode);
         }
     }
 
-    for (umlclassnode & classit : current_class.dependencies) {
-        tmpnode = find_by_name(classes, classit.key.name.c_str ());
-        if ( tmpnode && ! find_by_name(res, classit.key.name.c_str ()) ) {
-            append(res, *tmpnode);
+    for (const umlClassNode & classit : current_class.getDependencies ()) {
+        tmpnode = find_by_name(classes, classit.getName().c_str ());
+        if ( tmpnode && ! find_by_name(res, classit.getName().c_str ()) ) {
+            res.push_back (*tmpnode);
         }
     }
 
-    for (umlassoc & associations : current_class.associations) {
-        tmpnode = find_by_name(classes, associations.key.name.c_str ());
-        if ( tmpnode && ! find_by_name(res, associations.key.name.c_str ()) ) {
-            append(res, *tmpnode);
+    for (const umlassoc & associations : current_class.getAssociations ()) {
+        tmpnode = find_by_name(classes, associations.key.getName().c_str ());
+        if ( tmpnode && ! find_by_name(res, associations.key.getName().c_str ()) ) {
+            res.push_back (*tmpnode);
         }
     }
 
@@ -147,45 +135,41 @@ DiaGram::list_classes(umlclassnode & current_class, std::list <umlclassnode> & r
 }
 
 void
-DiaGram::push (umlclassnode & node)
+DiaGram::push (umlClassNode & node)
 {
-    std::list <umlclassnode> used_classes;
+    std::list <umlClassNode> used_classes;
     declaration d;
 
-    if (find_class (node, decl) != NULL) {
+    if (node.find_class (decl) != NULL) {
         return;
     }
 
-    tmp_classes.push_back (node.key.name);
+    tmp_classes.push_back (node.getName());
     
     list_classes (node, used_classes);
     /* Make sure all classes that this one depends on are already pushed. */
-    for (umlclassnode & it : used_classes) {
+    for (umlClassNode & it : used_classes) {
         /* don't push this class !*/
-        if (! !node.key.name.compare (it.key.name) &&
-            ! (is_present (tmp_classes, it.key.name.c_str ()) ^ invertsel)) {
+        if (! !node.getName().compare (it.getName()) &&
+            ! (is_present (tmp_classes, it.getName().c_str ()) ^ invertsel)) {
             push (it);
         }
     }
 
     d.decl_kind = dk_class;
-    d.u.this_class = new umlclassnode;
-    d.u.this_class->key = node.key;
-    d.u.this_class->parents = node.parents;
-    d.u.this_class->associations = node.associations;
-    d.u.this_class->dependencies = node.dependencies;
+    d.u.this_class = new umlClassNode (node);
 
-    if (node.key.package != NULL) {
+    if (node.getPackage() != NULL) {
         std::list <umlPackage> pkglist;
         module *m;
-        umlPackage::make_package_list (node.key.package, pkglist);
+        umlPackage::make_package_list (node.getPackage(), pkglist);
         m = find_or_add_module (decl, pkglist);
         m->contents.push_back (d);
     } else {
         decl.push_back (d);
     }
 
-    if (node.key.stereotype.compare (0, 5, "CORBA") == 0)
+    if (node.getStereotype().compare (0, 5, "CORBA") == 0)
         usecorba = true;
 }
 
@@ -211,14 +195,14 @@ DiaGram::add_include (const char *name)
 }
 
 void
-DiaGram::push_include (umlclassnode &node)
+DiaGram::push_include (umlClassNode &node)
 {
-    if (node.key.package != NULL) {
+    if (node.getPackage() != NULL) {
         std::list <umlPackage> pkglist;
-        umlPackage::make_package_list (node.key.package, pkglist);
+        umlPackage::make_package_list (node.getPackage(), pkglist);
         add_include ((*pkglist.begin ()).getName ().c_str ());
     } else {
-        add_include (node.key.name.c_str ());
+        add_include (node.getName().c_str ());
     }
 }
 
@@ -241,9 +225,9 @@ DiaGram::determine_includes (declaration &d)
             determine_includes (it);
         }
     } else {
-        std::list <umlclassnode> cl;
+        std::list <umlClassNode> cl;
         list_classes (*d.u.this_class, cl);
-        for (umlclassnode & it : cl) {
+        for (umlClassNode & it : cl) {
             push_include (it);
         }
     }

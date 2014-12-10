@@ -76,63 +76,7 @@ find_or_add_module (std::list <declaration> &dptr,
 }
 
 
-module *
-find_module (std::list <declaration> &dptr,
-             std::list <umlPackage>::iterator begin,
-             std::list <umlPackage>::iterator end)
-{
-    std::list <declaration>::iterator it = dptr.begin ();
-    while (it != dptr.end ()) {
-        if ((*it).decl_kind == dk_module) {
-            module *m = (*it).u.this_module;
-            if (m->pkg.getName ().compare ((*begin).getName ()) == 0) {
-                if (std::next (begin) != end)
-                {
-                    std::list<declaration> liste;
 
-                    if (m->contents.empty ())
-                        return NULL;
-                    else
-                    {
-                        liste.push_back (*m->contents.begin ());
-                        return find_module (liste, std::next (begin), end);
-                    }
-                }
-                else
-                    return m;
-            }
-        }
-        ++it;
-    }
-    return NULL;
-}
-
-
-declaration *
-find_class (umlclassnode &node, std::list <declaration> &decl)
-{
-    std::list <declaration> *d;
-
-    if (node.key.package) {
-        std::list <umlPackage> pkglist;
-        umlPackage::make_package_list (node.key.package, pkglist);
-        module *m = find_module (decl, pkglist.begin (), pkglist.end ());
-        if (m == NULL || m->contents.empty ())
-            return 0;
-        d = &m->contents;
-    } else {
-        d = &decl;
-    }
-
-    for (declaration & it : *d) {
-        if (it.decl_kind == dk_class) {
-            umlclassnode *cl = it.u.this_class;
-            if (cl->key.name.compare (node.key.name) == 0)
-                return &it;
-        }
-    }
-    return NULL;
-}
 
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

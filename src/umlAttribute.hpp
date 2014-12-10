@@ -70,7 +70,7 @@ class umlAttribute {
                      unsigned char isconstant_,
                      char kind_);
 
-        void check (const char *typename_);
+        void check (const char *typename_) const;
         void parse (xmlNodePtr node);
         void insert (std::list <umlAttribute> &l);
         

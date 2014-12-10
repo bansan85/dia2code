@@ -17,19 +17,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
+#ifndef SCAN_TREE_HPP
+#define SCAN_TREE_HPP
+
 #include "config.h"
 
 #include "umlClassNode.hpp"
 
-umlClassNode * find_by_name(std::list <umlClassNode> & list, const char * name ) {
-    if ( name != NULL && strlen(name) > 0 ) {
-        for (umlClassNode & it : list) {
-            if ( it.getName ().compare (name) == 0) {
-                return &it;
-            }
-        }
-    }
-    return NULL;
-}
+umlClassNode * find_by_name(std::list <umlClassNode> & list, const char * name);
 
-/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+
+#endif

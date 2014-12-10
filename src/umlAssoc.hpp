@@ -17,19 +17,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
+#ifndef UML_ASSOC_HPP
+#define UML_ASSOC_HPP
+
 #include "config.h"
 
-#include "umlClassNode.hpp"
+#include "umlClass.hpp"
 
-umlClassNode * find_by_name(std::list <umlClassNode> & list, const char * name ) {
-    if ( name != NULL && strlen(name) > 0 ) {
-        for (umlClassNode & it : list) {
-            if ( it.getName ().compare (name) == 0) {
-                return &it;
-            }
-        }
-    }
-    return NULL;
-}
+struct umlassoc {
+    umlClass key;
+    std::string name;
+    char composite;
+    // Unused
+    char multiplicity[10];
+};
 
-/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+
+
+#endif

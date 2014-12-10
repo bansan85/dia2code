@@ -43,7 +43,7 @@ class umlPackage {
         const umlPackage *getParent () const;
         void setParent (umlPackage * pack);
 
-        static void make_package_list(umlPackage *package, std::list <umlPackage> &res);
+        static void make_package_list(const umlPackage *package, std::list <umlPackage> &res);
         
         ~umlPackage ();
 };

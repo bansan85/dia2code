@@ -30,9 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "umlAttribute.hpp"
-#include "umlOperation.hpp"
-
 #define kind_str(A)   ((A)=='1'?"in":((A)=='2'?"in/out":((A)=='3'?"out":"???")))
 #define BAD_CAST2 reinterpret_cast <const xmlChar *>
 #define BAD_TSAC2 reinterpret_cast <const char *>
@@ -44,46 +41,10 @@ struct geometry {
     float height;
 };
 
-#include "umlPackage.hpp"
-
-struct umlclass {
-    std::string id;
-    std::string name;
-    std::string stereotype;
-    std::string comment;
-    int isabstract;
-    std::list <umlAttribute> attributes;
-    std::list <umlOperation> operations;
-/*
- * struct umltemplate {
-    std::string name;
-    std::string type;
-};*/
-    std::list <std::pair <std::string, std::string> > templates;
-    umlPackage *package;
-    geometry geom;
-};
-
-struct umlassoc {
-    umlclass key;
-    std::string name;
-    char composite;
-    // Unused
-    char multiplicity[10];
-};
-
-struct umlclassnode {
-    umlclass key;
-    std::list <umlclassnode> parents;
-    std::list <umlassoc> associations;
-    std::list <umlclassnode> dependencies;
-};
-
 std::string strtoupper(std::string s);
 std::string strtoupperfirst(std::string s);
 std::list <std::string> parse_class_names (char *s);
 int is_present(std::list <std::string> list, const char *name);
-umlclassnode * find_by_name(std::list <umlclassnode> & list, const char * name);
 
 int is_enum_stereo (const char * stereo);
 int is_struct_stereo (const char * stereo);

@@ -73,7 +73,7 @@ umlPackage::umlPackage (const umlPackage & pack) :
     package will be the last.
 */
 void
-umlPackage::make_package_list(umlPackage *package, std::list <umlPackage> &res) {
+umlPackage::make_package_list(const umlPackage *package, std::list <umlPackage> &res) {
     umlPackage *par;
     
     if (package == NULL)

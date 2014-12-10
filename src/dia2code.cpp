@@ -16,11 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "dia2code.hpp"
 #include <errno.h>
 
-int generate_backup;
+#include "dia2code.hpp"
 
+int generate_backup;
 
 /**
  * This function returns the upper case char* of the one taken on input
