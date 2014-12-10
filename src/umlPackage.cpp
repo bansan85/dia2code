@@ -38,10 +38,10 @@ umlPackage::umlPackage (xmlNodePtr package, std::string id_) :
     directory ()
 {
     xmlNodePtr attribute;
-    xmlChar *attrname;
 
     attribute = package->xmlChildrenNode;
     while ( attribute != NULL ) {
+        xmlChar *attrname;
         attrname = xmlGetProp(attribute, BAD_CAST2 ("name"));
         if( attrname != NULL ) {
             if ( !strcmp("name", BAD_TSAC2 (attrname)) ) {

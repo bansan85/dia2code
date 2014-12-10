@@ -44,9 +44,9 @@ class GenerateCode {
         
         int pass_by_reference (umlclass &cl);
         void gen_class (umlclassnode *node);
-        const char * cppname (std::string name);
+        const char * cppname (std::string name) const;
         void check_visibility (int *curr_vis, int new_vis);
-        std::string spc();
+        std::string spc() const;
         void open_outfile (const char *filename);
         void gen_decl (declaration &d);
     public:
@@ -55,29 +55,29 @@ class GenerateCode {
         DiaGram & getDia ();
         void generate_code ();
         
-        const char * getFileExt ();
+        const char * getFileExt () const;
         void   setFileExt (char * ext);
 
-        const char * getBodyFileExt ();
+        const char * getBodyFileExt () const;
         void   setBodyFileExt (char * ext);
 
-        uint32_t getIndent ();
+        uint32_t getIndent () const;
         void     setIndent (uint8_t spaces);
 
-        const char * getLicense ();
+        const char * getLicense () const;
         void   setLicense (char * lic);
 
-        const char * getOutdir ();
-        const  std::string * getOutdirS ();
+        const char * getOutdir () const;
+        const  std::string * getOutdirS () const;
         void   setOutdir (char * dir);
 
-        bool getOverwrite ();
+        bool getOverwrite () const;
         void setOverwrite (bool over);
 
-        bool getBuildTree ();
+        bool getBuildTree () const;
         void setBuildTree (bool build);
 
-        bool getOpenBraceOnNewline ();
+        bool getOpenBraceOnNewline () const;
         void setOpenBraceOnNewline (bool newline);
 
         virtual ~GenerateCode ();

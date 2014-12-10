@@ -143,7 +143,6 @@ umlAttribute::check (const char *typename_)
 
 void
 umlAttribute::parse(xmlNodePtr node) {
-    xmlChar *nodename;
     xmlChar *attrval;
 
     name.clear ();
@@ -153,6 +152,7 @@ umlAttribute::parse(xmlNodePtr node) {
     visibility = '0';
     kind     = '0';
     while ( node != NULL ) {
+        xmlChar *nodename;
         nodename = xmlGetProp(node, BAD_CAST2 ("name"));
 
         if ( !strcmp("name", BAD_TSAC2 (nodename)) ) {

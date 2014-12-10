@@ -49,7 +49,7 @@ GenerateCode::getDia () {
 
 
 const char *
-GenerateCode::getLicense () {
+GenerateCode::getLicense () const {
     return license.c_str ();
 }
 
@@ -63,13 +63,13 @@ GenerateCode::setLicense (char * lic) {
 
 
 const char *
-GenerateCode::getOutdir () {
+GenerateCode::getOutdir () const {
     return outdir.c_str ();
 }
 
 
 const std::string *
-GenerateCode::getOutdirS () {
+GenerateCode::getOutdirS () const {
     return &outdir;
 }
 
@@ -83,7 +83,7 @@ GenerateCode::setOutdir (char * dir) {
 
 
 bool
-GenerateCode::getOverwrite () {
+GenerateCode::getOverwrite () const {
     return overwrite;
 }
 
@@ -97,7 +97,7 @@ GenerateCode::setOverwrite (bool over) {
 
 
 bool
-GenerateCode::getBuildTree () {
+GenerateCode::getBuildTree () const {
     return buildtree;
 }
 
@@ -111,7 +111,7 @@ GenerateCode::setBuildTree (bool build) {
 
 
 bool
-GenerateCode::getOpenBraceOnNewline () {
+GenerateCode::getOpenBraceOnNewline () const {
     return bOpenBraceOnNewline;
 }
 
@@ -137,7 +137,6 @@ GenerateCode::open_outfile (const char *filename)
         fprintf (stderr, "Failed to overwrite %s.\n", outfilename.c_str ());
         file.close ();
         exit (1);
-        return;
     }
     return;
 }
@@ -218,7 +217,7 @@ GenerateCode::generate_code ()
 }
 
 const char *
-GenerateCode::getFileExt () {
+GenerateCode::getFileExt () const {
     return file_ext.c_str ();
 }
 
@@ -232,7 +231,7 @@ GenerateCode::setFileExt (char * ext) {
 
 
 const char *
-GenerateCode::getBodyFileExt () {
+GenerateCode::getBodyFileExt () const {
     return body_file_ext.c_str ();
 }
 
@@ -255,8 +254,7 @@ subst (char *str, const char search, char replace)
 }
 
 char *
-nospc (char *str)
-{
+nospc (char *str) {
     return subst (str, ' ', '_');
 }
 
@@ -293,7 +291,7 @@ is_oo_class (umlclass &cl)
 }
 
 const char *
-GenerateCode::cppname (std::string name)
+GenerateCode::cppname (std::string name) const
 {
     static std::string buf;
     if (dia.getUseCorba ()) {
@@ -430,9 +428,9 @@ GenerateCode::gen_class (umlclassnode *node)
          * setters/getters.)  Ideas and comments welcome.
         */
         for (umlassoc & assoc : node->associations) {
-            umlclassnode *ref;
             if (!assoc.name.empty ())
             {
+                umlclassnode *ref;
                 ref = find_by_name (dia.getUml (), assoc.key.name.c_str ());
                 if (ref != NULL)
                     file << spc () << fqname (*ref, !assoc.composite);
@@ -766,7 +764,7 @@ GenerateCode::gen_decl (declaration &d)
 
 
 std::string
-GenerateCode::spc()
+GenerateCode::spc() const
 {
     std::string spcbuf ("");
     int n_spaces = indent * indentlevel, i;
@@ -780,7 +778,7 @@ GenerateCode::spc()
 
 
 uint32_t
-GenerateCode::getIndent () {
+GenerateCode::getIndent () const {
     return indent;
 }
 

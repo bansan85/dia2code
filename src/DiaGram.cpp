@@ -46,13 +46,13 @@ DiaGram::addGenClasses (std::list <std::string> classes) {
 
 
 std::list <std::string>
-DiaGram::getGenClasses () {
+DiaGram::getGenClasses () const {
     return genClasses;
 }
 
 
 bool
-DiaGram::getInvertSel () {
+DiaGram::getInvertSel () const {
     return invertsel;
 }
 
@@ -66,7 +66,7 @@ DiaGram::setInvertSel (bool invert) {
 
 
 bool
-DiaGram::getUseCorba () {
+DiaGram::getUseCorba () const {
     return usecorba;
 }
 
@@ -75,17 +75,6 @@ void
 DiaGram::setUseCorba (bool corba) {
     usecorba = corba;
 
-    return;
-}
-
-
-/* Returns a list with all the classes declared in the diagram */
-void
-DiaGram::scan_tree_classes (std::list <std::string> &res) {
-    for (umlclassnode & it : uml) {
-        res.push_back (it.key.name);
-    }
-    
     return;
 }
 
@@ -161,7 +150,6 @@ void
 DiaGram::push (umlclassnode & node)
 {
     std::list <umlclassnode> used_classes;
-    module *m;
     declaration d;
 
     if (find_class (node, decl) != NULL) {
@@ -189,6 +177,7 @@ DiaGram::push (umlclassnode & node)
 
     if (node.key.package != NULL) {
         std::list <umlPackage> pkglist;
+        module *m;
         umlPackage::make_package_list (node.key.package, pkglist);
         m = find_or_add_module (decl, pkglist);
         m->contents.push_back (d);
@@ -202,7 +191,7 @@ DiaGram::push (umlclassnode & node)
 
 
 int
-DiaGram::have_include (const char *name)
+DiaGram::have_include (const char *name) const
 {
     for (std::string inc : includes) {
         if (!inc.compare (name)) {
@@ -234,7 +223,7 @@ DiaGram::push_include (umlclassnode &node)
 }
 
 std::list <std::string>
-DiaGram::getIncludes () {
+DiaGram::getIncludes () const {
     return includes;
 }
 

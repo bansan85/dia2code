@@ -40,14 +40,13 @@ class DiaGram {
         std::list <std::string> includes;
         std::list <declaration> decl;
         
-        void scan_tree_classes (std::list <std::string> &res);
         void list_classes (umlclassnode & current_class, std::list <umlclassnode> & res);
 
         /**
          * open_outfile() returns NULL if the file exists and is not rewritten
          * due to a clobber prohibition. Does an exit(1) if serious problems happen.
         */
-        int have_include (const char *name);
+        int have_include (const char *name) const;
         void add_include (const char *name);
         void push_include (umlclassnode & node);
     public:
@@ -57,16 +56,16 @@ class DiaGram {
         std::list <umlclassnode> & getUml ();
 
         void addGenClasses (std::list <std::string> classes);
-        std::list <std::string> getGenClasses ();
+        std::list <std::string> getGenClasses () const;
 
-        bool getInvertSel ();
+        bool getInvertSel () const;
         void setInvertSel (bool invert);
 
-        bool getUseCorba ();
+        bool getUseCorba () const;
         void setUseCorba (bool corba);
 
         void push (umlclassnode &node);
-        std::list <std::string> getIncludes ();
+        std::list <std::string> getIncludes () const;
         void cleanIncludes ();
         void determine_includes (declaration &d);
         

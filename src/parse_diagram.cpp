@@ -277,12 +277,12 @@ int is_inside(const geometry & geom1, const geometry & geom2) {
 
 void parse_class(xmlNodePtr class_, umlclassnode & res) {
     xmlNodePtr attribute;
-    xmlChar *attrname;
 
     res.key.package = NULL;
 
     attribute = class_->xmlChildrenNode;
     while ( attribute != NULL ) {
+        xmlChar *attrname;
         attrname = xmlGetProp(attribute, BAD_CAST2 ("name"));
         /* fix a segfault - dia files contains *also* some rare tags without any "name" attribute : <dia:parent  for ex.  */
         if( attrname == NULL ) {

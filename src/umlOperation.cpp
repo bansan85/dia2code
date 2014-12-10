@@ -26,9 +26,9 @@ umlOperation::umlOperation (xmlNodePtr node) :
     implementation (),
     parameters ()
 {
-    xmlChar *nodename;
     parse(node);
     while ( node != NULL ) {
+        xmlChar *nodename;
         nodename = xmlGetProp(node, BAD_CAST2 ("name"));
         if ( !strcmp("parameters", BAD_TSAC2 (nodename)) ) {
             parse_attributes(node->xmlChildrenNode, parameters);
