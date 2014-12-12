@@ -21,8 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "umlClassNode.hpp"
 
-umlClassNode * find_by_name(std::list <umlClassNode> & list, const char * name ) {
-    if ( name != NULL && strlen(name) > 0 ) {
+umlClassNode * find_by_name (std::list <umlClassNode> & list,
+                             const char * name ) {
+    if ( name != NULL && strlen (name) > 0 ) {
         for (umlClassNode & it : list) {
             if ( it.getName ().compare (name) == 0) {
                 return &it;

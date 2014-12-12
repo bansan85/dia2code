@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "parse_diagram.hpp"
 #include "GenerateCodeCpp.hpp"
 
-int main(int argc, char **argv) {
+int main (int argc, char **argv) {
     DiaGram diagram;
     int i;
     char *infile = NULL;    /* The input file */
@@ -50,9 +50,11 @@ under certain conditions; read the COPYING file for details.\n";
     const char *bighelp = "\
     -h --help            Print this help and exit.\n\
     -t <target>          Selects the output language. <target> can be\n\
-                         one of: ada,c,cpp,idl,java,php,php5,python,ruby,shp,sql,as3 or csharp. \n\
+                         one of: ada,c,cpp,idl,java,php,php5,python,ruby,shp,\n\
+                         sql,as3 or csharp. \n\
     -d <dir>             Output generated files to <dir>, default is \".\" \n\
-    --buildtree          Convert package names to a directory tree. off by default.\n\
+    --buildtree          Convert package names to a directory tree.\n\
+                         off by default.\n\
     -l <license>         License file to prepend to generated files.\n\
     -nc                  Do not overwrite files that already exist.\n\
     -cl <classlist>      Generate code only for the classes specified in\n\
@@ -66,7 +68,8 @@ under certain conditions; read the COPYING file for details.\n";
     -ext <extension>     Use <extension> as the file extension.\n\
                          Here are the defaults:\n\
                          ada:\"ads\", c:\"h\", cpp:\"h\", idl:\"idl\",\n\
-                         java:\"java\", php:\"php\", python:\"py\", csharp:\"cs\".\n\
+                         java:\"java\", php:\"php\", python:\"py\",\n\
+                         csharp:\"cs\".\n\
                          Not applicable to shp, sql.\n\
     -bext <extension>    Use <extension> as the body (implementation) file\n\
                          extension. Currently only applies only to ada.\n\
@@ -80,40 +83,46 @@ under certain conditions; read the COPYING file for details.\n";
 
 
     if (argc < 2) {
-        fprintf(stderr, "%s\nUsage: %s %s\n", notice, argv[0], help);
-        exit(2);
+        fprintf (stderr, "%s\nUsage: %s %s\n", notice, argv[0], help);
+        exit (2);
     }
 
     /* Argument parsing: rewritten from scratch */
     for (i = 1; i < argc; i++) {
-        switch ( parameter ) {
+        switch (parameter) {
         case 0:
-            if ( !strcmp (argv[i], "-t") ) {
+            if (!strcmp (argv[i], "-t")) {
                 parameter = 1;
-            } else if ( !strcmp (argv[i], "-d") ) {
+            } else if (!strcmp (argv[i], "-d")) {
                 parameter = 2;
-            } else if ( !strcmp (argv[i], "-nc") ) {
+            } else if (!strcmp (argv[i], "-nc")) {
                 overwrite = false;
-            } else if ( !strcmp (argv[i], "-cl") ) {
+            } else if (!strcmp (argv[i], "-cl")) {
                 parameter = 3;
-            } else if ( !strcmp (argv[i], "-l") ) {
+            } else if (!strcmp (argv[i], "-l")) {
                 parameter = 4;
-            } else if ( !strcmp (argv[i], "-ext") ) {
+            } else if (!strcmp (argv[i], "-ext")) {
                 parameter = 5;
-            } else if ( !strcmp (argv[i], "-bext") ) {
+            } else if (!strcmp (argv[i], "-bext")) {
                 parameter = 6;
-            } else if ( !strcmp (argv[i], "-v") ) {
+            } else if (!strcmp (argv[i], "-v")) {
                 diagram.setInvertSel (!diagram.getInvertSel ());
-            } else if ( !strcmp (argv[i], "--version") ) {
-                std::cout << PACKAGE_VERSION << std::endl ;
-            } else if ( !strcmp (argv[i], "--tab") ) {
+            } else if (!strcmp (argv[i], "--version")) {
+                std::cout << PACKAGE_VERSION << std::endl;
+                exit (0);
+            } else if (!strcmp (argv[i], "--tab")) {
                 parameter = 8;
-            } else if ( !strcmp (argv[i], "-nl") ) {
+            } else if (!strcmp (argv[i], "-nl")) {
                 newline = true;
-            } else if ( !strcmp("-h", argv[i]) || !strcmp("--help", argv[i]) ) {
-                printf("%s\nUsage: %s %s\n\n%s\n", notice, argv[0], help, bighelp);
-                exit(0);
-            } else if ( !strcmp (argv[i], "--buildtree") ) {
+            } else if (!strcmp ("-h", argv[i]) ||
+                       !strcmp ("--help", argv[i])) {
+                printf ("%s\nUsage: %s %s\n\n%s\n",
+                        notice,
+                        argv[0],
+                        help,
+                        bighelp);
+                exit (0);
+            } else if (!strcmp (argv[i], "--buildtree")) {
                 buildtree = true;
             } else {
                 infile = argv[i];
@@ -121,31 +130,31 @@ under certain conditions; read the COPYING file for details.\n";
             break;
         case 1:   /* Which code generator */
             parameter = 0;
-            if ( !strcmp (argv[i], "cpp") ) {
+            if (!strcmp (argv[i], "cpp")) {
                 generator = new GenerateCodeCpp (diagram);
-            } else if ( !strcmp (argv[i], "java") ) {
+            } else if (!strcmp (argv[i], "java")) {
 //                generator = generators[1];
-            } else if ( !strcmp (argv[i], "c") ) {
+            } else if (!strcmp (argv[i], "c")) {
 //                generator = generators[2];
-            } else if ( !strcmp (argv[i], "sql") ) {
+            } else if (!strcmp (argv[i], "sql")) {
 //                generator = generators[3];
-            } else if ( !strcmp (argv[i], "ada") ) {
+            } else if (!strcmp (argv[i], "ada")) {
 //                generator = generators[4];
-            } else if ( !strcmp (argv[i], "python") ) {
+            } else if (!strcmp (argv[i], "python")) {
 //                generator = generators[5];
-            } else if ( !strcmp (argv[i], "php") ) {
+            } else if (!strcmp (argv[i], "php")) {
 //                generator = generators[6];
-            } else if ( !strcmp (argv[i], "shp") ) {
+            } else if (!strcmp (argv[i], "shp")) {
 //                generator = generators[7];
-            } else if ( !strcmp (argv[i], "idl") ) {
+            } else if (!strcmp (argv[i], "idl")) {
 //                generator = generators[8];
-            } else if ( !strcmp (argv[i], "csharp") ) {
+            } else if (!strcmp (argv[i], "csharp")) {
 //                generator = generators[9];
-            } else if ( !strcmp(argv[i], "php5") ) {
+            } else if (!strcmp(argv[i], "php5")) {
 //                generator = generators[10];
-            } else if ( !strcmp(argv[i], "ruby") ) {
+            } else if (!strcmp(argv[i], "ruby")) {
 //                generator = generators[11];
-            } else if ( !strcmp(argv[i], "as3") ) {
+            } else if (!strcmp(argv[i], "as3")) {
 //                generator = generators[12];
             } else {
                 parameter = -1;
@@ -156,7 +165,7 @@ under certain conditions; read the COPYING file for details.\n";
             parameter = 0;
             break;
         case 3:   /* Which classes to consider */
-            diagram.addGenClasses (parse_class_names(argv[i]));
+            diagram.addGenClasses (parse_class_names (argv[i]));
             parameter = 0;
             break;
         case 4:   /* Which license file */
@@ -172,9 +181,10 @@ under certain conditions; read the COPYING file for details.\n";
             parameter = 0;
             break;
         case 8: {  /* Number of spaces for one indentation */
-            int num = atoi( argv[i] );
+            int num = atoi (argv[i]);
             if ((num < 1) || (num > 8)) {
-                fprintf (stderr, "The number of spaces for one indentation must be between 1 and 8.\n");
+                fprintf (stderr,
+        "The number of spaces for one indentation must be between 1 and 8.\n");
             }
             else {
                 tab = static_cast <uint8_t> (num);
@@ -189,20 +199,20 @@ under certain conditions; read the COPYING file for details.\n";
     }
     /* parameter != 0 means the command line was invalid */
 
-    if ( parameter != 0 || infile == NULL ) {
+    if (parameter != 0 || infile == NULL) {
         printf ("%s\nUsage: %s %s\n\n%s\n", notice, argv[0], help, bighelp);
         exit (2);
     }
 
     LIBXML_TEST_VERSION;
-    xmlKeepBlanksDefault(0);
+    xmlKeepBlanksDefault (0);
 
     // We build the class list from the dia file here
-    umlClass::parse_diagram(infile, diagram.getUml ());
+    umlClass::parse_diagram (infile, diagram.getUml ());
 
     // Code generation
-    if ( !generator ) {
-        fprintf( stderr,"error : no generator specify.\n" );
+    if (!generator) {
+        fprintf (stderr, "error : no generator specify.\n");
         exit (1);
     }
     
@@ -210,18 +220,22 @@ under certain conditions; read the COPYING file for details.\n";
     generator->setOverwrite (overwrite);
     generator->setBuildTree (buildtree);
     generator->setOpenBraceOnNewline (newline);
-    if (ext != NULL)
+    if (ext != NULL) {
         generator->setFileExt (ext);
-    if (bext != NULL)
+    }
+    if (bext != NULL) {
         generator->setBodyFileExt (bext);
-    if (outdir != NULL)
+    }
+    if (outdir != NULL) {
         generator->setOutdir (outdir);
-    if (license != NULL)
+    }
+    if (license != NULL) {
         generator->setLicense (license);
+    }
     generator->generate_code ();
     delete generator;
 
-    xmlCleanupParser();
+    xmlCleanupParser ();
 
     return 0;
 }

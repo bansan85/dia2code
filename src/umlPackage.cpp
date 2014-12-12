@@ -40,18 +40,18 @@ umlPackage::umlPackage (xmlNodePtr package, std::string id_) :
     xmlNodePtr attribute;
 
     attribute = package->xmlChildrenNode;
-    while ( attribute != NULL ) {
+    while (attribute != NULL) {
         xmlChar *attrname;
-        attrname = xmlGetProp(attribute, BAD_CAST2 ("name"));
-        if( attrname != NULL ) {
-            if ( !strcmp("name", BAD_TSAC2 (attrname)) ) {
-                parse_dia_node(attribute->xmlChildrenNode, name);
-            } else if ( !strcmp ( "obj_pos", BAD_TSAC2 (attrname) ) ) {
-                parse_geom_position(attribute->xmlChildrenNode, &geom );
-            } else if ( !strcmp ( "elem_width", BAD_TSAC2 (attrname) ) ) {
-                parse_geom_width(attribute->xmlChildrenNode, &geom );
-            } else if ( !strcmp ( "elem_height", BAD_TSAC2 (attrname) ) ) {
-                parse_geom_height(attribute->xmlChildrenNode, &geom );
+        attrname = xmlGetProp (attribute, BAD_CAST2 ("name"));
+        if (attrname != NULL) {
+            if (!strcmp ("name", BAD_TSAC2 (attrname))) {
+                parse_dia_node (attribute->xmlChildrenNode, name);
+            } else if (!strcmp ("obj_pos", BAD_TSAC2 (attrname))) {
+                parse_geom_position (attribute->xmlChildrenNode, &geom);
+            } else if (!strcmp ("elem_width", BAD_TSAC2 (attrname))) {
+                parse_geom_width (attribute->xmlChildrenNode, &geom);
+            } else if (!strcmp ("elem_height", BAD_TSAC2 (attrname))) {
+                parse_geom_height (attribute->xmlChildrenNode, &geom);
             }
             xmlFree (attrname);
         }
@@ -73,14 +73,16 @@ umlPackage::umlPackage (const umlPackage & pack) :
     package will be the last.
 */
 void
-umlPackage::make_package_list(const umlPackage *package, std::list <umlPackage> &res) {
+umlPackage::make_package_list (const umlPackage *package,
+                               std::list <umlPackage> &res) {
     umlPackage *par;
     
-    if (package == NULL)
+    if (package == NULL) {
         return;
+    }
     res.push_back (*package);
     par = package->parent;
-    while ( par != NULL){
+    while (par != NULL) {
         res.push_front (*par);
         par = par->parent;
     }

@@ -40,7 +40,8 @@ class DiaGram {
         std::list <std::string> includes;
         std::list <declaration> decl;
         
-        void list_classes (umlClassNode & current_class, std::list <umlClassNode> & res);
+        void list_classes (umlClassNode & current_class,
+                           std::list <umlClassNode> & res);
 
         /**
          * open_outfile() returns NULL if the file exists and is not rewritten

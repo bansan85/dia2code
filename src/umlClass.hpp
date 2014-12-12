@@ -61,12 +61,15 @@ class umlClass {
         const std::list <umlAttribute> & getAttributes () const;
         const std::list <umlOperation> & getOperations () const;
         const umlPackage * getPackage () const;
-        const std::list <std::pair <std::string, std::string> > & getTemplates () const;
+        const std::list <std::pair <std::string, std::string> > &
+                                                         getTemplates () const;
         
-		void make_getset_methods ();
-		static void lolipop_implementation(std::list <umlClassNode> & classlist, xmlNodePtr object);
-		static void parse_diagram(char *diafile, std::list <umlClassNode> & res);
-        void parse_class(xmlNodePtr class_);
+        void make_getset_methods ();
+        static void lolipop_implementation (std::list <umlClassNode> & classlist,
+                                            xmlNodePtr object);
+        static void parse_diagram (char *diafile,
+                                   std::list <umlClassNode> & res);
+        void parse_class (xmlNodePtr class_);
 
         ~umlClass ();
 };

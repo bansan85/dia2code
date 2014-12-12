@@ -38,9 +38,9 @@ umlClassNode::umlClassNode (const umlClassNode & classnode) :
 }
 
 umlClassNode::umlClassNode (umlClass & _key,
-		                    std::list <umlClassNode> & parents_,
-					        std::list <umlassoc> & associations_,
-					        std::list <umlClassNode> & dependencies_) :
+                            std::list <umlClassNode> & parents_,
+                            std::list <umlassoc> & associations_,
+                            std::list <umlClassNode> & dependencies_) :
     umlClass (_key),
     parents (parents_),
     associations (associations_),
@@ -58,43 +58,42 @@ umlClassNode::umlClassNode (umlClass & _key) :
 
 const std::list <umlClassNode> &
 umlClassNode::getParents () const {
-	return parents;
+    return parents;
 }
 
 const std::list <umlassoc> &
 umlClassNode::getAssociations () const {
-	return associations;
+    return associations;
 }
 
 const std::list <umlClassNode> &
 umlClassNode::getDependencies () const {
-	return dependencies;
+    return dependencies;
 }
 
 module *
 find_module (std::list <declaration> &dptr,
              std::list <umlPackage>::iterator begin,
-             std::list <umlPackage>::iterator end)
-{
+             std::list <umlPackage>::iterator end) {
     std::list <declaration>::iterator it = dptr.begin ();
     while (it != dptr.end ()) {
         if ((*it).decl_kind == dk_module) {
             module *m = (*it).u.this_module;
             if (m->pkg.getName ().compare ((*begin).getName ()) == 0) {
-                if (std::next (begin) != end)
-                {
+                if (std::next (begin) != end) {
                     std::list<declaration> liste;
 
-                    if (m->contents.empty ())
+                    if (m->contents.empty ()) {
                         return NULL;
-                    else
-                    {
+                    }
+                    else {
                         liste.push_back (*m->contents.begin ());
                         return find_module (liste, std::next (begin), end);
                     }
                 }
-                else
+                else {
                     return m;
+                }
             }
         }
         ++it;
@@ -103,16 +102,16 @@ find_module (std::list <declaration> &dptr,
 }
 
 declaration *
-umlClassNode::find_class (std::list <declaration> &decl) const
-{
+umlClassNode::find_class (std::list <declaration> &decl) const {
     std::list <declaration> *d;
 
     if (getPackage ()) {
         std::list <umlPackage> pkglist;
         umlPackage::make_package_list (getPackage (), pkglist);
         module *m = find_module (decl, pkglist.begin (), pkglist.end ());
-        if (m == NULL || m->contents.empty ())
+        if (m == NULL || m->contents.empty ()) {
             return 0;
+        }
         d = &m->contents;
     } else {
         d = &decl;
@@ -121,35 +120,43 @@ umlClassNode::find_class (std::list <declaration> &decl) const
     for (declaration & it : *d) {
         if (it.decl_kind == dk_class) {
             umlClassNode *cl = it.u.this_class;
-            if (cl->getName ().compare (getName()) == 0)
+            if (cl->getName ().compare (getName ()) == 0) {
                 return &it;
+            }
         }
     }
     return NULL;
 }
 
 void
-umlClassNode::addparent(umlClass & key) {
+umlClassNode::addparent (umlClass & key) {
     umlClassNode tmp (key);
     parents.push_front (tmp);
 }
 
 void
-umlClassNode::adddependency(umlClassNode & dependent) {
-    umlClassNode tmp(dependent);
+umlClassNode::adddependency (umlClassNode & dependent) {
+    umlClassNode tmp (dependent);
     dependencies.push_front (dependent);
 }
 
 void
-umlClassNode::addaggregate(const char *name_, char composite, umlClassNode & base,
-                  const char *multiplicity) {
+umlClassNode::addaggregate (const char *name_,
+                            char composite,
+                            umlClassNode & base,
+                            const char *multiplicity) {
     umlassoc tmp;
-    if (name_ != NULL && strlen (name_) > 2)
+    if (name_ != NULL && strlen (name_) > 2) {
         parse_dia_string(name_, tmp.name);
-    if (multiplicity != NULL)
-        strncpy (tmp.multiplicity, multiplicity+1, strlen (multiplicity)-2);
-    else
-        sprintf(tmp.multiplicity, "1");
+    }
+    if (multiplicity != NULL) {
+        strncpy (tmp.multiplicity,
+                 multiplicity + 1,
+                 strlen (multiplicity) - 2);
+    }
+    else {
+        sprintf (tmp.multiplicity, "1");
+    }
     tmp.key = base;
     tmp.composite = composite;
     associations.push_front (tmp);

@@ -91,7 +91,7 @@ DiaGram::list_classes(umlClassNode & current_class, std::list <umlClassNode> & r
     for (const umlAttribute & umla : current_class.getAttributes ()) {
         if (!umla.getType ().empty ()) {
             tmpnode = find_by_name(classes, umla.getType ().c_str ());
-            if ( tmpnode && ! find_by_name(res, umla.getType ().c_str ())) {
+            if (tmpnode && ! find_by_name(res, umla.getType ().c_str ())) {
                 res.push_back (*tmpnode);
             }
         }
@@ -99,12 +99,12 @@ DiaGram::list_classes(umlClassNode & current_class, std::list <umlClassNode> & r
 
     for (const umlOperation & umlo : current_class.getOperations ()) {
         tmpnode = find_by_name(classes, umlo.getType ().c_str ());
-        if ( tmpnode && ! find_by_name(res, umlo.getType ().c_str ())) {
+        if (tmpnode && ! find_by_name(res, umlo.getType ().c_str ())) {
             res.push_back (*tmpnode);
         }
         for (const umlAttribute & umla : umlo.getParameters ()) {
             tmpnode = find_by_name(classes, umla.getType ().c_str ());
-            if ( tmpnode && ! find_by_name(res, umla.getType ().c_str ())) {
+            if (tmpnode && !find_by_name(res, umla.getType ().c_str ())) {
                 res.push_back (*tmpnode);
             }
         }
@@ -112,26 +112,84 @@ DiaGram::list_classes(umlClassNode & current_class, std::list <umlClassNode> & r
 
     for (const umlClassNode & classit : current_class.getParents ()) {
         tmpnode = find_by_name(classes, classit.getName().c_str ());
-        if ( tmpnode && ! find_by_name(res, classit.getName().c_str ()) ) {
+        if (tmpnode && !find_by_name(res, classit.getName().c_str ())) {
             res.push_back (*tmpnode);
         }
     }
 
     for (const umlClassNode & classit : current_class.getDependencies ()) {
         tmpnode = find_by_name(classes, classit.getName().c_str ());
-        if ( tmpnode && ! find_by_name(res, classit.getName().c_str ()) ) {
+        if (tmpnode && !find_by_name(res, classit.getName().c_str ())) {
             res.push_back (*tmpnode);
         }
     }
 
     for (const umlassoc & associations : current_class.getAssociations ()) {
         tmpnode = find_by_name(classes, associations.key.getName().c_str ());
-        if ( tmpnode && ! find_by_name(res, associations.key.getName().c_str ()) ) {
+        if (tmpnode &&
+            !find_by_name (res, associations.key.getName().c_str ())) {
             res.push_back (*tmpnode);
         }
     }
 
     return;
+}
+
+module *
+create_nested_modules_from_pkglist (std::list <umlPackage> &pkglist,
+                                    module        *m)
+{
+    bool first = true;
+    /* Expects pkglist and m to be non-NULL and m->contents to be NULL.
+       Returns a reference to the innermost module created.  */
+    for (umlPackage & it : pkglist) {
+        if (first) {
+            first = false;
+            continue;
+        }
+        declaration d;
+        d.decl_kind = dk_module;
+        d.u.this_module = new module;
+        m->contents.push_back(d);
+        m = d.u.this_module;
+        m->pkg = it;
+    }
+    return m;
+}
+
+
+module *
+find_or_add_module (std::list <declaration> &dptr,
+                    std::list <umlPackage> &pkglist)
+{
+    declaration d;
+    module *m;
+
+    if (pkglist.empty ()) {
+        return NULL;
+    }
+    
+    for (declaration & it : dptr) {
+        if (it.decl_kind == dk_module &&
+            it.u.this_module->pkg.getName ().compare (
+                                        (*pkglist.begin ()).getName ()) == 0) {
+            m = it.u.this_module;
+            if (pkglist.size () == 1) {
+                return m;
+            }
+            if (m->contents.empty ()) {
+                return create_nested_modules_from_pkglist (pkglist, m);
+            }
+            return find_or_add_module (m->contents, pkglist);
+        }
+    }
+    d.decl_kind = dk_module;
+    d.u.this_module = new module;
+    m = d.u.this_module;
+    m->pkg = *pkglist.begin ();
+    dptr.push_back (d);
+
+    return create_nested_modules_from_pkglist (pkglist, m);
 }
 
 void
@@ -169,8 +227,9 @@ DiaGram::push (umlClassNode & node)
         decl.push_back (d);
     }
 
-    if (node.getStereotype().compare (0, 5, "CORBA") == 0)
+    if (node.getStereotype().compare (0, 5, "CORBA") == 0) {
         usecorba = true;
+    }
 }
 
 
@@ -188,8 +247,9 @@ DiaGram::have_include (const char *name) const
 void
 DiaGram::add_include (const char *name)
 {
-    if (have_include (name))
+    if (have_include (name)) {
         return;
+    }
     
     includes.push_back (name);
 }

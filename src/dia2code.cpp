@@ -26,12 +26,13 @@ int generate_backup;
  * This function returns the upper case char* of the one taken on input
  * The char * received may be freed by the caller
 */
-std::string strtoupper(std::string s) {
+std::string
+strtoupper (std::string s) {
     std::string tmp (s);
     size_t i, n;
     n = tmp.length ();
     for (i = 0; i < n; i++) {
-        tmp[i] = static_cast <char> (toupper(tmp[i]));
+        tmp[i] = static_cast <char> (toupper (tmp[i]));
     }
     return tmp;
 }
@@ -41,16 +42,19 @@ std::string strtoupper(std::string s) {
   * character in upper case and the rest unchanged.
   * The char * received may be freed by the caller
 */
-std::string strtoupperfirst(std::string s) {
+std::string
+strtoupperfirst (std::string s) {
     std::string tmp (s);
-    if (s.empty ())
+    if (s.empty ()) {
         return s;
-    tmp[0] = static_cast <char> (toupper(tmp[0]));
+    }
+    tmp[0] = static_cast <char> (toupper (tmp[0]));
     return tmp;
 }
 
 
-std::list <std::string> parse_class_names (char *s) {
+std::list <std::string>
+parse_class_names (char *s) {
     char *token;
     const char *delim = ",";
     std::list <std::string> list;
@@ -64,59 +68,30 @@ std::list <std::string> parse_class_names (char *s) {
 }
 
 
-int is_present(std::list <std::string> list, const char *name) {
+int
+is_present (std::list <std::string> list, const char *name) {
     for (std::string str : list) {
         const char *namei = str.c_str ();
         size_t len;
         const char* mask;
-        if ( ! strcmp(namei, name) ) {
+        if ( ! strcmp (namei, name) ) {
             return 1;
         }
-        len = strlen(namei);
-        if (len >= 2 && len <= strlen(name)
-                && (mask = strchr(namei, '*')) != NULL
-                && mask == strrchr(namei, '*') ) {
+        len = strlen (namei);
+        if (len >= 2 && len <= strlen (name)
+                && (mask = strchr (namei, '*')) != NULL
+                && mask == strrchr (namei, '*')) {
             len--;
-            if ( mask == namei && ! strcmp(namei+1, name+strlen(name)-len) ) {
+            if (mask == namei && !strcmp (namei + 1,
+                                          name + strlen (name) - len) ) {
                 return 1;
             }
-            if ( mask == namei+len && ! strncmp(namei, name, len) ) {
+            if (mask == namei + len && ! strncmp (namei, name, len)) {
                 return 1;
             }
         }
     }
     return 0;
-}
-
-int
-is_enum_stereo (const char *stereo)
-{
-    return (!strcasecmp(stereo, "enum") ||
-            !strcasecmp (stereo, "enumeration") ||
-            !strcmp (stereo, "CORBAEnum"));
-}
-
-int
-is_struct_stereo (const char *stereo)
-{
-    return (!strcasecmp(stereo, "struct") ||
-            !strcasecmp (stereo, "structure") ||
-            !strcmp (stereo, "CORBAStruct"));
-}
-
-int
-is_typedef_stereo (const char *stereo)
-{
-    return (!strcasecmp(stereo, "typedef") ||
-            !strcmp (stereo, "CORBATypedef"));
-}
-
-int
-is_const_stereo (const char *stereo)
-{
-    return (!strcasecmp(stereo, "const") ||
-            !strcasecmp (stereo, "constant") ||
-            !strcmp (stereo, "CORBAConstant"));
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

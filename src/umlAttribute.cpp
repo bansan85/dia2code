@@ -135,14 +135,22 @@ void
 umlAttribute::check (const char *typename_) const
 {
     /* Check settings that don't make sense for C++ generation.  */
-    if (visibility == '1')
-        fprintf (stderr, "%s/%s: ignoring non-visibility\n", typename_, name.c_str ());
-    if (isstatic)
-        fprintf (stderr, "%s/%s: ignoring staticness\n", typename_, name.c_str ());
+    if (visibility == '1') {
+        fprintf (stderr,
+                 "%s/%s: ignoring non-visibility\n",
+                 typename_,
+                 name.c_str ());
+    }
+    if (isstatic) {
+        fprintf (stderr,
+                 "%s/%s: ignoring staticness\n",
+                 typename_,
+                 name.c_str ());
+    }
 }
 
 void
-umlAttribute::parse(xmlNodePtr node) {
+umlAttribute::parse (xmlNodePtr node) {
     xmlChar *attrval;
 
     name.clear ();
@@ -150,46 +158,46 @@ umlAttribute::parse(xmlNodePtr node) {
     type.clear ();
     comment.clear ();
     visibility = '0';
-    kind     = '0';
-    while ( node != NULL ) {
+    kind = '0';
+    while (node != NULL) {
         xmlChar *nodename;
-        nodename = xmlGetProp(node, BAD_CAST2 ("name"));
+        nodename = xmlGetProp (node, BAD_CAST2 ("name"));
 
-        if ( !strcmp("name", BAD_TSAC2 (nodename)) ) {
-            parse_dia_node(node->xmlChildrenNode, name);
-        } else if ( !strcmp("value", BAD_TSAC2 (nodename))) {
+        if (!strcmp ("name", BAD_TSAC2 (nodename))) {
+            parse_dia_node (node->xmlChildrenNode, name);
+        } else if (!strcmp ("value", BAD_TSAC2 (nodename))) {
             if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-                parse_dia_node(node->xmlChildrenNode, value);
+                parse_dia_node (node->xmlChildrenNode, value);
             }
-        } else if ( !strcmp("type", BAD_TSAC2 (nodename))) {
+        } else if (!strcmp ("type", BAD_TSAC2 (nodename))) {
             if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-                parse_dia_node(node->xmlChildrenNode, type);
+                parse_dia_node (node->xmlChildrenNode, type);
             } else {
                 type.clear ();
             }
-        } else if ( !strcmp("comment", BAD_TSAC2 (nodename))) {
+        } else if (!strcmp("comment", BAD_TSAC2 (nodename))) {
             if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-               parse_dia_node(node->xmlChildrenNode, comment);
+               parse_dia_node (node->xmlChildrenNode, comment);
             } else {
                comment.clear ();
           }
-        } else if ( !strcmp("kind", BAD_TSAC2 (nodename))) {
-            attrval = xmlGetProp(node->xmlChildrenNode, BAD_CAST2 ("val"));
-            sscanf(BAD_TSAC2 (attrval), "%c", &(kind));
-            free(attrval);
-        } else if ( !strcmp("visibility", BAD_TSAC2 (nodename))) {
-            attrval = xmlGetProp(node->xmlChildrenNode, BAD_CAST2 ("val"));
-            sscanf(BAD_TSAC2 (attrval), "%c", &(visibility));
-            free(attrval);
-        } else if ( !strcmp("abstract", BAD_TSAC2 (nodename))) {
-            isabstract = parse_boolean(node->xmlChildrenNode);
-        } else if ( !strcmp("class_scope", BAD_TSAC2 (nodename))) {
-            isstatic = parse_boolean(node->xmlChildrenNode);
-        } else if ( !strcmp("query", BAD_TSAC2 (nodename))) {
-            isconstant = parse_boolean(node->xmlChildrenNode);
+        } else if (!strcmp ("kind", BAD_TSAC2 (nodename))) {
+            attrval = xmlGetProp (node->xmlChildrenNode, BAD_CAST2 ("val"));
+            sscanf (BAD_TSAC2 (attrval), "%c", &kind);
+            free (attrval);
+        } else if (!strcmp ("visibility", BAD_TSAC2 (nodename))) {
+            attrval = xmlGetProp (node->xmlChildrenNode, BAD_CAST2 ("val"));
+            sscanf (BAD_TSAC2 (attrval), "%c", &visibility);
+            free (attrval);
+        } else if (!strcmp ("abstract", BAD_TSAC2 (nodename))) {
+            isabstract = parse_boolean (node->xmlChildrenNode);
+        } else if (!strcmp ("class_scope", BAD_TSAC2 (nodename))) {
+            isstatic = parse_boolean (node->xmlChildrenNode);
+        } else if (!strcmp ("query", BAD_TSAC2 (nodename))) {
+            isconstant = parse_boolean (node->xmlChildrenNode);
         }
 
-        free(nodename);
+        free (nodename);
         node = node->next;
     }
 }
@@ -198,7 +206,7 @@ umlAttribute::parse(xmlNodePtr node) {
   * Inserts "n" into the list "l", in orderly fashion
 */
 void
-umlAttribute::insert(std::list <umlAttribute> &l) {
+umlAttribute::insert (std::list <umlAttribute> &l) {
     std::list <umlAttribute>::iterator itl;
     
     itl = l.begin ();

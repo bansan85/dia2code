@@ -30,7 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define kind_str(A)   ((A)=='1'?"in":((A)=='2'?"in/out":((A)=='3'?"out":"???")))
+#define kind_str(A)  ((A) == '1'?"in":\
+                     ((A) == '2'?"in/out":\
+                     ((A) == '3'?"out":"???")))
 #define BAD_CAST2 reinterpret_cast <const xmlChar *>
 #define BAD_TSAC2 reinterpret_cast <const char *>
 
@@ -41,15 +43,10 @@ struct geometry {
     float height;
 };
 
-std::string strtoupper(std::string s);
-std::string strtoupperfirst(std::string s);
+std::string strtoupper (std::string s);
+std::string strtoupperfirst (std::string s);
 std::list <std::string> parse_class_names (char *s);
-int is_present(std::list <std::string> list, const char *name);
-
-int is_enum_stereo (const char * stereo);
-int is_struct_stereo (const char * stereo);
-int is_typedef_stereo (const char * stereo);
-int is_const_stereo (const char * stereo);
+int is_present (std::list <std::string> list, const char *name);
 
 extern int generate_backup;
 

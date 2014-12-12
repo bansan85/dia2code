@@ -47,7 +47,7 @@ class GenerateCode {
         void gen_class (umlClassNode *node);
         const char * cppname (std::string name) const;
         void check_visibility (int *curr_vis, int new_vis);
-        std::string spc() const;
+        std::string spc () const;
         void open_outfile (const char *filename);
         void gen_decl (declaration &d);
     public:
@@ -57,20 +57,20 @@ class GenerateCode {
         void generate_code ();
         
         const char * getFileExt () const;
-        void   setFileExt (char * ext);
+        void         setFileExt (char * ext);
 
         const char * getBodyFileExt () const;
-        void   setBodyFileExt (char * ext);
+        void         setBodyFileExt (char * ext);
 
         uint32_t getIndent () const;
         void     setIndent (uint8_t spaces);
 
         const char * getLicense () const;
-        void   setLicense (char * lic);
+        void         setLicense (char * lic);
 
         const char * getOutdir () const;
-        const  std::string * getOutdirS () const;
-        void   setOutdir (char * dir);
+        const        std::string * getOutdirS () const;
+        void         setOutdir (char * dir);
 
         bool getOverwrite () const;
         void setOverwrite (bool over);

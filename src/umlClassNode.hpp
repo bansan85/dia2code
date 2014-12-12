@@ -28,29 +28,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class umlClassNode : public umlClass {
     private :
-    std::list <umlClassNode> parents;
-    std::list <umlassoc> associations;
-    std::list <umlClassNode> dependencies;
+        std::list <umlClassNode> parents;
+        std::list <umlassoc> associations;
+        std::list <umlClassNode> dependencies;
     public :
         umlClassNode ();
         umlClassNode (const umlClassNode & classnode);
         umlClassNode (umlClass & _key,
-		              std::list <umlClassNode> & parents_,
-					  std::list <umlassoc> & associations_,
-					  std::list <umlClassNode> & dependencies_);
+                      std::list <umlClassNode> & parents_,
+                      std::list <umlassoc> & associations_,
+                      std::list <umlClassNode> & dependencies_);
         umlClassNode (umlClass & _key);
-		
-		const std::list <umlClassNode> & getParents () const;
-		const std::list <umlassoc> & getAssociations () const;
-		const std::list <umlClassNode> & getDependencies () const;
         
-        declaration * find_class (std::list <declaration> &decl) const;
-        void addparent(umlClass & key);
-        void adddependency(umlClassNode & dependent);
-        void addaggregate(const char *name, char composite, umlClassNode & base,
-                  const char *multiplicity);
+        const std::list <umlClassNode> & getParents () const;
+        const std::list <umlassoc> & getAssociations () const;
+        const std::list <umlClassNode> & getDependencies () const;
         
-		~umlClassNode ();
+        declaration * find_class (std::list <declaration> & decl) const;
+        void addparent (umlClass & key);
+        void adddependency (umlClassNode & dependent);
+        void addaggregate (const char *name,
+                           char composite,
+                           umlClassNode & base,
+                           const char *multiplicity);
+        
+        ~umlClassNode ();
 };
 
 #endif

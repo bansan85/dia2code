@@ -42,7 +42,10 @@ struct module {  /* UML package = IDL module
     std::list<declaration> contents;
 };
 
-typedef enum { dk_module, dk_class } decl_kind_t;
+typedef enum {
+    dk_module = 0,
+    dk_class
+} decl_kind_t;
 
 struct declaration {
     decl_kind_t decl_kind;
@@ -55,14 +58,6 @@ struct declaration {
            sequencing (see `prev' and `next' below.)  */
     } u;
 };
-
-/* Utilities for building the global `decls' from umlclassnodes and
-   their parents.  (`decls' contains everything in ascending order of
-   interdependence.)  */
-
-module *
-find_or_add_module (std::list <declaration> &dptr, std::list <umlPackage> &pkglist);
-
 #endif  /* DECLS_H */
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
