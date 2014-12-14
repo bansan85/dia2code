@@ -53,14 +53,6 @@ parse_boolean (xmlNodePtr booleannode) {
     return result;
 }
 
-
-void
-insert_template (std::pair <std::string, std::string> &n,
-                 std::list <std::pair <std::string, std::string> > &l) {
-    l.push_back (n);
-}
-
-
 void
 parse_attributes (xmlNodePtr node, std::list <umlAttribute> &retour) {
     while (node != NULL) {
@@ -90,7 +82,7 @@ parse_templates (xmlNodePtr node,
                                                                        NULL ) {
             std::pair <std::string, std::string> tn;
             parse_template (node->xmlChildrenNode, tn);
-            insert_template (tn, res);
+            res.push_back (tn);
         }
         node = node->next;
     }
