@@ -22,24 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <libxml/tree.h>
 
 #include "parse_diagram.hpp"
-#include "umlOperation.hpp"
-#include "umlClassNode.hpp"
+#include "string2.hpp"
 
 #ifndef MIN
 #define MIN(x, y) (x < y ? x : y)
 #endif
-
-umlClassNode *
-find (std::list <umlClassNode> & list, const char *id) {
-    if (id != NULL) {
-        for (umlClassNode & it : list) {
-            if (it.getId ().compare (id) == 0) {
-                return &it;
-            }
-        }
-    }
-    return NULL;
-}
 
 void
 parse_dia_string (const char * stringnode, std::string &buffer) {
@@ -67,32 +54,6 @@ parse_boolean (xmlNodePtr booleannode) {
 }
 
 
-/**
-  * Inserts "n" into the list "l", in orderly fashion
-*/
-void
-insert_operation (umlOperation &n, std::list <umlOperation> &l) {
-    std::list <umlOperation>::iterator itl;
-    
-    itl = l.begin ();
-    
-    if (itl == l.end ()) {
-        l.push_back (n);
-    }
-    else {
-        while ((itl != l.end ()) &&
-               ((*itl).getVisibility () >= n.getVisibility ())) {
-            ++itl;
-        }
-        if (itl == l.end ()) {
-            l.push_back (n);
-        }
-        else {
-            l.insert (std::next (itl), n);
-        }
-    }
-}
-
 void
 insert_template (std::pair <std::string, std::string> &n,
                  std::list <std::pair <std::string, std::string> > &l) {
@@ -108,16 +69,6 @@ parse_attributes (xmlNodePtr node, std::list <umlAttribute> &retour) {
         an.insert (retour);
         node = node->next;
     }
-}
-
-void
-parse_operations (xmlNodePtr node, std::list <umlOperation> &res) {
-    while (node != NULL) {
-        umlOperation on (node->xmlChildrenNode);
-        insert_operation (on, res);
-        node = node->next;
-    }
-    return;
 }
 
 void
@@ -144,34 +95,6 @@ parse_templates (xmlNodePtr node,
         node = node->next;
     }
     return;
-}
-
-void
-parse_geom_position (xmlNodePtr attribute, geometry * geom) {
-    xmlChar *val;
-    char * token;
-    val = xmlGetProp (attribute, BAD_CAST2 ("val"));
-    token = strtok (reinterpret_cast <char *> (val), ",");
-    sscanf (token, "%f", &(geom->pos_x) );
-    token = strtok (NULL, ",");
-    sscanf (token, "%f", &(geom->pos_y) );
-    xmlFree (val);
-}
-
-void
-parse_geom_width (xmlNodePtr attribute, geometry * geom ) {
-    xmlChar *val;
-    val = xmlGetProp (attribute, BAD_CAST2 ("val"));
-    sscanf (BAD_TSAC2 (val), "%f", &(geom->width) );
-    xmlFree (val);
-}
-
-void
-parse_geom_height (xmlNodePtr attribute, geometry * geom ) {
-    xmlChar *val;
-    val = xmlGetProp (attribute, BAD_CAST2 ("val"));
-    sscanf (BAD_TSAC2 (val), "%f", &(geom->height) );
-    xmlFree (val);
 }
 
 void

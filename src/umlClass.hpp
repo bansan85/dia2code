@@ -29,10 +29,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "umlAttribute.hpp"
 #include "umlOperation.hpp"
+// No include to avoid circular dependencies.
 class umlClassNode;
-#include "dia2code.hpp"
-
 class umlPackage;
+
+struct geometry {
+    float pos_x;
+    float pos_y;
+    float width;
+    float height;
+};
+
+void parse_geom_position (xmlNodePtr attribute, geometry * geom);
+void parse_geom_width (xmlNodePtr attribute, geometry * geom);
+void parse_geom_height (xmlNodePtr attribute, geometry * geom);
 
 class umlClass {
     private :

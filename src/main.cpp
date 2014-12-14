@@ -16,13 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#include "dia2code.hpp"
+#include "config.h"
 
 #include <libxml/tree.h>
 #include <iostream>
 
-#include "parse_diagram.hpp"
+#include "string2.hpp"
 #include "GenerateCodeCpp.hpp"
 
 int main (int argc, char **argv) {

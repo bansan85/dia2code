@@ -17,8 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#ifndef DIA2CODE_H
-#define DIA2CODE_H
+#ifndef STRING2_HPP
+#define STRING2_HPP
 
 #include "config.h"
 
@@ -35,13 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                      ((A) == '3'?"out":"???")))
 #define BAD_CAST2 reinterpret_cast <const xmlChar *>
 #define BAD_TSAC2 reinterpret_cast <const char *>
-
-struct geometry {
-    float pos_x;
-    float pos_y;
-    float width;
-    float height;
-};
 
 std::string strtoupper (std::string s);
 std::string strtoupperfirst (std::string s);

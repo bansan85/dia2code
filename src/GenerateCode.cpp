@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "GenerateCode.hpp"
 #include "scan_tree.hpp"
+#include "string2.hpp"
 
 #define SPEC_EXT "h"
 #define BODY_EXT "cpp"

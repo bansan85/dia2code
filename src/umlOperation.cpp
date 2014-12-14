@@ -16,10 +16,46 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "dia2code.hpp"
-
 #include "umlOperation.hpp"
 #include "parse_diagram.hpp"
+#include "string2.hpp"
+
+/**
+  * Inserts "n" into the list "l", in orderly fashion
+*/
+void
+umlOperation::insert_operation (umlOperation &n, std::list <umlOperation> &l) {
+    std::list <umlOperation>::iterator itl;
+    
+    itl = l.begin ();
+    
+    if (itl == l.end ()) {
+        l.push_back (n);
+    }
+    else {
+        while ((itl != l.end ()) &&
+               ((*itl).getVisibility () >= n.getVisibility ())) {
+            ++itl;
+        }
+        if (itl == l.end ()) {
+            l.push_back (n);
+        }
+        else {
+            l.insert (std::next (itl), n);
+        }
+    }
+}
+
+void
+umlOperation::parse_operations (xmlNodePtr node,
+                                std::list <umlOperation> &res) {
+    while (node != NULL) {
+        umlOperation on (node->xmlChildrenNode);
+        insert_operation (on, res);
+        node = node->next;
+    }
+    return;
+}
 
 umlOperation::umlOperation (xmlNodePtr node) :
     umlAttribute (),

@@ -16,10 +16,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "dia2code.hpp"
-
-#include "parse_diagram.hpp"
 #include "umlAttribute.hpp"
+#include "string2.hpp"
+#include "parse_diagram.hpp"
 
 umlAttribute::umlAttribute () :
     name (),

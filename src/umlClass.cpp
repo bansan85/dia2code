@@ -16,10 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "dia2code.hpp"
+#include "config.h"
 
 #include "umlClass.hpp"
+#include "string2.hpp"
 #include "parse_diagram.hpp"
+#include "umlClassNode.hpp"
 
 umlClass::umlClass () :
     id ("00"),
@@ -120,7 +122,7 @@ umlClass::make_getset_methods () {
                                     '1',
                                     impl);
             operation.addParameter (parameter);
-            insert_operation(operation, operations);
+            umlOperation::insert_operation(operation, operations);
 
             /* The GET or IS method */
             impl.assign ("    return ");
@@ -135,7 +137,7 @@ umlClass::make_getset_methods () {
             
             umlOperation operation2 (tmpname, "", attrlist.getType (),
                                      "", '0', false, false, true, '1', impl);
-            insert_operation (operation2, operations);
+            umlOperation::insert_operation (operation2, operations);
         }
     }
  }
@@ -175,7 +177,7 @@ umlClass::lolipop_implementation (std::list <umlClassNode> & classlist,
         }
         attribute = attribute->next;
     }
-    implementator = find (classlist, BAD_TSAC2 (id));
+    implementator = umlClassNode::find (classlist, BAD_TSAC2 (id));
     free (id);
     if (implementator != NULL && name != NULL && strlen (name) > 2) {
         umlClass key;
@@ -196,8 +198,8 @@ associate (std::list <umlClassNode> & classlist,
            const char * aggregate,
            const char *multiplicity) {
     umlClassNode *umlbase, *umlaggregate;
-    umlbase = find (classlist, base);
-    umlaggregate = find (classlist, aggregate);
+    umlbase = umlClassNode::find (classlist, base);
+    umlaggregate = umlClassNode::find (classlist, aggregate);
     if (umlbase != NULL && umlaggregate != NULL) {
         umlaggregate->addaggregate (name, composite, *umlbase, multiplicity);
     }
@@ -208,8 +210,8 @@ make_depend (std::list <umlClassNode> & classlist,
              const char * dependent,
              const char * dependee) {
     umlClassNode *umldependent, *umldependee;
-    umldependent = find (classlist, dependent);
-    umldependee = find (classlist, dependee);
+    umldependent = umlClassNode::find (classlist, dependent);
+    umldependee = umlClassNode::find (classlist, dependee);
     if (umldependent != NULL && umldependee != NULL) {
         umldependee->adddependency (*umldependent);
     }
@@ -220,8 +222,8 @@ inherit_realize (std::list <umlClassNode> & classlist,
                  const char * base,
                  const char * derived) {
     umlClassNode *umlbase, *umlderived;
-    umlbase = find (classlist, base);
-    umlderived = find (classlist, derived);
+    umlbase = umlClassNode::find (classlist, base);
+    umlderived = umlClassNode::find (classlist, derived);
     if (umlbase != NULL && umlderived != NULL) {
         umlderived->addparent (*umlbase);
     }
@@ -239,6 +241,34 @@ is_inside (const geometry & geom1,
            geom1.pos_y < geom2.pos_y &&
            geom2.pos_y < geom1.pos_y + geom1.height;
 
+}
+
+void
+parse_geom_position (xmlNodePtr attribute, geometry * geom) {
+    xmlChar *val;
+    char * token;
+    val = xmlGetProp (attribute, BAD_CAST2 ("val"));
+    token = strtok (reinterpret_cast <char *> (val), ",");
+    sscanf (token, "%f", &(geom->pos_x) );
+    token = strtok (NULL, ",");
+    sscanf (token, "%f", &(geom->pos_y) );
+    xmlFree (val);
+}
+
+void
+parse_geom_width (xmlNodePtr attribute, geometry * geom ) {
+    xmlChar *val;
+    val = xmlGetProp (attribute, BAD_CAST2 ("val"));
+    sscanf (BAD_TSAC2 (val), "%f", &(geom->width) );
+    xmlFree (val);
+}
+
+void
+parse_geom_height (xmlNodePtr attribute, geometry * geom ) {
+    xmlChar *val;
+    val = xmlGetProp (attribute, BAD_CAST2 ("val"));
+    sscanf (BAD_TSAC2 (val), "%f", &(geom->height) );
+    xmlFree (val);
 }
 
 void
@@ -565,7 +595,8 @@ umlClass::parse_class (xmlNodePtr class_) {
         } else if (!strcmp ("attributes", BAD_TSAC2 (attrname))) {
             parse_attributes (attribute->xmlChildrenNode, attributes);
         } else if (!strcmp ("operations", BAD_TSAC2 (attrname))) {
-            parse_operations (attribute->xmlChildrenNode, operations);
+            umlOperation::parse_operations (attribute->xmlChildrenNode,
+                                            operations);
             if (stereotype.compare ("getset") == 0) {
                 this->make_getset_methods ();
             }

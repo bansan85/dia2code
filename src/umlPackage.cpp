@@ -16,10 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "dia2code.hpp"
+#include "config.h"
 
 #include "parse_diagram.hpp"
 #include "umlPackage.hpp"
+#include "string2.hpp"
 
 umlPackage::umlPackage () :
     id (),
@@ -94,7 +95,7 @@ umlPackage::getName () const {
     return name;
 }
 
-geometry
+const geometry &
 umlPackage::getGeometry () const {
     return geom;
 }

@@ -16,10 +16,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "dia2code.hpp"
+#include "config.h"
 
 #include "umlClassNode.hpp"
 #include "parse_diagram.hpp"
+
+umlClassNode *
+umlClassNode::find (std::list <umlClassNode> & list, const char *id) {
+    if (id != NULL) {
+        for (umlClassNode & it : list) {
+            if (it.getId ().compare (id) == 0) {
+                return &it;
+            }
+        }
+    }
+    return NULL;
+}
+
 
 umlClassNode::umlClassNode () :
     umlClass (),

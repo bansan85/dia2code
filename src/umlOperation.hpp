@@ -33,6 +33,10 @@ class umlOperation : public umlAttribute {
         std::string implementation;
         std::list <umlAttribute> parameters;
     public :
+        static void insert_operation (umlOperation &n,
+                                      std::list <umlOperation> &l);
+        static void parse_operations (xmlNodePtr node,
+                                      std::list <umlOperation> &res);
         umlOperation (xmlNodePtr node);
         umlOperation (std::string name_,
                       std::string value_,

@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <errno.h>
 
-#include "dia2code.hpp"
+#include "string2.hpp"
 
 int generate_backup;
 

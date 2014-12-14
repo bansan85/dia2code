@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
-#include "dia2code.hpp"
 #include "decls.hpp"
 #include "umlClass.hpp"
 #include "umlAssoc.hpp"
@@ -32,6 +31,8 @@ class umlClassNode : public umlClass {
         std::list <umlassoc> associations;
         std::list <umlClassNode> dependencies;
     public :
+        static umlClassNode * find (std::list <umlClassNode> & list,
+                                    const char *id);
         umlClassNode ();
         umlClassNode (const umlClassNode & classnode);
         umlClassNode (umlClass & _key,

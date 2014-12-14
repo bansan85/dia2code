@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <libxml/tree.h>
 
-#include "dia2code.hpp"
+#include "umlClass.hpp"
 
 class umlPackage {
     private :
@@ -39,11 +39,11 @@ class umlPackage {
         umlPackage (const umlPackage & pack);
 
         const std::string getName () const;
-        geometry getGeometry () const;
-        const umlPackage *getParent () const;
+        const geometry & getGeometry () const;
+        const umlPackage * getParent () const;
         void setParent (umlPackage * pack);
 
-        static void make_package_list (const umlPackage *package,
+        static void make_package_list (const umlPackage * package,
                                        std::list <umlPackage> &res);
         
         ~umlPackage ();
