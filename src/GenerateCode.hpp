@@ -62,11 +62,13 @@ class GenerateCode {
         const char * getBodyFileExt () const;
         void         setBodyFileExt (char * ext);
 
+        std::ofstream & getFile ();
+        
         uint32_t getIndent () const;
         void     setIndent (uint8_t spaces);
 
-        const char * getLicense () const;
-        void         setLicense (char * lic);
+        const std::string & getLicense () const;
+        void                setLicense (char * lic);
 
         const char * getOutdir () const;
         const        std::string * getOutdirS () const;
@@ -80,6 +82,8 @@ class GenerateCode {
 
         bool getOpenBraceOnNewline () const;
         void setOpenBraceOnNewline (bool newline);
+
+        virtual void writeLicense () = 0;
 
         virtual ~GenerateCode ();
 };

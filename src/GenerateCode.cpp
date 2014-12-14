@@ -52,9 +52,9 @@ GenerateCode::getDia () {
 }
 
 
-const char *
+const std::string &
 GenerateCode::getLicense () const {
-    return license.c_str ();
+    return license;
 }
 
 
@@ -141,17 +141,6 @@ GenerateCode::generate_code () {
     std::list <declaration>::iterator it2;
     std::list <umlClassNode> tmplist = getDia ().getUml ();
     
-    FILE *licensefile = NULL;
-
-    /* open license file */
-    if (!license.empty ()) {
-        licensefile = fopen (license.c_str (), "r");
-        if (!licensefile) {
-            fprintf (stderr, "Can't open the license file.\n");
-            exit (1);
-        }
-    }
-
     for (umlClassNode & it : tmplist) {
         if (!is_present (getDia ().getGenClasses (),
                          it.getName().c_str ()) ^ getDia ().getInvertSel ()) {
@@ -176,18 +165,11 @@ GenerateCode::generate_code () {
 
         open_outfile (filename.c_str ());
 
+        writeLicense ();
+
         tmpname = strtoupper (name);
         file << spc () << "#ifndef " << tmpname << "__HPP\n";
         file << spc () << "#define " << tmpname << "__HPP\n\n";
-
-        /* add license to the header */
-        if (!license.empty ()) {
-            int lc;
-            rewind (licensefile);
-            while ((lc = fgetc (licensefile)) != EOF) {
-                file << static_cast <char> (lc);
-            }
-        }
 
         getDia ().cleanIncludes ();
         getDia ().determine_includes (*it2);
@@ -209,9 +191,6 @@ GenerateCode::generate_code () {
         file.close ();
 
         ++it2;
-    }
-    if (licensefile != NULL) {
-        fclose (licensefile);
     }
 }
 
@@ -238,6 +217,11 @@ GenerateCode::setBodyFileExt (char * ext) {
     body_file_ext.assign (ext);
 }
 
+
+std::ofstream &
+GenerateCode::getFile () {
+    return file;
+}
 
 char *
 subst (char *str, const char search, char replace) {
