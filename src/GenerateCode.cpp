@@ -854,6 +854,24 @@ GenerateCode::setIndent (uint8_t spaces) {
 }
 
 
+void
+GenerateCode::writeLicenseAll () {
+    FILE * licensefile = fopen (license.c_str (), "r");
+    if (!licensefile) {
+        fprintf (stderr, "Can't open the license file.\n");
+        exit (1);
+    }
+
+    int lc;
+    rewind (licensefile);
+    while ((lc = fgetc (licensefile)) != EOF) {
+        getFile () << static_cast <char> (lc);
+    }
+
+    fclose (licensefile);
+}
+
+
 GenerateCode::~GenerateCode () {
 }
 

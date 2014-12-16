@@ -84,6 +84,7 @@ class GenerateCode {
         void setOpenBraceOnNewline (bool newline);
 
         virtual void writeLicense () = 0;
+        void writeLicenseAll ();
 
         virtual ~GenerateCode ();
 };
