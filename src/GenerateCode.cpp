@@ -173,13 +173,12 @@ GenerateCode::generate_code () {
         getDia ().cleanIncludes ();
         getDia ().determine_includes (*it2);
         if (getDia ().getUseCorba ()) {
-            file << "#include <p_orb.h>\n\n";
+            writeInclude ("p_orb.h");
         }
         std::list <std::string> incfile = getDia ().getIncludes ();
         for (std::string namei : incfile) {
             if (namei.compare (name)) {
-                file << "#include \"" << namei << "." << getFileExt ()
-                     << "\"\n";
+                writeInclude (namei + "." + getFileExt ());
             }
         }
         file << "\n";

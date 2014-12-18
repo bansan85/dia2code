@@ -48,6 +48,16 @@ GenerateCodeCpp::writeEndHeader () {
     getFile () << "#endif\n";
 }
 
+void
+GenerateCodeCpp::writeInclude (std::basic_string <char> name) {
+    getFile () << "#include \"" << name << "\"\n";
+}
+
+void
+GenerateCodeCpp::writeInclude (const char * name) {
+    getFile () << "#include \"" << name << "\"\n";
+}
+
 GenerateCodeCpp::~GenerateCodeCpp () {
 }
 

@@ -86,6 +86,8 @@ class GenerateCode {
         virtual void writeLicense () = 0;
         virtual void writeStartHeader (std::string & name) = 0;
         virtual void writeEndHeader () = 0;
+        virtual void writeInclude (std::basic_string <char> name) = 0;
+        virtual void writeInclude (const char * name) = 0;
         void writeLicenseAll ();
 
         virtual ~GenerateCode ();

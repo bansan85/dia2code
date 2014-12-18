@@ -29,6 +29,8 @@ class GenerateCodeCpp : public GenerateCode {
         void writeLicense ();
         void writeStartHeader (std::string & name);
         void writeEndHeader ();
+        void writeInclude (std::basic_string <char> name);
+        void writeInclude (const char * name);
         
         ~GenerateCodeCpp ();
 };
