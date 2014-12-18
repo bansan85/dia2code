@@ -37,6 +37,17 @@ GenerateCodeCpp::writeLicense () {
     getFile () << "*/\n\n";
 }
 
+void
+GenerateCodeCpp::writeStartHeader (std::string & name) {
+    getFile () << spc () << "#ifndef " << name << "__HPP\n";
+    getFile () << spc () << "#define " << name << "__HPP\n\n";
+}
+
+void
+GenerateCodeCpp::writeEndHeader () {
+    getFile () << "#endif\n";
+}
+
 GenerateCodeCpp::~GenerateCodeCpp () {
 }
 

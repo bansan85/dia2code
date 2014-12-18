@@ -47,7 +47,6 @@ class GenerateCode {
         void gen_class (umlClassNode *node);
         const char * cppname (std::string name) const;
         void check_visibility (int *curr_vis, int new_vis);
-        std::string spc () const;
         void open_outfile (const char *filename);
         void gen_decl (declaration &d);
     public:
@@ -83,7 +82,10 @@ class GenerateCode {
         bool getOpenBraceOnNewline () const;
         void setOpenBraceOnNewline (bool newline);
 
+        std::string spc () const;
         virtual void writeLicense () = 0;
+        virtual void writeStartHeader (std::string & name) = 0;
+        virtual void writeEndHeader () = 0;
         void writeLicenseAll ();
 
         virtual ~GenerateCode ();

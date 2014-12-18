@@ -168,8 +168,7 @@ GenerateCode::generate_code () {
         writeLicense ();
 
         tmpname = strtoupper (name);
-        file << spc () << "#ifndef " << tmpname << "__HPP\n";
-        file << spc () << "#define " << tmpname << "__HPP\n\n";
+        writeStartHeader (tmpname);
 
         getDia ().cleanIncludes ();
         getDia ().determine_includes (*it2);
@@ -187,7 +186,7 @@ GenerateCode::generate_code () {
 
         gen_decl (*it2);
 
-        file << "#endif\n";
+        writeEndHeader ();
         file.close ();
 
         ++it2;
