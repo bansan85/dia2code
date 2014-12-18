@@ -6,7 +6,7 @@ rm result/*
 if [[ ! -a result/pack.hpp ]] ; then
 exit 1
 fi ;
-diff -pu result/pack.hpp pack.hpp > result.txt
+diff -pu pack.hpp result/pack.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -15,7 +15,7 @@ fi ;
 if [[ ! -a result/enumeration.hpp ]] ; then
 exit 1
 fi ;
-diff -pu result/enumeration.hpp enumeration.hpp > result.txt
+diff -pu enumeration.hpp result/enumeration.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -24,7 +24,7 @@ fi ;
 if [[ ! -a result/operations.hpp ]] ; then
 exit 1
 fi ;
-diff -pu result/operations.hpp operations.hpp > result.txt
+diff -pu operations.hpp result/operations.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -34,7 +34,7 @@ rm result/operations.hpp
 if [[ ! -a result/operations.hpp ]] ; then
 exit 1
 fi ;
-diff -pu result/operations.hpp operations_COPYING.hpp > result.txt
+diff -pu operations_COPYING.hpp result/operations.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;

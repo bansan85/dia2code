@@ -181,7 +181,9 @@ GenerateCode::generate_code () {
                 writeInclude (namei + "." + getFileExt ());
             }
         }
-        file << "\n";
+        if (!incfile.empty ()) {
+            file << "\n";
+        }
 
         gen_decl (*it2);
 
@@ -459,6 +461,7 @@ GenerateCode::gen_class (umlClassNode *node) {
         }
     }
 
+    indentlevel++;
     if (!node->getAttributes ().empty ()) {
         if (is_valuetype) {
             file << spc () << "// Public state members\n";
@@ -545,12 +548,12 @@ GenerateCode::gen_class (umlClassNode *node) {
 
     if (!node->getOperations ().empty ()) {
         int tmpv = -1;
+        indentlevel--;
         file << spc () << "// Operations\n";
         if (is_valuetype) {
-            indentlevel--;
             file << spc () << "public:\n";
-            indentlevel++;
         }
+        indentlevel++;
         for (const umlOperation & umlo : node->getOperations ()) {
             std::list <umlAttribute>::const_iterator tmpa;
             if (is_valuetype) {
@@ -647,6 +650,7 @@ GenerateCode::gen_class (umlClassNode *node) {
         }
     }
 
+    indentlevel--;
     indentlevel--;
     file << spc () << "};\n\n";
 }
