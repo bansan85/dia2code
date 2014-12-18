@@ -26,6 +26,13 @@ GenerateCodeCpp::GenerateCodeCpp (DiaGram & diagram) :
     GenerateCode (diagram, "hpp") {
 }
 
+std::string
+GenerateCodeCpp::strPackage (const char * package) const {
+    std::string retour (package);
+    retour.append ("::");
+    return retour;
+}
+
 void
 GenerateCodeCpp::writeLicense () {
     if (getLicense ().empty ()) {

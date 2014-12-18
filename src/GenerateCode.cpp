@@ -299,8 +299,7 @@ is_oo_class (umlClass &cl) {
 }
 
 const char *
-GenerateCode::cppname (std::string name) const
-{
+GenerateCode::cppname (std::string name) const {
     static std::string buf;
     if (dia.getUseCorba ()) {
         if (name.compare ("boolean") == 0 ||
@@ -312,21 +311,25 @@ GenerateCode::cppname (std::string name) const
             name.compare ("double") == 0 ||
             name.compare ("string") == 0 ||
             name.compare ("any") == 0) {
-                buf.assign ("CORBA::");
+                buf.assign (strPackage ("CORBA"));
                 buf.append (nospc (const_cast <char *> (
                                             strtoupperfirst (name).c_str ())));
         }
         else if (name.compare ("long long") == 0) {
-            buf.assign ("CORBA::LongLong");
+            buf.assign (strPackage ("CORBA"));
+            buf.append ("LongLong");
         }
         else if (name.compare ("unsigned short") == 0) {
-            buf.assign ("CORBA::UShort");
+            buf.assign (strPackage ("CORBA"));
+            buf.append ("UShort");
         }
         else if (name.compare ("unsigned long") == 0) {
-            buf.assign ("CORBA::ULong");
+            buf.assign (strPackage ("CORBA"));
+            buf.append ("ULong");
         }
         else if (name.compare ("unsigned long long") == 0) {
-            buf.assign ("CORBA::ULongLong");
+            buf.assign (strPackage ("CORBA"));
+            buf.append ("ULongLong");
         }
         else {
             buf.assign (name);
@@ -339,7 +342,7 @@ GenerateCode::cppname (std::string name) const
 
 
 const char *
-fqname (const umlClassNode &node, bool use_ref_type) {
+GenerateCode::fqname (const umlClassNode &node, bool use_ref_type) {
     static std::string buf;
 
     buf.clear ();
@@ -347,8 +350,7 @@ fqname (const umlClassNode &node, bool use_ref_type) {
         std::list <umlPackage> pkglist;
         umlPackage::make_package_list (node.getPackage (), pkglist);
         for (umlPackage & it : pkglist) {
-            buf.append (it.getName ());
-            buf.append ("::");
+            buf.append (strPackage (it.getName ().c_str ()));
         }
     }
     buf.append (node.getName ());
@@ -427,7 +429,7 @@ GenerateCode::gen_class (umlClassNode *node) {
             }
         }
     } else if (is_valuetype) {
-        file << " : CORBA::ValueBase";
+        file << " : " << strPackage ("CORBA") << "ValueBase";
     }
     if (bOpenBraceOnNewline) {
         file << "\n{\n";
