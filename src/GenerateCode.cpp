@@ -370,16 +370,20 @@ GenerateCode::check_visibility (int *curr_vis, int new_vis) {
     indentlevel--;
     switch (new_vis) {
         case '0':
-            file << spc () << "public:\n";
+            file << spc () << "public :\n";
             break;
         case '1':
-            file << spc () << "private:\n";
+            file << spc () << "private :\n";
             break;
         case '2':
-            file << spc () << "protected:\n";
+            file << spc () << "protected :\n";
+            break;
+        case '3':
+            file << spc () << "implemetation :\n";
             break;
         default :
             fprintf (stderr, "Unknown visibility %d\n", new_vis);
+            exit (1);
             break;
     }
     *curr_vis = new_vis;
@@ -465,11 +469,9 @@ GenerateCode::gen_class (umlClassNode *node) {
         }
     }
 
-    indentlevel++;
     if (!node->getAttributes ().empty ()) {
         if (is_valuetype) {
             file << spc () << "// Public state members\n";
-            indentlevel--;
             file << spc () << "public:\n";
             indentlevel++;
             for (const umlAttribute & umla : node->getAttributes ()) {
@@ -527,16 +529,17 @@ GenerateCode::gen_class (umlClassNode *node) {
                     file << spc () << "}\n";
                 }
             }
+            indentlevel--;
         }
         else {
             int tmpv = -1;
             file << spc () << "// Attributes\n";
+            indentlevel++;
             for (const umlAttribute & umla : node->getAttributes ()) {
                 check_visibility (&tmpv, umla.getVisibility ());
                 if (!umla.getComment ().empty ()) {
                     file << spc () << "/// " << umla.getComment () << "\n";
                 }
-                file << spc ();
                 if (umla.isStatic ()) {
                     file << spc () << "static " << umla.getType () << " "
                          << umla.getName ();
@@ -547,12 +550,12 @@ GenerateCode::gen_class (umlClassNode *node) {
                 }
                 file << ";\n";
             }
+            indentlevel--;
         }
     }
 
     if (!node->getOperations ().empty ()) {
         int tmpv = -1;
-        indentlevel--;
         file << spc () << "// Operations\n";
         if (is_valuetype) {
             file << spc () << "public:\n";
@@ -629,6 +632,7 @@ GenerateCode::gen_class (umlClassNode *node) {
             }
             file << ";\n";
         }
+        indentlevel--;
     }
 
     if ((!node->getAttributes ().empty ()) && (is_valuetype)) {
@@ -654,7 +658,6 @@ GenerateCode::gen_class (umlClassNode *node) {
         }
     }
 
-    indentlevel--;
     indentlevel--;
     file << spc () << "};\n\n";
 }

@@ -1,0 +1,23 @@
+/*
+LICENSE
+FILE
+*/
+
+#ifndef ATTRIBUTES__HPP
+#define ATTRIBUTES__HPP
+
+/// class attributes - 
+class attributes {
+    // Attributes
+    public :
+        /// com1
+        type1 nom1;
+    protected :
+        /// com3
+        type3 nom3;
+    private :
+        /// com2
+        type2 nom2;
+};
+
+#endif
