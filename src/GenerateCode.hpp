@@ -86,6 +86,7 @@ class GenerateCode {
         std::string spc () const;
 
         virtual std::string strPackage (const char * package) const = 0;
+        virtual std::string strPointer (const std::string & type) const = 0;
 
         virtual void writeLicense () = 0;
         virtual void writeStartHeader (std::string & name) = 0;

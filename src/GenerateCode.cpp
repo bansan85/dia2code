@@ -353,9 +353,11 @@ GenerateCode::fqname (const umlClassNode &node, bool use_ref_type) {
             buf.append (strPackage (it.getName ().c_str ()));
         }
     }
-    buf.append (node.getName ());
     if (use_ref_type) {
-        buf.append ("*");
+        buf.append (strPointer (node.getName ()));
+    }
+    else {
+        buf.append (node.getName ());
     }
     return buf.c_str ();
 }

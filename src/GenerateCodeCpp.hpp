@@ -27,6 +27,7 @@ class GenerateCodeCpp : public GenerateCode {
         GenerateCodeCpp (DiaGram & diagram);
 
         std::string strPackage (const char * package) const;
+        std::string strPointer (const std::string & type) const;
 
         void writeLicense ();
         void writeStartHeader (std::string & name);

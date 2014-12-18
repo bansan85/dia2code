@@ -27,6 +27,13 @@ GenerateCodeCpp::GenerateCodeCpp (DiaGram & diagram) :
 }
 
 std::string
+GenerateCodeCpp::strPointer (const std::string & type) const {
+    std::string retour (type);
+    retour.append (" *");
+    return retour;
+}
+
+std::string
 GenerateCodeCpp::strPackage (const char * package) const {
     std::string retour (package);
     retour.append ("::");
