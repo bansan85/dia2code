@@ -47,9 +47,9 @@ umlAttribute::umlAttribute (std::string name_,
     type (type_),
     comment (comment_),
     visibility (visibility_),
-    isabstract (isabstract_),
-    isstatic (isstatic_),
-    isconstant (isconstant_),
+    isabstract (isabstract_ & 1),
+    isstatic (isstatic_ & 1),
+    isconstant (isconstant_ & 1),
     kind (kind_)
 {
 }
@@ -124,9 +124,9 @@ umlAttribute::assign (std::string name_,
     type = type_;
     comment = comment_;
     visibility = visibility_;
-    isabstract = isabstract_;
-    isstatic = isstatic_;
-    isconstant = isconstant_;
+    isabstract = isabstract_ & 1;
+    isstatic = isstatic_ & 1;
+    isconstant = isconstant_ & 1;
     kind = kind_;
 }
 
