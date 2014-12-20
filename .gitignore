@@ -22,3 +22,4 @@ tests/result.txt
 tests/test-suite.log
 tests/tests.sh.log
 tests/tests.sh.trs
+src/*.gc??

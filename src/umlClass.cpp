@@ -457,9 +457,9 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
             xmlNodePtr attribute = object->xmlChildrenNode;
             while (attribute != NULL) {
                 if (!strcmp ("connections", BAD_TSAC2 (attribute->name))) {
-                    end1 = xmlGetProp (attribute->xmlChildrenNode,
+                    end2 = xmlGetProp (attribute->xmlChildrenNode,
                                        BAD_CAST2 ("to"));
-                    end2 = xmlGetProp (attribute->xmlChildrenNode->next,
+                    end1 = xmlGetProp (attribute->xmlChildrenNode->next,
                                        BAD_CAST2 ("to"));
                     make_depend (res, BAD_TSAC2 (end1), BAD_TSAC2 (end2));
                     free (end1);

@@ -39,12 +39,20 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-rm result/attributes.hpp
-../src/dia2code -t cpp attributes.dia -d result -l COPYING
+../src/dia2code -t cpp attributes.dia -d result
 if [[ ! -a result/attributes.hpp ]] ; then
 exit 1
 fi ;
 diff -pu attributes.hpp result/attributes.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
+../src/dia2code -t cpp dependances.dia -d result
+if [[ ! -a result/dependances.hpp ]] ; then
+exit 1
+fi ;
+diff -pu dependances.hpp result/dependances.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;

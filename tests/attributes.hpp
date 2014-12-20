@@ -1,8 +1,3 @@
-/*
-LICENSE
-FILE
-*/
-
 #ifndef ATTRIBUTES__HPP
 #define ATTRIBUTES__HPP
 
