@@ -96,5 +96,21 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
+../src/dia2code -t cpp inherence.dia -d result
+if [[ ! -a result/ClasseChildren.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/ClasseParent.hpp ]] ; then
+exit 1
+fi ;
+diff -pu ClasseChildren.hpp result/ClasseChildren.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu ClasseParent.hpp result/ClasseParent.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 
 exit 0

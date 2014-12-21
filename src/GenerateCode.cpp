@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
+#include <iostream>
+
 #include "GenerateCode.hpp"
 #include "scan_tree.hpp"
 #include "string2.hpp"
@@ -350,6 +352,7 @@ GenerateCode::fqname (const umlClassNode &node, bool use_ref_type) {
         std::list <umlPackage> pkglist;
         umlPackage::make_package_list (node.getPackage (), pkglist);
         for (umlPackage & it : pkglist) {
+            std::cout << "::" << it.getName () << "::";
             buf.append (strPackage (it.getName ().c_str ()));
         }
     }
@@ -427,6 +430,7 @@ GenerateCode::gen_class (umlClassNode *node) {
         std::list <umlClassNode>::const_iterator parent;
         parent = node->getParents ().begin ();
         file << " : ";
+        std::cout << "CLASS\n";
         while (parent != node->getParents ().end ()) {
             file << "public " << fqname (*parent, false);
             ++parent;
@@ -434,6 +438,7 @@ GenerateCode::gen_class (umlClassNode *node) {
                 file << ", ";
             }
         }
+        std::cout << "CLASSFIN\n";
     } else if (is_valuetype) {
         file << " : " << strPackage ("CORBA") << "ValueBase";
     }
