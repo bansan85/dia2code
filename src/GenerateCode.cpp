@@ -702,6 +702,8 @@ GenerateCode::gen_decl (declaration &d) {
         file << spc () << "// CORBANative: " << name << " \n\n";
     }
     else if (is_const_stereo (stype)) {
+        file << spc () << "/// const " << name << " " << node->getComment ()
+             << "\n";
         if (umla == node->getAttributes ().end ()) {
             fprintf (stderr, "Error: first attribute not set at %s\n", name);
             exit (1);
@@ -715,6 +717,8 @@ GenerateCode::gen_decl (declaration &d) {
 
     }
     else if (is_enum_stereo (stype)) {
+        file << spc () << "/// enum " << name << " " << node->getComment ()
+             << "\n";
         if (bOpenBraceOnNewline) {
             file << spc () << "enum " << name << "\n";
             file << spc () << "{\n";
@@ -726,6 +730,7 @@ GenerateCode::gen_decl (declaration &d) {
         while (umla != node->getAttributes ().end ()) {
             const char *literal = (*umla).getName ().c_str ();
             (*umla).check (name);
+            file << spc () << "/// " << (*umla).getComment () << "\n";
             if (!(*umla).getType ().empty ()) {
                 fprintf (stderr, "%s/%s: ignoring type\n", name, literal);
             }
@@ -744,6 +749,8 @@ GenerateCode::gen_decl (declaration &d) {
 
     }
     else if (is_struct_stereo (stype)) {
+        file << spc () << "/// struct " << name << " " << node->getComment ()
+             << "\n";
         if (bOpenBraceOnNewline) {
             file << spc () << "struct " << name << "\n";
             file << spc () << "{\n";
@@ -754,6 +761,7 @@ GenerateCode::gen_decl (declaration &d) {
         indentlevel++;
         while (umla != node->getAttributes ().end ()) {
             (*umla).check (name);
+            file << spc () << "/// " << (*umla).getComment () << "\n";
             file << spc () << cppname ((*umla).getType ()) << " "
                  << (*umla).getName ();
             if (!(*umla).getValue ().empty ()) {
