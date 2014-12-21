@@ -7,12 +7,20 @@ namespace pack {
 
         namespace pack3 {
 
-            /// class Classe - 
-            class Classe {
+            /// class Classe3 - 
+            class Classe3 {
             };
 
         };
 
+        /// class Classe2 - 
+        class Classe2 {
+        };
+
+    };
+
+    /// class Classe1 - 
+    class Classe1 {
     };
 
 };
