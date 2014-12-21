@@ -758,9 +758,10 @@ GenerateCode::gen_decl (declaration &d) {
                  << (*umla).getName ();
             if (!(*umla).getValue ().empty ()) {
                 fprintf (stderr,
-                         "%s/%s: ignoring getValue ()\n",
+                         "%s/%s: ignoring value %s\n",
                          name,
-                         (*umla).getName ().c_str ());
+                         (*umla).getName ().c_str (),
+                         (*umla).getValue ().c_str ());
             }
             file << ";\n";
             ++umla;

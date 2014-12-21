@@ -87,5 +87,14 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
+../src/dia2code -t cpp structure.dia -d result
+if [[ ! -a result/structure.hpp ]] ; then
+exit 1
+fi ;
+diff -pu structure.hpp result/structure.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 
 exit 0
