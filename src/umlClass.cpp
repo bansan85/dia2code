@@ -215,6 +215,14 @@ make_depend (std::list <umlClassNode> & classlist,
     if (umldependent != NULL && umldependee != NULL) {
         umldependee->adddependency (*umldependent);
     }
+    else {
+        fprintf (stderr,
+                 "Impossible to find dependance between id=%s and id=%s. "
+                 "Maybe id=%s is not a class (package for example).\n",
+                 dependent,
+                 dependee,
+                 umldependent == NULL ? dependent : dependee);
+    }
 }
 
 void

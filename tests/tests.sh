@@ -57,5 +57,35 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
+../src/dia2code -t cpp dependances_pack.dia -d result
+if [[ ! -a result/ClassePack1.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/ClassePack2.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/ClassePack3.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/ClassePack4.hpp ]] ; then
+exit 1
+fi ;
+diff -pu ClassePack1.hpp result/ClassePack1.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu ClassePack2.hpp result/ClassePack2.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu ClassePack3.hpp result/ClassePack3.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu ClassePack4.hpp result/ClassePack4.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 
 exit 0
