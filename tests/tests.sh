@@ -112,5 +112,14 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
+../src/dia2code -t cpp typedef.dia -d result
+if [[ ! -a result/TypeDef.hpp ]] ; then
+exit 1
+fi ;
+diff -pu TypeDef.hpp result/TypeDef.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 
 exit 0
