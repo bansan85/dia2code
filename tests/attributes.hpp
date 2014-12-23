@@ -12,7 +12,7 @@ class attributes {
         type3 nom3;
     private :
         /// com2
-        type2 nom2;
+        static type2 nom2;
 };
 
 #endif
