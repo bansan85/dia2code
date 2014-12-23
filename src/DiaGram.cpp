@@ -114,7 +114,7 @@ DiaGram::list_classes (umlClassNode & current_class,
         }
     }
 
-    for (const umlClassNode * classit : current_class.getParents ()) {
+    for (const umlClass * classit : current_class.getParents ()) {
         tmpnode = find_by_name (classes, classit->getName ().c_str ());
         if (tmpnode && !find_by_name (res, classit->getName ().c_str ())) {
             res.push_back (*tmpnode);

@@ -51,7 +51,7 @@ umlClassNode::umlClassNode (const umlClassNode & classnode) :
 }
 
 umlClassNode::umlClassNode (umlClass * _key,
-                            std::list <umlClassNode *> & parents_,
+                            std::list <umlClass *> & parents_,
                             std::list <umlassoc> & associations_,
                             std::list <umlClassNode> & dependencies_) :
     umlClass (*_key),
@@ -69,7 +69,7 @@ umlClassNode::umlClassNode (umlClass & _key) :
 {
 }
 
-const std::list <umlClassNode *> &
+const std::list <umlClass *> &
 umlClassNode::getParents () const {
     return parents;
 }
@@ -143,7 +143,7 @@ umlClassNode::find_class (std::list <declaration> &decl) const {
 
 void
 umlClassNode::addparent (umlClass * key) {
-    parents.push_front (static_cast <umlClassNode *> (key));
+    parents.push_front (key);
 }
 
 void
