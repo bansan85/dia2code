@@ -130,5 +130,14 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
+../src/dia2code -t cpp getset.dia -d result
+if [[ ! -a result/GetSet.hpp ]] ; then
+exit 1
+fi ;
+diff -pu GetSet.hpp result/GetSet.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 
 exit 0
