@@ -427,12 +427,12 @@ GenerateCode::gen_class (umlClassNode *node) {
 
     file << spc () << "class " << name;
     if (!node->getParents ().empty ()) {
-        std::list <umlClassNode>::const_iterator parent;
+        std::list <umlClassNode *>::const_iterator parent;
         parent = node->getParents ().begin ();
         file << " : ";
         std::cout << "CLASS\n";
         while (parent != node->getParents ().end ()) {
-            file << "public " << fqname (*parent, false);
+            file << "public " << fqname (**parent, false);
             ++parent;
             if (parent != node->getParents ().end ()) {
                 file << ", ";

@@ -180,12 +180,12 @@ umlClass::lolipop_implementation (std::list <umlClassNode> & classlist,
     implementator = umlClassNode::find (classlist, BAD_TSAC2 (id));
     free (id);
     if (implementator != NULL && name != NULL && strlen (name) > 2) {
-        umlClass key;
-        key.package = NULL;
-        key.id.assign ("00");
-        parse_dia_string (name, key.name);
-        key.stereotype.assign ("Interface");
-        key.isabstract = 1;
+        umlClass * key = new umlClass ();
+        key->package = NULL;
+        key->id.assign ("00");
+        parse_dia_string (name, key->name);
+        key->stereotype.assign ("Interface");
+        key->isabstract = 1;
         implementator->addparent (key);
     }
 }
@@ -233,7 +233,7 @@ inherit_realize (std::list <umlClassNode> & classlist,
     umlbase = umlClassNode::find (classlist, base);
     umlderived = umlClassNode::find (classlist, derived);
     if (umlbase != NULL && umlderived != NULL) {
-        umlderived->addparent (*umlbase);
+        umlderived->addparent (umlbase);
     }
 }
 
