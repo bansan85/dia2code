@@ -20,7 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* NB: If you use CORBA stereotypes, you will need the file p_orb.h
    found in the runtime/cpp directory.  */
 
+#include "config.h"
+
 #include "GenerateCodeCpp.hpp"
+#include "umlClassNode.hpp"
 
 GenerateCodeCpp::GenerateCodeCpp (DiaGram & diagram) :
     GenerateCode (diagram, "hpp") {
@@ -38,6 +41,27 @@ GenerateCodeCpp::strPackage (const char * package) const {
     std::string retour (package);
     retour.append ("::");
     return retour;
+}
+
+const char *
+GenerateCodeCpp::fqname (const umlClassNode &node, bool use_ref_type) {
+    static std::string buf;
+
+    buf.clear ();
+    if (node.getPackage () != NULL) {
+        std::list <umlPackage> pkglist;
+        umlPackage::make_package_list (node.getPackage (), pkglist);
+        for (umlPackage & it : pkglist) {
+            buf.append (strPackage (it.getName ().c_str ()));
+        }
+    }
+    if (use_ref_type) {
+        buf.append (strPointer (node.getName ()));
+    }
+    else {
+        buf.append (node.getName ());
+    }
+    return buf.c_str ();
 }
 
 void

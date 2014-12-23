@@ -343,28 +343,6 @@ GenerateCode::cppname (std::string name) const {
 }
 
 
-const char *
-GenerateCode::fqname (const umlClassNode &node, bool use_ref_type) {
-    static std::string buf;
-
-    buf.clear ();
-    if (node.getPackage () != NULL) {
-        std::list <umlPackage> pkglist;
-        umlPackage::make_package_list (node.getPackage (), pkglist);
-        for (umlPackage & it : pkglist) {
-            std::cout << "::" << it.getName () << "::";
-            buf.append (strPackage (it.getName ().c_str ()));
-        }
-    }
-    if (use_ref_type) {
-        buf.append (strPointer (node.getName ()));
-    }
-    else {
-        buf.append (node.getName ());
-    }
-    return buf.c_str ();
-}
-
 void
 GenerateCode::check_visibility (int *curr_vis, int new_vis) {
     if (*curr_vis == new_vis) {

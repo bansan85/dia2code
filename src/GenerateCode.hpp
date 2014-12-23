@@ -82,7 +82,8 @@ class GenerateCode {
         bool getOpenBraceOnNewline () const;
         void setOpenBraceOnNewline (bool newline);
 
-        const char * fqname (const umlClassNode &node, bool use_ref_type);
+        virtual const char * fqname (const umlClassNode & node,
+                                     bool use_ref_type) = 0;
         std::string spc () const;
 
         virtual std::string strPackage (const char * package) const = 0;
