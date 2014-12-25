@@ -159,6 +159,16 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope) {
     }
     getFile () << ";\n";
 }
+
+void
+GenerateCodeCpp::writeComment (const std::string & text) {
+    getFile () << spc () << "// " << text << "\n";
+}
+
+void GenerateCodeCpp::writeComment (const char * text) {
+    getFile () << spc () << "// " << text << "\n";
+}
+
 GenerateCodeCpp::~GenerateCodeCpp () {
 }
 

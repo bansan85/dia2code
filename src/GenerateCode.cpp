@@ -382,7 +382,7 @@ GenerateCode::gen_class (umlClassNode *node) {
     const char *stype = node->getStereotype ().c_str ();
 
     if (strlen (stype) > 0) {
-        file << spc () << "// Stereotype : " << stype << "\n";
+        writeComment (std::string ("Stereotype : ") + stype);
         isCorba = eq (stype, "CORBAValue");
     }
 
@@ -431,7 +431,7 @@ GenerateCode::gen_class (umlClassNode *node) {
     indentlevel++;
 
     if (!node->getAssociations ().empty ()) {
-        file << spc () << "// Associations\n";
+        writeComment ("Associations");
         /*
          * The associations are mapped as private members.
          * Is that really what we want?
@@ -456,7 +456,7 @@ GenerateCode::gen_class (umlClassNode *node) {
 
     if (!node->getAttributes ().empty ()) {
         if (isCorba) {
-            file << spc () << "// Public state members\n";
+            writeComment ("Public state members");
             file << spc () << "public:\n";
             indentlevel++;
             for (const umlAttribute & umla : node->getAttributes ()) {
@@ -518,7 +518,7 @@ GenerateCode::gen_class (umlClassNode *node) {
         }
         else {
             int tmpv = -1;
-            file << spc () << "// Attributes\n";
+            writeComment ("Attributes");
             indentlevel++;
             for (const umlAttribute & umla : node->getAttributes ()) {
                 check_visibility (&tmpv, umla.getVisibility ());
@@ -541,9 +541,9 @@ GenerateCode::gen_class (umlClassNode *node) {
 
     if (!node->getOperations ().empty ()) {
         int tmpv = -1;
-        file << spc () << "// Operations\n";
+        writeComment ("Operations");
         if (isCorba) {
-            file << spc () << "public:\n";
+            file << spc () << "public :\n";
         }
         indentlevel++;
         for (const umlOperation & umlo : node->getOperations ()) {
@@ -570,7 +570,8 @@ GenerateCode::gen_class (umlClassNode *node) {
     if ((!node->getAttributes ().empty ()) && (isCorba)) {
         file << "\n";
         indentlevel--;
-        file << spc () << "private:  // State member implementation\n";
+        writeComment ("State member implementation");
+        file << spc () << "private :\n";
         indentlevel++;
         for (const umlAttribute & umla : node->getAttributes ()) {
             umlClassNode *ref = find_by_name (dia.getUml (),
@@ -631,7 +632,9 @@ GenerateCode::gen_decl (declaration &d) {
     }
 
     if (eq (stype, "CORBANative")) {
-        file << spc () << "// CORBANative: " << name << " \n\n";
+        writeComment (std::string ("CORBANative: ") +
+                      node->getName () +
+                      std::string ("\n"));
     }
     else if (is_const_stereo (stype)) {
         file << spc () << "/// const " << name << " " << node->getComment ()
@@ -721,23 +724,25 @@ GenerateCode::gen_decl (declaration &d) {
         }
         fprintf (stderr, "%s: CORBAUnion not yet fully implemented\n", name);
         if (bOpenBraceOnNewline) {
+            writeComment ("CORBAUnion");
             file << spc () << "class " << name << "\n";
-            file << spc () << "{ // CORBAUnion\n";
+            file << spc () << "{\n";
         }
         else {
-            file << spc () << "class " << name << " { // CORBAUnion\n";
+            writeComment ("CORBAUnion");
+            file << spc () << "class " << name << " {\n";
         }
-        file << spc () << "public:\n";
+        file << spc () << "public :\n";
         indentlevel++;
-        file << spc () << (*umla).getType () << " _d();  // body TBD\n\n";
+        file << spc () << (*umla).getType () << " _d();\n\n";
         ++umla;
         while (umla != node->getAttributes ().end ()) {
             (*umla).check (name);
             file << spc () << cppname ((*umla).getType ()) << " "
-                 << (*umla).getName () << " ();  // body TBD\n";
+                 << (*umla).getName () << " ();\n";
             file << spc () << "void " << (*umla).getName () << " ("
                  << cppname ((*umla).getType ())
-                 << " _value);  // body TBD\n\n";
+                 << " _value);\n\n";
             ++umla;
         }
         indentlevel--;

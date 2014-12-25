@@ -103,6 +103,8 @@ class GenerateCode {
         void writeLicenseAll ();
         virtual void writeCommentFunction (const umlOperation & ope) = 0;
         virtual void writeFunction (const umlOperation & ope) = 0;
+        virtual void writeComment (const std::string & text) = 0;
+        virtual void writeComment (const char * text) = 0;
 
         virtual ~GenerateCode ();
 };
