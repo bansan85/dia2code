@@ -382,7 +382,7 @@ GenerateCode::gen_class (umlClassNode *node) {
     const char *stype = node->getStereotype ().c_str ();
 
     if (strlen (stype) > 0) {
-        file << spc () << "// " << stype << "\n";
+        file << spc () << "// Stereotype : " << stype << "\n";
         isCorba = eq (stype, "CORBAValue");
     }
 
