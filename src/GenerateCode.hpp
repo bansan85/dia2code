@@ -65,6 +65,8 @@ class GenerateCode {
         
         uint32_t getIndent () const;
         void     setIndent (uint8_t spaces);
+        void     incIndentLevel ();
+        void     decIndentLevel ();
 
         const std::string & getLicense () const;
         void                setLicense (char * lic);
@@ -95,6 +97,7 @@ class GenerateCode {
         virtual void writeInclude (std::basic_string <char> name) = 0;
         virtual void writeInclude (const char * name) = 0;
         void writeLicenseAll ();
+        virtual void writeCommentFunction (const umlOperation & ope) = 0;
 
         virtual ~GenerateCode ();
 };

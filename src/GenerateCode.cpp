@@ -556,12 +556,7 @@ GenerateCode::gen_class (umlClassNode *node) {
 
             /* print comments on operation */
             if (!umlo.getComment ().empty ()) {
-                file << spc () << "/// " << umlo.getComment () << "\n";
-                for (const umlAttribute & tmpa2 : umlo.getParameters ()) {
-                     file << spc () << "/// @param " << tmpa2.getName ()
-                          << "\t(" << kind_str(tmpa2.getKind ()) << ") "
-                          << tmpa2.getComment () << "\n";
-                }
+                writeCommentFunction (umlo);
             }
             /* print operation */
             file << spc ();
@@ -852,6 +847,22 @@ GenerateCode::setIndent (uint8_t spaces) {
     return;
 }
 
+
+void
+GenerateCode::incIndentLevel () {
+    indentlevel++;
+}
+
+
+void
+GenerateCode::decIndentLevel () {
+    if (indentlevel != 0) {
+        indentlevel--;
+    }
+    else {
+        fprintf (stderr, "Failed to decIndentLevel.\n");
+    }
+}
 
 void
 GenerateCode::writeLicenseAll () {

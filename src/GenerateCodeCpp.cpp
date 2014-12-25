@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "GenerateCodeCpp.hpp"
 #include "umlClassNode.hpp"
+#include "string2.hpp"
 
 GenerateCodeCpp::GenerateCodeCpp (DiaGram & diagram) :
     GenerateCode (diagram, "hpp") {
@@ -94,6 +95,20 @@ GenerateCodeCpp::writeInclude (std::basic_string <char> name) {
 void
 GenerateCodeCpp::writeInclude (const char * name) {
     getFile () << "#include \"" << name << "\"\n";
+}
+
+void
+GenerateCodeCpp::writeCommentFunction (const umlOperation & ope) {
+    getFile () << spc () << "/**" << "\n"
+               << spc () << "    \\brief " << ope.getComment () << "\n";
+    incIndentLevel ();
+    for (const umlAttribute & tmpa2 : ope.getParameters ()) {
+        getFile () << spc () << "\\param " << tmpa2.getName ()
+                   << "\t(" << kind_str (tmpa2.getKind ()) << ") "
+                   << tmpa2.getComment () << "\n";
+    }
+    decIndentLevel ();
+    getFile () << spc () << "*/\n";
 }
 
 GenerateCodeCpp::~GenerateCodeCpp () {
