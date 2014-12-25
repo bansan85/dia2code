@@ -5,8 +5,7 @@
 class operations {
     // Operations
     private :
-        /**
-            \brief comment
+        /** \brief comment
             \param arg1	(in) 
             \param arg2	(out) comment2
             \param arg3	(???) 

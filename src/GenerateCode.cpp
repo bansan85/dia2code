@@ -44,7 +44,8 @@ GenerateCode::GenerateCode (DiaGram    & diagram,
     indentlevel (0),
     overwrite (true),
     buildtree (false),
-    bOpenBraceOnNewline (false) {
+    bOpenBraceOnNewline (false),
+    isCorba (false){
 }
 
 
@@ -122,6 +123,10 @@ GenerateCode::setOpenBraceOnNewline (bool newline) {
 }
 
 
+bool
+GenerateCode::getCorba () const {
+    return isCorba;
+}
 void
 GenerateCode::open_outfile (const char *filename) {
     static std::string outfilename;
@@ -375,18 +380,17 @@ void
 GenerateCode::gen_class (umlClassNode *node) {
     const char *name = node->getName ().c_str ();
     const char *stype = node->getStereotype ().c_str ();
-    int is_valuetype = 0;
 
     if (strlen (stype) > 0) {
         file << spc () << "// " << stype << "\n";
-        is_valuetype = eq (stype, "CORBAValue");
+        isCorba = eq (stype, "CORBAValue");
     }
 
     file << spc () << "/// class " << name << " - " << node->getComment ()
          << "\n";
 
     if (!node->getTemplates ().empty ()) {
-        if (is_valuetype) {
+        if (isCorba) {
             fprintf (stderr, "CORBAValue %s: template ignored\n", name);
         } else {
             std::list <std::pair <std::string, std::string> >::const_iterator
@@ -415,7 +419,7 @@ GenerateCode::gen_class (umlClassNode *node) {
                 file << ", ";
             }
         }
-    } else if (is_valuetype) {
+    } else if (isCorba) {
         file << " : " << strPackage ("CORBA") << "ValueBase";
     }
     if (bOpenBraceOnNewline) {
@@ -451,7 +455,7 @@ GenerateCode::gen_class (umlClassNode *node) {
     }
 
     if (!node->getAttributes ().empty ()) {
-        if (is_valuetype) {
+        if (isCorba) {
             file << spc () << "// Public state members\n";
             file << spc () << "public:\n";
             indentlevel++;
@@ -538,13 +542,12 @@ GenerateCode::gen_class (umlClassNode *node) {
     if (!node->getOperations ().empty ()) {
         int tmpv = -1;
         file << spc () << "// Operations\n";
-        if (is_valuetype) {
+        if (isCorba) {
             file << spc () << "public:\n";
         }
         indentlevel++;
         for (const umlOperation & umlo : node->getOperations ()) {
-            std::list <umlAttribute>::const_iterator tmpa;
-            if (is_valuetype) {
+            if (isCorba) {
                 if (umlo.getVisibility () != '0') {
                     fprintf (stderr, "CORBAValue %s/%s: must be public\n",
                                      name, umlo.getName ().c_str ());
@@ -559,59 +562,12 @@ GenerateCode::gen_class (umlClassNode *node) {
                 writeCommentFunction (umlo);
             }
             /* print operation */
-            file << spc ();
-            if (umlo.isAbstract () || is_valuetype) {
-                file << "virtual ";
-            }
-            if (umlo.isStatic ()) {
-                if (is_valuetype) {
-                    fprintf (stderr,
-                             "CORBAValue %s/%s: static not supported\n",
-                             name,
-                             umlo.getName ().c_str ());
-                }
-                else {
-                    file << "static ";
-                }
-            }
-            if (!umlo.getType ().empty ()) {
-                file << cppname (umlo.getType ()) << " ";
-            }
-            file << umlo.getName () << " (";
-            tmpa = umlo.getParameters ().begin ();
-            while (tmpa != umlo.getParameters ().end ()) {
-                file << (*tmpa).getType () << " " << (*tmpa).getName ();
-                if (!(*tmpa).getValue ().empty ()) {
-                    if (is_valuetype) {
-                        fprintf (stderr,
-                             "CORBAValue %s/%s: param default not supported\n",
-                                 name,
-                                 umlo.getName ().c_str ());
-                    }
-                    else {
-                       file << " = " << (*tmpa).getValue ();
-                    }
-                }
-                ++tmpa;
-                if (tmpa != umlo.getParameters ().end ()) {
-                    file << ", ";
-                }
-            }
-            file << ")";
-            if (umlo.isConstant ()) {
-                file << " const";
-            }
-            // virtual
-            if ((umlo.isAbstract () || is_valuetype) &&
-                umlo.getName ()[0] != '~') {
-                file << " = 0";
-            }
-            file << ";\n";
+            writeFunction (umlo);
         }
         indentlevel--;
     }
 
-    if ((!node->getAttributes ().empty ()) && (is_valuetype)) {
+    if ((!node->getAttributes ().empty ()) && (isCorba)) {
         file << "\n";
         indentlevel--;
         file << spc () << "private:  // State member implementation\n";

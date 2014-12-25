@@ -42,10 +42,10 @@ class GenerateCode {
         // Convert package names to a directory tree.
         bool        buildtree : 1;
         bool        bOpenBraceOnNewline : 1;
+        bool        isCorba : 1;
         
         int pass_by_reference (umlClass &cl);
         void gen_class (umlClassNode *node);
-        const char * cppname (std::string name) const;
         void check_visibility (int *curr_vis, int new_vis);
         void open_outfile (const char *filename);
         void gen_decl (declaration &d);
@@ -84,6 +84,10 @@ class GenerateCode {
         bool getOpenBraceOnNewline () const;
         void setOpenBraceOnNewline (bool newline);
 
+        bool getCorba () const;
+
+        const char * cppname (std::string name) const;
+
         virtual const char * fqname (const umlClassNode & node,
                                      bool use_ref_type) = 0;
         std::string spc () const;
@@ -98,6 +102,7 @@ class GenerateCode {
         virtual void writeInclude (const char * name) = 0;
         void writeLicenseAll ();
         virtual void writeCommentFunction (const umlOperation & ope) = 0;
+        virtual void writeFunction (const umlOperation & ope) = 0;
 
         virtual ~GenerateCode ();
 };

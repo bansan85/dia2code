@@ -99,18 +99,66 @@ GenerateCodeCpp::writeInclude (const char * name) {
 
 void
 GenerateCodeCpp::writeCommentFunction (const umlOperation & ope) {
-    getFile () << spc () << "/**" << "\n"
-               << spc () << "    \\brief " << ope.getComment () << "\n";
-    incIndentLevel ();
+    getFile () << spc () << "/** \\brief " << ope.getComment () << "\n";
     for (const umlAttribute & tmpa2 : ope.getParameters ()) {
-        getFile () << spc () << "\\param " << tmpa2.getName ()
+        getFile () << spc () << "    \\param " << tmpa2.getName ()
                    << "\t(" << kind_str (tmpa2.getKind ()) << ") "
                    << tmpa2.getComment () << "\n";
     }
-    decIndentLevel ();
     getFile () << spc () << "*/\n";
 }
 
+void
+GenerateCodeCpp::writeFunction (const umlOperation & ope) {
+    getFile () << spc ();
+    if (ope.isAbstract () || getCorba ()) {
+        getFile () << "virtual ";
+    }
+    if (ope.isStatic ()) {
+        if (getCorba ()) {
+            fprintf (stderr,
+                     "CORBAValue %s: static not supported\n",
+                     ope.getName ().c_str ());
+        }
+        else {
+            getFile () << "static ";
+        }
+    }
+    if (!ope.getType ().empty ()) {
+        getFile () << cppname (ope.getType ()) << " ";
+    }
+    getFile () << ope.getName () << " (";
+
+    std::list <umlAttribute>::const_iterator tmpa;
+    tmpa = ope.getParameters ().begin ();
+    while (tmpa != ope.getParameters ().end ()) {
+        getFile () << (*tmpa).getType () << " " << (*tmpa).getName ();
+        if (!(*tmpa).getValue ().empty ()) {
+            if (getCorba ()) {
+                fprintf (stderr,
+                         "CORBAValue %s: param default not supported\n",
+                         ope.getName ().c_str ());
+            }
+            else {
+               getFile () << " = " << (*tmpa).getValue ();
+            }
+        }
+        ++tmpa;
+        if (tmpa != ope.getParameters ().end ()) {
+            getFile () << ", ";
+        }
+    }
+    getFile () << ")";
+    if (ope.isConstant ()) {
+        getFile () << " const";
+    }
+    // virtual
+    if ((ope.isAbstract () || getCorba ()) &&
+        ope.getName ()[0] != '~') {
+        getFile () << " = 0";
+    }
+    getFile () << ";\n";
+}
 GenerateCodeCpp::~GenerateCodeCpp () {
 }
 
