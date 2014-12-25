@@ -1,12 +1,12 @@
 #ifndef ASSOCIATION__HPP
 #define ASSOCIATION__HPP
 
-#include "Classe2.hpp"
+#include "Pack.hpp"
 
 /// class Association - 
 class Association {
     // Associations
-    Classe2 asso;
+    Pack::Classe2 asso;
 };
 
 #endif
