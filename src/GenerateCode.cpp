@@ -408,7 +408,6 @@ GenerateCode::gen_class (umlClassNode *node) {
         std::list <umlClass *>::const_iterator parent;
         parent = node->getParents ().begin ();
         file << " : ";
-        std::cout << "CLASS\n";
         while (parent != node->getParents ().end ()) {
             file << "public " << fqname (**parent, false);
             ++parent;
@@ -416,7 +415,6 @@ GenerateCode::gen_class (umlClassNode *node) {
                 file << ", ";
             }
         }
-        std::cout << "CLASSFIN\n";
     } else if (is_valuetype) {
         file << " : " << strPackage ("CORBA") << "ValueBase";
     }
