@@ -179,6 +179,32 @@ GenerateCodeCpp::writeClassComment (umlClassNode & node) {
     getFile () << spc () << "*/\n";
 }
 
+void
+GenerateCodeCpp::writeClassStart (umlClassNode & node) {
+    getFile () << spc () << "class " << node.getName ();
+    if (!node.getParents ().empty ()) {
+        std::list <umlClass *>::const_iterator parent;
+        parent = node.getParents ().begin ();
+        getFile () << " : ";
+        while (parent != node.getParents ().end ()) {
+            getFile () << "public " << fqname (**parent, false);
+            ++parent;
+            if (parent != node.getParents ().end ()) {
+                getFile () << ", ";
+            }
+        }
+    } else if (getCorba ()) {
+        getFile () << " : " << strPackage ("CORBA") << "ValueBase";
+    }
+    if (getOpenBraceOnNewline ()) {
+        getFile () << "\n"
+                   << spc () << "{\n";
+    }
+    else {
+        getFile () << " {\n";
+    }
+}
+
 GenerateCodeCpp::~GenerateCodeCpp () {
 }
 

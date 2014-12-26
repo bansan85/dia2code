@@ -40,6 +40,7 @@ class GenerateCodeCpp : public GenerateCode {
         void writeComment (const std::string & text);
         void writeComment (const char * text);
         void writeClassComment (umlClassNode & node);
+        void writeClassStart (umlClassNode & node);
         
         ~GenerateCodeCpp ();
 };

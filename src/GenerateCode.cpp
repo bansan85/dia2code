@@ -406,27 +406,7 @@ GenerateCode::gen_class (umlClassNode & node) {
         }
     }
 
-    file << spc () << "class " << name;
-    if (!node.getParents ().empty ()) {
-        std::list <umlClass *>::const_iterator parent;
-        parent = node.getParents ().begin ();
-        file << " : ";
-        while (parent != node.getParents ().end ()) {
-            file << "public " << fqname (**parent, false);
-            ++parent;
-            if (parent != node.getParents ().end ()) {
-                file << ", ";
-            }
-        }
-    } else if (isCorba) {
-        file << " : " << strPackage ("CORBA") << "ValueBase";
-    }
-    if (bOpenBraceOnNewline) {
-        file << "\n{\n";
-    }
-    else {
-        file << " {\n";
-    }
+    writeClassStart (node);
     indentlevel++;
 
     if (!node.getAssociations ().empty ()) {
