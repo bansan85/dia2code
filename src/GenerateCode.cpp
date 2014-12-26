@@ -571,7 +571,7 @@ GenerateCode::gen_class (umlClassNode & node) {
     }
 
     indentlevel--;
-    file << spc () << "};\n\n";
+    writeClassEnd (node);
 }
 
 

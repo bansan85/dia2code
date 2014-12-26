@@ -107,6 +107,7 @@ class GenerateCode {
         virtual void writeComment (const char * text) = 0;
         virtual void writeClassComment (umlClassNode & node) = 0;
         virtual void writeClassStart (umlClassNode & node) = 0;
+        virtual void writeClassEnd (umlClassNode & node) = 0;
 
         virtual ~GenerateCode ();
 };

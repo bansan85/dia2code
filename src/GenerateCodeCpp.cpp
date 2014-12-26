@@ -205,6 +205,11 @@ GenerateCodeCpp::writeClassStart (umlClassNode & node) {
     }
 }
 
+void
+GenerateCodeCpp::writeClassEnd (umlClassNode & node) {
+    getFile () << spc () << "};\n\n";
+}
+
 GenerateCodeCpp::~GenerateCodeCpp () {
 }
 
