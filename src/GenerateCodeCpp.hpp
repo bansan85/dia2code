@@ -47,6 +47,8 @@ class GenerateCodeCpp : public GenerateCode {
         void writeClassEnd (const umlClassNode & node);
         void writeAttribute (const umlAttribute & attr,
                              int * curr_visibility);
+        void writeNameSpaceStart (const std::string & name);
+        void writeNameSpaceEnd ();
         
         ~GenerateCodeCpp ();
 };

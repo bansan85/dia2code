@@ -294,6 +294,22 @@ GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
     getFile () << ";\n";
 }
 
+void
+GenerateCodeCpp::writeNameSpaceStart (const std::string & name) {
+    if (getOpenBraceOnNewline ()) {
+        getFile () << spc () << "namespace " << name << "\n"
+                   << spc () << "{\n\n";
+    }
+    else {
+        getFile () << spc () << "namespace " << name << " {\n\n";
+    }
+}
+
+void
+GenerateCodeCpp::writeNameSpaceEnd () {
+    getFile () << spc () << "};\n\n";
+}
+
 GenerateCodeCpp::~GenerateCodeCpp () {
 }
 

@@ -117,6 +117,8 @@ class GenerateCode {
         virtual void writeClassEnd (const umlClassNode & node) = 0;
         virtual void writeAttribute (const umlAttribute & attr,
                                      int * curr_visibility) = 0;
+        virtual void writeNameSpaceStart (const std::string & name) = 0;
+        virtual void writeNameSpaceEnd () = 0;
 
         virtual ~GenerateCode ();
 };

@@ -185,9 +185,11 @@ GenerateCode::generate_code () {
 
         getDia ().cleanIncludes ();
         getDia ().determine_includes (*it2);
+#ifdef ENABLE_CORBA
         if (getDia ().getUseCorba ()) {
             writeInclude ("p_orb.h");
         }
+#endif
         std::list <std::string> incfile = getDia ().getIncludes ();
         for (std::string namei : incfile) {
             if (namei.compare (name)) {
@@ -564,20 +566,13 @@ GenerateCode::gen_decl (declaration &d) {
     std::list <umlAttribute>::const_iterator umla;
 
     if (d.decl_kind == dk_module) {
-        name = d.u.this_module->pkg.getName ().c_str ();
-        if (bOpenBraceOnNewline) {
-            file << spc () << "namespace " << name << "\n";
-            file << spc () << "{\n\n";
-        }
-        else {
-            file << spc () << "namespace " << name << " {\n\n";
-        }
+        writeNameSpaceStart (d.u.this_module->pkg.getName ());
         indentlevel++;
         for (declaration & it : d.u.this_module->contents) {
             gen_decl (it);
         }
         indentlevel--;
-        file << spc () << "};\n\n";
+        writeNameSpaceEnd ();
         return;
     }
 
