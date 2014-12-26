@@ -49,7 +49,7 @@ class GenerateCode {
 #endif
         
         int pass_by_reference (umlClass &cl);
-        void gen_class (umlClassNode & node);
+        void gen_class (const umlClassNode & node);
         void open_outfile (const char *filename);
         void gen_decl (declaration &d);
     public:
@@ -119,6 +119,7 @@ class GenerateCode {
                                      int * curr_visibility) = 0;
         virtual void writeNameSpaceStart (const std::string & name) = 0;
         virtual void writeNameSpaceEnd () = 0;
+        virtual void writeConst (const umlClassNode & node) = 0;
 
         virtual ~GenerateCode ();
 };

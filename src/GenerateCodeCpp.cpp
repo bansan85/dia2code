@@ -310,6 +310,29 @@ GenerateCodeCpp::writeNameSpaceEnd () {
     getFile () << spc () << "};\n\n";
 }
 
+void
+GenerateCodeCpp::writeConst (const umlClassNode & node) {
+    std::list <umlAttribute>::const_iterator umla;
+    
+    umla = node.getAttributes ().begin ();
+    getFile () << spc () << "/// " << node.getComment () << "\n";
+    if (node.getAttributes ().size () != 1) {
+        fprintf (stderr,
+                 "Error: first attribute not set at %s\n",
+                 node.getName ().c_str ());
+        exit (1);
+    }
+    if (!(*umla).getName ().empty ()) {
+        fprintf (stderr,
+                 "Warning: ignoring attribute name at %s\n",
+                 node.getName ().c_str ());
+    }
+
+    getFile () << spc () << "const " << cppname ((*umla).getType ())
+               << " " << node.getName () << " = " << (*umla).getValue ()
+               << ";\n\n";
+}
+
 GenerateCodeCpp::~GenerateCodeCpp () {
 }
 

@@ -373,7 +373,7 @@ GenerateCode::cppname (std::string name) const {
 }
 
 void
-GenerateCode::gen_class (umlClassNode & node) {
+GenerateCode::gen_class (const umlClassNode & node) {
 #ifdef ENABLE_CORBA
     const char *name = node.getName ().c_str ();
 #endif
@@ -562,7 +562,7 @@ void
 GenerateCode::gen_decl (declaration &d) {
     const char *name;
     const char *stype;
-    umlClassNode *node;
+    const umlClassNode *node;
     std::list <umlAttribute>::const_iterator umla;
 
     if (d.decl_kind == dk_module) {
@@ -595,19 +595,7 @@ GenerateCode::gen_decl (declaration &d) {
     else
 #endif
     if (is_const_stereo (stype)) {
-        file << spc () << "/// const " << name << " " << node->getComment ()
-             << "\n";
-        if (umla == node->getAttributes ().end ()) {
-            fprintf (stderr, "Error: first attribute not set at %s\n", name);
-            exit (1);
-        }
-        if (!(*umla).getName ().empty ()) {
-            fprintf (stderr, "Warning: ignoring attribute name at %s\n", name);
-        }
-
-        file << spc () << "const " << cppname ((*umla).getType ()) << " "
-             << name << " = " << (*umla).getValue () << ";\n\n";
-
+        writeConst (*node);
     }
     else if (is_enum_stereo (stype)) {
         file << spc () << "/// enum " << name << " " << node->getComment ()

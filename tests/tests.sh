@@ -139,5 +139,14 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
+../src/dia2code -t cpp constance.dia -d result
+if [[ ! -a result/constance.hpp ]] ; then
+exit 1
+fi ;
+diff -pu constance.hpp result/constance.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 
 exit 0
