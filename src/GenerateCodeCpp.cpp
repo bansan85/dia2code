@@ -165,8 +165,18 @@ GenerateCodeCpp::writeComment (const std::string & text) {
     getFile () << spc () << "// " << text << "\n";
 }
 
-void GenerateCodeCpp::writeComment (const char * text) {
+void
+GenerateCodeCpp::writeComment (const char * text) {
     getFile () << spc () << "// " << text << "\n";
+}
+
+void
+GenerateCodeCpp::writeClassComment (umlClassNode & node) {
+    getFile () << spc () << "/** \\class " << node.getName () << "\n";
+    if (!node.getComment ().empty ()) {
+        getFile () << spc () << "    \\brief " << node.getComment () << "\n";
+    }
+    getFile () << spc () << "*/\n";
 }
 
 GenerateCodeCpp::~GenerateCodeCpp () {

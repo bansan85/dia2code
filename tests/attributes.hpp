@@ -1,7 +1,8 @@
 #ifndef ATTRIBUTES__HPP
 #define ATTRIBUTES__HPP
 
-/// class attributes - 
+/** \class attributes
+*/
 class attributes {
     // Attributes
     public :

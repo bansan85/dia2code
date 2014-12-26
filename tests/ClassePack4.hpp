@@ -3,7 +3,8 @@
 
 #include "Pack.hpp"
 
-/// class ClassePack4 - 
+/** \class ClassePack4
+*/
 class ClassePack4 {
 };
 

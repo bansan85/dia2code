@@ -386,8 +386,7 @@ GenerateCode::gen_class (umlClassNode *node) {
         isCorba = eq (stype, "CORBAValue");
     }
 
-    file << spc () << "/// class " << name << " - " << node->getComment ()
-         << "\n";
+    writeClassComment (*node);
 
     if (!node->getTemplates ().empty ()) {
         if (isCorba) {

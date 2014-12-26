@@ -4,7 +4,8 @@
 #include "Classe2.hpp"
 #include "Classe1.hpp"
 
-/// class dependances - 
+/** \class dependances
+*/
 class dependances {
 };
 

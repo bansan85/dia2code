@@ -3,7 +3,8 @@
 
 #include "Pack.hpp"
 
-/// class Association - 
+/** \class Association
+*/
 class Association {
     // Associations
     Pack::Classe2 asso;
