@@ -509,7 +509,7 @@ GenerateCode::gen_class (umlClassNode & node) {
 
             /* print comments on operation */
             if (!umlo.getComment ().empty ()) {
-                writeCommentFunction (umlo);
+                writeFunctionComment (umlo);
             }
             /* print operation */
             writeFunction (umlo);

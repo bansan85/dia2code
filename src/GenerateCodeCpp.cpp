@@ -129,7 +129,7 @@ GenerateCodeCpp::writeInclude (const char * name) {
 }
 
 void
-GenerateCodeCpp::writeCommentFunction (const umlOperation & ope) {
+GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
     getFile () << spc () << "/** \\brief " << ope.getComment () << "\n";
     for (const umlAttribute & tmpa2 : ope.getParameters ()) {
         getFile () << spc () << "    \\param " << tmpa2.getName ()

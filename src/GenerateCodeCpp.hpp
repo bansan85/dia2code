@@ -36,7 +36,7 @@ class GenerateCodeCpp : public GenerateCode {
         void writeEndHeader ();
         void writeInclude (std::basic_string <char> name);
         void writeInclude (const char * name);
-        void writeCommentFunction (const umlOperation & ope);
+        void writeFunctionComment (const umlOperation & ope);
         void writeFunction (const umlOperation & ope);
         void writeComment (const std::string & text);
         void writeComment (const char * text);
