@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DiaGram.hpp"
 #include "umlClass.hpp"
+#include "umlAssoc.hpp"
 
 class GenerateCode {
     private:
@@ -123,6 +124,7 @@ class GenerateCode {
         virtual void writeEnum (const umlClassNode & node) = 0;
         virtual void writeStruct (const umlClassNode & node) = 0;
         virtual void writeTypedef (const umlClassNode & node) = 0;
+        virtual void writeAssociation (const umlassoc & asso) = 0;
 
         virtual ~GenerateCode ();
 };

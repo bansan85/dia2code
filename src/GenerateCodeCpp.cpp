@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GenerateCodeCpp.hpp"
 #include "umlClassNode.hpp"
 #include "string2.hpp"
+#include "scan_tree.hpp"
 
 GenerateCodeCpp::GenerateCodeCpp (DiaGram & diagram) :
     GenerateCode (diagram, "hpp") {
@@ -424,6 +425,22 @@ GenerateCodeCpp::writeTypedef (const umlClassNode & node) {
     }
     getFile () << spc () << "typedef " << cppname ((*umla).getType ()) << " "
                << node.getName () << (*umla).getValue () << ";\n\n";
+}
+
+void
+GenerateCodeCpp::writeAssociation (const umlassoc & asso) {
+    if (!asso.name.empty ()) {
+        umlClassNode *ref;
+        ref = find_by_name (getDia ().getUml (),
+                            asso.key.getName ().c_str ());
+        if (ref != NULL) {
+            getFile () << spc () << fqname (*ref, !asso.composite);
+        }
+        else {
+            getFile () << spc () << cppname (asso.key.getName ());
+        }
+        getFile () << " " << asso.name << ";\n";
+    }
 }
 
 GenerateCodeCpp::~GenerateCodeCpp () {

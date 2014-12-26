@@ -421,18 +421,7 @@ GenerateCode::gen_class (const umlClassNode & node) {
          * setters/getters.)  Ideas and comments welcome.
         */
         for (const umlassoc & assoc : node.getAssociations ()) {
-            if (!assoc.name.empty ()) {
-                umlClassNode *ref;
-                ref = find_by_name (dia.getUml (),
-                                    assoc.key.getName ().c_str ());
-                if (ref != NULL) {
-                    file << spc () << fqname (*ref, !assoc.composite);
-                }
-                else {
-                    file << spc () << cppname (assoc.key.getName ());
-                }
-                file << " " << assoc.name << ";\n";
-            }
+            writeAssociation (assoc);
         }
     }
 
