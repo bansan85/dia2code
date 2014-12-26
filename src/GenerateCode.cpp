@@ -485,22 +485,7 @@ GenerateCode::gen_class (umlClassNode & node) {
         }
         indentlevel++;
         for (const umlOperation & umlo : node.getOperations ()) {
-            if (isCorba) {
-                if (umlo.getVisibility () != '0') {
-                    fprintf (stderr, "CORBAValue %s/%s: must be public\n",
-                                     name, umlo.getName ().c_str ());
-                }
-            }
-            else {
-                check_visibility (&tmpv, umlo.getVisibility ());
-            }
-
-            /* print comments on operation */
-            if (!umlo.getComment ().empty ()) {
-                writeFunctionComment (umlo);
-            }
-            /* print operation */
-            writeFunction (umlo);
+            writeFunction (umlo, &tmpv);
         }
         indentlevel--;
     }

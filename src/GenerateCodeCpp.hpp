@@ -37,7 +37,7 @@ class GenerateCodeCpp : public GenerateCode {
         void writeInclude (std::basic_string <char> name);
         void writeInclude (const char * name);
         void writeFunctionComment (const umlOperation & ope);
-        void writeFunction (const umlOperation & ope);
+        void writeFunction (const umlOperation & ope, int * curr_visibility);
         void writeComment (const std::string & text);
         void writeComment (const char * text);
         void writeClassComment (const umlClassNode & node);

@@ -102,7 +102,8 @@ class GenerateCode {
         virtual void writeInclude (const char * name) = 0;
         void writeLicenseAll ();
         virtual void writeFunctionComment (const umlOperation & ope) = 0;
-        virtual void writeFunction (const umlOperation & ope) = 0;
+        virtual void writeFunction (const umlOperation & ope,
+                                    int * curr_visibility) = 0;
         virtual void writeComment (const std::string & text) = 0;
         virtual void writeComment (const char * text) = 0;
         virtual void writeClassComment (const umlClassNode & node) = 0;

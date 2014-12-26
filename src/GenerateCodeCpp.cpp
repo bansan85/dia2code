@@ -82,9 +82,7 @@ GenerateCodeCpp::check_visibility (int *curr_vis, int new_vis) {
             getFile () << spc () << "protected :\n";
             break;
         case '3':
-            fprintf (stderr,
-                     "Implementation not applicable in C++.\n",
-                     new_vis);
+            fprintf (stderr, "Implementation not applicable in C++.\n");
             exit (1);
             break;
         default :
@@ -140,7 +138,24 @@ GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
 }
 
 void
-GenerateCodeCpp::writeFunction (const umlOperation & ope) {
+GenerateCodeCpp::writeFunction (const umlOperation & ope,
+                                int * curr_visibility) {
+    if (getCorba ()) {
+        if (ope.getVisibility () != '0') {
+            fprintf (stderr,
+                     "CORBAValue %s: must be public\n",
+                     ope.getName ().c_str ());
+        }
+    }
+    else {
+        check_visibility (curr_visibility, ope.getVisibility ());
+    }
+
+    /* print comments on operation */
+    if (!ope.getComment ().empty ()) {
+        writeFunctionComment (ope);
+    }
+
     getFile () << spc ();
     if (ope.isAbstract () || getCorba ()) {
         getFile () << "virtual ";
