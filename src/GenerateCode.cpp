@@ -560,7 +560,9 @@ GenerateCode::gen_class (const umlClassNode & node) {
 
 void
 GenerateCode::gen_decl (declaration &d) {
+#ifdef ENABLE_CORBA
     const char *name;
+#endif
     const char *stype;
     const umlClassNode *node;
     std::list <umlAttribute>::const_iterator umla;
@@ -578,7 +580,9 @@ GenerateCode::gen_decl (declaration &d) {
 
     node = d.u.this_class;
     stype = node->getStereotype ().c_str ();
+#ifdef ENABLE_CORBA
     name = node->getName ().c_str ();
+#endif
     umla = node->getAttributes ().begin ();
 
     if (strlen (stype) == 0) {
@@ -642,27 +646,7 @@ GenerateCode::gen_decl (declaration &d) {
     }
 #endif
     else if (is_typedef_stereo (stype)) {
-        /* Conventions for CORBATypedef:
-           The first (and only) attribute contains the following:
-           Name:   Empty - the name is taken from the class.
-           Type:   Name of the original type which is typedefed.
-           Value:  Optionally contains array dimension(s) of the typedef.
-                   These dimensions are given in square brackets, e.g.
-                   [3][10]
-         */
-        if (umla == node->getAttributes ().end ()) {
-            fprintf (stderr,
-                  "Error: first attribute (impl type) not set at typedef %s\n",
-                     name);
-            exit (1);
-        }
-        if (!(*umla).getName ().empty ())  {
-            fprintf (stderr,
- "Warning: typedef %s: ignoring name field in implementation type attribute\n",
-                     name);
-        }
-        file << spc () << "typedef " << cppname ((*umla).getType ()) << " "
-             << name << (*umla).getValue () << ";\n\n";
+        writeTypedef (*node);
     }
     else {
         gen_class (*node);

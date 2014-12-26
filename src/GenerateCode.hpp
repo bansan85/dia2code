@@ -122,6 +122,7 @@ class GenerateCode {
         virtual void writeConst (const umlClassNode & node) = 0;
         virtual void writeEnum (const umlClassNode & node) = 0;
         virtual void writeStruct (const umlClassNode & node) = 0;
+        virtual void writeTypedef (const umlClassNode & node) = 0;
 
         virtual ~GenerateCode ();
 };

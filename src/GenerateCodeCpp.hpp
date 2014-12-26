@@ -52,6 +52,7 @@ class GenerateCodeCpp : public GenerateCode {
         void writeConst (const umlClassNode & node);
         void writeEnum (const umlClassNode & node);
         void writeStruct (const umlClassNode & node);
+        void writeTypedef (const umlClassNode & node);
         
         ~GenerateCodeCpp ();
 };
