@@ -373,6 +373,39 @@ GenerateCodeCpp::writeEnum (const umlClassNode & node) {
     getFile () << spc () << "};\n\n";
 }
 
+void
+GenerateCodeCpp::writeStruct (const umlClassNode & node) {
+    std::list <umlAttribute>::const_iterator umla;
+
+    umla = node.getAttributes ().begin ();
+    getFile () << spc () << "/// " << node.getComment () << "\n";
+    if (getOpenBraceOnNewline ()) {
+        getFile () << spc () << "struct " << node.getName () << "\n";
+        getFile () << spc () << "{\n";
+    }
+    else {
+        getFile () << spc () << "struct " << node.getName () << " {\n";
+    }
+    incIndentLevel ();
+    while (umla != node.getAttributes ().end ()) {
+        (*umla).check (node.getName ().c_str ());
+        getFile () << spc () << "/// " << (*umla).getComment () << "\n";
+        getFile () << spc () << cppname ((*umla).getType ()) << " "
+             << (*umla).getName ();
+        if (!(*umla).getValue ().empty ()) {
+            fprintf (stderr,
+                     "%s/%s: ignoring value %s\n",
+                     node.getName ().c_str (),
+                     (*umla).getName ().c_str (),
+                     (*umla).getValue ().c_str ());
+        }
+        getFile () << ";\n";
+        ++umla;
+    }
+    decIndentLevel ();
+    getFile () << spc () << "};\n\n";
+}
+
 GenerateCodeCpp::~GenerateCodeCpp () {
 }
 

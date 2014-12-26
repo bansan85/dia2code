@@ -1,7 +1,7 @@
 #ifndef STRUCTURE__HPP
 #define STRUCTURE__HPP
 
-/// struct structure 
+/// com struct
 struct structure {
     /// com1
     type1 nom1;

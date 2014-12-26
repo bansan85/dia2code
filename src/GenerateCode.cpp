@@ -601,34 +601,7 @@ GenerateCode::gen_decl (declaration &d) {
         writeEnum (*node);
     }
     else if (is_struct_stereo (stype)) {
-        file << spc () << "/// struct " << name << " " << node->getComment ()
-             << "\n";
-        if (bOpenBraceOnNewline) {
-            file << spc () << "struct " << name << "\n";
-            file << spc () << "{\n";
-        }
-        else {
-            file << spc () << "struct " << name << " {\n";
-        }
-        indentlevel++;
-        while (umla != node->getAttributes ().end ()) {
-            (*umla).check (name);
-            file << spc () << "/// " << (*umla).getComment () << "\n";
-            file << spc () << cppname ((*umla).getType ()) << " "
-                 << (*umla).getName ();
-            if (!(*umla).getValue ().empty ()) {
-                fprintf (stderr,
-                         "%s/%s: ignoring value %s\n",
-                         name,
-                         (*umla).getName ().c_str (),
-                         (*umla).getValue ().c_str ());
-            }
-            file << ";\n";
-            ++umla;
-        }
-        indentlevel--;
-        file << spc () << "};\n\n";
-
+        writeStruct (*node);
     }
 #ifdef ENABLE_CORBA
     else if (eq (stype, "CORBAException")) {
