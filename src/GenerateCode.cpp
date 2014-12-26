@@ -296,6 +296,7 @@ GenerateCode::pass_by_reference (umlClass &cl) {
             !is_enum_stereo (st));
 }
 
+#ifdef ENABLE_CORBA
 static int
 is_oo_class (umlClass &cl) {
     const char *st;
@@ -310,6 +311,7 @@ is_oo_class (umlClass &cl) {
             !eq (st, "CORBAUnion") &&
             !eq (st, "CORBAException"));
 }
+#endif
 
 const char *
 GenerateCode::cppname (std::string name) const {
