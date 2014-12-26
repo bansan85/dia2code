@@ -36,7 +36,9 @@ class DiaGram {
         // Flag that inverts the above selection.
         bool        invertsel : 1;
         // Set by push() if CORBA stereotypes in use.
+#ifdef ENABLE_CORBA
         bool        usecorba : 1;
+#endif
         
         std::list <std::string> tmp_classes;
         std::list <std::string> includes;
@@ -64,8 +66,10 @@ class DiaGram {
         bool getInvertSel () const;
         void setInvertSel (bool invert);
 
+#ifdef ENABLE_CORBA
         bool getUseCorba () const;
         void setUseCorba (bool corba);
+#endif
 
         void push (umlClassNode &node);
         std::list <std::string> getIncludes () const;

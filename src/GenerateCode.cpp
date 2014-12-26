@@ -253,28 +253,40 @@ nospc (char *str) {
 int
 is_enum_stereo (const char *stereo) {
     return (!strcasecmp (stereo, "enum") ||
-            !strcasecmp (stereo, "enumeration") ||
-            !strcmp (stereo, "CORBAEnum"));
+            !strcasecmp (stereo, "enumeration")
+#ifdef ENABLE_CORBA
+            || !strcmp (stereo, "CORBAEnum")
+#endif
+            );
 }
 
 int
 is_struct_stereo (const char *stereo) {
     return (!strcasecmp (stereo, "struct") ||
-            !strcasecmp (stereo, "structure") ||
-            !strcmp (stereo, "CORBAStruct"));
+            !strcasecmp (stereo, "structure")
+#ifdef ENABLE_CORBA
+            || !strcmp (stereo, "CORBAStruct")
+#endif
+            );
 }
 
 int
 is_typedef_stereo (const char *stereo) {
-    return (!strcasecmp (stereo, "typedef") ||
-            !strcmp (stereo, "CORBATypedef"));
+    return (!strcasecmp (stereo, "typedef")
+#ifdef ENABLE_CORBA
+            || !strcmp (stereo, "CORBATypedef")
+#endif
+            );
 }
 
 int
 is_const_stereo (const char *stereo) {
     return (!strcasecmp (stereo, "const") ||
-            !strcasecmp (stereo, "constant") ||
-            !strcmp (stereo, "CORBAConstant"));
+            !strcasecmp (stereo, "constant")
+#ifdef ENABLE_CORBA
+            || !strcmp (stereo, "CORBAConstant")
+#endif
+            );
 }
 
 int
@@ -316,6 +328,7 @@ is_oo_class (umlClass &cl) {
 const char *
 GenerateCode::cppname (std::string name) const {
     static std::string buf;
+#ifdef ENABLE_CORBA
     if (dia.getUseCorba ()) {
         if (name.compare ("boolean") == 0 ||
             name.compare ("char") == 0 ||
@@ -349,7 +362,9 @@ GenerateCode::cppname (std::string name) const {
         else {
             buf.assign (name);
         }
-    } else {
+    } else
+#endif
+    {
         buf.assign (name);
     }
     return buf.c_str ();
@@ -576,12 +591,15 @@ GenerateCode::gen_decl (declaration &d) {
         return;
     }
 
+#ifdef ENABLE_CORBA
     if (eq (stype, "CORBANative")) {
         writeComment (std::string ("CORBANative: ") +
                       node->getName () +
                       std::string ("\n"));
     }
-    else if (is_const_stereo (stype)) {
+    else
+#endif
+    if (is_const_stereo (stype)) {
         file << spc () << "/// const " << name << " " << node->getComment ()
              << "\n";
         if (umla == node->getAttributes ().end ()) {
@@ -658,6 +676,7 @@ GenerateCode::gen_decl (declaration &d) {
         file << spc () << "};\n\n";
 
     }
+#ifdef ENABLE_CORBA
     else if (eq (stype, "CORBAException")) {
         fprintf (stderr, "%s: CORBAException not yet implemented\n", name);
 
@@ -694,6 +713,7 @@ GenerateCode::gen_decl (declaration &d) {
         file << spc () << "};\n\n";
 
     }
+#endif
     else if (is_typedef_stereo (stype)) {
         /* Conventions for CORBATypedef:
            The first (and only) attribute contains the following:

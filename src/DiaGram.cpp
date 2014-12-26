@@ -28,7 +28,9 @@ DiaGram::DiaGram () :
     uml (),
     genClasses (),
     invertsel (false),
+#ifdef ENABLE_CORBA
     usecorba (false),
+#endif
     tmp_classes (),
     includes (),
     decl (){
@@ -69,6 +71,7 @@ DiaGram::setInvertSel (bool invert) {
 }
 
 
+#ifdef ENABLE_CORBA
 bool
 DiaGram::getUseCorba () const {
     return usecorba;
@@ -81,6 +84,7 @@ DiaGram::setUseCorba (bool corba) {
 
     return;
 }
+#endif
 
 
 /* Returns a freshly constructed list of the classes that are used
@@ -235,9 +239,11 @@ DiaGram::push (umlClassNode & node)
         decl.push_back (d);
     }
 
+#ifdef ENABLE_CORBA
     if (node.getStereotype ().compare (0, 5, "CORBA") == 0) {
         usecorba = true;
     }
+#endif
 }
 
 
