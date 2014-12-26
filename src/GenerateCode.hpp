@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef GENERATE_CODE_HPP
 #define GENERATE_CODE_HPP
 
+#include "config.h"
+
 #include <fstream>
 
 #include "DiaGram.hpp"
@@ -42,7 +44,9 @@ class GenerateCode {
         // Convert package names to a directory tree.
         bool        buildtree : 1;
         bool        bOpenBraceOnNewline : 1;
+#ifdef ENABLE_CORBA
         bool        isCorba : 1;
+#endif
         
         int pass_by_reference (umlClass &cl);
         void gen_class (umlClassNode & node);
@@ -83,7 +87,9 @@ class GenerateCode {
         bool getOpenBraceOnNewline () const;
         void setOpenBraceOnNewline (bool newline);
 
+#ifdef ENABLE_CORBA
         bool getCorba () const;
+#endif
 
         const char * cppname (std::string name) const;
         virtual void check_visibility (int *curr_vis, int new_vis) = 0;

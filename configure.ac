@@ -21,11 +21,24 @@ dnl Checks for libraries.
 
 AC_PATH_PROG(XML_CONFIG, xml2-config, no)
 if test "$XML_CONFIG" = "no"; then
-  AC_MSG_ERROR([Cannot determine configuration of libxml.
+    AC_MSG_ERROR([Cannot determine configuration of libxml.
 Perhaps you forgot to install the package libxml2-devel ?])
 else
-  AC_SUBST(XML_CFLAGS, `$XML_CONFIG --cflags`)
-  AC_SUBST(XML_LIBS, `$XML_CONFIG --libs`)
+    AC_SUBST(XML_CFLAGS, `$XML_CONFIG --cflags`)
+    AC_SUBST(XML_LIBS, `$XML_CONFIG --libs`)
+fi
+
+AC_ARG_WITH(corba,
+            AS_HELP_STRING([--with-corba],
+                           [build with corba.]))
+if test "$with_corba" != "yes"; then
+    withcorba=false
+else
+    withcorba=true
+fi
+AM_CONDITIONAL(ENABLE_CORBA, test x$withcorba = xtrue)
+if test x$withcorba = xtrue; then
+    AC_DEFINE(ENABLE_CORBA, 1, [Add Corba functionnality])
 fi
 
 dnl Checks for header files.

@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef DIA_GRAM_HPP
 #define DIA_GRAM_HPP
 
+#include "config.h"
+
 #include <string>
 #include <list>
 

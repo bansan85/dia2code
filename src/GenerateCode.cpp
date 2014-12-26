@@ -44,8 +44,11 @@ GenerateCode::GenerateCode (DiaGram    & diagram,
     indentlevel (0),
     overwrite (true),
     buildtree (false),
-    bOpenBraceOnNewline (false),
-    isCorba (false){
+    bOpenBraceOnNewline (false)
+#ifdef ENABLE_CORBA
+    , isCorba (false)
+#endif
+{
 }
 
 
@@ -123,10 +126,13 @@ GenerateCode::setOpenBraceOnNewline (bool newline) {
 }
 
 
+#ifdef ENABLE_CORBA
 bool
 GenerateCode::getCorba () const {
     return isCorba;
 }
+#endif
+
 void
 GenerateCode::open_outfile (const char *filename) {
     static std::string outfilename;
@@ -150,7 +156,7 @@ GenerateCode::generate_code () {
     
     for (umlClassNode & it : tmplist) {
         if (!(is_present (getDia ().getGenClasses (),
-                         it.getName().c_str ()) ^ getDia ().getInvertSel ())) {
+                         it.getName ().c_str ()) ^ getDia ().getInvertSel ())) {
             getDia ().push (it);
         }
     }
@@ -164,7 +170,7 @@ GenerateCode::generate_code () {
         if ((*it2).decl_kind == dk_module) {
             name = (*it2).u.this_module->pkg.getName ();
         } else {         /* dk_class */
-            name = (*it2).u.this_class->getName();
+            name = (*it2).u.this_class->getName ();
         }
         filename.assign (name);
         filename.append (".");
@@ -280,7 +286,7 @@ GenerateCode::pass_by_reference (umlClass &cl) {
     }
     if (is_typedef_stereo (st)) {
         umlClassNode *ref = find_by_name (dia.getUml (),
-                                          cl.getName().c_str ());
+                                          cl.getName ().c_str ());
         if (ref == NULL) {
             return 0;
         }
@@ -349,20 +355,27 @@ GenerateCode::cppname (std::string name) const {
 
 void
 GenerateCode::gen_class (umlClassNode & node) {
+#ifdef ENABLE_CORBA
     const char *name = node.getName ().c_str ();
+#endif
     const char *stype = node.getStereotype ().c_str ();
 
     if (strlen (stype) > 0) {
         writeComment (std::string ("Stereotype : ") + stype);
+#ifdef ENABLE_CORBA
         isCorba = eq (stype, "CORBAValue");
+#endif
     }
 
     writeClassComment (node);
 
     if (!node.getTemplates ().empty ()) {
+#ifdef ENABLE_CORBA
         if (isCorba) {
             fprintf (stderr, "CORBAValue %s: template ignored\n", name);
-        } else {
+        } else
+#endif
+        {
             std::list <std::pair <std::string, std::string> >::const_iterator
                                     template_ = node.getTemplates ().begin ();
             file << spc () << "template <";
@@ -405,6 +418,7 @@ GenerateCode::gen_class (umlClassNode & node) {
     }
 
     if (!node.getAttributes ().empty ()) {
+#ifdef ENABLE_CORBA
         if (isCorba) {
             writeComment ("Public state members");
             file << spc () << "public:\n";
@@ -466,7 +480,9 @@ GenerateCode::gen_class (umlClassNode & node) {
             }
             indentlevel--;
         }
-        else {
+        else
+#endif
+        {
             int tmpv = -1;
             writeComment ("Attributes");
             indentlevel++;
@@ -480,9 +496,11 @@ GenerateCode::gen_class (umlClassNode & node) {
     if (!node.getOperations ().empty ()) {
         int tmpv = -1;
         writeComment ("Operations");
+#ifdef ENABLE_CORBA
         if (isCorba) {
             file << spc () << "public :\n";
         }
+#endif
         indentlevel++;
         for (const umlOperation & umlo : node.getOperations ()) {
             writeFunction (umlo, &tmpv);
@@ -490,6 +508,7 @@ GenerateCode::gen_class (umlClassNode & node) {
         indentlevel--;
     }
 
+#ifdef ENABLE_CORBA
     if ((!node.getAttributes ().empty ()) && (isCorba)) {
         file << "\n";
         indentlevel--;
@@ -513,6 +532,7 @@ GenerateCode::gen_class (umlClassNode & node) {
             file << " _" << umla.getName () << ";\n";
         }
     }
+#endif
 
     indentlevel--;
     writeClassEnd (node);

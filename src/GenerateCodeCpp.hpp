@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef GENERATE_CODE_CPP_HPP
 #define GENERATE_CODE_CPP_HPP
 
+#include "config.h"
+
 #include "GenerateCode.hpp"
 
 class GenerateCodeCpp : public GenerateCode {

@@ -140,6 +140,7 @@ GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
 void
 GenerateCodeCpp::writeFunction (const umlOperation & ope,
                                 int * curr_visibility) {
+#ifdef ENABLE_CORBA
     if (getCorba ()) {
         if (ope.getVisibility () != '0') {
             fprintf (stderr,
@@ -147,7 +148,9 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
                      ope.getName ().c_str ());
         }
     }
-    else {
+    else
+#endif
+    {
         check_visibility (curr_visibility, ope.getVisibility ());
     }
 
@@ -157,16 +160,23 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
     }
 
     getFile () << spc ();
-    if (ope.isAbstract () || getCorba ()) {
+    if (ope.isAbstract ()
+#ifdef ENABLE_CORBA
+        || getCorba ()
+#endif
+    ) {
         getFile () << "virtual ";
     }
     if (ope.isStatic ()) {
+#ifdef ENABLE_CORBA
         if (getCorba ()) {
             fprintf (stderr,
                      "CORBAValue %s: static not supported\n",
                      ope.getName ().c_str ());
         }
-        else {
+        else 
+#endif
+        {
             getFile () << "static ";
         }
     }
@@ -180,12 +190,15 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
     while (tmpa != ope.getParameters ().end ()) {
         getFile () << (*tmpa).getType () << " " << (*tmpa).getName ();
         if (!(*tmpa).getValue ().empty ()) {
+#ifdef ENABLE_CORBA
             if (getCorba ()) {
                 fprintf (stderr,
                          "CORBAValue %s: param default not supported\n",
                          ope.getName ().c_str ());
             }
-            else {
+            else
+#endif
+            {
                getFile () << " = " << (*tmpa).getValue ();
             }
         }
@@ -199,7 +212,11 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
         getFile () << " const";
     }
     // virtual
-    if ((ope.isAbstract () || getCorba ()) &&
+    if ((ope.isAbstract ()
+#ifdef ENABLE_CORBA
+        || getCorba ()
+#endif
+        ) &&
         ope.getName ()[0] != '~') {
         getFile () << " = 0";
     }
@@ -239,9 +256,12 @@ GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
                 getFile () << ", ";
             }
         }
-    } else if (getCorba ()) {
+    }
+#ifdef ENABLE_CORBA
+    else if (getCorba ()) {
         getFile () << " : " << strPackage ("CORBA") << "ValueBase";
     }
+#endif
     if (getOpenBraceOnNewline ()) {
         getFile () << "\n"
                    << spc () << "{\n";

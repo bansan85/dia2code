@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef DECLS_HPP
 #define DECLS_HPP
 
+#include "config.h"
+
 #include "umlPackage.hpp"
 
 /* Package processing auxiliary structure:
