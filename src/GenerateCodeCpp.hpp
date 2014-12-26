@@ -40,9 +40,11 @@ class GenerateCodeCpp : public GenerateCode {
         void writeFunction (const umlOperation & ope);
         void writeComment (const std::string & text);
         void writeComment (const char * text);
-        void writeClassComment (umlClassNode & node);
-        void writeClassStart (umlClassNode & node);
-        void writeClassEnd (umlClassNode & node);
+        void writeClassComment (const umlClassNode & node);
+        void writeClassStart (const umlClassNode & node);
+        void writeClassEnd (const umlClassNode & node);
+        void writeAttribute (const umlAttribute & attr,
+                             int * curr_visibility);
         
         ~GenerateCodeCpp ();
 };

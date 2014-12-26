@@ -471,19 +471,7 @@ GenerateCode::gen_class (umlClassNode & node) {
             writeComment ("Attributes");
             indentlevel++;
             for (const umlAttribute & umla : node.getAttributes ()) {
-                check_visibility (&tmpv, umla.getVisibility ());
-                if (!umla.getComment ().empty ()) {
-                    file << spc () << "/// " << umla.getComment () << "\n";
-                }
-                if (umla.isStatic ()) {
-                    file << spc () << "static " << umla.getType () << " "
-                         << umla.getName ();
-                }
-                else {
-                    file << spc () << umla.getType () << " "
-                         << umla.getName () << "";
-                }
-                file << ";\n";
+                writeAttribute (umla, &tmpv);
             }
             indentlevel--;
         }

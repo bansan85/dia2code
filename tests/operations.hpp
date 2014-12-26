@@ -12,6 +12,8 @@ class operations {
             \param arg3	(???) 
         */
         virtual type test (type1 arg1, type2 arg2, type3 arg3 = 0) = 0;
+    protected :
+        test4 ();
     public :
         static test2 ();
         test3 () const;

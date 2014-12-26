@@ -202,7 +202,7 @@ GenerateCodeCpp::writeComment (const char * text) {
 }
 
 void
-GenerateCodeCpp::writeClassComment (umlClassNode & node) {
+GenerateCodeCpp::writeClassComment (const umlClassNode & node) {
     getFile () << spc () << "/** \\class " << node.getName () << "\n";
     if (!node.getComment ().empty ()) {
         getFile () << spc () << "    \\brief " << node.getComment () << "\n";
@@ -211,7 +211,7 @@ GenerateCodeCpp::writeClassComment (umlClassNode & node) {
 }
 
 void
-GenerateCodeCpp::writeClassStart (umlClassNode & node) {
+GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
     getFile () << spc () << "class " << node.getName ();
     if (!node.getParents ().empty ()) {
         std::list <umlClass *>::const_iterator parent;
@@ -237,8 +237,26 @@ GenerateCodeCpp::writeClassStart (umlClassNode & node) {
 }
 
 void
-GenerateCodeCpp::writeClassEnd (umlClassNode & node) {
+GenerateCodeCpp::writeClassEnd (const umlClassNode & node) {
     getFile () << spc () << "};\n\n";
+}
+
+void
+GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
+                                 int * curr_visibility) {
+    check_visibility (curr_visibility, attr.getVisibility ());
+    if (!attr.getComment ().empty ()) {
+        getFile () << spc () << "/// " << attr.getComment () << "\n";
+    }
+    if (attr.isStatic ()) {
+        getFile () << spc () << "static " << attr.getType () << " "
+                   << attr.getName ();
+    }
+    else {
+        getFile () << spc () << attr.getType () << " "
+                   << attr.getName ();
+    }
+    getFile () << ";\n";
 }
 
 GenerateCodeCpp::~GenerateCodeCpp () {
