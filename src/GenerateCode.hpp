@@ -120,6 +120,7 @@ class GenerateCode {
         virtual void writeNameSpaceStart (const std::string & name) = 0;
         virtual void writeNameSpaceEnd () = 0;
         virtual void writeConst (const umlClassNode & node) = 0;
+        virtual void writeEnum (const umlClassNode & node) = 0;
 
         virtual ~GenerateCode ();
 };

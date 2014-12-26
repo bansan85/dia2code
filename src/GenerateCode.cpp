@@ -598,36 +598,7 @@ GenerateCode::gen_decl (declaration &d) {
         writeConst (*node);
     }
     else if (is_enum_stereo (stype)) {
-        file << spc () << "/// enum " << name << " " << node->getComment ()
-             << "\n";
-        if (bOpenBraceOnNewline) {
-            file << spc () << "enum " << name << "\n";
-            file << spc () << "{\n";
-        }
-        else {
-            file << spc () << "enum " << name << " {\n";
-        }
-        indentlevel++;
-        while (umla != node->getAttributes ().end ()) {
-            const char *literal = (*umla).getName ().c_str ();
-            (*umla).check (name);
-            file << spc () << "/// " << (*umla).getComment () << "\n";
-            if (!(*umla).getType ().empty ()) {
-                fprintf (stderr, "%s/%s: ignoring type\n", name, literal);
-            }
-            file << spc () << literal;
-            if (!(*umla).getValue ().empty ()) {
-                file << " = " << (*umla).getValue ();
-            }
-            ++umla;
-            if (umla != node->getAttributes ().end ()) {
-                file << ",";
-            }
-            file << "\n";
-        }
-        indentlevel--;
-        file << spc () << "};\n\n";
-
+        writeEnum (*node);
     }
     else if (is_struct_stereo (stype)) {
         file << spc () << "/// struct " << name << " " << node->getComment ()

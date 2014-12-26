@@ -50,6 +50,7 @@ class GenerateCodeCpp : public GenerateCode {
         void writeNameSpaceStart (const std::string & name);
         void writeNameSpaceEnd ();
         void writeConst (const umlClassNode & node);
+        void writeEnum (const umlClassNode & node);
         
         ~GenerateCodeCpp ();
 };

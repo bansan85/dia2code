@@ -1,7 +1,7 @@
 #ifndef ENUMERATION__HPP
 #define ENUMERATION__HPP
 
-/// enum enumeration 
+/// enum class
 enum enumeration {
     /// enum1
     ENUM_1 = 0,

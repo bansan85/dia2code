@@ -333,6 +333,46 @@ GenerateCodeCpp::writeConst (const umlClassNode & node) {
                << ";\n\n";
 }
 
+void
+GenerateCodeCpp::writeEnum (const umlClassNode & node) {
+    std::list <umlAttribute>::const_iterator umla;
+
+    umla = node.getAttributes ().begin ();
+    if (!node.getComment ().empty ()) {
+        getFile () << spc () << "/// " << node.getComment () << "\n";
+    }
+    if (getOpenBraceOnNewline ()) {
+        getFile () << spc () << "enum " << node.getName () << "\n";
+        getFile () << spc () << "{\n";
+    }
+    else {
+        getFile () << spc () << "enum " << node.getName () << " {\n";
+    }
+    incIndentLevel ();
+    while (umla != node.getAttributes ().end ()) {
+        const char *literal = (*umla).getName ().c_str ();
+        (*umla).check (node.getName ().c_str ());
+        getFile () << spc () << "/// " << (*umla).getComment () << "\n";
+        if (!(*umla).getType ().empty ()) {
+            fprintf (stderr,
+                     "%s/%s: ignoring type\n",
+                     node.getName ().c_str (),
+                     literal);
+        }
+        getFile () << spc () << literal;
+        if (!(*umla).getValue ().empty ()) {
+            getFile () << " = " << (*umla).getValue ();
+        }
+        ++umla;
+        if (umla != node.getAttributes ().end ()) {
+            getFile () << ",";
+        }
+        getFile () << "\n";
+    }
+    decIndentLevel ();
+    getFile () << spc () << "};\n\n";
+}
+
 GenerateCodeCpp::~GenerateCodeCpp () {
 }
 
