@@ -29,6 +29,7 @@ class GenerateCodeCpp : public GenerateCode {
         std::string strPackage (const char * package) const;
         std::string strPointer (const std::string & type) const;
         const char * fqname (const umlClassNode & node, bool use_ref_type);
+        void check_visibility (int *curr_vis, int new_vis);
 
         void writeLicense ();
         void writeStartHeader (std::string & name);

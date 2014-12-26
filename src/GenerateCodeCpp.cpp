@@ -66,6 +66,37 @@ GenerateCodeCpp::fqname (const umlClassNode &node, bool use_ref_type) {
 }
 
 void
+GenerateCodeCpp::check_visibility (int *curr_vis, int new_vis) {
+    if (*curr_vis == new_vis) {
+        return;
+    }
+    decIndentLevel ();
+    switch (new_vis) {
+        case '0':
+            getFile () << spc () << "public :\n";
+            break;
+        case '1':
+            getFile () << spc () << "private :\n";
+            break;
+        case '2':
+            getFile () << spc () << "protected :\n";
+            break;
+        case '3':
+            fprintf (stderr,
+                     "Implementation not applicable in C++.\n",
+                     new_vis);
+            exit (1);
+            break;
+        default :
+            fprintf (stderr, "Unknown visibility %d\n", new_vis);
+            exit (1);
+            break;
+    }
+    *curr_vis = new_vis;
+    incIndentLevel ();
+}
+
+void
 GenerateCodeCpp::writeLicense () {
     if (getLicense ().empty ()) {
         return;

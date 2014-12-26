@@ -46,7 +46,6 @@ class GenerateCode {
         
         int pass_by_reference (umlClass &cl);
         void gen_class (umlClassNode & node);
-        void check_visibility (int *curr_vis, int new_vis);
         void open_outfile (const char *filename);
         void gen_decl (declaration &d);
     public:
@@ -87,6 +86,7 @@ class GenerateCode {
         bool getCorba () const;
 
         const char * cppname (std::string name) const;
+        virtual void check_visibility (int *curr_vis, int new_vis) = 0;
 
         virtual const char * fqname (const umlClassNode & node,
                                      bool use_ref_type) = 0;

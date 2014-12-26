@@ -347,35 +347,6 @@ GenerateCode::cppname (std::string name) const {
     return buf.c_str ();
 }
 
-
-void
-GenerateCode::check_visibility (int *curr_vis, int new_vis) {
-    if (*curr_vis == new_vis) {
-        return;
-    }
-    indentlevel--;
-    switch (new_vis) {
-        case '0':
-            file << spc () << "public :\n";
-            break;
-        case '1':
-            file << spc () << "private :\n";
-            break;
-        case '2':
-            file << spc () << "protected :\n";
-            break;
-        case '3':
-            file << spc () << "implemetation :\n";
-            break;
-        default :
-            fprintf (stderr, "Unknown visibility %d\n", new_vis);
-            exit (1);
-            break;
-    }
-    *curr_vis = new_vis;
-    indentlevel++;
-}
-
 void
 GenerateCode::gen_class (umlClassNode & node) {
     const char *name = node.getName ().c_str ();
