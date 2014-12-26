@@ -377,28 +377,28 @@ GenerateCode::check_visibility (int *curr_vis, int new_vis) {
 }
 
 void
-GenerateCode::gen_class (umlClassNode *node) {
-    const char *name = node->getName ().c_str ();
-    const char *stype = node->getStereotype ().c_str ();
+GenerateCode::gen_class (umlClassNode & node) {
+    const char *name = node.getName ().c_str ();
+    const char *stype = node.getStereotype ().c_str ();
 
     if (strlen (stype) > 0) {
         writeComment (std::string ("Stereotype : ") + stype);
         isCorba = eq (stype, "CORBAValue");
     }
 
-    writeClassComment (*node);
+    writeClassComment (node);
 
-    if (!node->getTemplates ().empty ()) {
+    if (!node.getTemplates ().empty ()) {
         if (isCorba) {
             fprintf (stderr, "CORBAValue %s: template ignored\n", name);
         } else {
             std::list <std::pair <std::string, std::string> >::const_iterator
-                                    template_ = node->getTemplates ().begin ();
+                                    template_ = node.getTemplates ().begin ();
             file << spc () << "template <";
-            while (template_ != node->getTemplates ().end ()) {
+            while (template_ != node.getTemplates ().end ()) {
                 file << (*template_).second << " " << (*template_).first;
                 ++template_;
-                if (template_ != node->getTemplates ().end ()) {
+                if (template_ != node.getTemplates ().end ()) {
                     file << ", ";
                 }
             }
@@ -407,14 +407,14 @@ GenerateCode::gen_class (umlClassNode *node) {
     }
 
     file << spc () << "class " << name;
-    if (!node->getParents ().empty ()) {
+    if (!node.getParents ().empty ()) {
         std::list <umlClass *>::const_iterator parent;
-        parent = node->getParents ().begin ();
+        parent = node.getParents ().begin ();
         file << " : ";
-        while (parent != node->getParents ().end ()) {
+        while (parent != node.getParents ().end ()) {
             file << "public " << fqname (**parent, false);
             ++parent;
-            if (parent != node->getParents ().end ()) {
+            if (parent != node.getParents ().end ()) {
                 file << ", ";
             }
         }
@@ -429,7 +429,7 @@ GenerateCode::gen_class (umlClassNode *node) {
     }
     indentlevel++;
 
-    if (!node->getAssociations ().empty ()) {
+    if (!node.getAssociations ().empty ()) {
         writeComment ("Associations");
         /*
          * The associations are mapped as private members.
@@ -437,7 +437,7 @@ GenerateCode::gen_class (umlClassNode *node) {
          * (For example, other UML tools additionally generate
          * setters/getters.)  Ideas and comments welcome.
         */
-        for (const umlassoc & assoc : node->getAssociations ()) {
+        for (const umlassoc & assoc : node.getAssociations ()) {
             if (!assoc.name.empty ()) {
                 umlClassNode *ref;
                 ref = find_by_name (dia.getUml (),
@@ -453,12 +453,12 @@ GenerateCode::gen_class (umlClassNode *node) {
         }
     }
 
-    if (!node->getAttributes ().empty ()) {
+    if (!node.getAttributes ().empty ()) {
         if (isCorba) {
             writeComment ("Public state members");
             file << spc () << "public:\n";
             indentlevel++;
-            for (const umlAttribute & umla : node->getAttributes ()) {
+            for (const umlAttribute & umla : node.getAttributes ()) {
                 const char *member = umla.getName ().c_str ();
                 umlClassNode *ref;
                 if (umla.getVisibility () != '0') {
@@ -519,7 +519,7 @@ GenerateCode::gen_class (umlClassNode *node) {
             int tmpv = -1;
             writeComment ("Attributes");
             indentlevel++;
-            for (const umlAttribute & umla : node->getAttributes ()) {
+            for (const umlAttribute & umla : node.getAttributes ()) {
                 check_visibility (&tmpv, umla.getVisibility ());
                 if (!umla.getComment ().empty ()) {
                     file << spc () << "/// " << umla.getComment () << "\n";
@@ -538,14 +538,14 @@ GenerateCode::gen_class (umlClassNode *node) {
         }
     }
 
-    if (!node->getOperations ().empty ()) {
+    if (!node.getOperations ().empty ()) {
         int tmpv = -1;
         writeComment ("Operations");
         if (isCorba) {
             file << spc () << "public :\n";
         }
         indentlevel++;
-        for (const umlOperation & umlo : node->getOperations ()) {
+        for (const umlOperation & umlo : node.getOperations ()) {
             if (isCorba) {
                 if (umlo.getVisibility () != '0') {
                     fprintf (stderr, "CORBAValue %s/%s: must be public\n",
@@ -566,13 +566,13 @@ GenerateCode::gen_class (umlClassNode *node) {
         indentlevel--;
     }
 
-    if ((!node->getAttributes ().empty ()) && (isCorba)) {
+    if ((!node.getAttributes ().empty ()) && (isCorba)) {
         file << "\n";
         indentlevel--;
         writeComment ("State member implementation");
         file << spc () << "private :\n";
         indentlevel++;
-        for (const umlAttribute & umla : node->getAttributes ()) {
+        for (const umlAttribute & umla : node.getAttributes ()) {
             umlClassNode *ref = find_by_name (dia.getUml (),
                                               umla.getType ().c_str ());
             file << spc ();
@@ -626,7 +626,7 @@ GenerateCode::gen_decl (declaration &d) {
     umla = node->getAttributes ().begin ();
 
     if (strlen (stype) == 0) {
-        gen_class (node);
+        gen_class (*node);
         return;
     }
 
@@ -772,7 +772,7 @@ GenerateCode::gen_decl (declaration &d) {
              << name << (*umla).getValue () << ";\n\n";
     }
     else {
-        gen_class (node);
+        gen_class (*node);
     }
 }
 

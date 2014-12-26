@@ -45,7 +45,7 @@ class GenerateCode {
         bool        isCorba : 1;
         
         int pass_by_reference (umlClass &cl);
-        void gen_class (umlClassNode *node);
+        void gen_class (umlClassNode & node);
         void check_visibility (int *curr_vis, int new_vis);
         void open_outfile (const char *filename);
         void gen_decl (declaration &d);
