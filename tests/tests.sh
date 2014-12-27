@@ -2,6 +2,23 @@
 
 mkdir result
 rm result/*
+
+../src/dia2code -t cpp association.dia -d result
+if [[ ! -a result/AssociationClass1.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/AssociationPack.hpp ]] ; then
+exit 1
+fi ;
+diff -pu AssociationClass1.hpp result/AssociationClass1.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu AssociationPack.hpp result/AssociationPack.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 ../src/dia2code -t cpp package.dia -d result
 if [[ ! -a result/pack.hpp ]] ; then
 exit 1
@@ -117,15 +134,6 @@ if [[ ! -a result/TypeDef.hpp ]] ; then
 exit 1
 fi ;
 diff -pu TypeDef.hpp result/TypeDef.hpp > result.txt
-if [[ -s result.txt ]] ; then
-exit 1
-fi ;
-
-../src/dia2code -t cpp association.dia -d result
-if [[ ! -a result/Association.hpp ]] ; then
-exit 1
-fi ;
-diff -pu Association.hpp result/Association.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;

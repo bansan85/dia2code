@@ -54,7 +54,7 @@ under certain conditions; read the COPYING file for details.\n";
     -h --help            Print this help and exit.\n\
     -d <dir>             Output generated files to <dir>, default is \".\" \n\
     --buildtree          Convert package names to a directory tree.\n\
-                         Off by default.\n\
+                         Imply -1. Off by default.\n\
     -l <license>         License file to prepend to generated files.\n\
     -nc                  Do not overwrite files that already exist.\n\
     -cl <classlist>      Generate code only for the classes specified in\n\
@@ -76,7 +76,9 @@ under certain conditions; read the COPYING file for details.\n";
                          Here are the defaults:\n\
                          ada:\"adb\", c:\"c\"\n\
     -nl                  Create new line on new brace. Off by default.\n\
-    -1                   One header contains only one header.\n\
+    -1                   One header contains only one header. If two classes\n\
+                         have the same name, they will be overwriting without\n\
+                         --buildtree.\n\
                          Off by default but java.\n\
     -t <target>          Selects the output language. <target> can be one of:\n\
                          ada,as3,c,cpp,csharp,idl,java,php,php5,python,ruby,\n\
@@ -108,6 +110,7 @@ under certain conditions; read the COPYING file for details.\n";
                 parameter = 2;
             } else if (!strcmp (argv[i], "--buildtree")) {
                 buildtree = true;
+                oneclass = true;
             } else if (!strcmp (argv[i], "-l")) {
                 parameter = 4;
             } else if (!strcmp (argv[i], "-nc")) {

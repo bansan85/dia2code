@@ -68,19 +68,19 @@
         <dia:point val="8.3,3.95"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="8.25,3.9;14.0375,6.2"/>
+        <dia:rectangle val="8.25,3.9;16.9475,6.2"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="8.3,3.95"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="5.6875"/>
+        <dia:real val="8.5975000000000001"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="2.1999999999999997"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#Association#</dia:string>
+        <dia:string>#AssociationClass1#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -211,19 +211,19 @@
         <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="obj_pos">
-        <dia:point val="11.1438,6.15"/>
+        <dia:point val="12.5988,6.15"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="11.0938,6.1;18.9762,13.25"/>
+        <dia:rectangle val="12.5488,6.1;19.2987,15.65"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="11.1438,6.15"/>
-        <dia:point val="11.1438,9.3"/>
-        <dia:point val="18.7762,9.3"/>
-        <dia:point val="18.7762,12.45"/>
+        <dia:point val="12.5988,6.15"/>
+        <dia:point val="12.5988,10.5"/>
+        <dia:point val="19.0987,10.5"/>
+        <dia:point val="19.0987,14.85"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -246,19 +246,19 @@
     </dia:object>
     <dia:object type="UML - LargePackage" version="0" id="O2">
       <dia:attribute name="obj_pos">
-        <dia:point val="14.45,11.2"/>
+        <dia:point val="12,12.75"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="14.4,10.15;25,20.25"/>
+        <dia:rectangle val="11.95,11.7;25.2,21.8"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="14.45,11.2"/>
+        <dia:point val="12,12.75"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="10.5"/>
+        <dia:real val="13.150000000000002"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="8.9999999999999982"/>
@@ -279,27 +279,27 @@
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#Pack#</dia:string>
+        <dia:string>#AssociationPack#</dia:string>
       </dia:attribute>
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O3">
       <dia:attribute name="obj_pos">
-        <dia:point val="16.8,12.45"/>
+        <dia:point val="14.8,14.85"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.75,12.4;20.8025,14.7"/>
+        <dia:rectangle val="14.75,14.8;23.4475,17.1"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="16.8,12.45"/>
+        <dia:point val="14.8,14.85"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="3.9524999999999997"/>
+        <dia:real val="8.5975000000000001"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="2.1999999999999997"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#Classe2#</dia:string>
+        <dia:string>#AssociationClass2#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
