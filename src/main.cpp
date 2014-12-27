@@ -33,7 +33,8 @@ int main (int argc, char **argv) {
     
     uint8_t tab = 4;
     char   *ext = NULL, *bext = NULL, *outdir = NULL, *license = NULL;
-    bool    overwrite = true, buildtree = false, newline = false;
+    bool    overwrite = true, buildtree = false, newline = false,
+            oneclass = false;
 
     GenerateCodeCpp *generator;
 
@@ -43,18 +44,17 @@ Dia2Code comes with ABSOLUTELY NO WARRANTY\n\
 This is free software, and you are welcome to redistribute it\n\
 under certain conditions; read the COPYING file for details.\n";
 
-    const char *help = "[-h|--help] [-d <dir>] [-nc] [-cl <classlist>]\n\
-       <-t (ada|c|cpp|csharp|idl|java|php|php5|python|ruby|shp|sql|as3)> [-v]\n\
-       [-l <license file>] <diagramfile>";
+    const char *help = "[-h|--help] [-d <dir>] [--buildtree] [-l <license file>\n\
+       [-nc] [-cl <classlist>] [-v] [--version] [--tab <number>]\n\
+       [-ext <extension>] [-bext <extension>] [-nl] [-1] \n\
+       <-t (ada|as3|c|cpp|csharp|idl|java|php|php5|python|ruby|shp|sql)>\n\
+       <diagramfile>";
 
     const char *bighelp = "\
     -h --help            Print this help and exit.\n\
-    -t <target>          Selects the output language. <target> can be\n\
-                         one of: ada,c,cpp,idl,java,php,php5,python,ruby,shp,\n\
-                         sql,as3 or csharp. \n\
     -d <dir>             Output generated files to <dir>, default is \".\" \n\
     --buildtree          Convert package names to a directory tree.\n\
-                         off by default.\n\
+                         Off by default.\n\
     -l <license>         License file to prepend to generated files.\n\
     -nc                  Do not overwrite files that already exist.\n\
     -cl <classlist>      Generate code only for the classes specified in\n\
@@ -67,15 +67,20 @@ under certain conditions; read the COPYING file for details.\n";
                          Default: 4. Maximum: 8.\n\
     -ext <extension>     Use <extension> as the file extension.\n\
                          Here are the defaults:\n\
-                         ada:\"ads\", c:\"h\", cpp:\"h\", idl:\"idl\",\n\
+                         ada:\"ads\", c:\"h\", cpp:\"hpp\", idl:\"idl\",\n\
                          java:\"java\", php:\"php\", python:\"py\",\n\
                          csharp:\"cs\".\n\
                          Not applicable to shp, sql.\n\
     -bext <extension>    Use <extension> as the body (implementation) file\n\
-                         extension. Currently only applies only to ada.\n\
+                         extension. Only applies only to ada and c.\n\
                          Here are the defaults:\n\
-                         ada:\"adb\"\n\
-    -nl                  Create new line on new brace. Default no.\n\
+                         ada:\"adb\", c:\"c\"\n\
+    -nl                  Create new line on new brace. Off by default.\n\
+    -1                   One header contains only one header.\n\
+                         Off by default but java.\n\
+    -t <target>          Selects the output language. <target> can be one of:\n\
+                         ada,as3,c,cpp,csharp,idl,java,php,php5,python,ruby,\n\
+                         shp,sql. \n\
     <diagramfile>        The Dia file that holds the diagram to be read.\n\n\
     Note: parameters can be specified in any order.";
 
@@ -91,20 +96,24 @@ under certain conditions; read the COPYING file for details.\n";
     for (i = 1; i < argc; i++) {
         switch (parameter) {
         case 0:
-            if (!strcmp (argv[i], "-t")) {
-                parameter = 1;
+            if (!strcmp ("-h", argv[i]) ||
+                !strcmp ("--help", argv[i])) {
+                printf ("%s\nUsage: %s %s\n\n%s\n",
+                        notice,
+                        argv[0],
+                        help,
+                        bighelp);
+                exit (0);
             } else if (!strcmp (argv[i], "-d")) {
                 parameter = 2;
+            } else if (!strcmp (argv[i], "--buildtree")) {
+                buildtree = true;
+            } else if (!strcmp (argv[i], "-l")) {
+                parameter = 4;
             } else if (!strcmp (argv[i], "-nc")) {
                 overwrite = false;
             } else if (!strcmp (argv[i], "-cl")) {
                 parameter = 3;
-            } else if (!strcmp (argv[i], "-l")) {
-                parameter = 4;
-            } else if (!strcmp (argv[i], "-ext")) {
-                parameter = 5;
-            } else if (!strcmp (argv[i], "-bext")) {
-                parameter = 6;
             } else if (!strcmp (argv[i], "-v")) {
                 diagram.setInvertSel (!diagram.getInvertSel ());
             } else if (!strcmp (argv[i], "--version")) {
@@ -112,18 +121,16 @@ under certain conditions; read the COPYING file for details.\n";
                 exit (0);
             } else if (!strcmp (argv[i], "--tab")) {
                 parameter = 8;
+            } else if (!strcmp (argv[i], "-ext")) {
+                parameter = 5;
+            } else if (!strcmp (argv[i], "-bext")) {
+                parameter = 6;
             } else if (!strcmp (argv[i], "-nl")) {
                 newline = true;
-            } else if (!strcmp ("-h", argv[i]) ||
-                       !strcmp ("--help", argv[i])) {
-                printf ("%s\nUsage: %s %s\n\n%s\n",
-                        notice,
-                        argv[0],
-                        help,
-                        bighelp);
-                exit (0);
-            } else if (!strcmp (argv[i], "--buildtree")) {
-                buildtree = true;
+            } else if (!strcmp (argv[i], "-1")) {
+                oneclass = true;
+            } else if (!strcmp (argv[i], "-t")) {
+                parameter = 1;
             } else {
                 infile = argv[i];
             }
@@ -220,6 +227,7 @@ under certain conditions; read the COPYING file for details.\n";
     generator->setOverwrite (overwrite);
     generator->setBuildTree (buildtree);
     generator->setOpenBraceOnNewline (newline);
+    generator->setOneClass (oneclass);
     if (ext != NULL) {
         generator->setFileExt (ext);
     }

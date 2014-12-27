@@ -45,6 +45,7 @@ class GenerateCode {
         // Convert package names to a directory tree.
         bool        buildtree : 1;
         bool        bOpenBraceOnNewline : 1;
+        bool        oneClassOneHeader : 1;
 #ifdef ENABLE_CORBA
         bool        isCorba : 1;
 #endif
@@ -87,6 +88,9 @@ class GenerateCode {
 
         bool getOpenBraceOnNewline () const;
         void setOpenBraceOnNewline (bool newline);
+
+        bool getOneClass () const;
+        void setOneClass (bool val);
 
 #ifdef ENABLE_CORBA
         bool getCorba () const;

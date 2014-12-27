@@ -44,7 +44,8 @@ GenerateCode::GenerateCode (DiaGram    & diagram,
     indentlevel (0),
     overwrite (true),
     buildtree (false),
-    bOpenBraceOnNewline (false)
+    bOpenBraceOnNewline (false),
+    oneClassOneHeader (false)
 #ifdef ENABLE_CORBA
     , isCorba (false)
 #endif
@@ -123,6 +124,17 @@ GenerateCode::getOpenBraceOnNewline () const {
 void
 GenerateCode::setOpenBraceOnNewline (bool newline) {
     bOpenBraceOnNewline = newline;
+}
+
+bool
+GenerateCode::getOneClass () const {
+    return oneClassOneHeader;
+}
+
+
+void
+GenerateCode::setOneClass (bool value) {
+    oneClassOneHeader = value;
 }
 
 
