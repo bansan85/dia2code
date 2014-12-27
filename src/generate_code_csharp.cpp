@@ -40,7 +40,7 @@ void generate_code_csharp (batch *b) {
 
     /* open license file */
     if (b->license != NULL) {
-        licensefile = fopen (b->license, "r"); 
+        licensefile = fopen (b->license, "r");
         if (!licensefile) {
             fprintf (stderr, "Can't open the license file.\n");
             exit (1);

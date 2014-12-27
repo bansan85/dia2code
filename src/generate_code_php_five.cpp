@@ -110,11 +110,11 @@ int d2c_php_print_func_comments(FILE *outfile, umloplist umlo)
         fprintf(outfile, "%s * @return %s XXX\n",
                 TABS, umlo->key.attr.type);
     }
-    
+
     /*fprintf(outfile, "%s * @access ", TABS );
     tmpname = d2c_php_visibility(umlo->key.attr.visibility);
     fprintf(outfile, "%s\n", tmpname);*/
-    
+
     if (umlo->key.attr.isabstract) {
         fprintf(outfile, "%s * @abstract\n", TABS );
         umlo->key.attr.value[0] = '0';
@@ -216,8 +216,8 @@ int d2c_php_print_attributes(FILE *outfile, umlclasslist tmplist)
             fprintf(outfile, "%s * XXX\n", TABS );
         fprintf(outfile, "%s *\n", TABS );
         fprintf(outfile, "%s * @var    %s\n", TABS, umla->key.type);
-        //fprintf(outfile, "%s * @access ", TABS); 
-    
+        //fprintf(outfile, "%s * @access ", TABS);
+
         char *tmpname = d2c_php_visibility(umla->key.visibility);
         //fprintf(outfile, "%s\n", tmpname);*/
         if (umla->key.isstatic) {
@@ -306,7 +306,7 @@ int d2c_php_print_class_desc(FILE *outfile, umlclasslist tmplist)
 {
     umlpackagelist tmppcklist;
     fprintf(outfile, "/**\n" );
-    
+
     if (strlen(tmplist->key->comment) > 0)
         fprintf(outfile, " * %s\n", tmplist->key->comment);
     else
@@ -315,7 +315,7 @@ int d2c_php_print_class_desc(FILE *outfile, umlclasslist tmplist)
     fprintf(outfile, " * @author    XXX\n" );
     fprintf(outfile, " * @version   XXX\n" );
     fprintf(outfile, " * @copyright XXX\n" );
-    
+
     tmppcklist = make_package_list(tmplist->key->package);
     if ( tmppcklist != NULL ) {
         int packcounter = 0;
@@ -333,11 +333,11 @@ int d2c_php_print_class_desc(FILE *outfile, umlclasslist tmplist)
         }
         fprintf(outfile, "\n");
     }
-    
+
     if (tmplist->key->isabstract) {
         fprintf(outfile, " * @abstract\n" );
     }
-    
+
     fprintf(outfile, " */\n" );
         return 0;
 }
@@ -353,14 +353,14 @@ int d2c_php_print_class_decl(FILE *outfile, umlclasslist tmplist)
     tmpname = d2c_php_class_type(tmplist);
     /* print class 'type' and name */
     fprintf(outfile, "%s %s", tmpname, tmplist->key->name);
-    
+
     parents = tmplist->parents;
     if (parents != NULL) {
         while (parents != NULL) {
             tmpname = strtolower(parents->key->stereotype);
             if (eq(tmpname, "interface")) {
                 fprintf(outfile, " implements ");
-            }    
+            }
             else {
                 fprintf(outfile, " extends ");
             }
@@ -395,7 +395,7 @@ FILE *d2c_php_getoutfile(umlclasslist tmplist, batch *b, FILE *outfile, int maxl
 /*
  * main function called to begin output
  * */
-void generate_code_php_five(batch *b) 
+void generate_code_php_five(batch *b)
 {
     umlclasslist tmplist; 
     char *tmpname;

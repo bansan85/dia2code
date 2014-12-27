@@ -168,7 +168,6 @@ create_nested_modules_from_pkglist (
     return m;
 }
 
-
 module *
 find_or_add_module (std::list <declaration> &dptr,
                     const std::list <umlPackage>::iterator &debut,
@@ -215,7 +214,7 @@ DiaGram::push (umlClassNode & node)
     }
 
     tmp_classes.push_back (node.getName ());
-    
+
     list_classes (node, used_classes);
     // Make sure all classes that this one depends on are already pushed.
     for (umlClassNode & it : used_classes) {
@@ -246,7 +245,6 @@ DiaGram::push (umlClassNode & node)
 #endif
 }
 
-
 bool
 DiaGram::have_include (const std::string & name) const
 {
@@ -264,7 +262,7 @@ DiaGram::add_include (const std::string & name)
     if (have_include (name)) {
         return;
     }
-    
+
     includes.push_back (name);
 }
 

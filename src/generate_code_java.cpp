@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * get the visibility java keyword from the Dia visibility code
  * @param int the dia visibility constant
- * @return the java keyword for visibility 
+ * @return the java keyword for visibility
  */
 char *java_visibility_to_string(int visibility)
 {
@@ -139,7 +139,7 @@ int java_generate_operation( FILE * outfile, umloperation *ope, int classtype )
     d2c_fprintf(outfile, " )");
     if ( classtype == CLASSTYPE_ABSTRACT || classtype == CLASSTYPE_INTERFACE) {
         d2c_fprintf(outfile, ";\n");
-    } 
+    }
     else {
         if ( ope->implementation != NULL ) {
             debug( DBG_GENCODE, "implementation found" );
@@ -206,7 +206,7 @@ void generate_code_java(batch *b)
             fprintf(stderr, "Sorry, name of file too long ...\nTry a smaller dir name\n");
             exit(4);
         }
-        
+
         tmppcklist = make_package_list(tmplist->key->package);
 
         if (tmppcklist) {
@@ -238,7 +238,7 @@ void generate_code_java(batch *b)
                     d2c_fputc(lc, (char) outfile);
             }
 
-            
+
             tmppcklist = make_package_list(class_->package);
             if ( tmppcklist != NULL ){
                 d2c_fprintf(outfile,"package %s",tmppcklist->key->name);

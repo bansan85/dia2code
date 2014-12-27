@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * get the visibility java keyword from the Dia visibility code
  * @param int the dia visibility constant
- * @return the java keyword for visibility 
+ * @return the java keyword for visibility
  */
 char *php_visibility(int visibility)
 {
@@ -43,7 +43,7 @@ char *php_visibility(int visibility)
     }
 }
 
-void generate_code_php(batch *b) 
+void generate_code_php(batch *b)
 {
     umlclasslist tmplist, parents;
     umlassoclist associations;
@@ -74,13 +74,13 @@ void generate_code_php(batch *b)
             debug( 1, "warning: Can't open the license file.\n");
         }
     }
-    
-    
-    
+
+
+
     while ( tmplist != NULL ) {
         char *sourcebuffer = NULL;
         sbklist = NULL;
-        
+
         if ( ! ( is_present(b->classes, tmplist->key->name) ^ b->mask ) ) {
 
             tmpname = tmplist->key->name;
@@ -106,7 +106,7 @@ void generate_code_php(batch *b)
 
             /* get implementation code from the existing file */
             source_preserve( b, tmplist->key, outfilename, source );
-            
+
             if ( b->clobber ) {
 
                 outfile = fopen(outfilename, "w");
@@ -262,7 +262,7 @@ void generate_code_php(batch *b)
                         if (tmpa != NULL) fprintf(outfile, ", ");
                     }
                     fprintf(outfile, ") ");
-                    
+
                     if ( umlo->key.implementation != NULL ) {
                         fprintf(outfile, "%s{%s}\n", TABS, umlo->key.implementation);
                     } else if (!umlo->key.attr.isabstract) {

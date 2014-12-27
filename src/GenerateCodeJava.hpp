@@ -56,7 +56,7 @@ class GenerateCodeJava : public GenerateCode {
         void writeStruct (const umlClassNode & node);
         void writeTypedef (const umlClassNode & node);
         void writeAssociation (const umlassoc & asso);
-        
+
         ~GenerateCodeJava ();
 };
 

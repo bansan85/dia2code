@@ -40,11 +40,11 @@ class umlClassNode : public umlClass {
                       std::list <umlassoc> & associations_,
                       std::list <umlClassNode> & dependencies_);
         umlClassNode (umlClass & _key);
-        
+
         const std::list <umlClass *> & getParents () const;
         const std::list <umlassoc> & getAssociations () const;
         const std::list <umlClassNode> & getDependencies () const;
-        
+
         declaration * find_class (std::list <declaration> & decl) const;
         void addparent (umlClass * key);
         void adddependency (umlClassNode & dependent);
@@ -52,7 +52,7 @@ class umlClassNode : public umlClass {
                            char composite,
                            umlClassNode & base,
                            const char *multiplicity);
-        
+
         ~umlClassNode ();
 };
 

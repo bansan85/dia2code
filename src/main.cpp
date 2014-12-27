@@ -30,7 +30,7 @@ int main (int argc, char **argv) {
     int i;
     char *infile = NULL;    /* The input file */
     int parameter = 0;
-    
+
     uint8_t tab = 4;
     char   *ext = NULL, *bext = NULL, *outdir = NULL, *license = NULL;
     bool    overwrite = true, buildtree = false, newline = false,
@@ -222,7 +222,7 @@ under certain conditions; read the COPYING file for details.\n";
         fprintf (stderr, "error : no generator specify.\n");
         exit (1);
     }
-    
+
     generator->setIndent (tab);
     generator->setOverwrite (overwrite);
     generator->setBuildTree (buildtree);

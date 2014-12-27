@@ -156,11 +156,11 @@ void generate_code_sql(batch *b) {
                 fk_col = temp->name;
             }
             fprintf( outfilesql, "\n\nALTER TABLE %s ADD\n", temp->key->name );
-            fprintf( outfilesql, "    CONSTRAINT  FK_%s_%s  FOREIGN KEY(%s) REFERENCES %s (%s);\n", 
-                     temp->key->name, 
-                     tmplist->key->name, 
-                     temp->name, 
-                     tmplist->key->name, 
+            fprintf( outfilesql, "    CONSTRAINT  FK_%s_%s  FOREIGN KEY(%s) REFERENCES %s (%s);\n",
+                     temp->key->name,
+                     tmplist->key->name,
+                     temp->name,
+                     tmplist->key->name,
                      fk_col );
             temp = temp->next;
         }

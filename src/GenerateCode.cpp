@@ -664,7 +664,7 @@ GenerateCode::spc () const {
     for (i = 0; i < n_spaces; i++) {
         spcbuf.append (" ");
     }
-    
+
     return spcbuf;
 }
 
@@ -680,7 +680,7 @@ GenerateCode::setIndent (uint8_t spaces) {
     if ((spaces < 1) || (spaces > 8)) {
         return;
     }
-    
+
     indent = spaces & 15;
 
     return;

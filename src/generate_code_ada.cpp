@@ -298,7 +298,7 @@ gen_class (umlclassnode *node, int do_valuetype)
         while (umla != NULL) {
             char *member = umla->key.name;
             umlclassnode *ref;
-    
+
             if (umla->key.visibility != '0' || umla->key.isstatic) {
                 umla = umla->next;
                 continue;

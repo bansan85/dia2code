@@ -110,7 +110,7 @@ umlClass::make_getset_methods () {
 
             tmpname.assign ("set");
             tmpname.append (strtoupperfirst(attrlist.getName ()));
-            
+
             umlOperation operation (tmpname,
                                     "",
                                     "void",
@@ -134,7 +134,7 @@ umlClass::make_getset_methods () {
                 tmpname.assign ("get");
             }
             tmpname.append (strtoupperfirst (attrlist.getName ()));
-            
+
             umlOperation operation2 (tmpname, "", attrlist.getType (),
                                      "", '0', false, false, true, '1', impl);
             umlOperation::insert_operation (operation2, operations);
@@ -300,7 +300,7 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
 
     while (object != NULL) {
         xmlChar *objtype = xmlGetProp (object, BAD_CAST2 ("type"));
-        // Here we have a Dia object 
+        // Here we have a Dia object
         if (strcmp ("UML - Class", BAD_TSAC2 (objtype)) == 0) {
             // Here we have a class definition
             umlClassNode tmplist;
@@ -390,7 +390,7 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                         }
                         else if (!strcmp (attrtype, "multipicity_b")) {
                             multiplicity_b = BAD_TSAC2 (grandchild->content);
-                        } 
+                        }
                         else if (!strcmp (attrtype, "ends")) {
                             if (!strcmp (BAD_TSAC2 (child->name), "composite")) {
                                 while (grandchild) {
@@ -557,9 +557,9 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
             }
         }
     }
-    
+
     xmlFreeDoc (ptr);
-    
+
     return;
 }
 

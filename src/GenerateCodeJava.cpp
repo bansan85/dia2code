@@ -314,7 +314,7 @@ GenerateCodeCpp::writeNameSpaceEnd () {
 void
 GenerateCodeCpp::writeConst (const umlClassNode & node) {
     std::list <umlAttribute>::const_iterator umla;
-    
+
     umla = node.getAttributes ().begin ();
     getFile () << spc () << "/// " << node.getComment () << "\n";
     if (node.getAttributes ().size () != 1) {

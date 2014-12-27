@@ -38,7 +38,7 @@ char *java_visibility_to_string(int visibility);
 /**
  * get the visibility java keyword from the Dia visibility code
  * @param int the dia visibility constant
- * @return the java keyword for visibility 
+ * @return the java keyword for visibility
  */
 char *as3_visibility_to_string(int visibility)
 {

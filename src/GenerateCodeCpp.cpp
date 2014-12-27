@@ -176,7 +176,7 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
                      "CORBAValue %s: static not supported\n",
                      ope.getName ().c_str ());
         }
-        else 
+        else
 #endif
         {
             getFile () << "static ";
@@ -324,7 +324,7 @@ GenerateCodeCpp::writeNameSpaceEnd (const umlClassNode * node) {
 void
 GenerateCodeCpp::writeConst (const umlClassNode & node) {
     std::list <umlAttribute>::const_iterator umla;
-    
+
     umla = node.getAttributes ().begin ();
     getFile () << spc () << "/// " << node.getComment () << "\n";
     if (node.getAttributes ().size () != 1) {
