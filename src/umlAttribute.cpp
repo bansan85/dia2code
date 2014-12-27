@@ -165,20 +165,20 @@ umlAttribute::parse (xmlNodePtr node) {
         nodename = xmlGetProp (node, BAD_CAST2 ("name"));
 
         if (!strcmp ("name", BAD_TSAC2 (nodename))) {
-            parse_dia_node (node->xmlChildrenNode, name);
+            parseDiaNode (node->xmlChildrenNode, name);
         } else if (!strcmp ("value", BAD_TSAC2 (nodename))) {
             if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-                parse_dia_node (node->xmlChildrenNode, value);
+                parseDiaNode (node->xmlChildrenNode, value);
             }
         } else if (!strcmp ("type", BAD_TSAC2 (nodename))) {
             if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-                parse_dia_node (node->xmlChildrenNode, type);
+                parseDiaNode (node->xmlChildrenNode, type);
             } else {
                 type.clear ();
             }
         } else if (!strcmp("comment", BAD_TSAC2 (nodename))) {
             if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
-               parse_dia_node (node->xmlChildrenNode, comment);
+               parseDiaNode (node->xmlChildrenNode, comment);
             } else {
                comment.clear ();
           }
@@ -191,11 +191,11 @@ umlAttribute::parse (xmlNodePtr node) {
             sscanf (BAD_TSAC2 (attrval), "%c", &visibility);
             free (attrval);
         } else if (!strcmp ("abstract", BAD_TSAC2 (nodename))) {
-            isabstract = parse_boolean (node->xmlChildrenNode);
+            isabstract = parseBoolean (node->xmlChildrenNode);
         } else if (!strcmp ("class_scope", BAD_TSAC2 (nodename))) {
-            isstatic = parse_boolean (node->xmlChildrenNode);
+            isstatic = parseBoolean (node->xmlChildrenNode);
         } else if (!strcmp ("query", BAD_TSAC2 (nodename))) {
-            isconstant = parse_boolean (node->xmlChildrenNode);
+            isconstant = parseBoolean (node->xmlChildrenNode);
         }
 
         free (nodename);

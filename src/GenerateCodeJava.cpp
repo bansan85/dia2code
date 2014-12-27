@@ -182,7 +182,7 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
         }
     }
     if (!ope.getType ().empty ()) {
-        getFile () << cppname (ope.getType ()) << " ";
+        getFile () << cppName (ope.getType ()) << " ";
     }
     getFile () << ope.getName () << " (";
 
@@ -329,7 +329,7 @@ GenerateCodeCpp::writeConst (const umlClassNode & node) {
                  node.getName ().c_str ());
     }
 
-    getFile () << spc () << "const " << cppname ((*umla).getType ())
+    getFile () << spc () << "const " << cppName ((*umla).getType ())
                << " " << node.getName () << " = " << (*umla).getValue ()
                << ";\n\n";
 }
@@ -391,7 +391,7 @@ GenerateCodeCpp::writeStruct (const umlClassNode & node) {
     while (umla != node.getAttributes ().end ()) {
         (*umla).check (node.getName ().c_str ());
         getFile () << spc () << "/// " << (*umla).getComment () << "\n";
-        getFile () << spc () << cppname ((*umla).getType ()) << " "
+        getFile () << spc () << cppName ((*umla).getType ()) << " "
              << (*umla).getName ();
         if (!(*umla).getValue ().empty ()) {
             fprintf (stderr,
@@ -423,7 +423,7 @@ GenerateCodeCpp::writeTypedef (const umlClassNode & node) {
                  "Warning: typedef %s: ignoring name field in implementation type attribute\n",
                  node.getName ().c_str ());
     }
-    getFile () << spc () << "typedef " << cppname ((*umla).getType ()) << " "
+    getFile () << spc () << "typedef " << cppName ((*umla).getType ()) << " "
                << node.getName () << (*umla).getValue () << ";\n\n";
 }
 
@@ -437,7 +437,7 @@ GenerateCodeCpp::writeAssociation (const umlassoc & asso) {
             getFile () << spc () << fqname (*ref, !asso.composite);
         }
         else {
-            getFile () << spc () << cppname (asso.key.getName ());
+            getFile () << spc () << cppName (asso.key.getName ());
         }
         getFile () << " " << asso.name << ";\n";
     }

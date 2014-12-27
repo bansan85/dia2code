@@ -58,7 +58,7 @@ nospc (char *str)
 }
 
 static int
-is_oo_class (umlclass *cl)
+isOoClass (umlclass *cl)
 {
     char *st;
     if (cl == NULL)
@@ -66,10 +66,10 @@ is_oo_class (umlclass *cl)
     st = cl->stereotype;
     if (strlen (st) == 0)
         return 1;
-    return (!is_const_stereo (st) &&
-            !is_typedef_stereo (st) &&
-            !is_enum_stereo (st) &&
-            !is_struct_stereo (st) &&
+    return (!isConstStereo (st) &&
+            !isTypedefStereo (st) &&
+            !isEnumStereo (st) &&
+            !isStructStereo (st) &&
             !eq (st, "CORBAUnion") &&
             !eq (st, "CORBAException"));
 }
@@ -82,7 +82,7 @@ has_oo_class (declaration *d)
             if (has_oo_class (d->u.this_module->contents))
                 return 1;
         } else {         /* dk_class */
-            if (is_oo_class (d->u.this_class->key))
+            if (isOoClass (d->u.this_class->key))
                 return 1;
         }
         d = d->next;
@@ -112,7 +112,7 @@ adaname (char *name)
     } else {
         umlclassnode *ref = find_by_name (gb->classlist, name);
         strcpy (buf, name);
-        if (ref != NULL && is_oo_class (ref->key))
+        if (ref != NULL && isOoClass (ref->key))
             strcat (buf, ".Value_Ref");
     }
     return buf;
@@ -193,7 +193,7 @@ fqname (umlclassnode *node, int use_ref_type)
         }
     }
     strcat (buf, node->key->name);
-    if (is_oo_class (node->key)) {
+    if (isOoClass (node->key)) {
         if (use_ref_type)
             strcat (buf, ".Value_Ref");
         else
@@ -260,7 +260,7 @@ gen_static_attributes (umlattrlist umla, int do_private)
 }
 
 static void
-gen_class (umlclassnode *node, int do_valuetype)
+genClass (umlclassnode *node, int do_valuetype)
 {
     char *name = node->key->name;
     char parentname[SMALL_BUFFER];
@@ -378,7 +378,7 @@ gen_class (umlclassnode *node, int do_valuetype)
             ref = find_by_name (gb->classlist, assoc->key->name);
             print ("%s : ", assoc->name);
             if (ref != NULL) {
-                if (is_oo_class (ref->key) && do_valuetype && assoc->composite)
+                if (isOoClass (ref->key) && do_valuetype && assoc->composite)
                     fprintf (stderr, "Association %s cannot be composite\n",
                                      assoc->key->name);
                 emit ("%s", fqname (ref, !assoc->composite));
@@ -404,7 +404,7 @@ convention_c (char *name)
 }
 
 static void
-gen_decl (declaration *d)
+genDecl (declaration *d)
 {
     char *name;
     char *stype;
@@ -422,7 +422,7 @@ gen_decl (declaration *d)
         indentlevel++;
         d = d->u.this_module->contents;
         while (d != NULL) {
-            gen_decl (d);
+            genDecl (d);
             d = d->next;
         }
         indentlevel--;
@@ -436,14 +436,14 @@ gen_decl (declaration *d)
     umla = node->key->attributes;
 
     if (strlen (stype) == 0) {
-        gen_class (node, 0);
+        genClass (node, 0);
         return;
     }
 
     if (eq (stype, "CORBANative")) {
         print ("-- CORBANative: %s\n\n", name);
 
-    } else if (is_const_stereo (stype)) {
+    } else if (isConstStereo (stype)) {
         if (umla == NULL) {
             fprintf (stderr, "Error: first attribute not set at %s\n", name);
             exit (1);
@@ -454,7 +454,7 @@ gen_decl (declaration *d)
         print ("%s : constant %s := %s;\n\n", name, adaname (umla->key.type),
                                                              umla->key.value);
 
-    } else if (is_enum_stereo (stype)) {
+    } else if (isEnumStereo (stype)) {
         print ("type %s is (\n", name);
         indentlevel++;
         while (umla != NULL) {
@@ -472,7 +472,7 @@ gen_decl (declaration *d)
         convention_c (name);
         emit ("\n");
 
-    } else if (is_struct_stereo (stype)) {
+    } else if (isStructStereo (stype)) {
         print ("type %s is record\n", name);
         indentlevel++;
         while (umla != NULL) {
@@ -533,7 +533,7 @@ gen_decl (declaration *d)
         convention_c (name);
         emit ("\n");
 
-    } else if (is_typedef_stereo (stype)) {
+    } else if (isTypedefStereo (stype)) {
         char dim[SMALL_BUFFER];
 
         /* Conventions for CORBATypedef:
@@ -578,11 +578,11 @@ gen_decl (declaration *d)
         emit ("%s;\n\n", adaname (umla->key.type));
 
     } else if (eq (stype, "CORBAValue")) {
-        gen_class (node, 1);
+        genClass (node, 1);
 
     } else {
         print ("--  %s\n", stype);
-        gen_class (node, 0);
+        genClass (node, 0);
     }
 }
 
@@ -647,7 +647,7 @@ generate_code_ada (batch *b)
         } else {         /* dk_class */
             name = d->u.this_class->key->name;
             strcpy (basename, name);
-            if (is_oo_class (d->u.this_class->key)) {
+            if (isOoClass (d->u.this_class->key)) {
                 need_body = 1;
             } else {
                 strcat (basename, PACKAGE_EXT);
@@ -670,7 +670,7 @@ generate_code_ada (batch *b)
         }
 
         includes = NULL;
-        determine_includes (d, b);
+        determineIncludes (d, b);
         if (use_corba)
             print ("with CORBA.Value;\n\n");
         if (includes) {
@@ -693,7 +693,7 @@ generate_code_ada (batch *b)
             body = NULL;
         }
 
-        gen_decl (d);
+        genDecl (d);
 
         if (synthesize_package) {
             indentlevel--;

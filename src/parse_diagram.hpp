@@ -27,13 +27,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "umlAttribute.hpp"
 
-void parse_dia_node (xmlNodePtr stringnode, std::string &buffer);
-bool parse_boolean (xmlNodePtr booleannode);
-void parse_attributes (xmlNodePtr node, std::list <umlAttribute> &retour);
-void parse_dia_string (const char * stringnode, std::string &buffer);
-void recursive_search (xmlNodePtr node, xmlNodePtr * object);
+void parseDiaNode (xmlNodePtr stringnode, std::string &buffer);
+bool parseBoolean (xmlNodePtr booleannode);
+void parseAttributes (xmlNodePtr node, std::list <umlAttribute> &retour);
+void parseDiaString (const char * stringnode, std::string &buffer);
+void recursiveSearch (xmlNodePtr node, xmlNodePtr * object);
 xmlNodePtr getNextObject (xmlNodePtr from);
-void parse_templates (xmlNodePtr node,
+void parseTemplates (xmlNodePtr node,
                       std::list <std::pair <std::string, std::string> > &res);
 
 #endif

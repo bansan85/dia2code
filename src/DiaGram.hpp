@@ -44,16 +44,16 @@ class DiaGram {
         std::list <std::string> includes;
         std::list <declaration> decl;
         
-        void list_classes (umlClassNode & current_class,
+        void listClasses (umlClassNode & current_class,
                            std::list <umlClassNode> & res);
 
         /**
          * open_outfile() returns NULL if the file exists and is not rewritten
          * due to a clobber prohibition. Does an exit(1) if serious problems happen.
         */
-        bool have_include (const std::string & name) const;
-        void add_include (const std::string & name);
-        void push_include (umlClassNode & node);
+        bool haveInclude (const std::string & name) const;
+        void addInclude (const std::string & name);
+        void pushInclude (umlClassNode & node);
     public:
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;
@@ -74,7 +74,7 @@ class DiaGram {
         void push (umlClassNode &node);
         std::list <std::string> getIncludes () const;
         void cleanIncludes ();
-        void determine_includes (declaration &d);
+        void determineIncludes (declaration &d);
         
         std::list <declaration>::iterator getDeclBegin ();
         std::list <declaration>::iterator getDeclEnd ();

@@ -136,7 +136,7 @@ gen_interface (umlclassnode *node)
 
 
 static void
-gen_decl (declaration *d)
+genDecl (declaration *d)
 {
     char *name;
     char *stype;
@@ -152,7 +152,7 @@ gen_decl (declaration *d)
         indentlevel++;
         d = d->u.this_module->contents;
         while (d != NULL) {
-            gen_decl (d);
+            genDecl (d);
             d = d->next;
         }
         close_scope ();
@@ -172,7 +172,7 @@ gen_decl (declaration *d)
     if (eq (stype, "CORBANative")) {
         print ("native %s;\n\n", name);
 
-    } else if (is_const_stereo (stype)) {
+    } else if (isConstStereo (stype)) {
         if (umla == NULL) {
             fprintf (stderr, "Error: first attribute not set at const %s\n", name);
             exit (1);
@@ -182,7 +182,7 @@ gen_decl (declaration *d)
 
         print ("const %s %s = %s;\n\n", umla->key.type, name, umla->key.value);
 
-    } else if (is_enum_stereo (stype)) {
+    } else if (isEnumStereo (stype)) {
         print ("enum %s {\n", name);
         indentlevel++;
         while (umla != NULL) {
@@ -198,7 +198,7 @@ gen_decl (declaration *d)
         }
         close_scope ();
 
-    } else if (is_struct_stereo (stype) ||
+    } else if (isStructStereo (stype) ||
                eq (stype, "CORBAException")) {
         int corba_ofst = strncmp (stype, "CORBA", 5) == 0 ? 5 : 0;
         char *keyword = strtolower (stype + corba_ofst);
@@ -233,7 +233,7 @@ gen_decl (declaration *d)
         }
         close_scope ();
 
-    } else if (is_typedef_stereo (stype)) {
+    } else if (isTypedefStereo (stype)) {
         /* Conventions for CORBATypedef:
            The first (and only) attribute contains the following:
            Name:   Empty - the name is taken from the class.
@@ -388,7 +388,7 @@ generate_code_idl (batch *b)
         put_hfence (name);
 
         includes = NULL;
-        determine_includes (d, b);
+        determineIncludes (d, b);
         if (includes) {
             namelist incfile = includes;
             while (incfile != NULL) {
@@ -400,7 +400,7 @@ generate_code_idl (batch *b)
             emit ("\n");
         }
 
-        gen_decl (d);
+        genDecl (d);
 
         emit ("#endif\n");   /* from hfence */
         fclose (spec);

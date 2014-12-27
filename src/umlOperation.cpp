@@ -69,7 +69,7 @@ umlOperation::umlOperation (xmlNodePtr node) :
         xmlChar *nodename;
         nodename = xmlGetProp(node, BAD_CAST2 ("name"));
         if (!strcmp ("parameters", BAD_TSAC2 (nodename))) {
-            parse_attributes (node->xmlChildrenNode, parameters);
+            parseAttributes (node->xmlChildrenNode, parameters);
         }
         free (nodename);
         node = node->next;

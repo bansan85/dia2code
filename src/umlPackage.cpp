@@ -46,7 +46,7 @@ umlPackage::umlPackage (xmlNodePtr package, std::string id_) :
         attrname = xmlGetProp (attribute, BAD_CAST2 ("name"));
         if (attrname != NULL) {
             if (!strcmp ("name", BAD_TSAC2 (attrname))) {
-                parse_dia_node (attribute->xmlChildrenNode, name);
+                parseDiaNode (attribute->xmlChildrenNode, name);
             } else if (!strcmp ("obj_pos", BAD_TSAC2 (attrname))) {
                 parse_geom_position (attribute->xmlChildrenNode, &geom);
             } else if (!strcmp ("elem_width", BAD_TSAC2 (attrname))) {

@@ -199,7 +199,7 @@ GenerateCode::generate_code () {
         writeStartHeader (tmpname);
 
         getDia ().cleanIncludes ();
-        getDia ().determine_includes (*it2);
+        getDia ().determineIncludes (*it2);
 #ifdef ENABLE_CORBA
         if (getDia ().getUseCorba ()) {
             writeInclude ("p_orb.h");
@@ -219,7 +219,7 @@ GenerateCode::generate_code () {
             }
         }
 
-        gen_decl (*it2);
+        genDecl (*it2);
 
         writeEndHeader ();
         if (indentlevel != 0) {
@@ -275,7 +275,7 @@ nospc (char *str) {
 }
 
 int
-is_enum_stereo (const char *stereo) {
+isEnumStereo (const char *stereo) {
     return (!strcasecmp (stereo, "enum") ||
             !strcasecmp (stereo, "enumeration")
 #ifdef ENABLE_CORBA
@@ -285,7 +285,7 @@ is_enum_stereo (const char *stereo) {
 }
 
 int
-is_struct_stereo (const char *stereo) {
+isStructStereo (const char *stereo) {
     return (!strcasecmp (stereo, "struct") ||
             !strcasecmp (stereo, "structure")
 #ifdef ENABLE_CORBA
@@ -295,7 +295,7 @@ is_struct_stereo (const char *stereo) {
 }
 
 int
-is_typedef_stereo (const char *stereo) {
+isTypedefStereo (const char *stereo) {
     return (!strcasecmp (stereo, "typedef")
 #ifdef ENABLE_CORBA
             || !strcmp (stereo, "CORBATypedef")
@@ -304,7 +304,7 @@ is_typedef_stereo (const char *stereo) {
 }
 
 int
-is_const_stereo (const char *stereo) {
+isConstStereo (const char *stereo) {
     return (!strcasecmp (stereo, "const") ||
             !strcasecmp (stereo, "constant")
 #ifdef ENABLE_CORBA
@@ -314,43 +314,43 @@ is_const_stereo (const char *stereo) {
 }
 
 int
-GenerateCode::pass_by_reference (umlClass &cl) {
+GenerateCode::passByReference (umlClass &cl) {
     const char *st;
     st = cl.getStereotype ().c_str ();
     if (strlen (st) == 0) {
         return 1;
     }
-    if (is_typedef_stereo (st)) {
+    if (isTypedefStereo (st)) {
         umlClassNode *ref = find_by_name (dia.getUml (),
                                           cl.getName ().c_str ());
         if (ref == NULL) {
             return 0;
         }
-        return pass_by_reference (*ref);
+        return passByReference (*ref);
     }
-    return (!is_const_stereo (st) &&
-            !is_enum_stereo (st));
+    return (!isConstStereo (st) &&
+            !isEnumStereo (st));
 }
 
 #ifdef ENABLE_CORBA
 static int
-is_oo_class (umlClass &cl) {
+isOoClass (umlClass &cl) {
     const char *st;
     st = cl.getStereotype ().c_str ();
     if (strlen (st) == 0) {
         return 1;
     }
-    return (!is_const_stereo (st) &&
-            !is_typedef_stereo (st) &&
-            !is_enum_stereo (st) &&
-            !is_struct_stereo (st) &&
+    return (!isConstStereo (st) &&
+            !isTypedefStereo (st) &&
+            !isEnumStereo (st) &&
+            !isStructStereo (st) &&
             !eq (st, "CORBAUnion") &&
             !eq (st, "CORBAException"));
 }
 #endif
 
 const char *
-GenerateCode::cppname (std::string name) const {
+GenerateCode::cppName (std::string name) const {
     static std::string buf;
 #ifdef ENABLE_CORBA
     if (dia.getUseCorba ()) {
@@ -395,7 +395,7 @@ GenerateCode::cppname (std::string name) const {
 }
 
 void
-GenerateCode::gen_class (const umlClassNode & node) {
+GenerateCode::genClass (const umlClassNode & node) {
 #ifdef ENABLE_CORBA
     const char *name = node.getName ().c_str ();
 #endif
@@ -459,7 +459,7 @@ GenerateCode::gen_class (const umlClassNode & node) {
                     file << spc () << fqname (*ref, true);
                 }
                 else {
-                    file << spc () << cppname (umla.getType ());
+                    file << spc () << cppName (umla.getType ());
                 }
                 if (!bOpenBraceOnNewline) {
                     file << " " << member << " () { return _" << member
@@ -474,7 +474,7 @@ GenerateCode::gen_class (const umlClassNode & node) {
                 }
                 file << spc () << "void " << member << " (";
                 if (ref != NULL) {
-                    int by_ref = pass_by_reference (*ref);
+                    int by_ref = passByReference (*ref);
                     if (by_ref) {
                         file << "const ";
                     }
@@ -484,7 +484,7 @@ GenerateCode::gen_class (const umlClassNode & node) {
                     }
                 }
                 else {
-                    file << cppname (umla.getType ());
+                    file << cppName (umla.getType ());
                 }
                 if (!bOpenBraceOnNewline) {
                     file << " value_) { _" << member << " = value_; }\n";
@@ -539,14 +539,14 @@ GenerateCode::gen_class (const umlClassNode & node) {
                                               umla.getType ().c_str ());
             file << spc ();
             if (ref != NULL) {
-                file << fqname (*ref, is_oo_class (*ref));
+                file << fqname (*ref, isOoClass (*ref));
                 /*
                  * FIXME: Find a better way to decide whether to use
                  * a pointer.
                 */
             }
             else {
-                file << cppname (umla.getType ());
+                file << cppName (umla.getType ());
             }
             file << " _" << umla.getName () << ";\n";
         }
@@ -559,7 +559,7 @@ GenerateCode::gen_class (const umlClassNode & node) {
 
 
 void
-GenerateCode::gen_decl (declaration &d) {
+GenerateCode::genDecl (declaration &d) {
 #ifdef ENABLE_CORBA
     const char *name;
 #endif
@@ -569,7 +569,7 @@ GenerateCode::gen_decl (declaration &d) {
 
     if (d.decl_kind == dk_module) {
         for (declaration & it : d.u.this_module->contents) {
-            gen_decl (it);
+            genDecl (it);
         }
         return;
     }
@@ -585,7 +585,7 @@ GenerateCode::gen_decl (declaration &d) {
     umla = node->getAttributes ().begin ();
 
     if (strlen (stype) == 0) {
-        gen_class (*node);
+        genClass (*node);
         writeNameSpaceEnd (d.u.this_class);
         return;
     }
@@ -598,13 +598,13 @@ GenerateCode::gen_decl (declaration &d) {
     }
     else
 #endif
-    if (is_const_stereo (stype)) {
+    if (isConstStereo (stype)) {
         writeConst (*node);
     }
-    else if (is_enum_stereo (stype)) {
+    else if (isEnumStereo (stype)) {
         writeEnum (*node);
     }
-    else if (is_struct_stereo (stype)) {
+    else if (isStructStereo (stype)) {
         writeStruct (*node);
     }
 #ifdef ENABLE_CORBA
@@ -633,10 +633,10 @@ GenerateCode::gen_decl (declaration &d) {
         ++umla;
         while (umla != node->getAttributes ().end ()) {
             (*umla).check (name);
-            file << spc () << cppname ((*umla).getType ()) << " "
+            file << spc () << cppName ((*umla).getType ()) << " "
                  << (*umla).getName () << " ();\n";
             file << spc () << "void " << (*umla).getName () << " ("
-                 << cppname ((*umla).getType ())
+                 << cppName ((*umla).getType ())
                  << " _value);\n\n";
             ++umla;
         }
@@ -645,11 +645,11 @@ GenerateCode::gen_decl (declaration &d) {
 
     }
 #endif
-    else if (is_typedef_stereo (stype)) {
+    else if (isTypedefStereo (stype)) {
         writeTypedef (*node);
     }
     else {
-        gen_class (*node);
+        genClass (*node);
     }
 
     writeNameSpaceEnd (d.u.this_class);

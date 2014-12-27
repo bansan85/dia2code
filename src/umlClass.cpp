@@ -183,7 +183,7 @@ umlClass::lolipop_implementation (std::list <umlClassNode> & classlist,
         umlClass * key = new umlClass ();
         key->package = NULL;
         key->id.assign ("00");
-        parse_dia_string (name, key->name);
+        parseDiaString (name, key->name);
         key->stereotype.assign ("Interface");
         key->isabstract = 1;
         implementator->addparent (key);
@@ -296,7 +296,7 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
     }
 
     // we search for the first "object" node
-    recursive_search (ptr->xmlRootNode->xmlChildrenNode->next, &object);
+    recursiveSearch (ptr->xmlRootNode->xmlChildrenNode->next, &object);
 
     while (object != NULL) {
         xmlChar *objtype = xmlGetProp (object, BAD_CAST2 ("type"));
@@ -333,7 +333,7 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
          THIS STILL SUCKS !!! How soon is now? */
 
     /* we search for the first "object" node */
-    recursive_search (ptr->xmlRootNode->xmlChildrenNode->next, &object);
+    recursiveSearch (ptr->xmlRootNode->xmlChildrenNode->next, &object);
 
     while (object != NULL) {
         xmlChar *objtype = xmlGetProp (object, BAD_CAST2 ("type"));
@@ -503,7 +503,7 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
 
     /* Generalizations: we must put this AFTER all the interface
        implementations. generate_code_java relies on this. */
-    recursive_search (ptr->xmlRootNode->xmlChildrenNode->next, &object);
+    recursiveSearch (ptr->xmlRootNode->xmlChildrenNode->next, &object);
     while (object != NULL) {
         xmlChar *objtype = xmlGetProp (object, BAD_CAST2 ("type"));
         if (!strcmp ("UML - Generalization", BAD_TSAC2 (objtype))) {
@@ -579,7 +579,7 @@ umlClass::parse_class (xmlNodePtr class_) {
             continue;
         }
         if (!strcmp ("name", BAD_TSAC2 (attrname))) {
-            parse_dia_node (attribute->xmlChildrenNode, name);
+            parseDiaNode (attribute->xmlChildrenNode, name);
         } else if (!strcmp ("obj_pos", BAD_TSAC2 (attrname))) {
             parse_geom_position (attribute->xmlChildrenNode, &geom);
         } else if (!strcmp ("elem_width", BAD_TSAC2 (attrname))) {
@@ -588,20 +588,20 @@ umlClass::parse_class (xmlNodePtr class_) {
             parse_geom_height (attribute->xmlChildrenNode, &geom);
         } else if (!strcmp ("comment", BAD_TSAC2 (attrname)))  {
             if (attribute->xmlChildrenNode->xmlChildrenNode != NULL) {
-               parse_dia_node (attribute->xmlChildrenNode, comment);
+               parseDiaNode (attribute->xmlChildrenNode, comment);
             }  else {
                comment.clear ();
             }
         } else if (!strcmp ("stereotype", BAD_TSAC2 (attrname))) {
             if (attribute->xmlChildrenNode->xmlChildrenNode != NULL) {
-                parse_dia_node (attribute->xmlChildrenNode, stereotype);
+                parseDiaNode (attribute->xmlChildrenNode, stereotype);
             } else {
                 stereotype.clear ();
             }
         } else if (!strcmp ("abstract", BAD_TSAC2 (attrname))) {
-            isabstract = parse_boolean (attribute->xmlChildrenNode);
+            isabstract = parseBoolean (attribute->xmlChildrenNode);
         } else if (!strcmp ("attributes", BAD_TSAC2 (attrname))) {
-            parse_attributes (attribute->xmlChildrenNode, attributes);
+            parseAttributes (attribute->xmlChildrenNode, attributes);
         } else if (!strcmp ("operations", BAD_TSAC2 (attrname))) {
             umlOperation::parse_operations (attribute->xmlChildrenNode,
                                             operations);
@@ -609,7 +609,7 @@ umlClass::parse_class (xmlNodePtr class_) {
                 this->make_getset_methods ();
             }
         } else if (!strcmp ("templates", BAD_TSAC2 (attrname))) {
-            parse_templates (attribute->xmlChildrenNode, templates);
+            parseTemplates (attribute->xmlChildrenNode, templates);
         }
         free (attrname);
         attribute = attribute->next;

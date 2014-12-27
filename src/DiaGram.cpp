@@ -91,7 +91,7 @@ DiaGram::setUseCorba (bool corba) {
    by the given class AND are themselves in the classlist of the
    given batch */
 void
-DiaGram::list_classes (umlClassNode & current_class,
+DiaGram::listClasses (umlClassNode & current_class,
                        std::list <umlClassNode> & res) {
     std::list <umlClassNode> classes = getUml ();
     umlClassNode * tmpnode;
@@ -215,7 +215,7 @@ DiaGram::push (umlClassNode & node)
 
     tmp_classes.push_back (node.getName ());
 
-    list_classes (node, used_classes);
+    listClasses (node, used_classes);
     // Make sure all classes that this one depends on are already pushed.
     for (umlClassNode & it : used_classes) {
         // don't push this class
@@ -246,7 +246,7 @@ DiaGram::push (umlClassNode & node)
 }
 
 bool
-DiaGram::have_include (const std::string & name) const
+DiaGram::haveInclude (const std::string & name) const
 {
     for (std::string inc : includes) {
         if (!inc.compare (name)) {
@@ -257,9 +257,9 @@ DiaGram::have_include (const std::string & name) const
 }
 
 void
-DiaGram::add_include (const std::string & name)
+DiaGram::addInclude (const std::string & name)
 {
-    if (have_include (name)) {
+    if (haveInclude (name)) {
         return;
     }
 
@@ -267,14 +267,14 @@ DiaGram::add_include (const std::string & name)
 }
 
 void
-DiaGram::push_include (umlClassNode &node)
+DiaGram::pushInclude (umlClassNode &node)
 {
     if (node.getPackage () != NULL) {
         std::list <umlPackage> pkglist;
         umlPackage::make_package_list (node.getPackage (), pkglist);
-        add_include ((*pkglist.begin ()).getName ());
+        addInclude ((*pkglist.begin ()).getName ());
     } else {
-        add_include (node.getName ());
+        addInclude (node.getName ());
     }
 }
 
@@ -290,17 +290,17 @@ DiaGram::cleanIncludes () {
 }
 
 void
-DiaGram::determine_includes (declaration &d)
+DiaGram::determineIncludes (declaration &d)
 {
     if (d.decl_kind == dk_module) {
         for (declaration & it : d.u.this_module->contents) {
-            determine_includes (it);
+            determineIncludes (it);
         }
     } else {
         std::list <umlClassNode> cl;
-        list_classes (*d.u.this_class, cl);
+        listClasses (*d.u.this_class, cl);
         for (umlClassNode & it : cl) {
-            push_include (it);
+            pushInclude (it);
         }
     }
 }

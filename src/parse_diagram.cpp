@@ -29,12 +29,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 void
-parse_dia_string (const char * stringnode, std::string &buffer) {
+parseDiaString (const char * stringnode, std::string &buffer) {
     buffer.assign (stringnode, 1, strlen (stringnode) - 2);
 }
 
 void
-parse_dia_node (xmlNodePtr stringnode, std::string &buffer) {
+parseDiaNode (xmlNodePtr stringnode, std::string &buffer) {
     xmlChar *content;
 
     content = xmlNodeGetContent (stringnode);
@@ -43,7 +43,7 @@ parse_dia_node (xmlNodePtr stringnode, std::string &buffer) {
 }
 
 bool
-parse_boolean (xmlNodePtr booleannode) {
+parseBoolean (xmlNodePtr booleannode) {
     xmlChar *val;
     int result;
 
@@ -54,7 +54,7 @@ parse_boolean (xmlNodePtr booleannode) {
 }
 
 void
-parse_attributes (xmlNodePtr node, std::list <umlAttribute> &retour) {
+parseAttributes (xmlNodePtr node, std::list <umlAttribute> &retour) {
     while (node != NULL) {
         umlAttribute an;
         an.parse (node->xmlChildrenNode);
@@ -64,24 +64,24 @@ parse_attributes (xmlNodePtr node, std::list <umlAttribute> &retour) {
 }
 
 void
-parse_template (xmlNodePtr node, std::pair <std::string, std::string> &tmp) {
-    parse_dia_string (BAD_TSAC2 (
+parseTemplate (xmlNodePtr node, std::pair <std::string, std::string> &tmp) {
+    parseDiaString (BAD_TSAC2 (
                               node->xmlChildrenNode->xmlChildrenNode->content),
                                  tmp.first);
-    parse_dia_string (BAD_TSAC2 (
+    parseDiaString (BAD_TSAC2 (
                         node->next->xmlChildrenNode->xmlChildrenNode->content),
                                  tmp.second);
 }
 
 void
-parse_templates (xmlNodePtr node,
+parseTemplates (xmlNodePtr node,
                  std::list <std::pair <std::string, std::string>> &res) {
     while (node != NULL) {
         if (node->xmlChildrenNode->xmlChildrenNode->xmlChildrenNode != NULL &&
             node->xmlChildrenNode->next->xmlChildrenNode->xmlChildrenNode !=
                                                                        NULL ) {
             std::pair <std::string, std::string> tn;
-            parse_template (node->xmlChildrenNode, tn);
+            parseTemplate (node->xmlChildrenNode, tn);
             res.push_back (tn);
         }
         node = node->next;
@@ -90,7 +90,7 @@ parse_templates (xmlNodePtr node,
 }
 
 void
-recursive_search (xmlNodePtr node, xmlNodePtr * object) {
+recursiveSearch (xmlNodePtr node, xmlNodePtr * object) {
     xmlNodePtr child;
     if (*object != NULL ) {
         return;
@@ -102,7 +102,7 @@ recursive_search (xmlNodePtr node, xmlNodePtr * object) {
         }
         child = node->xmlChildrenNode;
         while (child != NULL) {
-            recursive_search (child, object);
+            recursiveSearch (child, object);
             child = child->next;
         }
     }

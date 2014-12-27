@@ -267,7 +267,7 @@ void generate_code_as3(batch *b)
             }
 
             /* We generate the import clauses */
-            used_classes = list_classes(tmplist, b);
+            used_classes = listClasses(tmplist, b);
             while (used_classes != NULL)
             {
                 tmppcklist = make_package_list(used_classes->key->package);

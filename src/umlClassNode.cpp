@@ -159,7 +159,7 @@ umlClassNode::addaggregate (const char *name_,
                             const char *multiplicity) {
     umlassoc tmp;
     if (name_ != NULL && strlen (name_) > 2) {
-        parse_dia_string(name_, tmp.name);
+        parseDiaString(name_, tmp.name);
     }
     if (multiplicity != NULL) {
         strncpy (tmp.multiplicity,

@@ -75,7 +75,7 @@ void generate_code_csharp (batch *b) {
         emit ("%s", "using System;\n\n");
 
         /* We generate the import clauses */
-        used_classes = list_classes (tmplist, b);
+        used_classes = listClasses (tmplist, b);
         if (used_classes != NULL) {
             while (used_classes != NULL) {
                 umlpackagelist pkg = make_package_list (used_classes->key->package);

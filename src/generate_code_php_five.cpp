@@ -270,7 +270,7 @@ int d2c_php_print_includes(FILE *outfile, umlclasslist tmplist, batch *b)
 {
     /* We generate the include clauses */
     umlpackagelist tmppcklist;
-    umlclasslist used_classes = list_classes(tmplist, b);
+    umlclasslist used_classes = listClasses(tmplist, b);
     while (used_classes != NULL) {
         tmppcklist = make_package_list(used_classes->key->package);
         if ( tmppcklist != NULL ) {
