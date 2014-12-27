@@ -148,5 +148,14 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
+../src/dia2code -t cpp template.dia -d result
+if [[ ! -a result/Template.hpp ]] ; then
+exit 1
+fi ;
+diff -pu Template.hpp result/Template.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 
 exit 0
