@@ -247,19 +247,19 @@ DiaGram::push (umlClassNode & node)
 }
 
 
-int
-DiaGram::have_include (const char *name) const
+bool
+DiaGram::have_include (const std::string & name) const
 {
     for (std::string inc : includes) {
         if (!inc.compare (name)) {
-            return 1;
+            return true;
         }
     }
-    return 0;
+    return false;
 }
 
 void
-DiaGram::add_include (const char *name)
+DiaGram::add_include (const std::string & name)
 {
     if (have_include (name)) {
         return;
@@ -274,9 +274,9 @@ DiaGram::push_include (umlClassNode &node)
     if (node.getPackage () != NULL) {
         std::list <umlPackage> pkglist;
         umlPackage::make_package_list (node.getPackage (), pkglist);
-        add_include ((*pkglist.begin ()).getName ().c_str ());
+        add_include ((*pkglist.begin ()).getName ());
     } else {
-        add_include (node.getName ().c_str ());
+        add_include (node.getName ());
     }
 }
 
