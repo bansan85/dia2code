@@ -22,13 +22,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
-#include "GenerateCodeCpp.hpp"
+#include "GenerateCodeJava.hpp"
 #include "umlClassNode.hpp"
 #include "string2.hpp"
 #include "scan_tree.hpp"
 
 GenerateCodeCpp::GenerateCodeCpp (DiaGram & diagram) :
-    GenerateCode (diagram, "hpp") {
+    GenerateCode (diagram, "java") {
 }
 
 std::string
@@ -109,23 +109,22 @@ GenerateCodeCpp::writeLicense () {
 void
 GenerateCodeCpp::writeStartHeader (std::string & name) {
     getFile () << spc () << "#ifndef " << name << "__HPP\n";
-    getFile () << spc () << "#define " << name << "__HPP\n";
+    getFile () << spc () << "#define " << name << "__HPP\n\n";
 }
 
 void
 GenerateCodeCpp::writeEndHeader () {
-    getFile () << spc () << "\n";
-    getFile () << spc () << "#endif\n";
+    getFile () << "#endif\n";
 }
 
 void
 GenerateCodeCpp::writeInclude (std::basic_string <char> name) {
-    getFile () << spc () << "#include \"" << name << "\"\n";
+    getFile () << "#include \"" << name << "\"\n";
 }
 
 void
 GenerateCodeCpp::writeInclude (const char * name) {
-    getFile () << spc () << "#include \"" << name << "\"\n";
+    getFile () << "#include \"" << name << "\"\n";
 }
 
 void
@@ -245,7 +244,7 @@ GenerateCodeCpp::writeClassComment (const umlClassNode & node) {
 }
 
 void
-GenerateCodeCpp::writeClass (const umlClassNode & node) {
+GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
     getFile () << spc () << "class " << node.getName ();
     if (!node.getParents ().empty ()) {
         std::list <umlClass *>::const_iterator parent;
@@ -274,6 +273,11 @@ GenerateCodeCpp::writeClass (const umlClassNode & node) {
 }
 
 void
+GenerateCodeCpp::writeClassEnd (const umlClassNode & node) {
+    getFile () << spc () << "};\n\n";
+}
+
+void
 GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
                                  int * curr_visibility) {
     check_visibility (curr_visibility, attr.getVisibility ());
@@ -292,33 +296,19 @@ GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
 }
 
 void
-GenerateCodeCpp::writeNameSpaceStart (const umlClassNode * node) {
-    if (node->getPackage () != NULL) {
-        std::list <umlPackage> pkglist;
-        umlPackage::make_package_list (node->getPackage (), pkglist);
-        for (const umlPackage & it : pkglist) {
-            if (getOpenBraceOnNewline ()) {
-                getFile () << spc () << "namespace " << it.getName () << "\n"
-                           << spc () << "{\n";
-            }
-            else {
-                getFile () << spc () << "namespace " << it.getName ()
-                           << " {\n";
-            }
-            incIndentLevel ();
-        }
+GenerateCodeCpp::writeNameSpaceStart (const std::string & name) {
+    if (getOpenBraceOnNewline ()) {
+        getFile () << spc () << "namespace " << name << "\n"
+                   << spc () << "{\n\n";
+    }
+    else {
+        getFile () << spc () << "namespace " << name << " {\n\n";
     }
 }
 
 void
-GenerateCodeCpp::writeNameSpaceEnd (const umlClassNode * node) {
-    const umlPackage *pack = node->getPackage ();
-
-    while (pack != NULL) {
-        decIndentLevel ();
-        getFile () << spc () << "};\n";
-        pack = pack->getParent ();
-    }
+GenerateCodeCpp::writeNameSpaceEnd () {
+    getFile () << spc () << "};\n\n";
 }
 
 void
@@ -341,7 +331,7 @@ GenerateCodeCpp::writeConst (const umlClassNode & node) {
 
     getFile () << spc () << "const " << cppname ((*umla).getType ())
                << " " << node.getName () << " = " << (*umla).getValue ()
-               << ";\n";
+               << ";\n\n";
 }
 
 void
@@ -381,7 +371,7 @@ GenerateCodeCpp::writeEnum (const umlClassNode & node) {
         getFile () << "\n";
     }
     decIndentLevel ();
-    getFile () << spc () << "};\n";
+    getFile () << spc () << "};\n\n";
 }
 
 void
@@ -414,7 +404,7 @@ GenerateCodeCpp::writeStruct (const umlClassNode & node) {
         ++umla;
     }
     decIndentLevel ();
-    getFile () << spc () << "};\n";
+    getFile () << spc () << "};\n\n";
 }
 
 void
@@ -434,7 +424,7 @@ GenerateCodeCpp::writeTypedef (const umlClassNode & node) {
                  node.getName ().c_str ());
     }
     getFile () << spc () << "typedef " << cppname ((*umla).getType ()) << " "
-               << node.getName () << (*umla).getValue () << ";\n";
+               << node.getName () << (*umla).getValue () << ";\n\n";
 }
 
 void

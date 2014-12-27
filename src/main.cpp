@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "string2.hpp"
 #include "GenerateCodeCpp.hpp"
+//#include "GenerateCodeJava.hpp"
 
 int main (int argc, char **argv) {
     DiaGram diagram;
@@ -132,7 +133,7 @@ under certain conditions; read the COPYING file for details.\n";
             if (!strcmp (argv[i], "cpp")) {
                 generator = new GenerateCodeCpp (diagram);
             } else if (!strcmp (argv[i], "java")) {
-//                generator = generators[1];
+//                generator = new GenerateCodeJava (diagram);
             } else if (!strcmp (argv[i], "c")) {
 //                generator = generators[2];
             } else if (!strcmp (argv[i], "sql")) {

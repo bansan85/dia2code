@@ -17,16 +17,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#ifndef GENERATE_CODE_CPP_HPP
-#define GENERATE_CODE_CPP_HPP
+#ifndef GENERATE_CODE_JAVA_HPP
+#define GENERATE_CODE_JAVA_HPP
 
 #include "config.h"
 
 #include "GenerateCode.hpp"
 
-class GenerateCodeCpp : public GenerateCode {
+class GenerateCodeJava : public GenerateCode {
     public:
-        GenerateCodeCpp (DiaGram & diagram);
+        GenerateCodeJava (DiaGram & diagram);
 
         std::string strPackage (const char * package) const;
         std::string strPointer (const std::string & type) const;
@@ -45,18 +45,19 @@ class GenerateCodeCpp : public GenerateCode {
         void writeTemplates (
                const std::list <std::pair <std::string, std::string> > & tmps);
         void writeClassComment (const umlClassNode & node);
-        void writeClass (const umlClassNode & node);
+        void writeClassStart (const umlClassNode & node);
+        void writeClassEnd (const umlClassNode & node);
         void writeAttribute (const umlAttribute & attr,
                              int * curr_visibility);
-        void writeNameSpaceStart (const umlClassNode * node);
-        void writeNameSpaceEnd (const umlClassNode * node);
+        void writeNameSpaceStart (const std::string & name);
+        void writeNameSpaceEnd ();
         void writeConst (const umlClassNode & node);
         void writeEnum (const umlClassNode & node);
         void writeStruct (const umlClassNode & node);
         void writeTypedef (const umlClassNode & node);
         void writeAssociation (const umlassoc & asso);
         
-        ~GenerateCodeCpp ();
+        ~GenerateCodeJava ();
 };
 
 #endif

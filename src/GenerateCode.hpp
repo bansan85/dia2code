@@ -116,12 +116,11 @@ class GenerateCode {
         virtual void writeTemplates (
            const std::list <std::pair <std::string, std::string> > & tmps) = 0;
         virtual void writeClassComment (const umlClassNode & node) = 0;
-        virtual void writeClassStart (const umlClassNode & node) = 0;
-        virtual void writeClassEnd (const umlClassNode & node) = 0;
+        virtual void writeClass (const umlClassNode & node) = 0;
         virtual void writeAttribute (const umlAttribute & attr,
                                      int * curr_visibility) = 0;
-        virtual void writeNameSpaceStart (const std::string & name) = 0;
-        virtual void writeNameSpaceEnd () = 0;
+        virtual void writeNameSpaceStart (const umlClassNode * name) = 0;
+        virtual void writeNameSpaceEnd (const umlClassNode * node) = 0;
         virtual void writeConst (const umlClassNode & node) = 0;
         virtual void writeEnum (const umlClassNode & node) = 0;
         virtual void writeStruct (const umlClassNode & node) = 0;

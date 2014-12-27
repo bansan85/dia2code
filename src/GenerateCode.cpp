@@ -181,6 +181,9 @@ GenerateCode::generate_code () {
         writeLicense ();
 
         tmpname = strtoupper (name);
+        if (indentlevel != 0) {
+            fprintf (stderr, "indent level (%d) should be 0.\n", indentlevel);
+        }
         writeStartHeader (tmpname);
 
         getDia ().cleanIncludes ();
@@ -191,18 +194,25 @@ GenerateCode::generate_code () {
         }
 #endif
         std::list <std::string> incfile = getDia ().getIncludes ();
+        if ((!incfile.empty ())
+#ifdef ENABLE_CORBA
+            || (getDia ().getUseCorba ())
+#endif
+            ) {
+            file << "\n";
+        }
         for (std::string namei : incfile) {
             if (namei.compare (name)) {
                 writeInclude (namei + "." + getFileExt ());
             }
         }
-        if (!incfile.empty ()) {
-            file << "\n";
-        }
 
         gen_decl (*it2);
 
         writeEndHeader ();
+        if (indentlevel != 0) {
+            fprintf (stderr, "indent level (%d) should be 0.\n", indentlevel);
+        }
         file.close ();
 
         ++it2;
@@ -398,8 +408,8 @@ GenerateCode::gen_class (const umlClassNode & node) {
     }
 
     writeClassComment (node);
-    writeClassStart (node);
-    indentlevel++;
+    writeClass (node);
+    incIndentLevel ();
 
     if (!node.getAssociations ().empty ()) {
         writeComment ("Associations");
@@ -419,7 +429,7 @@ GenerateCode::gen_class (const umlClassNode & node) {
         if (isCorba) {
             writeComment ("Public state members");
             file << spc () << "public:\n";
-            indentlevel++;
+            incIndentLevel ();
             for (const umlAttribute & umla : node.getAttributes ()) {
                 const char *member = umla.getName ().c_str ();
                 umlClassNode *ref;
@@ -445,9 +455,9 @@ GenerateCode::gen_class (const umlClassNode & node) {
                 }
                 else {
                     file << " " << member << " ()\n" << spc () << "{\n";
-                    indentlevel++;
+                    incIndentLevel ();
                     file << spc () << "return _" << member << ";\n";
-                    indentlevel--;
+                    decIndentLevel ();
                     file << spc () << "}\n";
                 }
                 file << spc () << "void " << member << " (";
@@ -469,24 +479,24 @@ GenerateCode::gen_class (const umlClassNode & node) {
                 }
                 else {
                     file << " value_)\n" << spc () << "{\n";
-                    indentlevel++;
+                    incIndentLevel ();
                     file << spc () << "_" << member << " = value_;";
-                    indentlevel--;
+                    decIndentLevel ();
                     file << spc () << "}\n";
                 }
             }
-            indentlevel--;
+            decIndentLevel ();
         }
         else
 #endif
         {
             int tmpv = -1;
             writeComment ("Attributes");
-            indentlevel++;
+            incIndentLevel ();
             for (const umlAttribute & umla : node.getAttributes ()) {
                 writeAttribute (umla, &tmpv);
             }
-            indentlevel--;
+            decIndentLevel ();
         }
     }
 
@@ -498,20 +508,20 @@ GenerateCode::gen_class (const umlClassNode & node) {
             file << spc () << "public :\n";
         }
 #endif
-        indentlevel++;
+        incIndentLevel ();
         for (const umlOperation & umlo : node.getOperations ()) {
             writeFunction (umlo, &tmpv);
         }
-        indentlevel--;
+        decIndentLevel ();
     }
 
 #ifdef ENABLE_CORBA
     if ((!node.getAttributes ().empty ()) && (isCorba)) {
         file << "\n";
-        indentlevel--;
+        decIndentLevel ();
         writeComment ("State member implementation");
         file << spc () << "private :\n";
-        indentlevel++;
+        incIndentLevel ();
         for (const umlAttribute & umla : node.getAttributes ()) {
             umlClassNode *ref = find_by_name (dia.getUml (),
                                               umla.getType ().c_str ());
@@ -531,8 +541,8 @@ GenerateCode::gen_class (const umlClassNode & node) {
     }
 #endif
 
-    indentlevel--;
-    writeClassEnd (node);
+    decIndentLevel ();
+    file << spc () << "};\n";
 }
 
 
@@ -546,15 +556,14 @@ GenerateCode::gen_decl (declaration &d) {
     std::list <umlAttribute>::const_iterator umla;
 
     if (d.decl_kind == dk_module) {
-        writeNameSpaceStart (d.u.this_module->pkg.getName ());
-        indentlevel++;
         for (declaration & it : d.u.this_module->contents) {
             gen_decl (it);
         }
-        indentlevel--;
-        writeNameSpaceEnd ();
         return;
     }
+
+    file << "\n";
+    writeNameSpaceStart (d.u.this_class);
 
     node = d.u.this_class;
     stype = node->getStereotype ().c_str ();
@@ -565,6 +574,7 @@ GenerateCode::gen_decl (declaration &d) {
 
     if (strlen (stype) == 0) {
         gen_class (*node);
+        writeNameSpaceEnd (d.u.this_class);
         return;
     }
 
@@ -606,7 +616,7 @@ GenerateCode::gen_decl (declaration &d) {
             file << spc () << "class " << name << " {\n";
         }
         file << spc () << "public :\n";
-        indentlevel++;
+        incIndentLevel ();
         file << spc () << (*umla).getType () << " _d();\n\n";
         ++umla;
         while (umla != node->getAttributes ().end ()) {
@@ -618,7 +628,7 @@ GenerateCode::gen_decl (declaration &d) {
                  << " _value);\n\n";
             ++umla;
         }
-        indentlevel--;
+        decIndentLevel ();
         file << spc () << "};\n\n";
 
     }
@@ -629,6 +639,8 @@ GenerateCode::gen_decl (declaration &d) {
     else {
         gen_class (*node);
     }
+
+    writeNameSpaceEnd (d.u.this_class);
 }
 
 
