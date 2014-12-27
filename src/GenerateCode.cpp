@@ -146,7 +146,7 @@ GenerateCode::getCorba () const {
 #endif
 
 void
-GenerateCode::open_outfile (const char *filename) {
+GenerateCode::open_outfile (const std::string & filename) {
     static std::string outfilename;
 
     outfilename.assign (outdir);
@@ -188,7 +188,7 @@ GenerateCode::generate_code () {
         filename.append (".");
         filename.append (getFileExt ());
 
-        open_outfile (filename.c_str ());
+        open_outfile (filename);
 
         writeLicense ();
 
@@ -583,12 +583,6 @@ GenerateCode::genDecl (declaration &d) {
     name = node->getName ().c_str ();
 #endif
     umla = node->getAttributes ().begin ();
-
-    if (strlen (stype) == 0) {
-        genClass (*node);
-        writeNameSpaceEnd (d.u.this_class);
-        return;
-    }
 
 #ifdef ENABLE_CORBA
     if (eq (stype, "CORBANative")) {
