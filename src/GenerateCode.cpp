@@ -199,7 +199,7 @@ GenerateCode::generate_code () {
         writeStartHeader (tmpname);
 
         getDia ().cleanIncludes ();
-        getDia ().determineIncludes (*it2);
+        getDia ().determineIncludes (*it2, oneClassOneHeader);
 #ifdef ENABLE_CORBA
         if (getDia ().getUseCorba ()) {
             writeInclude ("p_orb.h");

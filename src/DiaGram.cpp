@@ -267,9 +267,9 @@ DiaGram::addInclude (const std::string & name)
 }
 
 void
-DiaGram::pushInclude (umlClassNode &node)
+DiaGram::pushInclude (umlClassNode &node, bool oneClass)
 {
-    if (node.getPackage () != NULL) {
+    if ((node.getPackage () != NULL) && (!oneClass)) {
         std::list <umlPackage> pkglist;
         umlPackage::make_package_list (node.getPackage (), pkglist);
         addInclude ((*pkglist.begin ()).getName ());
@@ -290,17 +290,17 @@ DiaGram::cleanIncludes () {
 }
 
 void
-DiaGram::determineIncludes (declaration &d)
+DiaGram::determineIncludes (declaration &d, bool oneClass)
 {
     if (d.decl_kind == dk_module) {
         for (declaration & it : d.u.this_module->contents) {
-            determineIncludes (it);
+            determineIncludes (it, oneClass);
         }
     } else {
         std::list <umlClassNode> cl;
         listClasses (*d.u.this_class, cl);
         for (umlClassNode & it : cl) {
-            pushInclude (it);
+            pushInclude (it, oneClass);
         }
     }
 }
