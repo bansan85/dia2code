@@ -42,6 +42,8 @@ class GenerateCodeCpp : public GenerateCode {
         void writeFunction (const umlOperation & ope, int * curr_visibility);
         void writeComment (const std::string & text);
         void writeComment (const char * text);
+        void writeTemplates (
+               const std::list <std::pair <std::string, std::string> > & tmps);
         void writeClassComment (const umlClassNode & node);
         void writeClassStart (const umlClassNode & node);
         void writeClassEnd (const umlClassNode & node);

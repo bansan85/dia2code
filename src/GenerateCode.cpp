@@ -386,8 +386,6 @@ GenerateCode::gen_class (const umlClassNode & node) {
 #endif
     }
 
-    writeClassComment (node);
-
     if (!node.getTemplates ().empty ()) {
 #ifdef ENABLE_CORBA
         if (isCorba) {
@@ -395,20 +393,11 @@ GenerateCode::gen_class (const umlClassNode & node) {
         } else
 #endif
         {
-            std::list <std::pair <std::string, std::string> >::const_iterator
-                                    template_ = node.getTemplates ().begin ();
-            file << spc () << "template <";
-            while (template_ != node.getTemplates ().end ()) {
-                file << (*template_).second << " " << (*template_).first;
-                ++template_;
-                if (template_ != node.getTemplates ().end ()) {
-                    file << ", ";
-                }
-            }
-            file << ">\n";
+            writeTemplates (node.getTemplates ());
         }
     }
 
+    writeClassComment (node);
     writeClassStart (node);
     indentlevel++;
 

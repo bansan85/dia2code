@@ -443,6 +443,22 @@ GenerateCodeCpp::writeAssociation (const umlassoc & asso) {
     }
 }
 
+void
+GenerateCodeCpp::writeTemplates (
+              const std::list <std::pair <std::string, std::string> > & tmps) {
+    std::list <std::pair <std::string, std::string> >::const_iterator
+                                                     template_ = tmps.begin ();
+    getFile () << spc () << "template <";
+    while (template_ != tmps.end ()) {
+        getFile () << (*template_).second << " " << (*template_).first;
+        ++template_;
+        if (template_ != tmps.end ()) {
+            getFile () << ", ";
+        }
+    }
+    getFile () << ">\n";
+}
+
 GenerateCodeCpp::~GenerateCodeCpp () {
 }
 
