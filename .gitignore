@@ -24,3 +24,4 @@ tests/tests.sh.log
 tests/tests.sh.trs
 src/*.gc??
 *.swp
+out_html

@@ -55,7 +55,6 @@ class GenerateCode {
         void openOutfile (const std::string & filename, declaration & d);
         void closeOutfile ();
         void genDecl (declaration &d,
-                      const std::string & nameNode,
                       bool forceOpen);
     public:
         GenerateCode (DiaGram & diagram, const char * ext);

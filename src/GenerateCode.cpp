@@ -221,15 +221,7 @@ GenerateCode::generate_code () {
     /* Generate a file for each outer declaration.  */
     it2 = getDia ().getDeclBegin ();
     while (it2 != getDia ().getDeclEnd ()) {
-        std::string name;
-
-        if ((*it2).decl_kind == dk_module) {
-            name = (*it2).u.this_module->pkg.getName ();
-        } else {         /* dk_class */
-            name = (*it2).u.this_class->getName ();
-        }
-
-        genDecl (*it2, name, true);
+        genDecl (*it2, true);
 
         ++it2;
     }
@@ -564,7 +556,6 @@ GenerateCode::genClass (const umlClassNode & node) {
 
 void
 GenerateCode::genDecl (declaration &d,
-                       const std::string & nameNode,
                        bool forceOpen) {
 #ifdef ENABLE_CORBA
     const char *name;
@@ -574,12 +565,20 @@ GenerateCode::genDecl (declaration &d,
     std::list <umlAttribute>::const_iterator umla;
 
     if (forceOpen) {
-        openOutfile (nameNode, d);
+        std::string name_;
+
+        if (d.decl_kind == dk_module) {
+            name_ = d.u.this_module->pkg.getName ();
+        } else {         /* dk_class */
+            name_ = d.u.this_class->getName ();
+        }
+
+        openOutfile (name_, d);
     }
 
     if (d.decl_kind == dk_module) {
         for (declaration & it : d.u.this_module->contents) {
-            genDecl (it, nameNode, false);
+            genDecl (it, oneClassOneHeader);
         }
         if (forceOpen) {
             closeOutfile ();
