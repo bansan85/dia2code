@@ -52,8 +52,11 @@ class GenerateCode {
         
         int passByReference (umlClass &cl);
         void genClass (const umlClassNode & node);
-        void open_outfile (const std::string & filename);
-        void genDecl (declaration &d);
+        void openOutfile (const std::string & filename, declaration & d);
+        void closeOutfile ();
+        void genDecl (declaration &d,
+                      const std::string & nameNode,
+                      bool forceOpen);
     public:
         GenerateCode (DiaGram & diagram, const char * ext);
 

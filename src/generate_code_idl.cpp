@@ -371,7 +371,7 @@ generate_code_idl (batch *b)
          *  command line option for it.
         */
 
-        spec = open_outfile (filename, b);
+        spec = openOutfile (filename, b);
         if (spec == NULL) {
             d = d->next;
             continue;

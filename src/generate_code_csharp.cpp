@@ -59,7 +59,7 @@ void generate_code_csharp (batch *b) {
 
         sprintf (outfilename, "%s.cs", tmplist->key->name);
 
-        spec = open_outfile (outfilename, b);
+        spec = openOutfile (outfilename, b);
         if (spec == NULL) {
             tmplist = tmplist->next;
             continue;

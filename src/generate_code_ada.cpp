@@ -655,7 +655,7 @@ generate_code_ada (batch *b)
             }
         }
 
-        spec = open_outfile (make_filename (basename, 0), b);
+        spec = openOutfile (make_filename (basename, 0), b);
         if (spec == NULL) {
             d = d->next;
             continue;
@@ -688,7 +688,7 @@ generate_code_ada (batch *b)
             emit ("package %s is\n\n", basename);
             indentlevel++;
         } else if (need_body) {
-            body = open_outfile (make_filename (basename, 1), b);
+            body = openOutfile (make_filename (basename, 1), b);
         } else {
             body = NULL;
         }

@@ -48,7 +48,7 @@ class DiaGram {
                            std::list <umlClassNode> & res);
 
         /**
-         * open_outfile() returns NULL if the file exists and is not rewritten
+         * openOutfile() returns NULL if the file exists and is not rewritten
          * due to a clobber prohibition. Does an exit(1) if serious problems happen.
         */
         bool haveInclude (const std::string & name) const;

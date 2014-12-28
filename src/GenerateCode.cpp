@@ -146,19 +146,61 @@ GenerateCode::getCorba () const {
 #endif
 
 void
-GenerateCode::open_outfile (const std::string & filename) {
+GenerateCode::openOutfile (const std::string & filename, declaration & d) {
     static std::string outfilename;
+    std::string tmpname;
 
     outfilename.assign (outdir);
     outfilename.append ("/");
     outfilename.append (filename);
+    outfilename.append (".");
+    outfilename.append (getFileExt ());
     file.open (outfilename.c_str ());
     if (file.is_open () && !overwrite) {
         fprintf (stderr, "Failed to overwrite %s.\n", outfilename.c_str ());
         file.close ();
         exit (1);
     }
+
+    writeLicense ();
+
+    tmpname = strtoupper (filename);
+    if (indentlevel != 0) {
+        fprintf (stderr, "indent level (%d) should be 0.\n", indentlevel);
+    }
+    writeStartHeader (tmpname);
+
+    getDia ().cleanIncludes ();
+    getDia ().determineIncludes (d, oneClassOneHeader);
+#ifdef ENABLE_CORBA
+    if (getDia ().getUseCorba ()) {
+        writeInclude ("p_orb.h");
+    }
+#endif
+    std::list <std::string> incfile = getDia ().getIncludes ();
+    if ((!incfile.empty ())
+#ifdef ENABLE_CORBA
+         || (getDia ().getUseCorba ())
+#endif
+        ) {
+        file << "\n";
+    }
+    for (std::string namei : incfile) {
+        if (namei.compare (filename)) {
+            writeInclude (namei + "." + getFileExt ());
+        }
+    }
+
     return;
+}
+
+void
+GenerateCode::closeOutfile () {
+    writeEndHeader ();
+    if (indentlevel != 0) {
+        fprintf (stderr, "indent level (%d) should be 0.\n", indentlevel);
+    }
+    file.close ();
 }
 
 void
@@ -176,56 +218,15 @@ GenerateCode::generate_code () {
     /* Generate a file for each outer declaration.  */
     it2 = getDia ().getDeclBegin ();
     while (it2 != getDia ().getDeclEnd ()) {
-        std::string name, tmpname;
-        std::string filename;
+        std::string name;
 
         if ((*it2).decl_kind == dk_module) {
             name = (*it2).u.this_module->pkg.getName ();
         } else {         /* dk_class */
             name = (*it2).u.this_class->getName ();
         }
-        filename.assign (name);
-        filename.append (".");
-        filename.append (getFileExt ());
 
-        open_outfile (filename);
-
-        writeLicense ();
-
-        tmpname = strtoupper (name);
-        if (indentlevel != 0) {
-            fprintf (stderr, "indent level (%d) should be 0.\n", indentlevel);
-        }
-        writeStartHeader (tmpname);
-
-        getDia ().cleanIncludes ();
-        getDia ().determineIncludes (*it2, oneClassOneHeader);
-#ifdef ENABLE_CORBA
-        if (getDia ().getUseCorba ()) {
-            writeInclude ("p_orb.h");
-        }
-#endif
-        std::list <std::string> incfile = getDia ().getIncludes ();
-        if ((!incfile.empty ())
-#ifdef ENABLE_CORBA
-            || (getDia ().getUseCorba ())
-#endif
-            ) {
-            file << "\n";
-        }
-        for (std::string namei : incfile) {
-            if (namei.compare (name)) {
-                writeInclude (namei + "." + getFileExt ());
-            }
-        }
-
-        genDecl (*it2);
-
-        writeEndHeader ();
-        if (indentlevel != 0) {
-            fprintf (stderr, "indent level (%d) should be 0.\n", indentlevel);
-        }
-        file.close ();
+        genDecl (*it2, name, true);
 
         ++it2;
     }
@@ -559,7 +560,9 @@ GenerateCode::genClass (const umlClassNode & node) {
 
 
 void
-GenerateCode::genDecl (declaration &d) {
+GenerateCode::genDecl (declaration &d,
+                       const std::string & nameNode,
+                       bool forceOpen) {
 #ifdef ENABLE_CORBA
     const char *name;
 #endif
@@ -567,9 +570,16 @@ GenerateCode::genDecl (declaration &d) {
     const umlClassNode *node;
     std::list <umlAttribute>::const_iterator umla;
 
+    if (forceOpen) {
+        openOutfile (nameNode, d);
+    }
+
     if (d.decl_kind == dk_module) {
         for (declaration & it : d.u.this_module->contents) {
-            genDecl (it);
+            genDecl (it, nameNode, false);
+        }
+        if (forceOpen) {
+            closeOutfile ();
         }
         return;
     }
@@ -647,6 +657,10 @@ GenerateCode::genDecl (declaration &d) {
     }
 
     writeNameSpaceEnd (d.u.this_class);
+
+    if (forceOpen) {
+        closeOutfile ();
+    }
 }
 
 
