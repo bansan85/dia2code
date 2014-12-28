@@ -98,7 +98,7 @@
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#pack#</dia:string>
+        <dia:string>#package#</dia:string>
       </dia:attribute>
     </dia:object>
     <dia:object type="UML - LargePackage" version="0" id="O1">
@@ -184,19 +184,19 @@
         <dia:point val="17.95,21.25"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="17.9,21.2;21.9525,23.5"/>
+        <dia:rectangle val="17.9,21.2;25.72,23.5"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="17.95,21.25"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="3.9524999999999997"/>
+        <dia:real val="7.7200000000000006"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="2.1999999999999997"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#Classe3#</dia:string>
+        <dia:string>#PackageClasse3#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -295,19 +295,19 @@
         <dia:point val="13.45,14.35"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="13.4,14.3;17.4525,16.6"/>
+        <dia:rectangle val="13.4,14.3;21.22,16.6"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="13.45,14.35"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="3.9524999999999997"/>
+        <dia:real val="7.7200000000000006"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="2.1999999999999997"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#Classe2#</dia:string>
+        <dia:string>#PackageClasse2#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -406,19 +406,19 @@
         <dia:point val="7.85,9.05"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="7.8,9;11.8525,11.3"/>
+        <dia:rectangle val="7.8,9;15.62,11.3"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="7.85,9.05"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="3.9524999999999997"/>
+        <dia:real val="7.7200000000000006"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="2.1999999999999997"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#Classe1#</dia:string>
+        <dia:string>#PackageClasse1#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>

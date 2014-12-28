@@ -213,7 +213,8 @@ GenerateCode::generate_code () {
     
     for (umlClassNode & it : tmplist) {
         if (!(is_present (getDia ().getGenClasses (),
-                         it.getName ().c_str ()) ^ getDia ().getInvertSel ())) {
+                          it.getName ().c_str ()) ^
+                                                  getDia ().getInvertSel ())) {
             getDia ().push (it);
         }
     }
@@ -564,7 +565,7 @@ GenerateCode::genDecl (declaration &d,
     const umlClassNode *node;
     std::list <umlAttribute>::const_iterator umla;
 
-    if (forceOpen) {
+    if (forceOpen && (!oneClassOneHeader || !d.decl_kind == dk_module)) {
         std::string name_;
 
         if (d.decl_kind == dk_module) {
@@ -580,7 +581,7 @@ GenerateCode::genDecl (declaration &d,
         for (declaration & it : d.u.this_module->contents) {
             genDecl (it, oneClassOneHeader);
         }
-        if (forceOpen) {
+        if (forceOpen && !oneClassOneHeader) {
             closeOutfile ();
         }
         return;

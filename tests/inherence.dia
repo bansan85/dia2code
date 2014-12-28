@@ -68,19 +68,19 @@
         <dia:point val="4.75,2.05"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="4.7,2;11.19,4.3"/>
+        <dia:rectangle val="4.7,2;15.695,4.3"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="4.75,2.05"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="6.3899999999999997"/>
+        <dia:real val="10.895"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="2.1999999999999997"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#ClasseParent#</dia:string>
+        <dia:string>#InherenceClasseParent#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -178,19 +178,19 @@
         <dia:point val="7.65,10.2"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="7.6,10.15;14.8825,12.45"/>
+        <dia:rectangle val="7.6,10.15;19.3875,12.45"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="7.65,10.2"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="7.1825000000000001"/>
+        <dia:real val="11.6875"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="2.1999999999999997"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#ClasseChildren#</dia:string>
+        <dia:string>#InherenceClasseChildren#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -285,19 +285,19 @@
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O2">
       <dia:attribute name="obj_pos">
-        <dia:point val="7.945,4.25"/>
+        <dia:point val="10.1975,4.25"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="7.095,4.2;11.2913,10.25"/>
+        <dia:rectangle val="9.3475,4.2;13.5438,10.25"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="7.945,4.25"/>
-        <dia:point val="7.945,7.625"/>
-        <dia:point val="11.2413,7.625"/>
-        <dia:point val="11.2413,10.2"/>
+        <dia:point val="10.1975,4.25"/>
+        <dia:point val="10.1975,7.625"/>
+        <dia:point val="13.4938,7.625"/>
+        <dia:point val="13.4938,10.2"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -329,7 +329,7 @@
         <dia:point val="19.15,-3.2875"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="19.1,-4.3375;32.1,7.0625"/>
+        <dia:rectangle val="19.1,-4.3375;34.3,7.0625"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
@@ -338,7 +338,7 @@
         <dia:point val="19.15,-3.2875"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="12.899999999999999"/>
+        <dia:real val="15.100000000000001"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="10.300000000000001"/>
@@ -359,27 +359,27 @@
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#Pack1#</dia:string>
+        <dia:string>#InherencePack1#</dia:string>
       </dia:attribute>
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O4">
       <dia:attribute name="obj_pos">
-        <dia:point val="22.25,-0.9375"/>
+        <dia:point val="21.7,-0.4375"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="22.2,-0.9875;29.2475,1.3125"/>
+        <dia:rectangle val="21.65,-0.4875;33.2025,1.8125"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="22.25,-0.9375"/>
+        <dia:point val="21.7,-0.4375"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="6.9474999999999998"/>
+        <dia:real val="11.452500000000001"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="2.1999999999999997"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#ClasseParent2#</dia:string>
+        <dia:string>#InherenceClasseParent2#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -475,19 +475,19 @@
     </dia:object>
     <dia:object type="UML - Generalization" version="1" id="O5">
       <dia:attribute name="obj_pos">
-        <dia:point val="25.7237,1.2625"/>
+        <dia:point val="27.4263,1.7625"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="11.1913,1.2125;26.5738,10.25"/>
+        <dia:rectangle val="13.4437,1.7125;28.2763,10.25"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="25.7237,1.2625"/>
-        <dia:point val="25.7237,6.13125"/>
-        <dia:point val="11.2413,6.13125"/>
-        <dia:point val="11.2413,10.2"/>
+        <dia:point val="27.4263,1.7625"/>
+        <dia:point val="27.4263,6.38125"/>
+        <dia:point val="13.4938,6.38125"/>
+        <dia:point val="13.4938,10.2"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>

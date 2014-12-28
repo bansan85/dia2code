@@ -1,7 +1,7 @@
 #!/bin/sh
 
 mkdir result
-rm result/*
+rm -f result/*
 
 ../src/dia2code -t cpp association.dia -d result
 if [[ ! -a result/AssociationClass1.hpp ]] ; then
@@ -19,15 +19,58 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp package.dia -d result
-if [[ ! -a result/pack.hpp ]] ; then
+rm -f result/*
+../src/dia2code -t cpp association.dia -d result -1
+if [[ ! -a result/AssociationClass1.hpp ]] ; then
 exit 1
 fi ;
-diff -pu pack.hpp result/pack.hpp > result.txt
+if [[ ! -a result/AssociationClass2.hpp ]] ; then
+exit 1
+fi ;
+diff -pu AssociationClass1-1.hpp result/AssociationClass1.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu AssociationClass2-1.hpp result/AssociationClass2.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
+rm -f result/*
+../src/dia2code -t cpp package.dia -d result
+if [[ ! -a result/package.hpp ]] ; then
+exit 1
+fi ;
+diff -pu package.hpp result/package.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
+rm -f result/*
+../src/dia2code -t cpp package.dia -d result -1
+if [[ ! -a result/PackageClasse1.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/PackageClasse2.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/PackageClasse3.hpp ]] ; then
+exit 1
+fi ;
+diff -pu PackageClasse1.hpp result/PackageClasse1.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu PackageClasse2.hpp result/PackageClasse2.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu PackageClasse3.hpp result/PackageClasse3.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
+rm -f result/*
 ../src/dia2code -t cpp enum.dia -d result
 if [[ ! -a result/enumeration.hpp ]] ; then
 exit 1
@@ -74,32 +117,85 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
+rm -f result/*
 ../src/dia2code -t cpp dependances_pack.dia -d result
-if [[ ! -a result/ClassePack1.hpp ]] ; then
+if [[ ! -a result/DepClassePack1.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/ClassePack2.hpp ]] ; then
+if [[ ! -a result/DepClassePack2.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/ClassePack3.hpp ]] ; then
+if [[ ! -a result/DepClassePack3.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/ClassePack4.hpp ]] ; then
+if [[ ! -a result/DepClassePack4.hpp ]] ; then
 exit 1
 fi ;
-diff -pu ClassePack1.hpp result/ClassePack1.hpp > result.txt
+if [[ ! -a result/DepPack.hpp ]] ; then
+exit 1
+fi ;
+diff -pu DepPack.hpp result/DepPack.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu ClassePack2.hpp result/ClassePack2.hpp > result.txt
+diff -pu DepClassePack1.hpp result/DepClassePack1.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu ClassePack3.hpp result/ClassePack3.hpp > result.txt
+diff -pu DepClassePack2.hpp result/DepClassePack2.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu ClassePack4.hpp result/ClassePack4.hpp > result.txt
+diff -pu DepClassePack3.hpp result/DepClassePack3.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack4.hpp result/DepClassePack4.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
+rm -f result/*
+../src/dia2code -t cpp dependances_pack.dia -d result -1
+if [[ ! -a result/DepClassePack1.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClassePack2.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClassePack3.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClassePack4.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClasse1.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClasse2.hpp ]] ; then
+exit 1
+fi ;
+diff -pu DepClasse1.hpp result/DepClasse1.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClasse2.hpp result/DepClasse2.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack1-1.hpp result/DepClassePack1.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack2-1.hpp result/DepClassePack2.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack3-1.hpp result/DepClassePack3.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack4-1.hpp result/DepClassePack4.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -113,18 +209,50 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
+rm -f result/*
 ../src/dia2code -t cpp inherence.dia -d result
-if [[ ! -a result/ClasseChildren.hpp ]] ; then
+if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/ClasseParent.hpp ]] ; then
+if [[ ! -a result/InherenceClasseParent.hpp ]] ; then
 exit 1
 fi ;
-diff -pu ClasseChildren.hpp result/ClasseChildren.hpp > result.txt
+if [[ ! -a result/InherencePack1.hpp ]] ; then
+exit 1
+fi ;
+diff -pu InherenceClasseChildren.hpp result/InherenceClasseChildren.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu ClasseParent.hpp result/ClasseParent.hpp > result.txt
+diff -pu InherenceClasseParent.hpp result/InherenceClasseParent.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InherencePack1.hpp result/InherencePack1.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
+rm -f result/*
+../src/dia2code -t cpp inherence.dia -d result -1
+if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InherenceClasseParent.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InherenceClasseParent2.hpp ]] ; then
+exit 1
+fi ;
+diff -pu InherenceClasseChildren-1.hpp result/InherenceClasseChildren.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InherenceClasseParent-1.hpp result/InherenceClasseParent.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InherenceClasseParent2-1.hpp result/InherenceClasseParent2.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
