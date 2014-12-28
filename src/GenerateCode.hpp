@@ -37,7 +37,7 @@ class GenerateCode {
         std::string outdir;
         std::string file_ext;
         std::string body_file_ext;
-        std::ofstream file;
+        std::list <std::ofstream *> file;
         uint8_t     indent : 4;
         uint8_t     indentlevel : 3;
         // Overwrite files while generating code.

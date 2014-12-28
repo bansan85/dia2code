@@ -155,10 +155,11 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
     outfilename.append (filename);
     outfilename.append (".");
     outfilename.append (getFileExt ());
-    file.open (outfilename.c_str ());
-    if (file.is_open () && !overwrite) {
+    file.push_back (new std::ofstream ());
+    file.back ()->open (outfilename.c_str ());
+    if (file.back ()->is_open () && !overwrite) {
         fprintf (stderr, "Failed to overwrite %s.\n", outfilename.c_str ());
-        file.close ();
+        file.back ()->close ();
         exit (1);
     }
 
@@ -183,7 +184,7 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
          || (getDia ().getUseCorba ())
 #endif
         ) {
-        file << "\n";
+        getFile () << "\n";
     }
     for (std::string namei : incfile) {
         if (namei.compare (filename)) {
@@ -200,7 +201,9 @@ GenerateCode::closeOutfile () {
     if (indentlevel != 0) {
         fprintf (stderr, "indent level (%d) should be 0.\n", indentlevel);
     }
-    file.close ();
+    file.back ()->close ();
+    delete file.back ();
+    file.pop_back ();
 }
 
 void
@@ -258,7 +261,7 @@ GenerateCode::setBodyFileExt (char * ext) {
 
 std::ofstream &
 GenerateCode::getFile () {
-    return file;
+    return *file.back ();
 }
 
 char *
@@ -441,7 +444,7 @@ GenerateCode::genClass (const umlClassNode & node) {
 #ifdef ENABLE_CORBA
         if (isCorba) {
             writeComment ("Public state members");
-            file << spc () << "public:\n";
+            getFile () << spc () << "public:\n";
             incIndentLevel ();
             for (const umlAttribute & umla : node.getAttributes ()) {
                 const char *member = umla.getName ().c_str ();
@@ -457,45 +460,45 @@ GenerateCode::genClass (const umlClassNode & node) {
                 }
                 ref = find_by_name (dia.getUml (), umla.getType ().c_str ());
                 if (ref != NULL) {
-                    file << spc () << fqname (*ref, true);
+                    getFile () << spc () << fqname (*ref, true);
                 }
                 else {
-                    file << spc () << cppName (umla.getType ());
+                    getFile () << spc () << cppName (umla.getType ());
                 }
                 if (!bOpenBraceOnNewline) {
-                    file << " " << member << " () { return _" << member
+                    getFile () << " " << member << " () { return _" << member
                          << "; }\n";
                 }
                 else {
-                    file << " " << member << " ()\n" << spc () << "{\n";
+                    getFile () << " " << member << " ()\n" << spc () << "{\n";
                     incIndentLevel ();
-                    file << spc () << "return _" << member << ";\n";
+                    getFile () << spc () << "return _" << member << ";\n";
                     decIndentLevel ();
-                    file << spc () << "}\n";
+                    getFile () << spc () << "}\n";
                 }
-                file << spc () << "void " << member << " (";
+                getFile () << spc () << "void " << member << " (";
                 if (ref != NULL) {
                     int by_ref = passByReference (*ref);
                     if (by_ref) {
-                        file << "const ";
+                        getFile () << "const ";
                     }
-                    file << fqname (*ref, true);
+                    getFile () << fqname (*ref, true);
                     if (by_ref) {
-                        file << "&";
+                        getFile () << "&";
                     }
                 }
                 else {
-                    file << cppName (umla.getType ());
+                    getFile () << cppName (umla.getType ());
                 }
                 if (!bOpenBraceOnNewline) {
-                    file << " value_) { _" << member << " = value_; }\n";
+                    getFile () << " value_) { _" << member << " = value_; }\n";
                 }
                 else {
-                    file << " value_)\n" << spc () << "{\n";
+                    getFile () << " value_)\n" << spc () << "{\n";
                     incIndentLevel ();
-                    file << spc () << "_" << member << " = value_;";
+                    getFile () << spc () << "_" << member << " = value_;";
                     decIndentLevel ();
-                    file << spc () << "}\n";
+                    getFile () << spc () << "}\n";
                 }
             }
             decIndentLevel ();
@@ -518,7 +521,7 @@ GenerateCode::genClass (const umlClassNode & node) {
         writeComment ("Operations");
 #ifdef ENABLE_CORBA
         if (isCorba) {
-            file << spc () << "public :\n";
+            getFile () << spc () << "public :\n";
         }
 #endif
         incIndentLevel ();
@@ -530,32 +533,32 @@ GenerateCode::genClass (const umlClassNode & node) {
 
 #ifdef ENABLE_CORBA
     if ((!node.getAttributes ().empty ()) && (isCorba)) {
-        file << "\n";
+        getFile () << "\n";
         decIndentLevel ();
         writeComment ("State member implementation");
-        file << spc () << "private :\n";
+        getFile () << spc () << "private :\n";
         incIndentLevel ();
         for (const umlAttribute & umla : node.getAttributes ()) {
             umlClassNode *ref = find_by_name (dia.getUml (),
                                               umla.getType ().c_str ());
-            file << spc ();
+            getFile () << spc ();
             if (ref != NULL) {
-                file << fqname (*ref, isOoClass (*ref));
+                getFile () << fqname (*ref, isOoClass (*ref));
                 /*
                  * FIXME: Find a better way to decide whether to use
                  * a pointer.
                 */
             }
             else {
-                file << cppName (umla.getType ());
+                getFile () << cppName (umla.getType ());
             }
-            file << " _" << umla.getName () << ";\n";
+            getFile () << " _" << umla.getName () << ";\n";
         }
     }
 #endif
 
     decIndentLevel ();
-    file << spc () << "};\n";
+    getFile () << spc () << "};\n";
 }
 
 
@@ -584,7 +587,7 @@ GenerateCode::genDecl (declaration &d,
         return;
     }
 
-    file << "\n";
+    getFile () << "\n";
     writeNameSpaceStart (d.u.this_class);
 
     node = d.u.this_class;
@@ -624,28 +627,28 @@ GenerateCode::genDecl (declaration &d,
         fprintf (stderr, "%s: CORBAUnion not yet fully implemented\n", name);
         if (bOpenBraceOnNewline) {
             writeComment ("CORBAUnion");
-            file << spc () << "class " << name << "\n";
-            file << spc () << "{\n";
+            getFile () << spc () << "class " << name << "\n";
+            getFile () << spc () << "{\n";
         }
         else {
             writeComment ("CORBAUnion");
-            file << spc () << "class " << name << " {\n";
+            getFile () << spc () << "class " << name << " {\n";
         }
-        file << spc () << "public :\n";
+        getFile () << spc () << "public :\n";
         incIndentLevel ();
-        file << spc () << (*umla).getType () << " _d();\n\n";
+        getFile () << spc () << (*umla).getType () << " _d();\n\n";
         ++umla;
         while (umla != node->getAttributes ().end ()) {
             (*umla).check (name);
-            file << spc () << cppName ((*umla).getType ()) << " "
+            getFile () << spc () << cppName ((*umla).getType ()) << " "
                  << (*umla).getName () << " ();\n";
-            file << spc () << "void " << (*umla).getName () << " ("
+            getFile () << spc () << "void " << (*umla).getName () << " ("
                  << cppName ((*umla).getType ())
                  << " _value);\n\n";
             ++umla;
         }
         decIndentLevel ();
-        file << spc () << "};\n\n";
+        getFile () << spc () << "};\n\n";
 
     }
 #endif
