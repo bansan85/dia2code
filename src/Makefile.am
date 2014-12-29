@@ -10,6 +10,6 @@ dia2code_SOURCES  = string2.cpp main.cpp parse_diagram.cpp scan_tree.cpp DiaGram
 #generate_code_python.cpp generate_code_php.cpp generate_code_shp.cpp generate_code_idl.cpp \
 #generate_code_csharp.cpp generate_code_php_five.cpp generate_code_ruby.cpp generate_code_as3.cpp
 
-EXTRA_DIST = decls.hpp string2.hpp parse_diagram.hpp DiaGram.hpp GenerateCodeCpp.hpp GenerateCode.hpp umlAttribute.hpp umlOperation.hpp umlPackage.hpp umlClass.hpp umlClassNode.hpp #GenerateCodeJava.hpp
+EXTRA_DIST = decls.hpp string2.hpp parse_diagram.hpp DiaGram.hpp GenerateCodeCpp.hpp GenerateCode.hpp umlAttribute.hpp umlOperation.hpp umlPackage.hpp umlClass.hpp umlClassNode.hpp umlAssoc.hpp scan_tree.hpp #GenerateCodeJava.hpp
 
 CLEANFILES = *.gcda *.gcno
