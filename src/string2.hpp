@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BAD_TSAC2 reinterpret_cast <const char *>
 
 #if defined(_WIN32) || defined(_WIN64)
-#define SEPARATOR '\\'
+#define SEPARATOR '\'
 #else
 #define SEPARATOR '/'
 #endif

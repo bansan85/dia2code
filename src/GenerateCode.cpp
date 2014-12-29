@@ -592,7 +592,11 @@ GenerateCode::genDecl (declaration &d,
         folder.append (1, SEPARATOR);
         folder.append (dirName (d.u.this_module->pkg));
 
+#if defined(_WIN32) || defined(_WIN64)
+        mkdir (folder.c_str ());
+#else
         mkdir (folder.c_str (), 0777);
+#endif
     }
 
     if (forceOpen && (!oneClassOneHeader || !d.decl_kind == dk_module)) {
