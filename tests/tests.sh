@@ -1,7 +1,7 @@
 #!/bin/sh
 
 mkdir result
-rm -f result/*
+rm -Rf result/*
 
 ../src/dia2code -t cpp association.dia -d result
 if [[ ! -a result/AssociationClass1.hpp ]] ; then
@@ -19,7 +19,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-rm -f result/*
+rm -Rf result/*
 ../src/dia2code -t cpp association.dia -d result -1
 if [[ ! -a result/AssociationClass1.hpp ]] ; then
 exit 1
@@ -36,7 +36,24 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-rm -f result/*
+rm -Rf result/*
+../src/dia2code -t cpp association.dia -d result --buildtree
+if [[ ! -a result/AssociationClass1.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/AssociationPack/AssociationClass2.hpp ]] ; then
+exit 1
+fi ;
+diff -pu AssociationClass1-b.hpp result/AssociationClass1.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu AssociationClass2-b.hpp result/AssociationPack/AssociationClass2.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
+rm -Rf result/*
 ../src/dia2code -t cpp package.dia -d result
 if [[ ! -a result/package.hpp ]] ; then
 exit 1
@@ -46,7 +63,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-rm -f result/*
+rm -Rf result/*
 ../src/dia2code -t cpp package.dia -d result -1
 if [[ ! -a result/PackageClasse1.hpp ]] ; then
 exit 1
@@ -70,7 +87,31 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-rm -f result/*
+rm -Rf result/*
+../src/dia2code -t cpp package.dia -d result --buildtree
+if [[ ! -a result/package/PackageClasse1.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/package/pack2/PackageClasse2.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/package/pack2/pack3/PackageClasse3.hpp ]] ; then
+exit 1
+fi ;
+diff -pu PackageClasse1-b.hpp result/package/PackageClasse1.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu PackageClasse2-b.hpp result/package/pack2/PackageClasse2.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu PackageClasse3-b.hpp result/package/pack2/pack3/PackageClasse3.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
+rm -Rf result/*
 ../src/dia2code -t cpp enum.dia -d result
 if [[ ! -a result/enumeration.hpp ]] ; then
 exit 1
@@ -117,7 +158,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-rm -f result/*
+rm -Rf result/*
 ../src/dia2code -t cpp dependances_pack.dia -d result
 if [[ ! -a result/DepClassePack1.hpp ]] ; then
 exit 1
@@ -155,7 +196,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-rm -f result/*
+rm -Rf result/*
 ../src/dia2code -t cpp dependances_pack.dia -d result -1
 if [[ ! -a result/DepClassePack1.hpp ]] ; then
 exit 1
@@ -200,6 +241,51 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
+rm -Rf result/*
+../src/dia2code -t cpp dependances_pack.dia -d result --buildtree
+if [[ ! -a result/DepClassePack1.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClassePack2.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClassePack3.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClassePack4.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepPack/DepClasse1.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepPack/pack2/DepClasse2.hpp ]] ; then
+exit 1
+fi ;
+diff -pu DepClasse1-b.hpp result/DepPack/DepClasse1.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClasse2-b.hpp result/DepPack/pack2/DepClasse2.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack1-b.hpp result/DepClassePack1.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack2-b.hpp result/DepClassePack2.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack3-b.hpp result/DepClassePack3.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack4-b.hpp result/DepClassePack4.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 ../src/dia2code -t cpp structure.dia -d result
 if [[ ! -a result/structure.hpp ]] ; then
 exit 1
@@ -209,7 +295,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-rm -f result/*
+rm -Rf result/*
 ../src/dia2code -t cpp inherence.dia -d result
 if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
 exit 1
@@ -233,7 +319,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-rm -f result/*
+rm -Rf result/*
 ../src/dia2code -t cpp inherence.dia -d result -1
 if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
 exit 1
@@ -253,6 +339,30 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 diff -pu InherenceClasseParent2-1.hpp result/InherenceClasseParent2.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
+rm -Rf result/*
+../src/dia2code -t cpp inherence.dia -d result --buildtree
+if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InherenceClasseParent.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InherencePack1/InherenceClasseParent2.hpp ]] ; then
+exit 1
+fi ;
+diff -pu InherenceClasseChildren-b.hpp result/InherenceClasseChildren.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InherenceClasseParent-b.hpp result/InherenceClasseParent.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InherenceClasseParent2-b.hpp result/InherencePack1/InherenceClasseParent2.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;

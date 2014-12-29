@@ -36,6 +36,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BAD_CAST2 reinterpret_cast <const xmlChar *>
 #define BAD_TSAC2 reinterpret_cast <const char *>
 
+#if defined(_WIN32) || defined(_WIN64)
+#define SEPARATOR '\\'
+#else
+#define SEPARATOR '/'
+#endif
+
 std::string strtoupper (std::string s);
 std::string strtoupperfirst (std::string s);
 std::list <std::string> parse_class_names (char *s);

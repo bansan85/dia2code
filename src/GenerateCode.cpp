@@ -24,12 +24,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
 
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include <sys/stat.h>
+#endif
+
 #include "GenerateCode.hpp"
 #include "scan_tree.hpp"
 #include "string2.hpp"
-
-#define SPEC_EXT "h"
-#define BODY_EXT "cpp"
 
 #define eq  !strcmp
 
@@ -151,7 +153,7 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
     std::string tmpname;
 
     outfilename.assign (outdir);
-    outfilename.append ("/");
+    outfilename.append (1, SEPARATOR);
     outfilename.append (filename);
     outfilename.append (".");
     outfilename.append (getFileExt ());
@@ -172,7 +174,7 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
     writeStartHeader (tmpname);
 
     getDia ().cleanIncludes ();
-    getDia ().determineIncludes (d, oneClassOneHeader);
+    getDia ().determineIncludes (d, oneClassOneHeader, buildtree);
 #ifdef ENABLE_CORBA
     if (getDia ().getUseCorba ()) {
         writeInclude ("p_orb.h");
@@ -219,7 +221,7 @@ GenerateCode::generate_code () {
         }
     }
 
-    /* Generate a file for each outer declaration.  */
+    // Generate a file for each outer declaration.
     it2 = getDia ().getDeclBegin ();
     while (it2 != getDia ().getDeclEnd ()) {
         genDecl (*it2, true);
@@ -554,6 +556,24 @@ GenerateCode::genClass (const umlClassNode & node) {
     getFile () << spc () << "};\n";
 }
 
+const char *
+dirName (const umlPackage &pkg) {
+    static std::string buf;
+    std::list <umlPackage>::const_iterator it;
+
+    buf.clear ();
+    std::list <umlPackage> pkglist;
+    umlPackage::make_package_list (&pkg, pkglist);
+    it = pkglist.begin ();
+    while (it != pkglist.end ()) {
+        buf.append ((*it).getName ());
+        ++it;
+        if (it != pkglist.end ()) {
+            buf.append (1, SEPARATOR);
+        }
+    }
+    return buf.c_str ();
+}
 
 void
 GenerateCode::genDecl (declaration &d,
@@ -565,13 +585,32 @@ GenerateCode::genDecl (declaration &d,
     const umlClassNode *node;
     std::list <umlAttribute>::const_iterator umla;
 
+    if ((buildtree) && (d.decl_kind == dk_module)) {
+        std::string folder;
+        
+        folder.assign (outdir);
+        folder.append (1, SEPARATOR);
+        folder.append (dirName (d.u.this_module->pkg));
+
+        mkdir (folder.c_str (), 0777);
+    }
+
     if (forceOpen && (!oneClassOneHeader || !d.decl_kind == dk_module)) {
         std::string name_;
 
         if (d.decl_kind == dk_module) {
-            name_ = d.u.this_module->pkg.getName ();
-        } else {         /* dk_class */
-            name_ = d.u.this_class->getName ();
+            if (buildtree) {
+                name_ = dirName (d.u.this_module->pkg);
+            }
+            else {
+                name_ = d.u.this_module->pkg.getName ();
+            }
+        } else {
+            if ((buildtree) && (d.u.this_class->getPackage () != NULL)) {
+                name_.assign (dirName (*d.u.this_class->getPackage ()));
+                name_.append (1, SEPARATOR);
+            }
+            name_.append (d.u.this_class->getName ());
         }
 
         openOutfile (name_, d);

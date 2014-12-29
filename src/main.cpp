@@ -63,7 +63,7 @@ under certain conditions; read the COPYING file for details.\n";
     -v                   Invert the class list selection.  When used \n\
                          without -cl prevents any file from being created.\n\
     --version            Show version x.y.z.\n\
-    --tab <number>       Set numbre of spaces for one indentation.\n\
+    --tab <number>       Set number of spaces for one indentation.\n\
                          Default: 4. Maximum: 8.\n\
     -ext <extension>     Use <extension> as the file extension.\n\
                          Here are the defaults:\n\
@@ -72,12 +72,12 @@ under certain conditions; read the COPYING file for details.\n";
                          csharp:\"cs\".\n\
                          Not applicable to shp, sql.\n\
     -bext <extension>    Use <extension> as the body (implementation) file\n\
-                         extension. Only applies only to ada and c.\n\
+                         extension. Only applies to ada and c.\n\
                          Here are the defaults:\n\
                          ada:\"adb\", c:\"c\"\n\
     -nl                  Create new line on new brace. Off by default.\n\
     -1                   One header contains only one header. If two classes\n\
-                         have the same name, they will be overwriting without\n\
+                         have the same name, they will be overwrite without\n\
                          --buildtree.\n\
                          Off by default but java.\n\
     -t <target>          Selects the output language. <target> can be one of:\n\

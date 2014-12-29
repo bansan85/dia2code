@@ -267,14 +267,28 @@ DiaGram::addInclude (const std::string & name)
 }
 
 void
-DiaGram::pushInclude (umlClassNode &node, bool oneClass)
+DiaGram::pushInclude (umlClassNode &node, bool oneClass, bool buildtree)
 {
     if ((node.getPackage () != NULL) && (!oneClass)) {
         std::list <umlPackage> pkglist;
         umlPackage::make_package_list (node.getPackage (), pkglist);
         addInclude ((*pkglist.begin ()).getName ());
     } else {
-        addInclude (node.getName ());
+        std::string nom;
+        if ((buildtree) && (node.getPackage () != NULL)) {
+            std::list <umlPackage> pkglist;
+            std::list <umlPackage>::const_iterator it;
+
+            umlPackage::make_package_list (node.getPackage (), pkglist);
+            it = pkglist.begin ();
+            while (it != pkglist.end ()) {
+                nom.append ((*it).getName ());
+                nom.append (1, SEPARATOR);
+                ++it;
+            }
+        }
+        nom.append (node.getName ());
+        addInclude (nom);
     }
 }
 
@@ -290,17 +304,17 @@ DiaGram::cleanIncludes () {
 }
 
 void
-DiaGram::determineIncludes (declaration &d, bool oneClass)
+DiaGram::determineIncludes (declaration &d, bool oneClass, bool buildtree)
 {
     if (d.decl_kind == dk_module) {
         for (declaration & it : d.u.this_module->contents) {
-            determineIncludes (it, oneClass);
+            determineIncludes (it, oneClass, buildtree);
         }
     } else {
         std::list <umlClassNode> cl;
         listClasses (*d.u.this_class, cl);
         for (umlClassNode & it : cl) {
-            pushInclude (it, oneClass);
+            pushInclude (it, oneClass, buildtree);
         }
     }
 }

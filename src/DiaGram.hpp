@@ -53,7 +53,7 @@ class DiaGram {
         */
         bool haveInclude (const std::string & name) const;
         void addInclude (const std::string & name);
-        void pushInclude (umlClassNode & node, bool oneClass);
+        void pushInclude (umlClassNode & node, bool oneClass, bool buildtree);
     public:
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;
@@ -74,7 +74,7 @@ class DiaGram {
         void push (umlClassNode &node);
         std::list <std::string> getIncludes () const;
         void cleanIncludes ();
-        void determineIncludes (declaration &d, bool oneClass);
+        void determineIncludes (declaration &d, bool oneClass, bool buildtree);
         
         std::list <declaration>::iterator getDeclBegin ();
         std::list <declaration>::iterator getDeclEnd ();
