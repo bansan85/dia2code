@@ -157,6 +157,18 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
     outfilename.append (filename);
     outfilename.append (".");
     outfilename.append (getFileExt ());
+
+    std::ifstream f (outfilename.c_str ());
+
+    if ((f.good ()) && (!overwrite)) {
+        f.close();
+        fprintf (stderr, "Overwrite %s is forbidden.\n", outfilename.c_str ());
+        exit (1);
+    }
+    else {
+        f.close();
+    }
+
     file.push_back (new std::ofstream ());
     file.back ()->open (outfilename.c_str ());
     if (file.back ()->is_open () && !overwrite) {
