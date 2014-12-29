@@ -83,12 +83,10 @@ GenerateCodeCpp::check_visibility (int *curr_vis, int new_vis) {
             getFile () << spc () << "protected :\n";
             break;
         case '3':
-            fprintf (stderr, "Implementation not applicable in C++.\n");
-            exit (1);
+            throw std::string ("Implementation not applicable in C++.\n");
             break;
         default :
-            fprintf (stderr, "Unknown visibility %d\n", new_vis);
-            exit (1);
+            throw std::string ("Unknown visibility.\n");
             break;
     }
     *curr_vis = new_vis;
@@ -328,10 +326,8 @@ GenerateCodeCpp::writeConst (const umlClassNode & node) {
     umla = node.getAttributes ().begin ();
     getFile () << spc () << "/// " << node.getComment () << "\n";
     if (node.getAttributes ().size () != 1) {
-        fprintf (stderr,
-                 "Error: first attribute not set at %s\n",
-                 node.getName ().c_str ());
-        exit (1);
+        throw std::string ("Error: first attribute not set at " +
+                           node.getName () + "\n");
     }
     if (!(*umla).getName ().empty ()) {
         fprintf (stderr,
@@ -423,10 +419,7 @@ GenerateCodeCpp::writeTypedef (const umlClassNode & node) {
 
     umla = node.getAttributes ().begin ();
     if (umla == node.getAttributes ().end ()) {
-        fprintf (stderr,
-                 "Error: first attribute (impl type) not set at typedef %s\n",
-                 node.getName ().c_str ());
-        exit (1);
+        throw std::string ("Error: first attribute (impl type) not set at typedef " + node.getName () + ".\n");
     }
     if (!(*umla).getName ().empty ())  {
         fprintf (stderr,

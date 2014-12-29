@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config.h"
 
 #include <iostream>
+#include <cassert>
 
 #include "DiaGram.hpp"
 #include "scan_tree.hpp"
@@ -46,8 +47,6 @@ DiaGram::getUml () {
 void
 DiaGram::addGenClasses (std::list <std::string> classes) {
     genClasses.merge (classes);
-
-    return;
 }
 
 
@@ -66,8 +65,6 @@ DiaGram::getInvertSel () const {
 void
 DiaGram::setInvertSel (bool invert) {
     invertsel = invert;
-
-    return;
 }
 
 
@@ -81,8 +78,6 @@ DiaGram::getUseCorba () const {
 void
 DiaGram::setUseCorba (bool corba) {
     usecorba = corba;
-
-    return;
 }
 #endif
 
@@ -96,6 +91,7 @@ DiaGram::listClasses (umlClassNode & current_class,
     std::list <umlClassNode> classes = getUml ();
     umlClassNode * tmpnode;
 
+    // Type may be unknown.
     for (const umlAttribute & umla : current_class.getAttributes ()) {
         if (!umla.getType ().empty ()) {
             tmpnode = find_by_name (classes, umla.getType ().c_str ());
@@ -118,24 +114,27 @@ DiaGram::listClasses (umlClassNode & current_class,
         }
     }
 
+    // But not parents, dependencies and associations.
     for (const umlClass * classit : current_class.getParents ()) {
         tmpnode = find_by_name (classes, classit->getName ().c_str ());
-        if (tmpnode && !find_by_name (res, classit->getName ().c_str ())) {
+        assert (tmpnode != NULL);
+        if (!find_by_name (res, classit->getName ().c_str ())) {
             res.push_back (*tmpnode);
         }
     }
 
     for (const umlClassNode & classit : current_class.getDependencies ()) {
         tmpnode = find_by_name (classes, classit.getName ().c_str ());
-        if (tmpnode && !find_by_name (res, classit.getName ().c_str ())) {
+        assert (tmpnode != NULL);
+        if (!find_by_name (res, classit.getName ().c_str ())) {
             res.push_back (*tmpnode);
         }
     }
 
     for (const umlassoc & associations : current_class.getAssociations ()) {
         tmpnode = find_by_name (classes, associations.key.getName ().c_str ());
-        if (tmpnode &&
-            !find_by_name (res, associations.key.getName ().c_str ())) {
+        assert (tmpnode != NULL);
+        if (!find_by_name (res, associations.key.getName ().c_str ())) {
             res.push_back (*tmpnode);
         }
     }
@@ -151,6 +150,7 @@ create_nested_modules_from_pkglist (
 {
     bool first = true;
     std::list <umlPackage>::iterator it;
+    assert (m != NULL);
     /* Expects pkglist and m to be non-NULL and m->contents to be NULL.
        Returns a reference to the innermost module created.  */
     for (it = debut; it != fin; ++it) {
@@ -219,8 +219,8 @@ DiaGram::push (umlClassNode & node)
     // Make sure all classes that this one depends on are already pushed.
     for (umlClassNode & it : used_classes) {
         // don't push this class
-        if (! !node.getName ().compare (it.getName ()) &&
-            ! (is_present (tmp_classes, it.getName ().c_str ()) ^ invertsel)) {
+        if ((node.getName ().compare (it.getName ()) != 0) &&
+            (!is_present (tmp_classes, it.getName ().c_str ()) ^ invertsel)) {
             push (it);
         }
     }

@@ -111,6 +111,9 @@ GenerateCode::getBuildTree () const {
 
 void
 GenerateCode::setBuildTree (bool build) {
+    if (build) {
+        oneClassOneHeader = true;
+    }
     buildtree = build;
 
     return;
@@ -162,8 +165,7 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
 
     if ((f.good ()) && (!overwrite)) {
         f.close();
-        fprintf (stderr, "Overwrite %s is forbidden.\n", outfilename.c_str ());
-        exit (1);
+        throw std::string ("Overwrite " + outfilename + " is forbidden.\n");
     }
     else {
         f.close();
@@ -171,18 +173,15 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
 
     file.push_back (new std::ofstream ());
     file.back ()->open (outfilename.c_str ());
-    if (file.back ()->is_open () && !overwrite) {
-        fprintf (stderr, "Failed to overwrite %s.\n", outfilename.c_str ());
+    if (file.back ()->is_open ()) {
         file.back ()->close ();
-        exit (1);
+        throw std::string ("File to create " + outfilename + ".\n");
     }
 
     writeLicense ();
 
     tmpname = strtoupper (filename);
-    if (indentlevel != 0) {
-        fprintf (stderr, "indent level (%d) should be 0.\n", indentlevel);
-    }
+    assert (indentlevel == 0);
     writeStartHeader (tmpname);
 
     getDia ().cleanIncludes ();
@@ -212,9 +211,7 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
 void
 GenerateCode::closeOutfile () {
     writeEndHeader ();
-    if (indentlevel != 0) {
-        fprintf (stderr, "indent level (%d) should be 0.\n", indentlevel);
-    }
+    assert (indentlevel == 0);
     file.back ()->close ();
     delete file.back ();
     file.pop_back ();
@@ -761,20 +758,16 @@ GenerateCode::incIndentLevel () {
 
 void
 GenerateCode::decIndentLevel () {
-    if (indentlevel != 0) {
-        indentlevel--;
-    }
-    else {
-        fprintf (stderr, "Failed to decIndentLevel.\n");
-    }
+    assert (indentlevel != 0);
+    indentlevel--;
 }
 
 void
 GenerateCode::writeLicenseAll () {
     FILE * licensefile = fopen (license.c_str (), "r");
+
     if (!licensefile) {
-        fprintf (stderr, "Can't open the license file.\n");
-        exit (1);
+        throw std::string ("Can't open the license file " + license + ".\n");
     }
 
     int lc;
