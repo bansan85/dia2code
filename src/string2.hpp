@@ -47,8 +47,6 @@ std::string strtoupperfirst (std::string s);
 std::list <std::string> parse_class_names (char *s);
 int is_present (std::list <std::string> list, const char *name);
 
-extern int generate_backup;
-
 #endif
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

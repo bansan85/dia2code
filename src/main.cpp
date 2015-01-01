@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 int main (int argc, char **argv) {
     DiaGram diagram;
     int i;
-    char *infile = NULL;    /* The input file */
+    char *infile = NULL;
     int parameter = 0;
 
     uint8_t tab = 4;
@@ -74,7 +74,7 @@ under certain conditions; read the COPYING file for details.\n";
     -bext <extension>    Use <extension> as the body (implementation) file\n\
                          extension. Only applies to ada and c.\n\
                          Here are the defaults:\n\
-                         ada:\"adb\", c:\"c\"\n\
+                         ada:\"adb\", c:\"c\".\n\
     -nl                  Create new line on new brace. Off by default.\n\
     -1                   One header contains only one header. If two classes\n\
                          have the same name, they will be overwrite without\n\
@@ -82,19 +82,18 @@ under certain conditions; read the COPYING file for details.\n";
                          Off by default but java.\n\
     -t <target>          Selects the output language. <target> can be one of:\n\
                          ada,as3,c,cpp,csharp,idl,java,php,php5,python,ruby,\n\
-                         shp,sql. \n\
-    <diagramfile>        The Dia file that holds the diagram to be read.\n\n\
+                         shp,sql.\n\
+    <diagramfile>        The Dia file that holds the diagram to be read.\n\
+\n\
     Note: parameters can be specified in any order.";
 
     generator = NULL;
 
-
-    if (argc < 2) {
-        fprintf (stderr, "%s\nUsage: %s %s\n", notice, argv[0], help);
-        exit (2);
+    if (argc < 4) {
+        throw std::string (std::string (notice) + "\nUsage: " + std::string (argv[0]) + " " + std::string (help) + "\n");
     }
 
-    /* Argument parsing: rewritten from scratch */
+    // Argument parsing: rewritten from scratch
     for (i = 1; i < argc; i++) {
         switch (parameter) {
         case 0:
@@ -138,7 +137,7 @@ under certain conditions; read the COPYING file for details.\n";
                 infile = argv[i];
             }
             break;
-        case 1:   /* Which code generator */
+        case 1:   // Which code generator
             parameter = 0;
             if (!strcmp (argv[i], "cpp")) {
                 generator = new GenerateCodeCpp (diagram);
@@ -170,27 +169,27 @@ under certain conditions; read the COPYING file for details.\n";
                 parameter = -1;
             }
             break;
-        case 2:   /* Which output directory */
+        case 2:   // Which output directory
             outdir = argv[i];
             parameter = 0;
             break;
-        case 3:   /* Which classes to consider */
+        case 3:   // Which classes to consider
             diagram.addGenClasses (parse_class_names (argv[i]));
             parameter = 0;
             break;
-        case 4:   /* Which license file */
+        case 4:   // Which license file
             license = argv[i];
             parameter = 0;
             break;
-        case 5:   /* Which file extension */
+        case 5:   // Which file extension
             ext = argv[i];
             parameter = 0;
             break;
-        case 6:   /* Which file extension for body file */
+        case 6:   // Which file extension for body file
             bext = argv[i];
             parameter = 0;
             break;
-        case 8: {  /* Number of spaces for one indentation */
+        case 8: { // Number of spaces for one indentation
             int num = atoi (argv[i]);
             if ((num < 1) || (num > 8)) {
                 fprintf (stderr,
@@ -203,15 +202,14 @@ under certain conditions; read the COPYING file for details.\n";
             break;
         }
         default : {
-            fprintf (stderr, "Unknown parameter : %s.\n", argv[i]);
+            fprintf (stderr, "Ignore unknown parameter : %s.\n", argv[i]);
         }
         }
     }
     /* parameter != 0 means the command line was invalid */
 
     if (parameter != 0 || infile == NULL) {
-        printf ("%s\nUsage: %s %s\n\n%s\n", notice, argv[0], help, bighelp);
-        exit (2);
+        throw std::string (std::string (notice) + "\nUsage: " + std::string (argv[0]) + " " + std::string (help) + "\n\n" + std::string (bighelp) + "\n");
     }
 
     LIBXML_TEST_VERSION;
@@ -222,8 +220,7 @@ under certain conditions; read the COPYING file for details.\n";
 
     // Code generation
     if (!generator) {
-        fprintf (stderr, "error : no generator specify.\n");
-        exit (1);
+        throw std::string ("Error : no generator specify.\n");
     }
 
     generator->setIndent (tab);

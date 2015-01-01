@@ -24,10 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "parse_diagram.hpp"
 #include "string2.hpp"
 
-#ifndef MIN
-#define MIN(x, y) (x < y ? x : y)
-#endif
-
 void
 parseDiaString (const char * stringnode, std::string &buffer) {
     buffer.assign (stringnode, 1, strlen (stringnode) - 2);

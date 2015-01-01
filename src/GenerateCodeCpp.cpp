@@ -86,7 +86,7 @@ GenerateCodeCpp::check_visibility (int *curr_vis, int new_vis) {
             throw std::string ("Implementation not applicable in C++.\n");
             break;
         default :
-            throw std::string ("Unknown visibility.\n");
+            throw std::string (new_vis + " : Unknown visibility.\n");
             break;
     }
     *curr_vis = new_vis;

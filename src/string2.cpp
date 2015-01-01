@@ -22,8 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "string2.hpp"
 
-int generate_backup;
-
 /**
  * This function returns the upper case char* of the one taken on input
  * The char * received may be freed by the caller

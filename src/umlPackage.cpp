@@ -68,6 +68,7 @@ umlPackage::umlPackage (const umlPackage & pack) :
     parent (pack.parent),
     directory (pack.directory) {
 }
+
 /*
     Builds a package list from the hierarchy of parents of package.
     The topmost package will be the first on the list and the initial

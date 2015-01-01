@@ -291,8 +291,7 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
     ptr = xmlParseFile (diafile);
 
     if (ptr == NULL) {
-        fprintf (stderr, "That file does not exist or is not a Dia diagram\n");
-        exit (2);
+        throw std::string ("File " + std::string (diafile) + " does not exist or is not a Dia diagram.\n");
     }
 
     // we search for the first "object" node
@@ -325,14 +324,9 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
         object = getNextObject (object);
     }
 
-    /* Second pass - Implementations and associations */
+    // Second pass - Implementations and associations
 
-    /* The association is done as a queue, so we must first put in
-         realizations (interfaces) and then generalizations (inheritance)
-         so we will have the latter first and the former after (!)
-         THIS STILL SUCKS !!! How soon is now? */
-
-    /* we search for the first "object" node */
+    // we search for the first "object" node
     recursiveSearch (ptr->xmlRootNode->xmlChildrenNode->next, &object);
 
     while (object != NULL) {
@@ -404,7 +398,7 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                                             multiplicity_a = BAD_TSAC2 (ggchild->xmlChildrenNode->content);
                                         }
                                         else if (!strcmp (attrtype, "aggregate")) {
-                                            /* todo */
+                                            /* TODO */
                                         }
                                     }
                                     grandchild = grandchild->next;
@@ -465,9 +459,9 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
             xmlNodePtr attribute = object->xmlChildrenNode;
             while (attribute != NULL) {
                 if (!strcmp ("connections", BAD_TSAC2 (attribute->name))) {
-                    end2 = xmlGetProp (attribute->xmlChildrenNode,
-                                       BAD_CAST2 ("to"));
                     end1 = xmlGetProp (attribute->xmlChildrenNode->next,
+                                       BAD_CAST2 ("to"));
+                    end2 = xmlGetProp (attribute->xmlChildrenNode,
                                        BAD_CAST2 ("to"));
                     make_depend (res, BAD_TSAC2 (end1), BAD_TSAC2 (end2));
                     free (end1);
@@ -530,7 +524,7 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
        packages.  Scanning the res we'll associate its own package
        to each class. */
 
-    /* Build the relationships between packages */
+    // Build the relationships between packages
     for (umlPackage & dummypcklst : packagelst) {
         for (umlPackage & tmppcklst : packagelst) {
             if (is_inside (dummypcklst.getGeometry (),
@@ -544,7 +538,7 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
         }
     }
 
-    /* Associate packages to classes */
+    // Associate packages to classes
     for (umlPackage & dummypcklst : packagelst) {
         for (umlClassNode & it : res) {
             if (is_inside (dummypcklst.getGeometry (), it.geom)) {
@@ -573,7 +567,6 @@ umlClass::parse_class (xmlNodePtr class_) {
     while (attribute != NULL) {
         xmlChar *attrname;
         attrname = xmlGetProp (attribute, BAD_CAST2 ("name"));
-        /* fix a segfault - dia files contains *also* some rare tags without any "name" attribute : <dia:parent  for ex.  */
         if (attrname == NULL) {
             attribute = attribute->next;
             continue;

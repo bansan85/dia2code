@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config.h"
 
 #include <iostream>
+#include <cassert>
 
 #if defined(_WIN32) || defined(_WIN64)
 #else
@@ -173,9 +174,9 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
 
     file.push_back (new std::ofstream ());
     file.back ()->open (outfilename.c_str ());
-    if (file.back ()->is_open ()) {
+    if (!file.back ()->is_open ()) {
         file.back ()->close ();
-        throw std::string ("File to create " + outfilename + ".\n");
+        throw std::string ("Failed to create " + outfilename + ".\n");
     }
 
     writeLicense ();
@@ -282,7 +283,7 @@ nospc (char *str) {
     return subst (str, ' ', '_');
 }
 
-int
+bool
 isEnumStereo (const char *stereo) {
     return (!strcasecmp (stereo, "enum") ||
             !strcasecmp (stereo, "enumeration")
@@ -292,7 +293,7 @@ isEnumStereo (const char *stereo) {
             );
 }
 
-int
+bool
 isStructStereo (const char *stereo) {
     return (!strcasecmp (stereo, "struct") ||
             !strcasecmp (stereo, "structure")
@@ -302,7 +303,7 @@ isStructStereo (const char *stereo) {
             );
 }
 
-int
+bool
 isTypedefStereo (const char *stereo) {
     return (!strcasecmp (stereo, "typedef")
 #ifdef ENABLE_CORBA
@@ -311,7 +312,7 @@ isTypedefStereo (const char *stereo) {
             );
 }
 
-int
+bool
 isConstStereo (const char *stereo) {
     return (!strcasecmp (stereo, "const") ||
             !strcasecmp (stereo, "constant")
@@ -326,13 +327,13 @@ GenerateCode::passByReference (umlClass &cl) {
     const char *st;
     st = cl.getStereotype ().c_str ();
     if (strlen (st) == 0) {
-        return 1;
+        return true;
     }
     if (isTypedefStereo (st)) {
         umlClassNode *ref = find_by_name (dia.getUml (),
                                           cl.getName ().c_str ());
         if (ref == NULL) {
-            return 0;
+            return false;
         }
         return passByReference (*ref);
     }
@@ -341,12 +342,12 @@ GenerateCode::passByReference (umlClass &cl) {
 }
 
 #ifdef ENABLE_CORBA
-static int
+static bool
 isOoClass (umlClass &cl) {
     const char *st;
     st = cl.getStereotype ().c_str ();
     if (strlen (st) == 0) {
-        return 1;
+        return true;
     }
     return (!isConstStereo (st) &&
             !isTypedefStereo (st) &&
@@ -362,9 +363,7 @@ GenerateCode::cppName (std::string name) const {
     static std::string buf;
 #ifdef ENABLE_CORBA
     if (dia.getUseCorba ()) {
-        if (name.compare ("boolean") == 0 ||
-            name.compare ("char") == 0 ||
-            name.compare ("octet") == 0 ||
+        if (name.compare ("boolean") == 0 || name.compare ("char") == 0 || name.compare ("octet") == 0 ||
             name.compare ("short") == 0 ||
             name.compare ("long") == 0 ||
             name.compare ("float") == 0 ||
