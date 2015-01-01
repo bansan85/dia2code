@@ -23,30 +23,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config.h"
 
 #include "GenerateCodeJava.hpp"
-#include "umlClassNode.hpp"
 #include "string2.hpp"
 #include "scan_tree.hpp"
 
-GenerateCodeCpp::GenerateCodeCpp (DiaGram & diagram) :
-    GenerateCode (diagram, "java") {
+GenerateCodeJava::GenerateCodeJava (DiaGram & diagram) :
+    GenerateCode (diagram, "hpp") {
 }
 
 std::string
-GenerateCodeCpp::strPointer (const std::string & type) const {
+GenerateCodeJava::strPointer (const std::string & type) const {
     std::string retour (type);
     retour.append (" *");
     return retour;
 }
 
 std::string
-GenerateCodeCpp::strPackage (const char * package) const {
+GenerateCodeJava::strPackage (const char * package) const {
     std::string retour (package);
     retour.append ("::");
     return retour;
 }
 
 const char *
-GenerateCodeCpp::fqname (const umlClassNode &node, bool use_ref_type) {
+GenerateCodeJava::fqname (const umlClassNode &node, bool use_ref_type) {
     static std::string buf;
 
     buf.clear ();
@@ -67,7 +66,7 @@ GenerateCodeCpp::fqname (const umlClassNode &node, bool use_ref_type) {
 }
 
 void
-GenerateCodeCpp::check_visibility (int *curr_vis, int new_vis) {
+GenerateCodeJava::check_visibility (int *curr_vis, int new_vis) {
     if (*curr_vis == new_vis) {
         return;
     }
@@ -83,12 +82,10 @@ GenerateCodeCpp::check_visibility (int *curr_vis, int new_vis) {
             getFile () << spc () << "protected :\n";
             break;
         case '3':
-            fprintf (stderr, "Implementation not applicable in C++.\n");
-            exit (1);
+            throw std::string ("Implementation not applicable in C++.\n");
             break;
         default :
-            fprintf (stderr, "Unknown visibility %d\n", new_vis);
-            exit (1);
+            throw std::string (new_vis + " : Unknown visibility.\n");
             break;
     }
     *curr_vis = new_vis;
@@ -96,7 +93,7 @@ GenerateCodeCpp::check_visibility (int *curr_vis, int new_vis) {
 }
 
 void
-GenerateCodeCpp::writeLicense () {
+GenerateCodeJava::writeLicense () {
     if (getLicense ().empty ()) {
         return;
     }
@@ -107,28 +104,29 @@ GenerateCodeCpp::writeLicense () {
 }
 
 void
-GenerateCodeCpp::writeStartHeader (std::string & name) {
+GenerateCodeJava::writeStartHeader (std::string & name) {
     getFile () << spc () << "#ifndef " << name << "__HPP\n";
-    getFile () << spc () << "#define " << name << "__HPP\n\n";
+    getFile () << spc () << "#define " << name << "__HPP\n";
 }
 
 void
-GenerateCodeCpp::writeEndHeader () {
-    getFile () << "#endif\n";
+GenerateCodeJava::writeEndHeader () {
+    getFile () << spc () << "\n";
+    getFile () << spc () << "#endif\n";
 }
 
 void
-GenerateCodeCpp::writeInclude (std::basic_string <char> name) {
-    getFile () << "#include \"" << name << "\"\n";
+GenerateCodeJava::writeInclude (std::basic_string <char> name) {
+    getFile () << spc () << "#include \"" << name << "\"\n";
 }
 
 void
-GenerateCodeCpp::writeInclude (const char * name) {
-    getFile () << "#include \"" << name << "\"\n";
+GenerateCodeJava::writeInclude (const char * name) {
+    getFile () << spc () << "#include \"" << name << "\"\n";
 }
 
 void
-GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
+GenerateCodeJava::writeFunctionComment (const umlOperation & ope) {
     getFile () << spc () << "/** \\brief " << ope.getComment () << "\n";
     for (const umlAttribute & tmpa2 : ope.getParameters ()) {
         getFile () << spc () << "    \\param " << tmpa2.getName ()
@@ -139,7 +137,7 @@ GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
 }
 
 void
-GenerateCodeCpp::writeFunction (const umlOperation & ope,
+GenerateCodeJava::writeFunction (const umlOperation & ope,
                                 int * curr_visibility) {
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
@@ -175,7 +173,7 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
                      "CORBAValue %s: static not supported\n",
                      ope.getName ().c_str ());
         }
-        else 
+        else
 #endif
         {
             getFile () << "static ";
@@ -225,17 +223,17 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
 }
 
 void
-GenerateCodeCpp::writeComment (const std::string & text) {
+GenerateCodeJava::writeComment (const std::string & text) {
     getFile () << spc () << "// " << text << "\n";
 }
 
 void
-GenerateCodeCpp::writeComment (const char * text) {
+GenerateCodeJava::writeComment (const char * text) {
     getFile () << spc () << "// " << text << "\n";
 }
 
 void
-GenerateCodeCpp::writeClassComment (const umlClassNode & node) {
+GenerateCodeJava::writeClassComment (const umlClassNode & node) {
     getFile () << spc () << "/** \\class " << node.getName () << "\n";
     if (!node.getComment ().empty ()) {
         getFile () << spc () << "    \\brief " << node.getComment () << "\n";
@@ -244,7 +242,7 @@ GenerateCodeCpp::writeClassComment (const umlClassNode & node) {
 }
 
 void
-GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
+GenerateCodeJava::writeClass (const umlClassNode & node) {
     getFile () << spc () << "class " << node.getName ();
     if (!node.getParents ().empty ()) {
         std::list <umlClass *>::const_iterator parent;
@@ -273,12 +271,7 @@ GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
 }
 
 void
-GenerateCodeCpp::writeClassEnd (const umlClassNode & node) {
-    getFile () << spc () << "};\n\n";
-}
-
-void
-GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
+GenerateCodeJava::writeAttribute (const umlAttribute & attr,
                                  int * curr_visibility) {
     check_visibility (curr_visibility, attr.getVisibility ());
     if (!attr.getComment ().empty ()) {
@@ -296,32 +289,44 @@ GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
 }
 
 void
-GenerateCodeCpp::writeNameSpaceStart (const std::string & name) {
-    if (getOpenBraceOnNewline ()) {
-        getFile () << spc () << "namespace " << name << "\n"
-                   << spc () << "{\n\n";
-    }
-    else {
-        getFile () << spc () << "namespace " << name << " {\n\n";
+GenerateCodeJava::writeNameSpaceStart (const umlClassNode * node) {
+    if (node->getPackage () != NULL) {
+        std::list <umlPackage> pkglist;
+        umlPackage::make_package_list (node->getPackage (), pkglist);
+        for (const umlPackage & it : pkglist) {
+            if (getOpenBraceOnNewline ()) {
+                getFile () << spc () << "namespace " << it.getName () << "\n"
+                           << spc () << "{\n";
+            }
+            else {
+                getFile () << spc () << "namespace " << it.getName ()
+                           << " {\n";
+            }
+            incIndentLevel ();
+        }
     }
 }
 
 void
-GenerateCodeCpp::writeNameSpaceEnd () {
-    getFile () << spc () << "};\n\n";
+GenerateCodeJava::writeNameSpaceEnd (const umlClassNode * node) {
+    const umlPackage *pack = node->getPackage ();
+
+    while (pack != NULL) {
+        decIndentLevel ();
+        getFile () << spc () << "};\n";
+        pack = pack->getParent ();
+    }
 }
 
 void
-GenerateCodeCpp::writeConst (const umlClassNode & node) {
+GenerateCodeJava::writeConst (const umlClassNode & node) {
     std::list <umlAttribute>::const_iterator umla;
 
     umla = node.getAttributes ().begin ();
     getFile () << spc () << "/// " << node.getComment () << "\n";
     if (node.getAttributes ().size () != 1) {
-        fprintf (stderr,
-                 "Error: first attribute not set at %s\n",
-                 node.getName ().c_str ());
-        exit (1);
+        throw std::string ("Error: first attribute not set at " +
+                           node.getName () + "\n");
     }
     if (!(*umla).getName ().empty ()) {
         fprintf (stderr,
@@ -331,11 +336,11 @@ GenerateCodeCpp::writeConst (const umlClassNode & node) {
 
     getFile () << spc () << "const " << cppName ((*umla).getType ())
                << " " << node.getName () << " = " << (*umla).getValue ()
-               << ";\n\n";
+               << ";\n";
 }
 
 void
-GenerateCodeCpp::writeEnum (const umlClassNode & node) {
+GenerateCodeJava::writeEnum (const umlClassNode & node) {
     std::list <umlAttribute>::const_iterator umla;
 
     umla = node.getAttributes ().begin ();
@@ -371,11 +376,11 @@ GenerateCodeCpp::writeEnum (const umlClassNode & node) {
         getFile () << "\n";
     }
     decIndentLevel ();
-    getFile () << spc () << "};\n\n";
+    getFile () << spc () << "};\n";
 }
 
 void
-GenerateCodeCpp::writeStruct (const umlClassNode & node) {
+GenerateCodeJava::writeStruct (const umlClassNode & node) {
     std::list <umlAttribute>::const_iterator umla;
 
     umla = node.getAttributes ().begin ();
@@ -404,19 +409,16 @@ GenerateCodeCpp::writeStruct (const umlClassNode & node) {
         ++umla;
     }
     decIndentLevel ();
-    getFile () << spc () << "};\n\n";
+    getFile () << spc () << "};\n";
 }
 
 void
-GenerateCodeCpp::writeTypedef (const umlClassNode & node) {
+GenerateCodeJava::writeTypedef (const umlClassNode & node) {
     std::list <umlAttribute>::const_iterator umla;
 
     umla = node.getAttributes ().begin ();
     if (umla == node.getAttributes ().end ()) {
-        fprintf (stderr,
-                 "Error: first attribute (impl type) not set at typedef %s\n",
-                 node.getName ().c_str ());
-        exit (1);
+        throw std::string ("Error: first attribute (impl type) not set at typedef " + node.getName () + ".\n");
     }
     if (!(*umla).getName ().empty ())  {
         fprintf (stderr,
@@ -424,11 +426,11 @@ GenerateCodeCpp::writeTypedef (const umlClassNode & node) {
                  node.getName ().c_str ());
     }
     getFile () << spc () << "typedef " << cppName ((*umla).getType ()) << " "
-               << node.getName () << (*umla).getValue () << ";\n\n";
+               << node.getName () << (*umla).getValue () << ";\n";
 }
 
 void
-GenerateCodeCpp::writeAssociation (const umlassoc & asso) {
+GenerateCodeJava::writeAssociation (const umlassoc & asso) {
     if (!asso.name.empty ()) {
         umlClassNode *ref;
         ref = find_by_name (getDia ().getUml (),
@@ -444,7 +446,7 @@ GenerateCodeCpp::writeAssociation (const umlassoc & asso) {
 }
 
 void
-GenerateCodeCpp::writeTemplates (
+GenerateCodeJava::writeTemplates (
               const std::list <std::pair <std::string, std::string> > & tmps) {
     std::list <std::pair <std::string, std::string> >::const_iterator
                                                      template_ = tmps.begin ();
@@ -459,7 +461,7 @@ GenerateCodeCpp::writeTemplates (
     getFile () << ">\n";
 }
 
-GenerateCodeCpp::~GenerateCodeCpp () {
+GenerateCodeJava::~GenerateCodeJava () {
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
