@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "string2.hpp"
 #include "GenerateCodeCpp.hpp"
+#include "GenerateCodeCpp11.hpp"
 //#include "GenerateCodeJava.hpp"
 
 int main (int argc, char **argv) {
@@ -82,8 +83,8 @@ under certain conditions; read the COPYING file for details.\n";
                          --buildtree.\n\
                          Off by default but java.\n\
     -t <target>          Selects the output language. <target> can be one of:\n\
-                         ada,as3,c,cpp,csharp,idl,java,php,php5,python,ruby,\n\
-                         shp,sql.\n\
+                         ada,as3,c,cpp,cpp11,csharp,idl,java,php,php5,python,\n\
+                         ruby,shp,sql.\n\
     <diagramfile>        The Dia file that holds the diagram to be read.\n\
 \n\
     Note: parameters can be specified in any order.";
@@ -142,6 +143,8 @@ under certain conditions; read the COPYING file for details.\n";
             parameter = 0;
             if (!strcmp (argv[i], "cpp")) {
                 generator = new GenerateCodeCpp (diagram);
+            } else if (!strcmp (argv[i], "cpp11")) {
+                generator = new GenerateCodeCpp11 (diagram);
             } else if (!strcmp (argv[i], "java")) {
 //                generator = new GenerateCodeJava (diagram);
             } else if (!strcmp (argv[i], "c")) {
