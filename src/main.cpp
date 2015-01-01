@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#include "GenerateCodeJava.hpp"
 
 int main (int argc, char **argv) {
+try {
     DiaGram diagram;
     int i;
     char *infile = NULL;
@@ -89,7 +90,7 @@ under certain conditions; read the COPYING file for details.\n";
 
     generator = NULL;
 
-    if (argc < 4) {
+    if (argc < 2) {
         throw std::string (std::string (notice) + "\nUsage: " + std::string (argv[0]) + " " + std::string (help) + "\n");
     }
 
@@ -166,7 +167,7 @@ under certain conditions; read the COPYING file for details.\n";
             } else if (!strcmp(argv[i], "as3")) {
 //                generator = generators[12];
             } else {
-                parameter = -1;
+                throw std::string ("Unknown generator : " + std::string (argv[i]) + ".\n");
             }
             break;
         case 2:   // Which output directory
@@ -208,7 +209,11 @@ under certain conditions; read the COPYING file for details.\n";
     }
     /* parameter != 0 means the command line was invalid */
 
-    if (parameter != 0 || infile == NULL) {
+    if (!infile) {
+        throw std::string ("Error : Dia diagram not specify.\n");
+    }
+
+    if (parameter != 0) {
         throw std::string (std::string (notice) + "\nUsage: " + std::string (argv[0]) + " " + std::string (help) + "\n\n" + std::string (bighelp) + "\n");
     }
 
@@ -218,7 +223,6 @@ under certain conditions; read the COPYING file for details.\n";
     // We build the class list from the dia file here
     umlClass::parse_diagram (infile, diagram.getUml ());
 
-    // Code generation
     if (!generator) {
         throw std::string ("Error : no generator specify.\n");
     }
@@ -246,6 +250,10 @@ under certain conditions; read the COPYING file for details.\n";
     xmlCleanupParser ();
 
     return 0;
+}
+catch (const std::string & Msg) {
+    std::cout << Msg;
+}
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
