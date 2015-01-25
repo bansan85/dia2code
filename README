@@ -391,14 +391,32 @@ Write an association.
                const std::list <std::pair <std::string, std::string> > & tmps);
 Write a template.
 
+Add a new generator to the main program:
+The following files needs to be update:
+ - src/main.cpp:
+     - add a new include at the top of the file with the header of the new
+       generator.
+     - inside the variable const char *help, add the abreviation of the
+       language.
+     - inside the variable const char *bighelp, change -ext, -bext and -t
+       options.
+     - and finally add it inside the main loop, in "case 1".
+ - src/Makefile.am
+     - add the source in dia2code_SOURCES,
+     - add the header in EXTRA_DIST.
+And of course, don't forget to run "git add GenerateCodeXXX.?pp".
+
+
 KNOWN BUGS
 
 - Does not follow the DTD of a Dia Diagram, rather parses as it sees fit.
 - Packages of classes are find with the position and size instead of <dia:childnode parent="O0"/>
 
+
 AUTHOR
 
 Javier O'Hara <joh314@users.sourceforge.net>
+
 
 MAINTAINER
 
@@ -430,5 +448,3 @@ THANKS
 Thanks to Collin Starkweather and Slush Gore for the extra help.
 Also, thanks to all the people that have contacted me with suggestions and bug
 reports.
-
-
