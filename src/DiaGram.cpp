@@ -220,7 +220,7 @@ DiaGram::push (umlClassNode & node)
     for (umlClassNode & it : used_classes) {
         // don't push this class
         if ((node.getName ().compare (it.getName ()) != 0) &&
-            (!is_present (tmp_classes, it.getName ().c_str ()) ^ invertsel)) {
+            (!(is_present (tmp_classes, it.getName ().c_str ())^invertsel))) {
             push (it);
         }
     }

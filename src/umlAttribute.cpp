@@ -216,7 +216,7 @@ umlAttribute::insert (std::list <umlAttribute> &l) {
         l.push_back (*this);
     }
     else {
-        while ((itl != l.end ()) && ((*itl).visibility >= this->visibility)) {
+        while ((itl != l.end ()) && ((*itl).visibility >= visibility)) {
             ++itl;
         }
         if (itl == l.end ()) {

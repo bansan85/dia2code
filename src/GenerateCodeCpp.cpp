@@ -99,7 +99,7 @@ GenerateCodeCpp::writeLicense () {
     }
 
     getFile () << "/*\n";
-    writeLicenseAll ();
+    writeFile ();
     getFile () << "*/\n\n";
 }
 
@@ -268,6 +268,11 @@ GenerateCodeCpp::writeClass (const umlClassNode & node) {
     else {
         getFile () << " {\n";
     }
+}
+
+void
+GenerateCodeCpp::writeClassEnd () {
+    getFile () << spc () << "};\n";
 }
 
 void

@@ -86,10 +86,10 @@ umlClass::getTemplates () const
 }
 
 /**
-  * Adds get() (or is()) and set() methods for each attribute
+  * Adds get () (or is ()) and set () methods for each attribute
 */
 void
-umlClass::make_getset_methods () {
+umlClass::makeGetSetMethods () {
     for (umlAttribute & attrlist : attributes) {
         if (!attrlist.isAbstract ()) {
             std::string tmpname, impl;
@@ -128,7 +128,9 @@ umlClass::make_getset_methods () {
             impl.assign ("    return ");
             impl.append (attrlist.getName ());
             impl.append (";");
-            if (attrlist.getType ().compare ("boolean") == 0) {
+            if ((attrlist.getType ().compare ("boolean") == 0) ||
+                (attrlist.getType ().compare ("Boolean") == 0) ||
+                (attrlist.getType ().compare ("bool") == 0)) {
                 tmpname.assign ("is");
             } else {
                 tmpname.assign ("get");
@@ -140,7 +142,7 @@ umlClass::make_getset_methods () {
             umlOperation::insert_operation (operation2, operations);
         }
     }
- }
+}
 
 /**
   Simple, non-compromising, implementation declaration.
@@ -184,8 +186,7 @@ umlClass::lolipop_implementation (std::list <umlClassNode> & classlist,
         key->package = NULL;
         key->id.assign ("00");
         parseDiaString (name, key->name);
-        key->stereotype.assign ("Interface");
-        key->isabstract = 1;
+        key->isabstract = true;
         implementator->addparent (key);
     }
 }
@@ -489,18 +490,7 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
             }
         } else if (!strcmp ("UML - Implements", BAD_TSAC2 (objtype))) {
             umlClass::lolipop_implementation (res, object);
-        }
-        free (objtype);
-        object = getNextObject (object);
-    }
-
-
-    /* Generalizations: we must put this AFTER all the interface
-       implementations. generate_code_java relies on this. */
-    recursiveSearch (ptr->xmlRootNode->xmlChildrenNode->next, &object);
-    while (object != NULL) {
-        xmlChar *objtype = xmlGetProp (object, BAD_CAST2 ("type"));
-        if (!strcmp ("UML - Generalization", BAD_TSAC2 (objtype))) {
+        } else if (!strcmp ("UML - Generalization", BAD_TSAC2 (objtype))) {
             xmlNodePtr attribute = object->xmlChildrenNode;
             while (attribute != NULL) {
                 if (!strcmp ("connections", BAD_TSAC2 (attribute->name))) {
@@ -598,8 +588,8 @@ umlClass::parse_class (xmlNodePtr class_) {
         } else if (!strcmp ("operations", BAD_TSAC2 (attrname))) {
             umlOperation::parse_operations (attribute->xmlChildrenNode,
                                             operations);
-            if (stereotype.compare ("getset") == 0) {
-                this->make_getset_methods ();
+            if (stereotype.compare ("GetSet") == 0) {
+                makeGetSetMethods ();
             }
         } else if (!strcmp ("templates", BAD_TSAC2 (attrname))) {
             parseTemplates (attribute->xmlChildrenNode, templates);

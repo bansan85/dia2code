@@ -35,7 +35,6 @@ class DiaGram {
         std::list <std::string> genClasses;
         // Flag that inverts the above selection.
         bool        invertsel : 1;
-        // Set by push() if CORBA stereotypes in use.
 #ifdef ENABLE_CORBA
         bool        usecorba : 1;
 #endif
@@ -45,7 +44,7 @@ class DiaGram {
         std::list <declaration> decl;
         
         void listClasses (umlClassNode & current_class,
-                           std::list <umlClassNode> & res);
+                          std::list <umlClassNode> & res);
 
         /**
          * openOutfile() returns NULL if the file exists and is not rewritten

@@ -561,7 +561,7 @@ GenerateCode::genClass (const umlClassNode & node) {
 #endif
 
     decIndentLevel ();
-    getFile () << spc () << "};\n";
+    writeClassEnd ();
 }
 
 const char *
@@ -588,10 +588,10 @@ GenerateCode::genDecl (declaration &d,
                        bool forceOpen) {
 #ifdef ENABLE_CORBA
     const char *name;
+    std::list <umlAttribute>::const_iterator umla;
 #endif
     const char *stype;
     const umlClassNode *node;
-    std::list <umlAttribute>::const_iterator umla;
 
     if ((buildtree) && (d.decl_kind == dk_module)) {
         std::string folder;
@@ -645,8 +645,8 @@ GenerateCode::genDecl (declaration &d,
     stype = node->getStereotype ().c_str ();
 #ifdef ENABLE_CORBA
     name = node->getName ().c_str ();
-#endif
     umla = node->getAttributes ().begin ();
+#endif
 
 #ifdef ENABLE_CORBA
     if (eq (stype, "CORBANative")) {
@@ -762,7 +762,7 @@ GenerateCode::decIndentLevel () {
 }
 
 void
-GenerateCode::writeLicenseAll () {
+GenerateCode::writeFile () {
     FILE * licensefile = fopen (license.c_str (), "r");
 
     if (!licensefile) {

@@ -49,7 +49,7 @@ class GenerateCode {
 #ifdef ENABLE_CORBA
         bool        isCorba : 1;
 #endif
-        
+
         int passByReference (umlClass &cl);
         void genClass (const umlClassNode & node);
         void openOutfile (const std::string & filename, declaration & d);
@@ -108,21 +108,20 @@ class GenerateCode {
         virtual std::string strPackage (const char * package) const = 0;
         virtual std::string strPointer (const std::string & type) const = 0;
 
+        void writeFile ();
         virtual void writeLicense () = 0;
         virtual void writeStartHeader (std::string & name) = 0;
         virtual void writeEndHeader () = 0;
         virtual void writeInclude (std::basic_string <char> name) = 0;
         virtual void writeInclude (const char * name) = 0;
-        void writeLicenseAll ();
         virtual void writeFunctionComment (const umlOperation & ope) = 0;
         virtual void writeFunction (const umlOperation & ope,
                                     int * curr_visibility) = 0;
         virtual void writeComment (const std::string & text) = 0;
         virtual void writeComment (const char * text) = 0;
-        virtual void writeTemplates (
-           const std::list <std::pair <std::string, std::string> > & tmps) = 0;
         virtual void writeClassComment (const umlClassNode & node) = 0;
         virtual void writeClass (const umlClassNode & node) = 0;
+        virtual void writeClassEnd () = 0;
         virtual void writeAttribute (const umlAttribute & attr,
                                      int * curr_visibility) = 0;
         virtual void writeNameSpaceStart (const umlClassNode * name) = 0;
@@ -132,6 +131,8 @@ class GenerateCode {
         virtual void writeStruct (const umlClassNode & node) = 0;
         virtual void writeTypedef (const umlClassNode & node) = 0;
         virtual void writeAssociation (const umlassoc & asso) = 0;
+        virtual void writeTemplates (
+           const std::list <std::pair <std::string, std::string> > & tmps) = 0;
 
         virtual ~GenerateCode ();
 };

@@ -42,10 +42,9 @@ class GenerateCodeCpp : public GenerateCode {
         void writeFunction (const umlOperation & ope, int * curr_visibility);
         void writeComment (const std::string & text);
         void writeComment (const char * text);
-        void writeTemplates (
-               const std::list <std::pair <std::string, std::string> > & tmps);
         void writeClassComment (const umlClassNode & node);
         void writeClass (const umlClassNode & node);
+        void writeClassEnd ();
         void writeAttribute (const umlAttribute & attr,
                              int * curr_visibility);
         void writeNameSpaceStart (const umlClassNode * node);
@@ -55,6 +54,8 @@ class GenerateCodeCpp : public GenerateCode {
         void writeStruct (const umlClassNode & node);
         void writeTypedef (const umlClassNode & node);
         void writeAssociation (const umlassoc & asso);
+        void writeTemplates (
+               const std::list <std::pair <std::string, std::string> > & tmps);
         
         ~GenerateCodeCpp ();
 };

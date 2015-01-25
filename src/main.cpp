@@ -220,15 +220,15 @@ under certain conditions; read the COPYING file for details.\n";
         throw std::string (std::string (notice) + "\nUsage: " + std::string (argv[0]) + " " + std::string (help) + "\n\n" + std::string (bighelp) + "\n");
     }
 
+    if (!generator) {
+        throw std::string ("Error : no generator specify.\n");
+    }
+
     LIBXML_TEST_VERSION;
     xmlKeepBlanksDefault (0);
 
     // We build the class list from the dia file here
     umlClass::parse_diagram (infile, diagram.getUml ());
-
-    if (!generator) {
-        throw std::string ("Error : no generator specify.\n");
-    }
 
     generator->setIndent (tab);
     generator->setOverwrite (overwrite);
