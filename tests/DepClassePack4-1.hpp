@@ -3,8 +3,6 @@
 
 #include "DepClasse1.hpp"
 
-/** \class DepClassePack4
-*/
 class DepClassePack4 {
 };
 

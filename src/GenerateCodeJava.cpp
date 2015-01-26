@@ -1,6 +1,6 @@
 /*
 This file is part of dia2code. It generates code from an UML Dia Diagram.
-Copyright (C) 2000-2014 Javier O'Hara - Oliver Kellogg
+Copyright (C) 2015 Vincent Le Garrec
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,9 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-/* NB: If you use CORBA stereotypes, you will need the file p_orb.h
-   found in the runtime/cpp directory.  */
-
 #include "config.h"
 
 #include "GenerateCodeJava.hpp"
@@ -27,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "scan_tree.hpp"
 
 GenerateCodeJava::GenerateCodeJava (DiaGram & diagram) :
-    GenerateCode (diagram, "hpp") {
+    GenerateCode (diagram, "java") {
 }
 
 std::string
@@ -40,7 +37,7 @@ GenerateCodeJava::strPointer (const std::string & type) const {
 std::string
 GenerateCodeJava::strPackage (const char * package) const {
     std::string retour (package);
-    retour.append ("::");
+    retour.append (".");
     return retour;
 }
 
@@ -99,30 +96,26 @@ GenerateCodeJava::writeLicense () {
     }
 
     getFile () << "/*\n";
-    writeLicenseAll ();
+    writeFile ();
     getFile () << "*/\n\n";
 }
 
 void
 GenerateCodeJava::writeStartHeader (std::string & name) {
-    getFile () << spc () << "#ifndef " << name << "__HPP\n";
-    getFile () << spc () << "#define " << name << "__HPP\n";
 }
 
 void
 GenerateCodeJava::writeEndHeader () {
-    getFile () << spc () << "\n";
-    getFile () << spc () << "#endif\n";
 }
 
 void
 GenerateCodeJava::writeInclude (std::basic_string <char> name) {
-    getFile () << spc () << "#include \"" << name << "\"\n";
+    getFile () << spc () << "import " << name << "\n";
 }
 
 void
 GenerateCodeJava::writeInclude (const char * name) {
-    getFile () << spc () << "#include \"" << name << "\"\n";
+    getFile () << spc () << "import " << name << "\n";
 }
 
 void
@@ -234,16 +227,32 @@ GenerateCodeJava::writeComment (const char * text) {
 
 void
 GenerateCodeJava::writeClassComment (const umlClassNode & node) {
-    getFile () << spc () << "/** \\class " << node.getName () << "\n";
     if (!node.getComment ().empty ()) {
-        getFile () << spc () << "    \\brief " << node.getComment () << "\n";
+        size_t start = 0;
+        size_t end;
+
+        std::string replace (spc ());
+        replace.append (" * ");
+
+        getFile () << spc () << "/**\n";
+
+        end = node.getComment ().find ("\n", start);
+        while (end != std::string::npos)
+        {
+            getFile () << spc () << " * "
+                       << node.getComment ().substr (start, end-start) << "\n";
+            start = end + 1;
+            end = node.getComment ().find ("\n", start);
+        }
+        getFile () << spc () << " * "
+                   << node.getComment ().substr (start) << "\n";
+        getFile () << spc () << "*/\n";
     }
-    getFile () << spc () << "*/\n";
 }
 
 void
 GenerateCodeJava::writeClass (const umlClassNode & node) {
-    getFile () << spc () << "class " << node.getName ();
+    getFile () << spc () << "public class " << node.getName ();
     if (!node.getParents ().empty ()) {
         std::list <umlClass *>::const_iterator parent;
         parent = node.getParents ().begin ();
@@ -271,6 +280,11 @@ GenerateCodeJava::writeClass (const umlClassNode & node) {
 }
 
 void
+GenerateCodeJava::writeClassEnd () {
+    getFile () << spc () << "}\n";
+}
+
+void
 GenerateCodeJava::writeAttribute (const umlAttribute & attr,
                                  int * curr_visibility) {
     check_visibility (curr_visibility, attr.getVisibility ());
@@ -293,29 +307,22 @@ GenerateCodeJava::writeNameSpaceStart (const umlClassNode * node) {
     if (node->getPackage () != NULL) {
         std::list <umlPackage> pkglist;
         umlPackage::make_package_list (node->getPackage (), pkglist);
-        for (const umlPackage & it : pkglist) {
-            if (getOpenBraceOnNewline ()) {
-                getFile () << spc () << "namespace " << it.getName () << "\n"
-                           << spc () << "{\n";
+        std::list <umlPackage>::const_iterator it = pkglist.begin ();
+
+        getFile () << spc () << "package ";
+        while (it != pkglist.end ()) {
+            getFile () << (*it).getName ();
+            ++it;
+            if (it != pkglist.end ()) {
+                getFile () << ".";
             }
-            else {
-                getFile () << spc () << "namespace " << it.getName ()
-                           << " {\n";
-            }
-            incIndentLevel ();
         }
+        getFile () << ";\n\n";
     }
 }
 
 void
 GenerateCodeJava::writeNameSpaceEnd (const umlClassNode * node) {
-    const umlPackage *pack = node->getPackage ();
-
-    while (pack != NULL) {
-        decIndentLevel ();
-        getFile () << spc () << "};\n";
-        pack = pack->getParent ();
-    }
 }
 
 void

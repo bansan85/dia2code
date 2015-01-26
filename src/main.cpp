@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "string2.hpp"
 #include "GenerateCodeCpp.hpp"
 #include "GenerateCodeCpp11.hpp"
-//#include "GenerateCodeJava.hpp"
+#include "GenerateCodeJava.hpp"
 
 int main (int argc, char **argv) {
 try {
@@ -38,7 +38,7 @@ try {
     bool    overwrite = true, buildtree = false, newline = false,
             oneclass = false;
 
-    GenerateCodeCpp *generator;
+    GenerateCode *generator;
 
     const char * notice = "\
 dia2code version " VERSION ", Copyright (C) 2000-2014 Javier O'Hara\n\
@@ -146,7 +146,8 @@ under certain conditions; read the COPYING file for details.\n";
             } else if (!strcmp (argv[i], "cpp11")) {
                 generator = new GenerateCodeCpp11 (diagram);
             } else if (!strcmp (argv[i], "java")) {
-//                generator = new GenerateCodeJava (diagram);
+                generator = new GenerateCodeJava (diagram);
+                oneclass = true;
             } else if (!strcmp (argv[i], "c")) {
 //                generator = generators[2];
             } else if (!strcmp (argv[i], "sql")) {

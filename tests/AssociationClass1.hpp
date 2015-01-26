@@ -3,7 +3,10 @@
 
 #include "AssociationPack.hpp"
 
-/** \class AssociationClass1
+/**
+ * \class AssociationClass1
+ * \brief Multiple line
+ *        comment
 */
 class AssociationClass1 {
     // Associations

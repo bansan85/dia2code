@@ -234,11 +234,40 @@ GenerateCodeCpp::writeComment (const char * text) {
 
 void
 GenerateCodeCpp::writeClassComment (const umlClassNode & node) {
-    getFile () << spc () << "/** \\class " << node.getName () << "\n";
     if (!node.getComment ().empty ()) {
-        getFile () << spc () << "    \\brief " << node.getComment () << "\n";
+        size_t start = 0;
+        size_t end;
+
+        std::string replace (spc ());
+        replace.append (" * ");
+
+        getFile () << spc () << "/**\n";
+        getFile () << spc () << " * \\class " << node.getName () << "\n";
+
+        end = node.getComment ().find ("\n", start);
+        while (end != std::string::npos)
+        {
+            getFile () << spc () << " * ";
+            if (start == 0) {
+                getFile () << "\\brief ";
+            }
+            else {
+                getFile () << "       ";
+            }
+            getFile () << node.getComment ().substr (start, end-start) << "\n";
+            start = end + 1;
+            end = node.getComment ().find ("\n", start);
+        }
+        getFile () << spc () << " * ";
+        if (start == 0) {
+            getFile () << "\\brief ";
+        }
+        else {
+            getFile () << "       ";
+        }
+        getFile () << node.getComment ().substr (start) << "\n";
+        getFile () << spc () << "*/\n";
     }
-    getFile () << spc () << "*/\n";
 }
 
 void
@@ -295,6 +324,7 @@ GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
 
 void
 GenerateCodeCpp::writeNameSpaceStart (const umlClassNode * node) {
+    getFile () << "\n";
     if (node->getPackage () != NULL) {
         std::list <umlPackage> pkglist;
         umlPackage::make_package_list (node->getPackage (), pkglist);

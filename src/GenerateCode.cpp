@@ -201,7 +201,7 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
         getFile () << "\n";
     }
     for (std::string namei : incfile) {
-        if (namei.compare (filename)) {
+        if (namei.compare (filename) != 0) {
             writeInclude (namei + "." + getFileExt ());
         }
     }
@@ -638,7 +638,6 @@ GenerateCode::genDecl (declaration &d,
         return;
     }
 
-    getFile () << "\n";
     writeNameSpaceStart (d.u.this_class);
 
     node = d.u.this_class;

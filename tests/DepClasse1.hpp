@@ -2,8 +2,6 @@
 #define DEPCLASSE1__HPP
 
 namespace DepPack {
-    /** \class DepClasse1
-    */
     class DepClasse1 {
     };
 };

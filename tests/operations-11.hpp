@@ -1,8 +1,6 @@
 #ifndef OPERATIONS__HPP
 #define OPERATIONS__HPP
 
-/** \class operations
-*/
 class operations {
     // Operations
     private :

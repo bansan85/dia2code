@@ -2,8 +2,6 @@
 #define GETSET__HPP
 
 // Stereotype : GetSet
-/** \class GetSet
-*/
 class GetSet {
     // Attributes
     public :
