@@ -28,6 +28,8 @@ class GenerateCodeCpp11 : public GenerateCodeCpp {
     public:
         GenerateCodeCpp11 (DiaGram & diagram);
 
+        void writeFunction (const umlOperation & ope, int * curr_visibility);
+        void writeConst (const umlClassNode & node);
         void writeEnum (const umlClassNode & node);
         
         ~GenerateCodeCpp11 ();

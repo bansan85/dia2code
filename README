@@ -288,6 +288,9 @@ INFORMATION FOR DEVELOPERS
 
 Code Generators:
 
+**Important** When a modification is done in a generator, BE SURE to do the
+same with all generators if necessary.
+
 A code generator (class derived from GenerateCode) is a class that takes 
 reference to a DiaGram class.
 

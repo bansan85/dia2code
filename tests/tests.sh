@@ -528,7 +528,7 @@ fi ;
 if [[ ! -a result/operations.hpp ]] ; then
 exit 1
 fi ;
-diff -pu operations.hpp result/operations.hpp > result.txt
+diff -pu operations-11.hpp result/operations.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -538,7 +538,7 @@ rm result/operations.hpp
 if [[ ! -a result/operations.hpp ]] ; then
 exit 1
 fi ;
-diff -pu operations_COPYING.hpp result/operations.hpp > result.txt
+diff -pu operations_COPYING-11.hpp result/operations.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -783,7 +783,7 @@ fi ;
 if [[ ! -a result/GetSet.hpp ]] ; then
 exit 1
 fi ;
-diff -pu GetSet.hpp result/GetSet.hpp > result.txt
+diff -pu GetSet-11.hpp result/GetSet.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -792,7 +792,7 @@ fi ;
 if [[ ! -a result/constance.hpp ]] ; then
 exit 1
 fi ;
-diff -pu constance.hpp result/constance.hpp > result.txt
+diff -pu constance-11.hpp result/constance.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;

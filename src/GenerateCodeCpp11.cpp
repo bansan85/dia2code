@@ -27,6 +27,113 @@ GenerateCodeCpp11::GenerateCodeCpp11 (DiaGram & diagram) :
 }
 
 void
+GenerateCodeCpp11::writeFunction (const umlOperation & ope,
+                                int * curr_visibility) {
+#ifdef ENABLE_CORBA
+    if (getCorba ()) {
+        if (ope.getVisibility () != '0') {
+            fprintf (stderr,
+                     "CORBAValue %s: must be public\n",
+                     ope.getName ().c_str ());
+        }
+    }
+    else
+#endif
+    {
+        check_visibility (curr_visibility, ope.getVisibility ());
+    }
+
+    /* print comments on operation */
+    if (!ope.getComment ().empty ()) {
+        writeFunctionComment (ope);
+    }
+
+    getFile () << spc ();
+    if (ope.isAbstract ()
+#ifdef ENABLE_CORBA
+        || getCorba ()
+#endif
+    ) {
+        getFile () << "virtual ";
+    }
+    if (ope.isStatic ()) {
+#ifdef ENABLE_CORBA
+        if (getCorba ()) {
+            fprintf (stderr,
+                     "CORBAValue %s: static not supported\n",
+                     ope.getName ().c_str ());
+        }
+        else
+#endif
+        {
+            getFile () << "static ";
+        }
+    }
+    if (ope.isConstant ()) {
+        getFile () << "constexpr ";
+    }
+    if (!ope.getType ().empty ()) {
+        getFile () << cppName (ope.getType ()) << " ";
+    }
+    getFile () << ope.getName () << " (";
+
+    std::list <umlAttribute>::const_iterator tmpa;
+    tmpa = ope.getParameters ().begin ();
+    while (tmpa != ope.getParameters ().end ()) {
+        getFile () << (*tmpa).getType () << " " << (*tmpa).getName ();
+        if (!(*tmpa).getValue ().empty ()) {
+#ifdef ENABLE_CORBA
+            if (getCorba ()) {
+                fprintf (stderr,
+                         "CORBAValue %s: param default not supported\n",
+                         ope.getName ().c_str ());
+            }
+            else
+#endif
+            {
+               getFile () << " = " << (*tmpa).getValue ();
+            }
+        }
+        ++tmpa;
+        if (tmpa != ope.getParameters ().end ()) {
+            getFile () << ", ";
+        }
+    }
+    getFile () << ")";
+    // virtual
+    if ((ope.isAbstract ()
+#ifdef ENABLE_CORBA
+        || getCorba ()
+#endif
+        ) &&
+        ope.getName ()[0] != '~') {
+        getFile () << " = 0";
+    }
+    getFile () << ";\n";
+}
+
+void
+GenerateCodeCpp11::writeConst (const umlClassNode & node) {
+    std::list <umlAttribute>::const_iterator umla;
+
+    umla = node.getAttributes ().begin ();
+    getFile () << spc () << "/// " << node.getComment () << "\n";
+    if (node.getAttributes ().size () != 1) {
+        throw std::string ("Error: first attribute not set at " +
+                           node.getName () + "\n");
+    }
+    if (!(*umla).getName ().empty ()) {
+        fprintf (stderr,
+                 "Warning: ignoring attribute name at %s\n",
+                 node.getName ().c_str ());
+    }
+
+    getFile () << spc () << "constexpr " << cppName ((*umla).getType ())
+               << " " << node.getName () << " = " << (*umla).getValue ()
+               << ";\n";
+}
+
+void
 GenerateCodeCpp11::writeEnum (const umlClassNode & node) {
     std::list <umlAttribute>::const_iterator umla;
 
