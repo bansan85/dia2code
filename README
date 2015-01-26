@@ -25,7 +25,7 @@ It can also generate a file with SQL's CREATE TABLE statements and .bat files
 for creating shapes. Templates and packages are supported.
 
 The generation of #include and import directives is automatically done
-considering the types used in each class but they may be add by dependencies.
+considering the types used in each class but they may be added by dependencies.
 Classes are automatically searched in the types of:
 attributes, method's return types, method's parameters, parents, dependencies
 and associations.
@@ -44,13 +44,13 @@ Read the COPYING file for details.
 
 REQUIREMENTS
 
-Work under Linux (i386 and x64) and Win32/Win64.
-Feedback about other platforms are welcome.
+Works under Linux (i386 and x64) and Win32/Win64.
+Feedback about other platforms is welcome.
 
 - Dia (I work with 0.97.2 but older versions *may* be OK).
 - libxml2 headers and development libraries (I use 2.9 but it *may* be
   OK if you use any version greater than 2.0).
-- A C++ compiler which support C++11 standard (>=gcc 4.6).
+- A C++ compiler which supports C++11 standard (>=gcc 4.6).
 - automake and autoconf (actually, optional)
 
 
@@ -120,7 +120,7 @@ Where <parameters> can be any combination of:
                      ada:\"adb\", c:\"c\".\n\
 -nl                  Create new line on new brace. Off by default.\n\
 -1                   One header contains only one header. If two classes\n\
-                     have the same name, they will be overwrite without\n\
+                     have the same name, they will be overwritten without\n\
                      --buildtree.\n\
                      Off by default but java.\n\
 -t <target>          Selects the output language. <target> can be one of:\n\
@@ -128,7 +128,7 @@ Where <parameters> can be any combination of:
                      ruby,shp,sql.\n\
 <diagramfile>        The Dia file that holds the diagram to be read.\n\
 
-The only mandatories parameters are the diagram file name and the target.
+The only mandatory parameters are the diagram file name and the target.
 
 Note: Parameters can be specified in any order.
 
@@ -276,7 +276,7 @@ a large box with all the elements inside (Large Package in Dia) or a small box
 (Small Package in Dia) to which the package's elements connect with a symbol
 that Dia does not include: a line with a crossed out circle in the end of the
 container. You can put a normal line with a "Coordiate origin" arrow at one
-end, of course, and will be aestetically correct, but of no use to Dia2Code.
+end, of course, and will be aesthetically correct, but of no use to Dia2Code.
 
 Dia2code, currently, checks only for intersections of packages (Large or
 Small) with other objects like classes and other packages, so it will
@@ -288,8 +288,8 @@ INFORMATION FOR DEVELOPERS
 
 Code Generators:
 
-A code generator (class derivated from GenerateCode) is a class that takes 
-reference to a DiaGram classe.
+A code generator (class derived from GenerateCode) is a class that takes 
+reference to a DiaGram class.
 
 The DiaGram class contains:
   - std::list <umlClassNode> uml; // a list of all class nodes.
@@ -325,29 +325,30 @@ The GenerateCode class contains:
 New generator:
 
 The new generator is a class that inherits from GenerateCode. All virtual
-function must be write. Developers can base their new generator code by having a good look inside GenerateCodeCpp.cpp.
+functions must be overridden. Developers can get an idea on how to write a
+new generator by having a good look inside GenerateCodeCpp.cpp.
 
   - writeLicense ();
-Write the license at the top of each header. The caracters that start and end
-multiple lines commentaries must be add before and after the file.
+Write the license at the top of each header. The characters that start and end
+multiple line comments must be added before and after the file.
 The license is specified by the attribute license.
 
   - writeStartHeader (std::string & name);
-Write the mecanism that avoid multiple inclusion.
+Write the mechanism that avoids multiple inclusion (applies to C/C++).
   - writeEndHeader ();
-Finish the mecanism that avoid multiple inclusion.
+Finish the mechanism that avoids multiple inclusion.
 
   - writeInclude (std::basic_string <char> name);
   - writeInclude (const char * name);
-Write the instruction that include a file (header).
+Write the instruction that includes a file (header).
 
   - writeFunctionComment (const umlOperation & ope);
-Write the comment for a function and his parameters. Use well-known format.
+Write the comment for a function and its parameters. Use well-known format.
 C++ uses doxygen format.
 
   - writeFunction (const umlOperation & ope, int * curr_visibility);
 Write the header of a function. The current visibility is used to avoid writing
-it everytime.
+it every time.
 
   - writeComment (const std::string & text);
   - writeComment (const char * text);
@@ -392,7 +393,7 @@ Write an association.
 Write a template.
 
 Add a new generator to the main program:
-The following files needs to be update:
+The following files needs to be updated:
  - src/main.cpp:
      - add a new include at the top of the file with the header of the new
        generator.
@@ -410,7 +411,8 @@ And of course, don't forget to run "git add GenerateCodeXXX.?pp".
 KNOWN BUGS
 
 - Does not follow the DTD of a Dia Diagram, rather parses as it sees fit.
-- Packages of classes are find with the position and size instead of <dia:childnode parent="O0"/>
+- Packages of classes are searched using the position and size instead of
+  <dia:childnode parent="O0"/>
 
 
 AUTHOR
@@ -428,6 +430,7 @@ Contributors: (in alphabetical order, by last name)
 - Harald Fielker <hfielker@softsolutions.de> PHP code generation.
 - Oliver Kellogg <okellogg@users.sourceforge.net>, CORBA stereotype and package
   support
+- Vincent Le Garrec (bansan) <vincent@le-garrec.fr> Conversion to C++.
 - Ruben Lopez <ryu@gpul.org>, C code generation.
 - Steffen Macke <sdteffen@yahoo.com> batch shapefile generation, win32
   installer.
