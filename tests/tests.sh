@@ -3,7 +3,7 @@
 mkdir result
 rm -Rf result/*
 
-../src/dia2code -t cpp association.dia -d result
+../src/dia2code -t cpp association.dia -d result || exit 1
 if [[ ! -a result/AssociationClass1.hpp ]] ; then
 exit 1
 fi ;
@@ -20,7 +20,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp association.dia -d result -1
+../src/dia2code -t cpp association.dia -d result -1 || exit 1
 if [[ ! -a result/AssociationClass1.hpp ]] ; then
 exit 1
 fi ;
@@ -37,7 +37,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp association.dia -d result --buildtree
+../src/dia2code -t cpp association.dia -d result --buildtree || exit 1
 if [[ ! -a result/AssociationClass1.hpp ]] ; then
 exit 1
 fi ;
@@ -54,7 +54,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp package.dia -d result
+../src/dia2code -t cpp package.dia -d result || exit 1
 if [[ ! -a result/package.hpp ]] ; then
 exit 1
 fi ;
@@ -64,7 +64,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp package.dia -d result -1
+../src/dia2code -t cpp package.dia -d result -1 || exit 1
 if [[ ! -a result/PackageClasse1.hpp ]] ; then
 exit 1
 fi ;
@@ -88,7 +88,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp package.dia -d result --buildtree
+../src/dia2code -t cpp package.dia -d result --buildtree || exit 1
 if [[ ! -a result/package/PackageClasse1.hpp ]] ; then
 exit 1
 fi ;
@@ -112,7 +112,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp enum.dia -d result
+../src/dia2code -t cpp enum.dia -d result || exit 1
 if [[ ! -a result/enumeration.hpp ]] ; then
 exit 1
 fi ;
@@ -121,7 +121,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp operations.dia -d result
+../src/dia2code -t cpp operations.dia -d result || exit 1
 if [[ ! -a result/operations.hpp ]] ; then
 exit 1
 fi ;
@@ -131,7 +131,7 @@ exit 1
 fi ;
 
 rm result/operations.hpp
-../src/dia2code -t cpp operations.dia -d result -l COPYING
+../src/dia2code -t cpp operations.dia -d result -l COPYING || exit 1
 if [[ ! -a result/operations.hpp ]] ; then
 exit 1
 fi ;
@@ -140,7 +140,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp attributes.dia -d result
+../src/dia2code -t cpp attributes.dia -d result || exit 1
 if [[ ! -a result/attributes.hpp ]] ; then
 exit 1
 fi ;
@@ -149,7 +149,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp dependances.dia -d result
+../src/dia2code -t cpp dependances.dia -d result || exit 1
 if [[ ! -a result/dependances.hpp ]] ; then
 exit 1
 fi ;
@@ -159,7 +159,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp dependances_pack.dia -d result
+../src/dia2code -t cpp dependances_pack.dia -d result || exit 1
 if [[ ! -a result/DepClassePack1.hpp ]] ; then
 exit 1
 fi ;
@@ -197,7 +197,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp dependances_pack.dia -d result -1
+../src/dia2code -t cpp dependances_pack.dia -d result -1 || exit 1
 if [[ ! -a result/DepClassePack1.hpp ]] ; then
 exit 1
 fi ;
@@ -242,7 +242,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp dependances_pack.dia -d result --buildtree
+../src/dia2code -t cpp dependances_pack.dia -d result --buildtree || exit 1
 if [[ ! -a result/DepClassePack1.hpp ]] ; then
 exit 1
 fi ;
@@ -286,7 +286,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp structure.dia -d result
+../src/dia2code -t cpp structure.dia -d result || exit 1
 if [[ ! -a result/structure.hpp ]] ; then
 exit 1
 fi ;
@@ -296,7 +296,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp inherence.dia -d result
+../src/dia2code -t cpp inherence.dia -d result || exit 1
 if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
@@ -320,7 +320,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp inherence.dia -d result -1
+../src/dia2code -t cpp inherence.dia -d result -1 || exit 1
 if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
@@ -344,7 +344,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp inherence.dia -d result --buildtree
+../src/dia2code -t cpp inherence.dia -d result --buildtree || exit 1
 if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
@@ -367,7 +367,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp typedef.dia -d result
+../src/dia2code -t cpp typedef.dia -d result || exit 1
 if [[ ! -a result/TypeDef.hpp ]] ; then
 exit 1
 fi ;
@@ -376,7 +376,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp getset.dia -d result
+../src/dia2code -t cpp getset.dia -d result || exit 1
 if [[ ! -a result/GetSet.hpp ]] ; then
 exit 1
 fi ;
@@ -385,7 +385,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp constance.dia -d result
+../src/dia2code -t cpp constance.dia -d result || exit 1
 if [[ ! -a result/constance.hpp ]] ; then
 exit 1
 fi ;
@@ -394,7 +394,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp template.dia -d result
+../src/dia2code -t cpp template.dia -d result || exit 1
 if [[ ! -a result/Template.hpp ]] ; then
 exit 1
 fi ;
@@ -406,7 +406,7 @@ fi ;
 
 rm -Rf result/*
 
-../src/dia2code -t cpp11 association.dia -d result
+../src/dia2code -t cpp11 association.dia -d result || exit 1
 if [[ ! -a result/AssociationClass1.hpp ]] ; then
 exit 1
 fi ;
@@ -423,7 +423,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp11 association.dia -d result -1
+../src/dia2code -t cpp11 association.dia -d result -1 || exit 1
 if [[ ! -a result/AssociationClass1.hpp ]] ; then
 exit 1
 fi ;
@@ -440,7 +440,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp11 association.dia -d result --buildtree
+../src/dia2code -t cpp11 association.dia -d result --buildtree || exit 1
 if [[ ! -a result/AssociationClass1.hpp ]] ; then
 exit 1
 fi ;
@@ -457,7 +457,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp11 package.dia -d result
+../src/dia2code -t cpp11 package.dia -d result || exit 1
 if [[ ! -a result/package.hpp ]] ; then
 exit 1
 fi ;
@@ -467,7 +467,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp11 package.dia -d result -1
+../src/dia2code -t cpp11 package.dia -d result -1 || exit 1
 if [[ ! -a result/PackageClasse1.hpp ]] ; then
 exit 1
 fi ;
@@ -491,7 +491,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp11 package.dia -d result --buildtree
+../src/dia2code -t cpp11 package.dia -d result --buildtree || exit 1
 if [[ ! -a result/package/PackageClasse1.hpp ]] ; then
 exit 1
 fi ;
@@ -515,7 +515,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp11 enum.dia -d result
+../src/dia2code -t cpp11 enum.dia -d result || exit 1
 if [[ ! -a result/enumeration.hpp ]] ; then
 exit 1
 fi ;
@@ -524,7 +524,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp11 operations.dia -d result
+../src/dia2code -t cpp11 operations.dia -d result || exit 1
 if [[ ! -a result/operations.hpp ]] ; then
 exit 1
 fi ;
@@ -534,7 +534,7 @@ exit 1
 fi ;
 
 rm result/operations.hpp
-../src/dia2code -t cpp11 operations.dia -d result -l COPYING
+../src/dia2code -t cpp11 operations.dia -d result -l COPYING || exit 1
 if [[ ! -a result/operations.hpp ]] ; then
 exit 1
 fi ;
@@ -543,7 +543,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp11 attributes.dia -d result
+../src/dia2code -t cpp11 attributes.dia -d result || exit 1
 if [[ ! -a result/attributes.hpp ]] ; then
 exit 1
 fi ;
@@ -552,7 +552,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp11 dependances.dia -d result
+../src/dia2code -t cpp11 dependances.dia -d result || exit 1
 if [[ ! -a result/dependances.hpp ]] ; then
 exit 1
 fi ;
@@ -562,7 +562,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp11 dependances_pack.dia -d result
+../src/dia2code -t cpp11 dependances_pack.dia -d result || exit 1
 if [[ ! -a result/DepClassePack1.hpp ]] ; then
 exit 1
 fi ;
@@ -600,7 +600,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp11 dependances_pack.dia -d result -1
+../src/dia2code -t cpp11 dependances_pack.dia -d result -1 || exit 1
 if [[ ! -a result/DepClassePack1.hpp ]] ; then
 exit 1
 fi ;
@@ -645,7 +645,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp11 dependances_pack.dia -d result --buildtree
+../src/dia2code -t cpp11 dependances_pack.dia -d result --buildtree || exit 1
 if [[ ! -a result/DepClassePack1.hpp ]] ; then
 exit 1
 fi ;
@@ -689,7 +689,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp11 structure.dia -d result
+../src/dia2code -t cpp11 structure.dia -d result || exit 1
 if [[ ! -a result/structure.hpp ]] ; then
 exit 1
 fi ;
@@ -699,7 +699,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp11 inherence.dia -d result
+../src/dia2code -t cpp11 inherence.dia -d result || exit 1
 if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
@@ -723,7 +723,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp11 inherence.dia -d result -1
+../src/dia2code -t cpp11 inherence.dia -d result -1 || exit 1
 if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
@@ -747,7 +747,7 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp11 inherence.dia -d result --buildtree
+../src/dia2code -t cpp11 inherence.dia -d result --buildtree || exit 1
 if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
@@ -770,7 +770,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp11 typedef.dia -d result
+../src/dia2code -t cpp11 typedef.dia -d result || exit 1
 if [[ ! -a result/TypeDef.hpp ]] ; then
 exit 1
 fi ;
@@ -779,7 +779,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp11 getset.dia -d result
+../src/dia2code -t cpp11 getset.dia -d result || exit 1
 if [[ ! -a result/GetSet.hpp ]] ; then
 exit 1
 fi ;
@@ -788,7 +788,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp11 constance.dia -d result
+../src/dia2code -t cpp11 constance.dia -d result || exit 1
 if [[ ! -a result/constance.hpp ]] ; then
 exit 1
 fi ;
@@ -797,7 +797,7 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-../src/dia2code -t cpp11 template.dia -d result
+../src/dia2code -t cpp11 template.dia -d result || exit 1
 if [[ ! -a result/Template.hpp ]] ; then
 exit 1
 fi ;
@@ -812,7 +812,7 @@ echo teisurteisruetisurn
 
 #rm -Rf result/*
 
-#../src/dia2code -t java association.dia -d result
+#../src/dia2code -t java association.dia -d result || exit 1
 #if [[ ! -a result/AssociationClass1.hpp ]] ; then
 #exit 1
 #fi ;
@@ -829,7 +829,7 @@ echo teisurteisruetisurn
 #fi ;
 #
 #rm -Rf result/*
-#../src/dia2code -t java association.dia -d result --buildtree
+#../src/dia2code -t java association.dia -d result --buildtree || exit 1
 #if [[ ! -a result/AssociationClass1.hpp ]] ; then
 #exit 1
 #fi ;
@@ -846,7 +846,7 @@ echo teisurteisruetisurn
 #fi ;
 #
 #rm -Rf result/*
-#../src/dia2code -t java package.dia -d result
+#../src/dia2code -t java package.dia -d result || exit 1
 #if [[ ! -a result/package.hpp ]] ; then
 #exit 1
 #fi ;
@@ -856,7 +856,7 @@ echo teisurteisruetisurn
 #fi ;
 #
 #rm -Rf result/*
-#../src/dia2code -t java package.dia -d result --buildtree
+#../src/dia2code -t java package.dia -d result --buildtree || exit 1
 #if [[ ! -a result/package/PackageClasse1.hpp ]] ; then
 #exit 1
 #fi ;
@@ -880,7 +880,7 @@ echo teisurteisruetisurn
 #fi ;
 #
 #rm -Rf result/*
-#../src/dia2code -t java enum.dia -d result
+#../src/dia2code -t java enum.dia -d result || exit 1
 #if [[ ! -a result/enumeration.hpp ]] ; then
 #exit 1
 #fi ;
@@ -889,7 +889,7 @@ echo teisurteisruetisurn
 #exit 1
 #fi ;
 #
-#../src/dia2code -t java operations.dia -d result
+#../src/dia2code -t java operations.dia -d result || exit 1
 #if [[ ! -a result/operations.hpp ]] ; then
 #exit 1
 #fi ;
@@ -899,7 +899,7 @@ echo teisurteisruetisurn
 #fi ;
 #
 #rm result/operations.hpp
-#../src/dia2code -t java operations.dia -d result -l COPYING
+#../src/dia2code -t java operations.dia -d result -l COPYING || exit 1
 #if [[ ! -a result/operations.hpp ]] ; then
 #exit 1
 #fi ;
@@ -908,7 +908,7 @@ echo teisurteisruetisurn
 #exit 1
 #fi ;
 #
-#../src/dia2code -t java attributes.dia -d result
+#../src/dia2code -t java attributes.dia -d result || exit 1
 #if [[ ! -a result/attributes.hpp ]] ; then
 #exit 1
 #fi ;
@@ -917,7 +917,7 @@ echo teisurteisruetisurn
 #exit 1
 #fi ;
 #
-#../src/dia2code -t java dependances.dia -d result
+#../src/dia2code -t java dependances.dia -d result || exit 1
 #if [[ ! -a result/dependances.hpp ]] ; then
 #exit 1
 #fi ;
@@ -927,7 +927,7 @@ echo teisurteisruetisurn
 #fi ;
 #
 #rm -Rf result/*
-#../src/dia2code -t java dependances_pack.dia -d result
+#../src/dia2code -t java dependances_pack.dia -d result || exit 1
 #if [[ ! -a result/DepClassePack1.hpp ]] ; then
 #exit 1
 #fi ;
@@ -965,7 +965,7 @@ echo teisurteisruetisurn
 #fi ;
 #
 #rm -Rf result/*
-#../src/dia2code -t java dependances_pack.dia -d result --buildtree
+#../src/dia2code -t java dependances_pack.dia -d result --buildtree || exit 1
 #if [[ ! -a result/DepClassePack1.hpp ]] ; then
 #exit 1
 #fi ;
@@ -1009,7 +1009,7 @@ echo teisurteisruetisurn
 #exit 1
 #fi ;
 #
-#../src/dia2code -t java structure.dia -d result
+#../src/dia2code -t java structure.dia -d result || exit 1
 #if [[ ! -a result/structure.hpp ]] ; then
 #exit 1
 #fi ;
@@ -1019,7 +1019,7 @@ echo teisurteisruetisurn
 #fi ;
 #
 #rm -Rf result/*
-#../src/dia2code -t java inherence.dia -d result
+#../src/dia2code -t java inherence.dia -d result || exit 1
 #if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
 #exit 1
 #fi ;
@@ -1043,7 +1043,7 @@ echo teisurteisruetisurn
 #fi ;
 #
 #rm -Rf result/*
-#../src/dia2code -t java inherence.dia -d result --buildtree
+#../src/dia2code -t java inherence.dia -d result --buildtree || exit 1
 #if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
 #exit 1
 #fi ;
@@ -1066,7 +1066,7 @@ echo teisurteisruetisurn
 #exit 1
 #fi ;
 #
-#../src/dia2code -t java typedef.dia -d result
+#../src/dia2code -t java typedef.dia -d result || exit 1
 #if [[ ! -a result/TypeDef.hpp ]] ; then
 #exit 1
 #fi ;
@@ -1075,7 +1075,7 @@ echo teisurteisruetisurn
 #exit 1
 #fi ;
 #
-#../src/dia2code -t java getset.dia -d result
+#../src/dia2code -t java getset.dia -d result || exit 1
 #if [[ ! -a result/GetSet.hpp ]] ; then
 #exit 1
 #fi ;
@@ -1084,7 +1084,7 @@ echo teisurteisruetisurn
 #exit 1
 #fi ;
 #
-#../src/dia2code -t java constance.dia -d result
+#../src/dia2code -t java constance.dia -d result || exit 1
 #if [[ ! -a result/constance.hpp ]] ; then
 #exit 1
 #fi ;
@@ -1093,7 +1093,7 @@ echo teisurteisruetisurn
 #exit 1
 #fi ;
 #
-#../src/dia2code -t java template.dia -d result
+#../src/dia2code -t java template.dia -d result || exit 1
 #if [[ ! -a result/Template.hpp ]] ; then
 #exit 1
 #fi ;
