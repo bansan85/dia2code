@@ -162,12 +162,20 @@ umlClassNode::addaggregate (const char *name_,
         parseDiaString(name_, tmp.name);
     }
     if (multiplicity != NULL) {
+#if defined(_WIN32) || defined(_WIN64)
+        strncpy_s (tmp.multiplicity,
+                   10,
+                   multiplicity + 1,
+                   strlen (multiplicity) - 2);
+#else
         strncpy (tmp.multiplicity,
                  multiplicity + 1,
                  strlen (multiplicity) - 2);
+#endif
     }
     else {
-        sprintf (tmp.multiplicity, "1");
+        tmp.multiplicity[0] = '1';
+        tmp.multiplicity[1] = 0;
     }
     tmp.key = base;
     tmp.composite = composite;

@@ -33,7 +33,7 @@ umlClass::umlClass () :
     operations (),
     templates (),
     package (NULL),
-    geom {0., 0., 0., 0.}
+    geom ({0., 0., 0., 0.})
 {
 }
 
@@ -256,11 +256,23 @@ void
 parse_geom_position (xmlNodePtr attribute, geometry * geom) {
     xmlChar *val;
     char * token;
+
     val = xmlGetProp (attribute, BAD_CAST2 ("val"));
-    token = strtok (reinterpret_cast <char *> (val), ",");
-    sscanf (token, "%f", &(geom->pos_x) );
+
+#if defined(_WIN32) || defined(_WIN64)
+    char *context = NULL;
+
+    token = strtok_s (reinterpret_cast <char *> (val), ",", &context);
+    sscanf_s (token, "%f", &(geom->pos_x) );
+    token = strtok_s(NULL, ",", &context);
+    sscanf_s (token, "%f", &(geom->pos_y));
+#else
+    token = strtok(reinterpret_cast <char *> (val), ",");
+    sscanf (token, "%f", &(geom->pos_x));
     token = strtok (NULL, ",");
-    sscanf (token, "%f", &(geom->pos_y) );
+    sscanf (token, "%f", &(geom->pos_y));
+#endif
+
     xmlFree (val);
 }
 
@@ -268,7 +280,11 @@ void
 parse_geom_width (xmlNodePtr attribute, geometry * geom ) {
     xmlChar *val;
     val = xmlGetProp (attribute, BAD_CAST2 ("val"));
+#if defined(_WIN32) || defined(_WIN64)
+    sscanf_s (BAD_TSAC2 (val), "%f", &(geom->width) );
+#else
     sscanf (BAD_TSAC2 (val), "%f", &(geom->width) );
+#endif
     xmlFree (val);
 }
 
@@ -276,7 +292,11 @@ void
 parse_geom_height (xmlNodePtr attribute, geometry * geom ) {
     xmlChar *val;
     val = xmlGetProp (attribute, BAD_CAST2 ("val"));
+#if defined(_WIN32) || defined(_WIN64)
+    sscanf_s (BAD_TSAC2 (val), "%f", &(geom->height) );
+#else
     sscanf (BAD_TSAC2 (val), "%f", &(geom->height) );
+#endif
     xmlFree (val);
 }
 

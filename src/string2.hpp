@@ -38,6 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #if defined(_WIN32) || defined(_WIN64)
 #define SEPARATOR '\\'
+#define strncasecmp _strnicmp
+#define strcasecmp _stricmp
 #else
 #define SEPARATOR '/'
 #endif

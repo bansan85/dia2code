@@ -24,8 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
 #include <cassert>
+#include <cstdint>
 
 #if defined(_WIN32) || defined(_WIN64)
+#include <direct.h>
 #else
 #include <sys/stat.h>
 #endif
@@ -601,7 +603,7 @@ GenerateCode::genDecl (declaration &d,
         folder.append (dirName (d.u.this_module->pkg));
 
 #if defined(_WIN32) || defined(_WIN64)
-        mkdir (folder.c_str ());
+        _mkdir (folder.c_str ());
 #else
         if (mkdir (folder.c_str (), 0777) != 0) {
             if (errno != EEXIST) {
@@ -767,11 +769,19 @@ GenerateCode::decIndentLevel () {
 
 void
 GenerateCode::writeFile () {
+#if defined(_WIN32) || defined(_WIN64)
+    FILE * licensefile;
+    if (fopen_s (&licensefile, license.c_str (), "r") != 0) {
+        throw std::string ("Can't open the license file " + license + ".\n");
+    }
+#else
     FILE * licensefile = fopen (license.c_str (), "r");
 
     if (!licensefile) {
         throw std::string ("Can't open the license file " + license + ".\n");
     }
+#endif
+
 
     int lc;
     rewind (licensefile);

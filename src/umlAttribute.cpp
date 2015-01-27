@@ -184,11 +184,19 @@ umlAttribute::parse (xmlNodePtr node) {
           }
         } else if (!strcmp ("kind", BAD_TSAC2 (nodename))) {
             attrval = xmlGetProp (node->xmlChildrenNode, BAD_CAST2 ("val"));
+#if defined(_WIN32) || defined(_WIN64)
+            sscanf_s (BAD_TSAC2 (attrval), "%c", &kind);
+#else
             sscanf (BAD_TSAC2 (attrval), "%c", &kind);
+#endif
             free (attrval);
         } else if (!strcmp ("visibility", BAD_TSAC2 (nodename))) {
             attrval = xmlGetProp (node->xmlChildrenNode, BAD_CAST2 ("val"));
+#if defined(_WIN32) || defined(_WIN64)
+            sscanf_s (BAD_TSAC2 (attrval), "%c", &visibility);
+#else
             sscanf (BAD_TSAC2 (attrval), "%c", &visibility);
+#endif
             free (attrval);
         } else if (!strcmp ("abstract", BAD_TSAC2 (nodename))) {
             isabstract = parseBoolean (node->xmlChildrenNode);

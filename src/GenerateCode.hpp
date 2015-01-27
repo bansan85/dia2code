@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config.h"
 
 #include <fstream>
+#include <cstdint>
 
 #include "DiaGram.hpp"
 #include "umlClass.hpp"

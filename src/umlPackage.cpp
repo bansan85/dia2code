@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 umlPackage::umlPackage () :
     id (),
     name (),
-    geom {0., 0., 0., 0.},
+    geom ({0., 0., 0., 0.}),
     parent (NULL),
     directory ()
 {
@@ -34,7 +34,7 @@ umlPackage::umlPackage () :
 umlPackage::umlPackage (xmlNodePtr package, std::string id_) :
     id (id_),
     name (),
-    geom {0., 0., 0., 0.},
+    geom ({0., 0., 0., 0.}),
     parent (NULL),
     directory ()
 {

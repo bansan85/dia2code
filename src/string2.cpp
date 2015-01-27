@@ -61,11 +61,20 @@ parse_class_names (char *s) {
     char *token;
     const char *delim = ",";
     std::list <std::string> list;
+#if defined(_WIN32) || defined(_WIN64)
+    char *context = NULL;
 
+    token = strtok_s (s, delim, &context);
+#else
     token = strtok (s, delim);
+#endif
     while ( token != NULL ) {
         list.push_back (token);
+#if defined(_WIN32) || defined(_WIN64)
+        token = strtok_s (NULL, delim, &context);
+#else
         token = strtok (NULL, delim);
+#endif
     }
     return list;
 }
