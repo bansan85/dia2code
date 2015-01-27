@@ -603,7 +603,12 @@ GenerateCode::genDecl (declaration &d,
 #if defined(_WIN32) || defined(_WIN64)
         mkdir (folder.c_str ());
 #else
-        mkdir (folder.c_str (), 0777);
+        if (mkdir (folder.c_str (), 0777) != 0) {
+            if (errno != EEXIST) {
+                throw std::string (std::string ("Fail to create folder ") +
+                                   folder + std::string (".\n"));
+            }
+        }
 #endif
     }
 

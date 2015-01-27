@@ -500,7 +500,9 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                                        BAD_CAST2 ("to"));
                     inherit_realize (res, BAD_TSAC2 (end1), BAD_TSAC2(end2));
                     free (end2);
+                    end2 = NULL;
                     free (end1);
+                    end1 = NULL;
                 }
                 attribute = attribute->next;
             }
