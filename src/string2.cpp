@@ -80,14 +80,14 @@ parse_class_names (char *s) {
 }
 
 
-int
+bool
 is_present (std::list <std::string> list, const char *name) {
     for (std::string str : list) {
         const char *namei = str.c_str ();
         size_t len;
         const char* mask;
         if ( ! strcmp (namei, name) ) {
-            return 1;
+            return true;
         }
         len = strlen (namei);
         if (len >= 2 && len <= strlen (name)
@@ -96,14 +96,14 @@ is_present (std::list <std::string> list, const char *name) {
             len--;
             if (mask == namei && !strcmp (namei + 1,
                                           name + strlen (name) - len) ) {
-                return 1;
+                return true;
             }
             if (mask == namei + len && ! strncmp (namei, name, len)) {
-                return 1;
+                return true;
             }
         }
     }
-    return 0;
+    return false;
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

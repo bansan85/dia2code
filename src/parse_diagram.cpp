@@ -41,10 +41,10 @@ parseDiaNode (xmlNodePtr stringnode, std::string &buffer) {
 bool
 parseBoolean (xmlNodePtr booleannode) {
     xmlChar *val;
-    int result;
+    bool result;
 
     val = xmlGetProp (booleannode, BAD_CAST2 ("val"));
-    result = val != NULL && !strcmp(BAD_TSAC2 (val), "true");
+    result = val != NULL && !strcmp (BAD_TSAC2 (val), "true");
     free (val);
     return result;
 }
@@ -71,7 +71,7 @@ parseTemplate (xmlNodePtr node, std::pair <std::string, std::string> &tmp) {
 
 void
 parseTemplates (xmlNodePtr node,
-                 std::list <std::pair <std::string, std::string>> &res) {
+                std::list <std::pair <std::string, std::string>> &res) {
     while (node != NULL) {
         if (node->xmlChildrenNode->xmlChildrenNode->xmlChildrenNode != NULL &&
             node->xmlChildrenNode->next->xmlChildrenNode->xmlChildrenNode !=

@@ -602,16 +602,18 @@ GenerateCode::genDecl (declaration &d,
         folder.append (1, SEPARATOR);
         folder.append (dirName (d.u.this_module->pkg));
 
+        if (
 #if defined(_WIN32) || defined(_WIN64)
-        _mkdir (folder.c_str ());
+        _mkdir (folder.c_str ()) != 0
 #else
-        if (mkdir (folder.c_str (), 0777) != 0) {
+        mkdir (folder.c_str (), 0777) != 0
+#endif
+        ) {
             if (errno != EEXIST) {
                 throw std::string (std::string ("Fail to create folder ") +
                                    folder + std::string (".\n"));
             }
         }
-#endif
     }
 
     if (forceOpen && (!oneClassOneHeader || !d.decl_kind == dk_module)) {
@@ -771,7 +773,8 @@ void
 GenerateCode::writeFile () {
 #if defined(_WIN32) || defined(_WIN64)
     FILE * licensefile;
-    if (fopen_s (&licensefile, license.c_str (), "r") != 0) {
+    if ((fopen_s (&licensefile, license.c_str (), "r") != 0) ||
+        (licensefile == NULL)) {
         throw std::string ("Can't open the license file " + license + ".\n");
     }
 #else
