@@ -825,23 +825,23 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-#rm -Rf result/*
-#../src/dia2code -t java association.dia -d result --buildtree || exit 1
-#if [[ ! -a result/AssociationClass1.hpp ]] ; then
-#exit 1
-#fi ;
-#if [[ ! -a result/AssociationPack/AssociationClass2.hpp ]] ; then
-#exit 1
-#fi ;
-#diff -pu AssociationClass1-b.hpp result/AssociationClass1.hpp > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#diff -pu AssociationClass2-b.hpp result/AssociationPack/AssociationClass2.hpp > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#
+rm -Rf result/*
+../src/dia2code -t java association.dia -d result --buildtree || exit 1
+if [[ ! -a result/AssociationClass1.java]] ; then
+exit 1
+fi ;
+if [[ ! -a result/AssociationPack/AssociationClass2.java ]] ; then
+exit 1
+fi ;
+diff -pu AssociationClass1-b.java result/AssociationClass1.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu AssociationClass2-b.java result/AssociationPack/AssociationClass2.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 #rm -Rf result/*
 #../src/dia2code -t java package.dia -d result || exit 1
 #if [[ ! -a result/package.hpp ]] ; then
