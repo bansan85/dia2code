@@ -32,7 +32,7 @@ umlClass::umlClass () :
     attributes (),
     operations (),
     templates (),
-    package (NULL),
+    package (nullptr),
     geom ({0., 0., 0., 0.})
 {
 }
@@ -183,7 +183,7 @@ umlClass::lolipop_implementation (std::list <umlClassNode> & classlist,
     free (id);
     if (implementator != NULL && name != NULL && strlen (name) > 2) {
         umlClass * key = new umlClass ();
-        key->package = NULL;
+        key->package = nullptr;
         key->id.assign ("00");
         parseDiaString (name, key->name);
         key->isabstract = true;
@@ -264,12 +264,12 @@ parse_geom_position (xmlNodePtr attribute, geometry * geom) {
 
     token = strtok_s (reinterpret_cast <char *> (val), ",", &context);
     sscanf_s (token, "%f", &(geom->pos_x) );
-    token = strtok_s(NULL, ",", &context);
+    token = strtok_s(nullptr, ",", &context);
     sscanf_s (token, "%f", &(geom->pos_y));
 #else
     token = strtok(reinterpret_cast <char *> (val), ",");
     sscanf (token, "%f", &(geom->pos_x));
-    token = strtok (NULL, ",");
+    token = strtok (nullptr, ",");
     sscanf (token, "%f", &(geom->pos_y));
 #endif
 
@@ -471,9 +471,9 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                     associate (res, thisname, composite, BAD_TSAC2 (end2), BAD_TSAC2 (end1), multiplicity_b);
                 }
                 free (end1);
-                end1 = NULL;
+                end1 = nullptr;
                 free (end2);
-                end2 = NULL;
+                end2 = nullptr;
             }
 
         } else if (!strcmp ("UML - Dependency", BAD_TSAC2 (objtype))) {
@@ -486,9 +486,9 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                                        BAD_CAST2 ("to"));
                     make_depend (res, BAD_TSAC2 (end1), BAD_TSAC2 (end2));
                     free (end1);
-                    end1 = NULL;
+                    end1 = nullptr;
                     free (end2);
-                    end2 = NULL;
+                    end2 = nullptr;
                 }
                 attribute = attribute->next;
             }
@@ -502,9 +502,9 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                                        BAD_CAST2 ("to"));
                     inherit_realize (res, BAD_TSAC2 (end1), BAD_TSAC2 (end2));
                     free (end2);
-                    end2 = NULL;
+                    end2 = nullptr;
                     free (end1);
-                    end1 = NULL;
+                    end1 = nullptr;
                 }
                 attribute = attribute->next;
             }
@@ -520,9 +520,9 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                                        BAD_CAST2 ("to"));
                     inherit_realize (res, BAD_TSAC2 (end1), BAD_TSAC2(end2));
                     free (end2);
-                    end2 = NULL;
+                    end2 = nullptr;
                     free (end1);
-                    end1 = NULL;
+                    end1 = nullptr;
                 }
                 attribute = attribute->next;
             }
@@ -573,7 +573,7 @@ void
 umlClass::parse_class (xmlNodePtr class_) {
     xmlNodePtr attribute;
 
-    package = NULL;
+    package = nullptr;
 
     attribute = class_->xmlChildrenNode;
     while (attribute != NULL) {

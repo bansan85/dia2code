@@ -26,7 +26,7 @@ umlPackage::umlPackage () :
     id (),
     name (),
     geom ({0., 0., 0., 0.}),
-    parent (NULL),
+    parent (nullptr),
     directory ()
 {
 }
@@ -35,7 +35,7 @@ umlPackage::umlPackage (xmlNodePtr package, std::string id_) :
     id (id_),
     name (),
     geom ({0., 0., 0., 0.}),
-    parent (NULL),
+    parent (nullptr),
     directory ()
 {
     xmlNodePtr attribute;

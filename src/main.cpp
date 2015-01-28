@@ -89,7 +89,7 @@ under certain conditions; read the COPYING file for details.\n";
 \n\
     Note: parameters can be specified in any order.";
 
-    generator = NULL;
+    generator = nullptr;
 
     if (argc < 2) {
         throw std::string (std::string (notice) + "\nUsage: " + std::string (argv[0]) + " " + std::string (help) + "\n");

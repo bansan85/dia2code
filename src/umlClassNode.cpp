@@ -97,7 +97,7 @@ find_module (std::list <declaration> &dptr,
                     std::list<declaration> liste;
 
                     if (m->contents.empty ()) {
-                        return NULL;
+                        return nullptr;
                     }
                     else {
                         liste.push_back (*m->contents.begin ());
@@ -111,7 +111,7 @@ find_module (std::list <declaration> &dptr,
         }
         ++it;
     }
-    return NULL;
+    return nullptr;
 }
 
 declaration *
@@ -123,7 +123,7 @@ umlClassNode::find_class (std::list <declaration> &decl) const {
         umlPackage::make_package_list (getPackage (), pkglist);
         module *m = find_module (decl, pkglist.begin (), pkglist.end ());
         if (m == NULL || m->contents.empty ()) {
-            return 0;
+            return nullptr;
         }
         d = &m->contents;
     } else {
@@ -138,7 +138,7 @@ umlClassNode::find_class (std::list <declaration> &decl) const {
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void

@@ -71,9 +71,9 @@ parse_class_names (char *s) {
     while ( token != NULL ) {
         list.push_back (token);
 #if defined(_WIN32) || defined(_WIN64)
-        token = strtok_s (NULL, delim, &context);
+        token = strtok_s (nullptr, delim, &context);
 #else
-        token = strtok (NULL, delim);
+        token = strtok (nullptr, delim);
 #endif
     }
     return list;
