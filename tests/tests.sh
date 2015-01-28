@@ -900,15 +900,15 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-#../src/dia2code -t java operations.dia -d result || exit 1
-#if [[ ! -a result/operations.java ]] ; then
-#exit 1
-#fi ;
-#diff -pu operations-11.java result/operations.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#
+../src/dia2code -t java operations.dia -d result || exit 1
+if [[ ! -a result/operations.java ]] ; then
+exit 1
+fi ;
+diff -pu operations.java result/operations.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 #rm result/operations.java
 #../src/dia2code -t java operations.dia -d result -l COPYING || exit 1
 #if [[ ! -a result/operations.java ]] ; then

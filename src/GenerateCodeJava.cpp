@@ -126,12 +126,14 @@ GenerateCodeJava::writeInclude (const char * name) {
 
 void
 GenerateCodeJava::writeFunctionComment (const umlOperation & ope) {
-    getFile () << spc () << "/** \\brief " << ope.getComment () << "\n";
+    getFile () << spc () << "/**\n";
+    getFile () << spc () << " * " << ope.getComment () << "\n";
     for (const umlAttribute & tmpa2 : ope.getParameters ()) {
-        getFile () << spc () << "    \\param " << tmpa2.getName ()
-                   << "\t(" << kind_str (tmpa2.getKind ()) << ") "
+        getFile () << spc () << " * @param " << tmpa2.getName ()
+                   << " (" << kind_str (tmpa2.getKind ()) << ") "
                    << tmpa2.getComment () << "\n";
     }
+    getFile () << spc () << " * @return " << ope.getType () << "\n";
     getFile () << spc () << "*/\n";
 }
 
@@ -154,13 +156,10 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
     }
 
     getFile () << spc ();
-    if (ope.isAbstract ()
-#ifdef ENABLE_CORBA
-        || getCorba ()
-#endif
-    ) {
-        getFile () << "virtual ";
+    if (ope.isAbstract ()) {
+        getFile () << "abstract ";
     }
+    getFile () << visibility (ope.getVisibility ());
     if (ope.isStatic ()) {
 #ifdef ENABLE_CORBA
         if (getCorba ()) {
@@ -184,17 +183,7 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
     while (tmpa != ope.getParameters ().end ()) {
         getFile () << (*tmpa).getType () << " " << (*tmpa).getName ();
         if (!(*tmpa).getValue ().empty ()) {
-#ifdef ENABLE_CORBA
-            if (getCorba ()) {
-                fprintf (stderr,
-                         "CORBAValue %s: param default not supported\n",
-                         ope.getName ().c_str ());
-            }
-            else
-#endif
-            {
-               getFile () << " = " << (*tmpa).getValue ();
-            }
+            fprintf (stderr, "Java does not support param default.\n");
         }
         ++tmpa;
         if (tmpa != ope.getParameters ().end ()) {
@@ -203,18 +192,16 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
     }
     getFile () << ")";
     if (ope.isConstant ()) {
-        getFile () << " const";
+        fprintf (stderr, "Java does not support const method.\n");
     }
-    // virtual
-    if ((ope.isAbstract ()
-#ifdef ENABLE_CORBA
-        || getCorba ()
-#endif
-        ) &&
-        ope.getName ()[0] != '~') {
-        getFile () << " = 0";
+    if (getOpenBraceOnNewline ()) {
+        getFile () << "\n";
+        getFile () << spc () << "{\n";
     }
-    getFile () << ";\n";
+    else {
+        getFile () << " {\n";
+    }
+    getFile () << spc () << "}\n";
 }
 
 void
