@@ -827,7 +827,7 @@ fi ;
 
 rm -Rf result/*
 ../src/dia2code -t java association.dia -d result --buildtree || exit 1
-if [[ ! -a result/AssociationClass1.java]] ; then
+if [[ ! -a result/AssociationClass1.java ]] ; then
 exit 1
 fi ;
 if [[ ! -a result/AssociationPack/AssociationClass2.java ]] ; then
@@ -842,16 +842,30 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-#rm -Rf result/*
-#../src/dia2code -t java package.dia -d result || exit 1
-#if [[ ! -a result/package.hpp ]] ; then
-#exit 1
-#fi ;
-#diff -pu package.hpp result/package.hpp > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#
+rm -Rf result/*
+../src/dia2code -t java package.dia -d result || exit 1
+if [[ ! -a result/PackageClasse1.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/PackageClasse2.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/PackageClasse3.java ]] ; then
+exit 1
+fi ;
+diff -pu PackageClasse1.java result/PackageClasse1.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu PackageClasse2.java result/PackageClasse2.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu PackageClasse3.java result/PackageClasse3.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 #rm -Rf result/*
 #../src/dia2code -t java package.dia -d result --buildtree || exit 1
 #if [[ ! -a result/package/PackageClasse1.hpp ]] ; then
