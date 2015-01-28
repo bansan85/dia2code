@@ -116,8 +116,36 @@ GenerateCodeCpp::writeEndHeader () {
 }
 
 void
-GenerateCodeCpp::writeInclude (std::basic_string <char> name) {
-    getFile () << spc () << "#include \"" << name << "\"\n";
+GenerateCodeCpp::writeInclude (std::list <std::string> & name) {
+    std::list <std::string>::const_iterator namei;
+
+    if (name.size () == 0) {
+        return;
+    }
+
+    getFile () << spc () << "#include \"";
+    
+    if (getBuildTree ()) {
+        namei = name.begin ();
+        while (namei != name.end ()) {
+            getFile () << *namei;
+            ++namei;
+            if (namei != name.end ()) {
+                getFile () << SEPARATOR;
+            }
+        }
+    }
+    else if (getOneClass ()) {
+        namei = name.end ();
+        --namei;
+        getFile () << *namei;
+    }
+    else {
+        namei = name.begin ();
+        getFile () << *namei;
+    }
+
+    getFile () << "." << getFileExt () << "\"\n";
 }
 
 void

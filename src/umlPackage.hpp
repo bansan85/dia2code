@@ -44,7 +44,9 @@ class umlPackage {
         void setParent (umlPackage * pack);
 
         static void make_package_list (const umlPackage * package,
-                                       std::list <umlPackage> &res);
+                                       std::list <umlPackage> & res);
+        static void make_package_list_name (const umlPackage * package,
+                                            std::list <std::string> & res);
         
         ~umlPackage ();
 };

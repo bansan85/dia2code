@@ -246,10 +246,23 @@ DiaGram::push (umlClassNode & node)
 }
 
 bool
-DiaGram::haveInclude (const std::string & name) const
+DiaGram::haveInclude (const std::list <std::string> & name) const
 {
-    for (std::string inc : includes) {
-        if (!inc.compare (name)) {
+    for (std::list <std::string> inc : includes) {
+        bool idem = true;
+        std::list <std::string>::const_iterator namei = name.begin ();
+
+        if (inc.size () != name.size ()) {
+            continue;
+        }
+        for (std::string inc2 : inc) {
+            if (inc2.compare (*namei) != 0) {
+                idem = false;
+                break;
+            }
+            ++namei;
+        }
+        if (idem) {
             return true;
         }
     }
@@ -257,7 +270,7 @@ DiaGram::haveInclude (const std::string & name) const
 }
 
 void
-DiaGram::addInclude (const std::string & name)
+DiaGram::addInclude (const std::list <std::string> & name)
 {
     if (haveInclude (name)) {
         return;
@@ -269,30 +282,16 @@ DiaGram::addInclude (const std::string & name)
 void
 DiaGram::pushInclude (umlClassNode &node, bool oneClass, bool buildtree)
 {
-    if ((node.getPackage () != NULL) && (!oneClass)) {
-        std::list <umlPackage> pkglist;
-        umlPackage::make_package_list (node.getPackage (), pkglist);
-        addInclude ((*pkglist.begin ()).getName ());
-    } else {
-        std::string nom;
-        if ((buildtree) && (node.getPackage () != NULL)) {
-            std::list <umlPackage> pkglist;
-            std::list <umlPackage>::const_iterator it;
+    std::list <std::string> pkglist;
 
-            umlPackage::make_package_list (node.getPackage (), pkglist);
-            it = pkglist.begin ();
-            while (it != pkglist.end ()) {
-                nom.append ((*it).getName ());
-                nom.append (1, SEPARATOR);
-                ++it;
-            }
-        }
-        nom.append (node.getName ());
-        addInclude (nom);
+    if (node.getPackage () != NULL) {
+        umlPackage::make_package_list_name (node.getPackage (), pkglist);
     }
+    pkglist.push_back (node.getName ());
+    addInclude (pkglist);
 }
 
-std::list <std::string>
+std::list <std::list <std::string> >
 DiaGram::getIncludes () const {
     return includes;
 }

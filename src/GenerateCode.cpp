@@ -194,7 +194,7 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
         writeInclude ("p_orb.h");
     }
 #endif
-    std::list <std::string> incfile = getDia ().getIncludes ();
+    std::list <std::list <std::string> > incfile = getDia ().getIncludes ();
     if ((!incfile.empty ())
 #ifdef ENABLE_CORBA
          || (getDia ().getUseCorba ())
@@ -202,10 +202,8 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
         ) {
         getFile () << "\n";
     }
-    for (std::string namei : incfile) {
-        if (namei.compare (filename) != 0) {
-            writeInclude (namei + "." + getFileExt ());
-        }
+    for (std::list <std::string> namei : incfile) {
+        writeInclude (namei);
     }
 
     return;

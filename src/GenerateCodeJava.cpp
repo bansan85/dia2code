@@ -109,13 +109,28 @@ GenerateCodeJava::writeEndHeader () {
 }
 
 void
-GenerateCodeJava::writeInclude (std::basic_string <char> name) {
-    getFile () << spc () << "import " << name << "\n";
+GenerateCodeJava::writeInclude (std::list <std::string> & name) {
+    std::list <std::string>::const_iterator namei = name.begin ();
+
+    if (name.size () == 0) {
+        return;
+    }
+
+    getFile () << spc () << "import ";
+
+    while (namei != name.end ()) {
+        getFile () << *namei;
+        ++namei;
+        if (namei != name.end ()) {
+            getFile () << ".";
+        }
+    }
+    getFile () << ";\n";
 }
 
 void
 GenerateCodeJava::writeInclude (const char * name) {
-    getFile () << spc () << "import " << name << "\n";
+    getFile () << spc () << "import " << name << ";\n";
 }
 
 void

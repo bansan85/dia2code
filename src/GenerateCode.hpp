@@ -113,7 +113,7 @@ class GenerateCode {
         virtual void writeLicense () = 0;
         virtual void writeStartHeader (std::string & name) = 0;
         virtual void writeEndHeader () = 0;
-        virtual void writeInclude (std::basic_string <char> name) = 0;
+        virtual void writeInclude (std::list <std::string> & name) = 0;
         virtual void writeInclude (const char * name) = 0;
         virtual void writeFunctionComment (const umlOperation & ope) = 0;
         virtual void writeFunction (const umlOperation & ope,

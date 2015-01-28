@@ -40,7 +40,7 @@ class DiaGram {
 #endif
         
         std::list <std::string> tmp_classes;
-        std::list <std::string> includes;
+        std::list <std::list <std::string> > includes;
         std::list <declaration> decl;
         
         void listClasses (umlClassNode & current_class,
@@ -50,8 +50,8 @@ class DiaGram {
          * openOutfile() returns NULL if the file exists and is not rewritten
          * due to a clobber prohibition. Does an exit(1) if serious problems happen.
         */
-        bool haveInclude (const std::string & name) const;
-        void addInclude (const std::string & name);
+        bool haveInclude (const std::list <std::string> & name) const;
+        void addInclude (const std::list <std::string> & name);
         void pushInclude (umlClassNode & node, bool oneClass, bool buildtree);
     public:
         DiaGram ();
@@ -71,7 +71,7 @@ class DiaGram {
 #endif
 
         void push (umlClassNode &node);
-        std::list <std::string> getIncludes () const;
+        std::list <std::list <std::string> > getIncludes () const;
         void cleanIncludes ();
         void determineIncludes (declaration &d, bool oneClass, bool buildtree);
         
