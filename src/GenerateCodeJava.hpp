@@ -31,7 +31,6 @@ class GenerateCodeJava : public GenerateCode {
         std::string strPackage (const char * package) const;
         std::string strPointer (const std::string & type) const;
         const char * fqname (const umlClassNode & node, bool use_ref_type);
-        void check_visibility (int *curr_vis, int new_vis);
 
         void writeLicense ();
         void writeStartHeader (std::string & name);
@@ -53,7 +52,7 @@ class GenerateCodeJava : public GenerateCode {
         void writeEnum (const umlClassNode & node);
         void writeStruct (const umlClassNode & node);
         void writeTypedef (const umlClassNode & node);
-        void writeAssociation (const umlassoc & asso);
+        void writeAssociation (const umlassoc & asso, int * curr_visibility);
         void writeTemplates (
                const std::list <std::pair <std::string, std::string> > & tmps);
         

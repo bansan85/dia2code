@@ -197,12 +197,17 @@ associate (std::list <umlClassNode> & classlist,
            char composite,
            const char * base,
            const char * aggregate,
-           const char *multiplicity) {
+           const char *multiplicity,
+           char visibility) {
     umlClassNode *umlbase, *umlaggregate;
     umlbase = umlClassNode::find (classlist, base);
     umlaggregate = umlClassNode::find (classlist, aggregate);
     if (umlbase != NULL && umlaggregate != NULL) {
-        umlaggregate->addaggregate (name, composite, *umlbase, multiplicity);
+        umlaggregate->addaggregate (name,
+                                    composite,
+                                    *umlbase,
+                                    multiplicity,
+                                    visibility);
     }
 }
 
@@ -360,6 +365,8 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
             const char *multiplicity_b = NULL;
             char direction = 0;
             char composite = 0;
+            char visibility_a = 1;
+            char visibility_b = 1;
             xmlNodePtr attribute = object->xmlChildrenNode;
 
             while (attribute != NULL) {
@@ -387,6 +394,18 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                         else {
                             composite = 1;
                         }
+                        free (tmptype);
+                    }
+                    else if (!strcmp ("visibility_a", attrtype)) {
+                        xmlChar *tmptype = xmlGetProp (child,
+                                                       BAD_CAST2 ("val"));
+                        visibility_a = tmptype[0];
+                        free (tmptype);
+                    }
+                    else if (!strcmp ("visibility_b", attrtype)) {
+                        xmlChar *tmptype = xmlGetProp (child,
+                                                       BAD_CAST2 ("val"));
+                        visibility_b = tmptype[0];
                         free (tmptype);
                     }
                     else if (child->xmlChildrenNode) {
@@ -463,12 +482,12 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                     if (thisname == NULL || !*thisname || !strcmp ("##", thisname)) {
                         thisname = name_a;
                     }
-                    associate (res, thisname, composite, BAD_TSAC2 (end1), BAD_TSAC2 (end2), multiplicity_a);
+                    associate (res, thisname, composite, BAD_TSAC2 (end1), BAD_TSAC2 (end2), multiplicity_a, visibility_a);
                 } else {
                     if (thisname == NULL || !*thisname || !strcmp ("##", thisname)) {
                         thisname = name_b;
                     }
-                    associate (res, thisname, composite, BAD_TSAC2 (end2), BAD_TSAC2 (end1), multiplicity_b);
+                    associate (res, thisname, composite, BAD_TSAC2 (end2), BAD_TSAC2 (end1), multiplicity_b, visibility_b);
                 }
                 free (end1);
                 end1 = nullptr;

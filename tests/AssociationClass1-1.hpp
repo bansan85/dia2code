@@ -10,7 +10,8 @@
 */
 class AssociationClass1 {
     // Associations
-    AssociationPack::AssociationClass2 asso;
+    public :
+        AssociationPack::AssociationClass2 asso;
 };
 
 #endif

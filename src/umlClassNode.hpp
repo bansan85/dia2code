@@ -51,7 +51,8 @@ class umlClassNode : public umlClass {
         void addaggregate (const char *name,
                            char composite,
                            umlClassNode & base,
-                           const char *multiplicity);
+                           const char *multiplicity,
+                           char visibility);
 
         ~umlClassNode ();
 };

@@ -192,18 +192,16 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
 #ifdef ENABLE_CORBA
     if (getDia ().getUseCorba ()) {
         writeInclude ("p_orb.h");
-    }
-#endif
-    std::list <std::list <std::string> > incfile = getDia ().getIncludes ();
-    if ((!incfile.empty ())
-#ifdef ENABLE_CORBA
-         || (getDia ().getUseCorba ())
-#endif
-        ) {
         getFile () << "\n";
     }
+#endif
+
+    std::list <std::list <std::string> > incfile = getDia ().getIncludes ();
     for (std::list <std::string> namei : incfile) {
         writeInclude (namei);
+    }
+    if (incfile.size () != 0) {
+        getFile () << "\n";
     }
 
     return;
@@ -407,6 +405,7 @@ GenerateCode::genClass (const umlClassNode & node) {
     const char *name = node.getName ().c_str ();
 #endif
     const char *stype = node.getStereotype ().c_str ();
+    int tmpv = -1; // Temporaire visibility
 
     if (strlen (stype) > 0) {
         writeComment (std::string ("Stereotype : ") + stype);
@@ -439,7 +438,7 @@ GenerateCode::genClass (const umlClassNode & node) {
          * setters/getters.)  Ideas and comments welcome.
         */
         for (const umlassoc & assoc : node.getAssociations ()) {
-            writeAssociation (assoc);
+            writeAssociation (assoc, &tmpv);
         }
     }
 
@@ -509,29 +508,23 @@ GenerateCode::genClass (const umlClassNode & node) {
         else
 #endif
         {
-            int tmpv = -1;
             writeComment ("Attributes");
-            incIndentLevel ();
             for (const umlAttribute & umla : node.getAttributes ()) {
                 writeAttribute (umla, &tmpv);
             }
-            decIndentLevel ();
         }
     }
 
     if (!node.getOperations ().empty ()) {
-        int tmpv = -1;
         writeComment ("Operations");
 #ifdef ENABLE_CORBA
         if (isCorba) {
             getFile () << spc () << "public :\n";
         }
 #endif
-        incIndentLevel ();
         for (const umlOperation & umlo : node.getOperations ()) {
             writeFunction (umlo, &tmpv);
         }
-        decIndentLevel ();
     }
 
 #ifdef ENABLE_CORBA

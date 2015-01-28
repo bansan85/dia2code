@@ -194,7 +194,7 @@ comment#</dia:string>
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="visibility_a">
-        <dia:enum val="3"/>
+        <dia:enum val="1"/>
       </dia:attribute>
       <dia:attribute name="show_arrow_a">
         <dia:boolean val="false"/>
@@ -206,7 +206,7 @@ comment#</dia:string>
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="visibility_b">
-        <dia:enum val="3"/>
+        <dia:enum val="0"/>
       </dia:attribute>
       <dia:attribute name="show_arrow_b">
         <dia:boolean val="false"/>
@@ -232,7 +232,7 @@ comment#</dia:string>
         <dia:enum val="1"/>
       </dia:attribute>
       <dia:attribute name="orth_autoroute">
-        <dia:boolean val="true"/>
+        <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="text_colour">
         <dia:color val="#000000"/>

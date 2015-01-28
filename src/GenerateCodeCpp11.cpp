@@ -29,6 +29,7 @@ GenerateCodeCpp11::GenerateCodeCpp11 (DiaGram & diagram) :
 void
 GenerateCodeCpp11::writeFunction (const umlOperation & ope,
                                 int * curr_visibility) {
+    incIndentLevel ();
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
         if (ope.getVisibility () != '0') {
@@ -110,6 +111,7 @@ GenerateCodeCpp11::writeFunction (const umlOperation & ope,
         getFile () << " = 0";
     }
     getFile () << ";\n";
+    decIndentLevel ();
 }
 
 void

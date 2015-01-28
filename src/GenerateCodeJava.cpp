@@ -62,31 +62,22 @@ GenerateCodeJava::fqname (const umlClassNode &node, bool use_ref_type) {
     return buf.c_str ();
 }
 
-void
-GenerateCodeJava::check_visibility (int *curr_vis, int new_vis) {
-    if (*curr_vis == new_vis) {
-        return;
-    }
-    decIndentLevel ();
-    switch (new_vis) {
+std::string
+visibility (int vis) {
+    switch (vis) {
         case '0':
-            getFile () << spc () << "public :\n";
-            break;
+            return std::string ("public ");
         case '1':
-            getFile () << spc () << "private :\n";
-            break;
+            return std::string ("private ");
         case '2':
-            getFile () << spc () << "protected :\n";
-            break;
+            return std::string ("protected ");
         case '3':
-            throw std::string ("Implementation not applicable in C++.\n");
+            throw std::string ("Implementation not applicable in Java.\n");
             break;
         default :
-            throw std::string (new_vis + " : Unknown visibility.\n");
+            throw std::string (vis + " : Unknown visibility.\n");
             break;
     }
-    *curr_vis = new_vis;
-    incIndentLevel ();
 }
 
 void
@@ -146,7 +137,7 @@ GenerateCodeJava::writeFunctionComment (const umlOperation & ope) {
 
 void
 GenerateCodeJava::writeFunction (const umlOperation & ope,
-                                int * curr_visibility) {
+                                 int * curr_visibility) {
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
         if (ope.getVisibility () != '0') {
@@ -155,11 +146,7 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
                      ope.getName ().c_str ());
         }
     }
-    else
 #endif
-    {
-        check_visibility (curr_visibility, ope.getVisibility ());
-    }
 
     /* print comments on operation */
     if (!ope.getComment ().empty ()) {
@@ -302,7 +289,6 @@ GenerateCodeJava::writeClassEnd () {
 void
 GenerateCodeJava::writeAttribute (const umlAttribute & attr,
                                  int * curr_visibility) {
-    check_visibility (curr_visibility, attr.getVisibility ());
     if (!attr.getComment ().empty ()) {
         getFile () << spc () << "/// " << attr.getComment () << "\n";
     }
@@ -452,17 +438,11 @@ GenerateCodeJava::writeTypedef (const umlClassNode & node) {
 }
 
 void
-GenerateCodeJava::writeAssociation (const umlassoc & asso) {
+GenerateCodeJava::writeAssociation (const umlassoc & asso,
+                                    int * curr_visibility) {
     if (!asso.name.empty ()) {
-        umlClassNode *ref;
-        ref = find_by_name (getDia ().getUml (),
-                            asso.key.getName ().c_str ());
-        if (ref != NULL) {
-            getFile () << spc () << fqname (*ref, !asso.composite);
-        }
-        else {
-            getFile () << spc () << cppName (asso.key.getName ());
-        }
+        getFile () << spc () << visibility (asso.visibility)
+                   << cppName (asso.key.getName ());
         getFile () << " " << asso.name << ";\n";
     }
 }

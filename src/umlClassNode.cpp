@@ -156,7 +156,8 @@ void
 umlClassNode::addaggregate (const char *name_,
                             char composite,
                             umlClassNode & base,
-                            const char *multiplicity) {
+                            const char *multiplicity,
+                            char visibility) {
     umlassoc tmp;
     if (name_ != NULL && strlen (name_) > 2) {
         parseDiaString(name_, tmp.name);
@@ -179,6 +180,7 @@ umlClassNode::addaggregate (const char *name_,
     }
     tmp.key = base;
     tmp.composite = composite;
+    tmp.visibility = visibility;
     associations.push_front (tmp);
 }
 

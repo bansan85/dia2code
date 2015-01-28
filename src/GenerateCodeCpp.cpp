@@ -106,12 +106,11 @@ GenerateCodeCpp::writeLicense () {
 void
 GenerateCodeCpp::writeStartHeader (std::string & name) {
     getFile () << spc () << "#ifndef " << name << "__HPP\n";
-    getFile () << spc () << "#define " << name << "__HPP\n";
+    getFile () << spc () << "#define " << name << "__HPP\n\n";
 }
 
 void
 GenerateCodeCpp::writeEndHeader () {
-    getFile () << spc () << "\n";
     getFile () << spc () << "#endif\n";
 }
 
@@ -167,6 +166,7 @@ GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
 void
 GenerateCodeCpp::writeFunction (const umlOperation & ope,
                                 int * curr_visibility) {
+    incIndentLevel ();
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
         if (ope.getVisibility () != '0') {
@@ -248,6 +248,7 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
         getFile () << " = 0";
     }
     getFile () << ";\n";
+    decIndentLevel ();
 }
 
 void
@@ -335,6 +336,7 @@ GenerateCodeCpp::writeClassEnd () {
 void
 GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
                                  int * curr_visibility) {
+    incIndentLevel ();
     check_visibility (curr_visibility, attr.getVisibility ());
     if (!attr.getComment ().empty ()) {
         getFile () << spc () << "/// " << attr.getComment () << "\n";
@@ -348,11 +350,11 @@ GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
                    << attr.getName ();
     }
     getFile () << ";\n";
+    decIndentLevel ();
 }
 
 void
 GenerateCodeCpp::writeNameSpaceStart (const umlClassNode * node) {
-    getFile () << "\n";
     if (node->getPackage () != NULL) {
         std::list <umlPackage> pkglist;
         umlPackage::make_package_list (node->getPackage (), pkglist);
@@ -379,6 +381,7 @@ GenerateCodeCpp::writeNameSpaceEnd (const umlClassNode * node) {
         getFile () << spc () << "};\n";
         pack = pack->getParent ();
     }
+    getFile () << spc () << "\n";
 }
 
 void
@@ -493,18 +496,23 @@ GenerateCodeCpp::writeTypedef (const umlClassNode & node) {
 }
 
 void
-GenerateCodeCpp::writeAssociation (const umlassoc & asso) {
+GenerateCodeCpp::writeAssociation (const umlassoc & asso,
+                                   int * curr_visibility) {
     if (!asso.name.empty ()) {
+        incIndentLevel ();
         umlClassNode *ref;
         ref = find_by_name (getDia ().getUml (),
                             asso.key.getName ().c_str ());
+        check_visibility (curr_visibility, asso.visibility);
+        getFile () << spc ();
         if (ref != NULL) {
-            getFile () << spc () << fqname (*ref, !asso.composite);
+            getFile () << fqname (*ref, !asso.composite);
         }
         else {
-            getFile () << spc () << cppName (asso.key.getName ());
+            getFile () << cppName (asso.key.getName ());
         }
         getFile () << " " << asso.name << ";\n";
+        decIndentLevel ();
     }
 }
 

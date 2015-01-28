@@ -100,7 +100,6 @@ class GenerateCode {
 #endif
 
         const char * cppName (std::string name) const;
-        virtual void check_visibility (int *curr_vis, int new_vis) = 0;
 
         virtual const char * fqname (const umlClassNode & node,
                                      bool use_ref_type) = 0;
@@ -131,7 +130,8 @@ class GenerateCode {
         virtual void writeEnum (const umlClassNode & node) = 0;
         virtual void writeStruct (const umlClassNode & node) = 0;
         virtual void writeTypedef (const umlClassNode & node) = 0;
-        virtual void writeAssociation (const umlassoc & asso) = 0;
+        virtual void writeAssociation (const umlassoc & asso,
+                                       int * curr_visibility) = 0;
         virtual void writeTemplates (
            const std::list <std::pair <std::string, std::string> > & tmps) = 0;
 
