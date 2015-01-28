@@ -890,16 +890,16 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-#rm -Rf result/*
-#../src/dia2code -t java enum.dia -d result || exit 1
-#if [[ ! -a result/enumeration.java ]] ; then
-#exit 1
-#fi ;
-#diff -pu enumeration-11.java result/enumeration.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#
+rm -Rf result/*
+../src/dia2code -t java enum.dia -d result || exit 1
+if [[ ! -a result/enumeration.java ]] ; then
+exit 1
+fi ;
+diff -pu enumeration.java result/enumeration.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 #../src/dia2code -t java operations.dia -d result || exit 1
 #if [[ ! -a result/operations.java ]] ; then
 #exit 1

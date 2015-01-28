@@ -290,7 +290,9 @@ void
 GenerateCodeJava::writeAttribute (const umlAttribute & attr,
                                  int * curr_visibility) {
     if (!attr.getComment ().empty ()) {
-        getFile () << spc () << "/// " << attr.getComment () << "\n";
+        getFile () << spc () << "/**\n";
+        getFile () << spc () << " * " << attr.getComment () << "\n";
+        getFile () << spc () << " */\n";
     }
     if (attr.isStatic ()) {
         getFile () << spc () << "static " << attr.getType () << " "
@@ -353,14 +355,16 @@ GenerateCodeJava::writeEnum (const umlClassNode & node) {
 
     umla = node.getAttributes ().begin ();
     if (!node.getComment ().empty ()) {
-        getFile () << spc () << "/// " << node.getComment () << "\n";
+        getFile () << spc () << "/**\n";
+        getFile () << spc () << " * " << node.getComment () << "\n";
+        getFile () << spc () << " */\n";
     }
     if (getOpenBraceOnNewline ()) {
-        getFile () << spc () << "enum " << node.getName () << "\n";
+        getFile () << spc () << "public enum " << node.getName () << "\n";
         getFile () << spc () << "{\n";
     }
     else {
-        getFile () << spc () << "enum " << node.getName () << " {\n";
+        getFile () << spc () << "public enum " << node.getName () << " {\n";
     }
     incIndentLevel ();
     while (umla != node.getAttributes ().end ()) {
@@ -392,7 +396,11 @@ GenerateCodeJava::writeStruct (const umlClassNode & node) {
     std::list <umlAttribute>::const_iterator umla;
 
     umla = node.getAttributes ().begin ();
-    getFile () << spc () << "/// " << node.getComment () << "\n";
+    if (!node.getComment ().empty ()) {
+        getFile () << spc () << "/**\n";
+        getFile () << spc () << " * " << node.getComment () << "\n";
+        getFile () << spc () << " */\n";
+    }
     if (getOpenBraceOnNewline ()) {
         getFile () << spc () << "struct " << node.getName () << "\n";
         getFile () << spc () << "{\n";
@@ -403,7 +411,11 @@ GenerateCodeJava::writeStruct (const umlClassNode & node) {
     incIndentLevel ();
     while (umla != node.getAttributes ().end ()) {
         (*umla).check (node.getName ().c_str ());
-        getFile () << spc () << "/// " << (*umla).getComment () << "\n";
+        if (!node.getComment ().empty ()) {
+            getFile () << spc () << "/**\n";
+            getFile () << spc () << " * " << (*umla).getComment () << "\n";
+            getFile () << spc () << " */\n";
+        }
         getFile () << spc () << cppName ((*umla).getType ()) << " "
              << (*umla).getName ();
         if (!(*umla).getValue ().empty ()) {

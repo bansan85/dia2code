@@ -776,7 +776,6 @@ GenerateCode::writeFile () {
     }
 #endif
 
-
     int lc;
     rewind (licensefile);
     while ((lc = fgetc (licensefile)) != EOF) {

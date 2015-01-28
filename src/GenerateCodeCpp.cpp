@@ -450,7 +450,9 @@ GenerateCodeCpp::writeStruct (const umlClassNode & node) {
     std::list <umlAttribute>::const_iterator umla;
 
     umla = node.getAttributes ().begin ();
-    getFile () << spc () << "/// " << node.getComment () << "\n";
+    if (!node.getComment ().empty ()) {
+        getFile () << spc () << "/// " << node.getComment () << "\n";
+    }
     if (getOpenBraceOnNewline ()) {
         getFile () << spc () << "struct " << node.getName () << "\n";
         getFile () << spc () << "{\n";
@@ -461,7 +463,9 @@ GenerateCodeCpp::writeStruct (const umlClassNode & node) {
     incIndentLevel ();
     while (umla != node.getAttributes ().end ()) {
         (*umla).check (node.getName ().c_str ());
-        getFile () << spc () << "/// " << (*umla).getComment () << "\n";
+        if (!node.getComment ().empty ()) {
+            getFile () << spc () << "/// " << (*umla).getComment () << "\n";
+        }
         getFile () << spc () << cppName ((*umla).getType ()) << " "
              << (*umla).getName ();
         if (!(*umla).getValue ().empty ()) {
