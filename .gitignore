@@ -2,7 +2,6 @@
 *~
 Makefile
 src/dia2code
-config.*
 autom4te.cache
 compile
 configure
@@ -25,3 +24,7 @@ tests/tests.sh.trs
 src/*.gc??
 *.swp
 out_html
+config.guess
+config.log
+config.status
+config.sub
