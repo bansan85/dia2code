@@ -388,43 +388,11 @@ GenerateCodeJava::writeEnum (const umlClassNode & node) {
 
 void
 GenerateCodeJava::writeStruct (const umlClassNode & node) {
-    std::list <umlAttribute>::const_iterator umla;
+    umlClassNode & nodetmp = const_cast <umlClassNode &> (node);
+    std::string stereo;
 
-    umla = node.getAttributes ().begin ();
-    if (!node.getComment ().empty ()) {
-        getFile () << spc () << "/**\n";
-        getFile () << spc () << " * " << node.getComment () << "\n";
-        getFile () << spc () << " */\n";
-    }
-    if (getOpenBraceOnNewline ()) {
-        getFile () << spc () << "struct " << node.getName () << "\n";
-        getFile () << spc () << "{\n";
-    }
-    else {
-        getFile () << spc () << "struct " << node.getName () << " {\n";
-    }
-    incIndentLevel ();
-    while (umla != node.getAttributes ().end ()) {
-        (*umla).check (node.getName ().c_str ());
-        if (!node.getComment ().empty ()) {
-            getFile () << spc () << "/**\n";
-            getFile () << spc () << " * " << (*umla).getComment () << "\n";
-            getFile () << spc () << " */\n";
-        }
-        getFile () << spc () << cppName ((*umla).getType ()) << " "
-             << (*umla).getName ();
-        if (!(*umla).getValue ().empty ()) {
-            fprintf (stderr,
-                     "%s/%s: ignoring value %s\n",
-                     node.getName ().c_str (),
-                     (*umla).getName ().c_str (),
-                     (*umla).getValue ().c_str ());
-        }
-        getFile () << ";\n";
-        ++umla;
-    }
-    decIndentLevel ();
-    getFile () << spc () << "};\n";
+    nodetmp.setStereotype (stereo);
+    genClass (nodetmp);
 }
 
 void

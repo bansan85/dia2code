@@ -1041,15 +1041,15 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-#../src/dia2code -t java structure.dia -d result || exit 1
-#if [[ ! -a result/structure.java ]] ; then
-#exit 1
-#fi ;
-#diff -pu structure.java result/structure.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#
+../src/dia2code -t java structure.dia -d result || exit 1
+if [[ ! -a result/structure.java ]] ; then
+exit 1
+fi ;
+diff -pu structure.java result/structure.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 #rm -Rf result/*
 #../src/dia2code -t java inherence.dia -d result || exit 1
 #if [[ ! -a result/InherenceClasseChildren.java ]] ; then

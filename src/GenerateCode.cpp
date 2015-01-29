@@ -431,12 +431,6 @@ GenerateCode::genClass (const umlClassNode & node) {
 
     if (!node.getAssociations ().empty ()) {
         writeComment ("Associations");
-        /*
-         * The associations are mapped as private members.
-         * Is that really what we want?
-         * (For example, other UML tools additionally generate
-         * setters/getters.)  Ideas and comments welcome.
-        */
         for (const umlassoc & assoc : node.getAssociations ()) {
             writeAssociation (assoc, &tmpv);
         }

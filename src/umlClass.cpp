@@ -33,55 +33,51 @@ umlClass::umlClass () :
     operations (),
     templates (),
     package (nullptr),
-    geom ({0., 0., 0., 0.})
-{
+    geom ({0., 0., 0., 0.}) {
 }
 
 const std::string &
-umlClass::getId () const
-{
+umlClass::getId () const {
     return id;
 }
 
 const std::string &
-umlClass::getName () const
-{
+umlClass::getName () const {
     return name;
 }
 
 const std::string &
-umlClass::getStereotype () const
-{
+umlClass::getStereotype () const {
     return stereotype;
 }
 
+void
+umlClass::setStereotype (std::string & stereo) {
+    stereotype = stereo;
+}
+
 const std::string &
-umlClass::getComment () const
-{
+umlClass::getComment () const {
     return comment;
 }
 
 const std::list <umlAttribute> &
-umlClass::getAttributes () const
-{
+umlClass::getAttributes () const {
     return attributes;
 }
 
 const std::list <umlOperation> &
-umlClass::getOperations () const
-{
+umlClass::getOperations () const {
     return operations;
 }
 
 const umlPackage *
-umlClass::getPackage () const
-{
+umlClass::getPackage () const {
     return package;
 }
 
 const std::list <std::pair <std::string, std::string> > &
-umlClass::getTemplates () const
-{
+umlClass::getTemplates () const {
     return templates;
 }
 

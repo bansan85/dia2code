@@ -67,6 +67,7 @@ class umlClass {
         const std::string & getId () const;
         const std::string & getName () const;
         const std::string & getStereotype () const;
+        void setStereotype (std::string & stereo);
         const std::string & getComment () const;
         const std::list <umlAttribute> & getAttributes () const;
         const std::list <umlOperation> & getOperations () const;

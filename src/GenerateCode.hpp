@@ -52,11 +52,9 @@ class GenerateCode {
 #endif
 
         int passByReference (umlClass &cl);
-        void genClass (const umlClassNode & node);
         void openOutfile (const std::string & filename, declaration & d);
         void closeOutfile ();
-        void genDecl (declaration &d,
-                      bool forceOpen);
+        void genDecl (declaration &d, bool forceOpen);
     public:
         GenerateCode (DiaGram & diagram, const char * ext);
 
@@ -98,6 +96,8 @@ class GenerateCode {
 #ifdef ENABLE_CORBA
         bool getCorba () const;
 #endif
+
+        void genClass (const umlClassNode & node);
 
         const char * cppName (std::string name) const;
 
