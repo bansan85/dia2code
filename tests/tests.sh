@@ -1107,15 +1107,15 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-#../src/dia2code -t java getset.dia -d result || exit 1
-#if [[ ! -a result/GetSet.java ]] ; then
-#exit 1
-#fi ;
-#diff -pu GetSet-11.java result/GetSet.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#
+../src/dia2code -t java getset.dia -d result || exit 1
+if [[ ! -a result/GetSet.java ]] ; then
+exit 1
+fi ;
+diff -pu GetSet.java result/GetSet.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 #../src/dia2code -t java constance.dia -d result || exit 1
 #if [[ ! -a result/constance.java ]] ; then
 #exit 1
