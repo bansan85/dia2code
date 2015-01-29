@@ -928,15 +928,29 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-#../src/dia2code -t java dependances.dia -d result || exit 1
-#if [[ ! -a result/dependances.java ]] ; then
-#exit 1
-#fi ;
-#diff -pu dependances.java result/dependances.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#
+../src/dia2code -t java dependances.dia -d result || exit 1
+if [[ ! -a result/dependances.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/Classe1.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/Classe2.java ]] ; then
+exit 1
+fi ;
+diff -pu dependances.java result/dependances.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu Classe1.java result/Classe1.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu Classe2.java result/Classe2.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 #rm -Rf result/*
 #../src/dia2code -t java dependances_pack.dia -d result || exit 1
 #if [[ ! -a result/DepClassePack1.java ]] ; then

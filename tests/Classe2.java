@@ -1,0 +1,2 @@
+public class Classe2 {
+}
