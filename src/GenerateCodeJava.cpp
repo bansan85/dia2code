@@ -393,19 +393,7 @@ GenerateCodeJava::writeStruct (const umlClassNode & node) {
 
 void
 GenerateCodeJava::writeTypedef (const umlClassNode & node) {
-    std::list <umlAttribute>::const_iterator umla;
-
-    umla = node.getAttributes ().begin ();
-    if (umla == node.getAttributes ().end ()) {
-        throw std::string ("Error: first attribute (impl type) not set at typedef " + node.getName () + ".\n");
-    }
-    if (!(*umla).getName ().empty ())  {
-        fprintf (stderr,
-                 "Warning: typedef %s: ignoring name field in implementation type attribute\n",
-                 node.getName ().c_str ());
-    }
-    getFile () << spc () << "typedef " << cppName ((*umla).getType ()) << " "
-               << node.getName () << (*umla).getValue () << ";\n";
+    fprintf (stderr, "Typedef in not applicable to Java.\n");
 }
 
 void

@@ -1098,15 +1098,15 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-#../src/dia2code -t java typedef.dia -d result || exit 1
-#if [[ ! -a result/TypeDef.java ]] ; then
-#exit 1
-#fi ;
-#diff -pu TypeDef.java result/TypeDef.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#
+../src/dia2code -t java typedef.dia -d result || exit 1
+if [[ ! -a result/TypeDef.java ]] ; then
+exit 1
+fi ;
+diff -pu TypeDef.java result/TypeDef.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 #../src/dia2code -t java getset.dia -d result || exit 1
 #if [[ ! -a result/GetSet.java ]] ; then
 #exit 1
