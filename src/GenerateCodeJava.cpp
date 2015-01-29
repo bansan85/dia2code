@@ -321,23 +321,7 @@ GenerateCodeJava::writeNameSpaceEnd (const umlClassNode * node) {
 
 void
 GenerateCodeJava::writeConst (const umlClassNode & node) {
-    std::list <umlAttribute>::const_iterator umla;
-
-    umla = node.getAttributes ().begin ();
-    getFile () << spc () << "/// " << node.getComment () << "\n";
-    if (node.getAttributes ().size () != 1) {
-        throw std::string ("Error: first attribute not set at " +
-                           node.getName () + "\n");
-    }
-    if (!(*umla).getName ().empty ()) {
-        fprintf (stderr,
-                 "Warning: ignoring attribute name at %s\n",
-                 node.getName ().c_str ());
-    }
-
-    getFile () << spc () << "const " << cppName ((*umla).getType ())
-               << " " << node.getName () << " = " << (*umla).getValue ()
-               << ";\n";
+    fprintf (stderr, "Const stereotype in not applicable to Java.\n");
 }
 
 void
@@ -393,7 +377,7 @@ GenerateCodeJava::writeStruct (const umlClassNode & node) {
 
 void
 GenerateCodeJava::writeTypedef (const umlClassNode & node) {
-    fprintf (stderr, "Typedef in not applicable to Java.\n");
+    fprintf (stderr, "Typedef stereotype in not applicable to Java.\n");
 }
 
 void

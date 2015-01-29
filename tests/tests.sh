@@ -1116,15 +1116,15 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-#../src/dia2code -t java constance.dia -d result || exit 1
-#if [[ ! -a result/constance.java ]] ; then
-#exit 1
-#fi ;
-#diff -pu constance-11.java result/constance.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#
+../src/dia2code -t java constance.dia -d result || exit 1
+if [[ ! -a result/constance.java ]] ; then
+exit 1
+fi ;
+diff -pu constance.java result/constance.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 #../src/dia2code -t java template.dia -d result || exit 1
 #if [[ ! -a result/Template.java ]] ; then
 #exit 1
