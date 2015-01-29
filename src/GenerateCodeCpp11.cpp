@@ -50,9 +50,9 @@ GenerateCodeCpp11::writeFunction (const umlOperation & ope,
     }
 
     getFile () << spc ();
-    if (ope.isAbstract ()
+    if ((ope.getInherence () != 2)
 #ifdef ENABLE_CORBA
-        || getCorba ()
+        || (getCorba ())
 #endif
     ) {
         getFile () << "virtual ";
@@ -102,12 +102,11 @@ GenerateCodeCpp11::writeFunction (const umlOperation & ope,
     }
     getFile () << ")";
     // virtual
-    if ((ope.isAbstract ()
+    if ((ope.getInherence () == 0)
 #ifdef ENABLE_CORBA
-        || getCorba ()
+        || (getCorba ())
 #endif
-        ) &&
-        ope.getName ()[0] != '~') {
+       ) {
         getFile () << " = 0";
     }
     getFile () << ";\n";

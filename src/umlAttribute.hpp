@@ -34,7 +34,7 @@ class umlAttribute {
         std::string type;
         std::string comment;
         char visibility;
-        unsigned char isabstract : 1;
+        unsigned char inherence : 2;
         unsigned char isstatic : 1;
         unsigned char isconstant : 1;
         char kind;
@@ -45,7 +45,7 @@ class umlAttribute {
                       std::string type_,
                       std::string comment_,
                       char visibility_,
-                      unsigned char isabstract_,
+                      unsigned char inherence_,
                       unsigned char isstatic_,
                       unsigned char isconstant_,
                       char kind_);
@@ -55,7 +55,7 @@ class umlAttribute {
         const std::string & getType () const;
         const std::string & getComment () const;
         char getVisibility () const;
-        unsigned char isAbstract () const;
+        unsigned char getInherence () const;
         unsigned char isStatic () const;
         unsigned char isConstant () const;
         char getKind () const;
@@ -65,7 +65,7 @@ class umlAttribute {
                      std::string type_,
                      std::string comment_,
                      char visibility_,
-                     unsigned char isabstract_,
+                     unsigned char inherence_,
                      unsigned char isstatic_,
                      unsigned char isconstant_,
                      char kind_);
@@ -73,7 +73,7 @@ class umlAttribute {
         void check (const char *typename_) const;
         void parse (xmlNodePtr node);
         void insert (std::list <umlAttribute> &l);
-        
+
         ~umlAttribute ();
 };
 

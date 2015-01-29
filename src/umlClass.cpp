@@ -91,56 +91,62 @@ umlClass::getTemplates () const
 void
 umlClass::makeGetSetMethods () {
     for (umlAttribute & attrlist : attributes) {
-        if (!attrlist.isAbstract ()) {
-            std::string tmpname, impl;
+        std::string tmpname, impl;
 
-            /* The SET method */
-            umlAttribute parameter ("value",
-                                    "",
-                                    attrlist.getType (),
-                                    "",
-                                    '0',
-                                    false,
-                                    false,
-                                    false,
-                                    '1');
-            impl.assign ("    ");
-            impl.append (attrlist.getName ());
-            impl.append (" = value;");
+        /* The SET method */
+        umlAttribute parameter ("value",
+                                "",
+                                attrlist.getType (),
+                                "",
+                                '0',
+                                false,
+                                false,
+                                false,
+                                '1');
+        impl.assign ("    ");
+        impl.append (attrlist.getName ());
+        impl.append (" = value;");
 
-            tmpname.assign ("set");
-            tmpname.append (strtoupperfirst(attrlist.getName ()));
+        tmpname.assign ("set");
+        tmpname.append (strtoupperfirst(attrlist.getName ()));
 
-            umlOperation operation (tmpname,
-                                    "",
-                                    "void",
-                                    "",
-                                    '0',
-                                    false,
-                                    false,
-                                    false,
-                                    '1',
-                                    impl);
-            operation.addParameter (parameter);
-            umlOperation::insert_operation(operation, operations);
+        umlOperation operation (tmpname,
+                                "",
+                                "void",
+                                "",
+                                '0',
+                                attrlist.getInherence (),
+                                false,
+                                false,
+                                '1',
+                                impl);
+        operation.addParameter (parameter);
+        umlOperation::insert_operation(operation, operations);
 
-            /* The GET or IS method */
-            impl.assign ("    return ");
-            impl.append (attrlist.getName ());
-            impl.append (";");
-            if ((attrlist.getType ().compare ("boolean") == 0) ||
-                (attrlist.getType ().compare ("Boolean") == 0) ||
-                (attrlist.getType ().compare ("bool") == 0)) {
-                tmpname.assign ("is");
-            } else {
-                tmpname.assign ("get");
-            }
-            tmpname.append (strtoupperfirst (attrlist.getName ()));
-
-            umlOperation operation2 (tmpname, "", attrlist.getType (),
-                                     "", '0', false, false, true, '1', impl);
-            umlOperation::insert_operation (operation2, operations);
+        /* The GET or IS method */
+        impl.assign ("    return ");
+        impl.append (attrlist.getName ());
+        impl.append (";");
+        if ((attrlist.getType ().compare ("boolean") == 0) ||
+            (attrlist.getType ().compare ("Boolean") == 0) ||
+            (attrlist.getType ().compare ("bool") == 0)) {
+            tmpname.assign ("is");
+        } else {
+            tmpname.assign ("get");
         }
+        tmpname.append (strtoupperfirst (attrlist.getName ()));
+
+        umlOperation operation2 (tmpname,
+                                 "",
+                                 attrlist.getType (),
+                                 "",
+                                 '0',
+                                 attrlist.getInherence (),
+                                 false,
+                                 true,
+                                 '1',
+                                 impl);
+        umlOperation::insert_operation (operation2, operations);
     }
 }
 

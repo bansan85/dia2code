@@ -72,7 +72,9 @@ visibility (int vis) {
         case '2':
             return std::string ("protected ");
         case '3':
-            throw std::string ("Implementation not applicable in Java.\n");
+            fprintf (stderr, "Implementation not applicable in Java.\n"
+                             "Default: public.");
+            return std::string ("public ");
             break;
         default :
             throw std::string (vis + " : Unknown visibility.\n");
@@ -156,8 +158,12 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
     }
 
     getFile () << spc ();
-    if (ope.isAbstract ()) {
+    if (ope.getInherence () == 0) {
         getFile () << "abstract ";
+    }
+    else if (ope.getInherence () == 2) {
+        fprintf (stderr,
+                 "With Java generator, all function is by default virtual.\n");
     }
     getFile () << visibility (ope.getVisibility ());
     if (ope.isStatic ()) {

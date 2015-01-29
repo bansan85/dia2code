@@ -18,7 +18,7 @@ class operations {
     protected :
         test4 ();
     public :
-        static test2 ();
+        virtual static test2 ();
         constexpr test3 ();
 };
 

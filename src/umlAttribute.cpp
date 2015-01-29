@@ -28,7 +28,7 @@ umlAttribute::umlAttribute () :
     type (),
     comment (),
     visibility ('0'),
-    isabstract (false),
+    inherence (2),
     isstatic (false),
     isconstant (false),
     kind ('1')
@@ -40,7 +40,7 @@ umlAttribute::umlAttribute (std::string name_,
                             std::string type_,
                             std::string comment_,
                             char visibility_,
-                            unsigned char isabstract_,
+                            unsigned char inherence_,
                             unsigned char isstatic_,
                             unsigned char isconstant_,
                             char kind_) :
@@ -49,7 +49,7 @@ umlAttribute::umlAttribute (std::string name_,
     type (type_),
     comment (comment_),
     visibility (visibility_),
-    isabstract (isabstract_ & 1),
+    inherence (inherence_ & 3),
     isstatic (isstatic_ & 1),
     isconstant (isconstant_ & 1),
     kind (kind_)
@@ -87,9 +87,9 @@ umlAttribute::getVisibility () const
 }
 
 unsigned char
-umlAttribute::isAbstract () const
+umlAttribute::getInherence () const
 {
-    return isabstract;
+    return inherence;
 }
 
 unsigned char
@@ -116,7 +116,7 @@ umlAttribute::assign (std::string name_,
                       std::string type_,
                       std::string comment_,
                       char visibility_,
-                      unsigned char isabstract_,
+                      unsigned char inherence_,
                       unsigned char isstatic_,
                       unsigned char isconstant_,
                       char kind_)
@@ -126,7 +126,7 @@ umlAttribute::assign (std::string name_,
     type = type_;
     comment = comment_;
     visibility = visibility_;
-    isabstract = isabstract_ & 1;
+    inherence = inherence_ & 3;
     isstatic = isstatic_ & 1;
     isconstant = isconstant_ & 1;
     kind = kind_;
@@ -198,8 +198,16 @@ umlAttribute::parse (xmlNodePtr node) {
             sscanf (BAD_TSAC2 (attrval), "%c", &visibility);
 #endif
             free (attrval);
-        } else if (!strcmp ("abstract", BAD_TSAC2 (nodename))) {
-            isabstract = parseBoolean (node->xmlChildrenNode);
+        } else if (!strcmp ("inheritance_type", BAD_TSAC2 (nodename))) {
+            char inherence_tmp;
+            attrval = xmlGetProp (node->xmlChildrenNode, BAD_CAST2 ("val"));
+#if defined(_WIN32) || defined(_WIN64)
+            sscanf_s (BAD_TSAC2 (attrval), "%c", &inherence_tmp);
+#else
+            sscanf (BAD_TSAC2 (attrval), "%c", &inherence_tmp);
+#endif
+            inherence = inherence_tmp & 3;
+            free (attrval);
         } else if (!strcmp ("class_scope", BAD_TSAC2 (nodename))) {
             isstatic = parseBoolean (node->xmlChildrenNode);
         } else if (!strcmp ("query", BAD_TSAC2 (nodename))) {
