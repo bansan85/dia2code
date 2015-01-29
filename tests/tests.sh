@@ -996,51 +996,51 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-#rm -Rf result/*
-#../src/dia2code -t java dependances_pack.dia -d result --buildtree || exit 1
-#if [[ ! -a result/DepClassePack1.java ]] ; then
-#exit 1
-#fi ;
-#if [[ ! -a result/DepClassePack2.java ]] ; then
-#exit 1
-#fi ;
-#if [[ ! -a result/DepClassePack3.java ]] ; then
-#exit 1
-#fi ;
-#if [[ ! -a result/DepClassePack4.java ]] ; then
-#exit 1
-#fi ;
-#if [[ ! -a result/DepPack/DepClasse1.java ]] ; then
-#exit 1
-#fi ;
-#if [[ ! -a result/DepPack/pack2/DepClasse2.java ]] ; then
-#exit 1
-#fi ;
-#diff -pu DepClasse1-b.java result/DepPack/DepClasse1.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#diff -pu DepClasse2-b.java result/DepPack/pack2/DepClasse2.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#diff -pu DepClassePack1-b.java result/DepClassePack1.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#diff -pu DepClassePack2-b.java result/DepClassePack2.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#diff -pu DepClassePack3-b.java result/DepClassePack3.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#diff -pu DepClassePack4-b.java result/DepClassePack4.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#
+rm -Rf result/*
+../src/dia2code -t java dependances_pack.dia -d result --buildtree || exit 1
+if [[ ! -a result/DepClassePack1.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClassePack2.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClassePack3.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClassePack4.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepPack/DepClasse1.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepPack/pack2/DepClasse2.java ]] ; then
+exit 1
+fi ;
+diff -pu DepClasse1-b.java result/DepPack/DepClasse1.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClasse2-b.java result/DepPack/pack2/DepClasse2.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack1-b.java result/DepClassePack1.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack2-b.java result/DepClassePack2.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack3-b.java result/DepClassePack3.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack4-b.java result/DepClassePack4.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 #../src/dia2code -t java structure.dia -d result || exit 1
 #if [[ ! -a result/structure.java ]] ; then
 #exit 1
