@@ -281,13 +281,15 @@ GenerateCodeJava::writeAttribute (const umlAttribute & attr,
         getFile () << spc () << " * " << attr.getComment () << "\n";
         getFile () << spc () << " */\n";
     }
+    getFile () << spc () << visibility (attr.getVisibility ());
     if (attr.isStatic ()) {
-        getFile () << spc () << "static " << attr.getType () << " "
-                   << attr.getName ();
+        getFile () << "static " << attr.getType () << " " << attr.getName ();
     }
     else {
-        getFile () << spc () << attr.getType () << " "
-                   << attr.getName ();
+        getFile () << attr.getType () << " " << attr.getName ();
+    }
+    if (!attr.getValue ().empty ()) {
+        getFile () << " = " << attr.getValue ();
     }
     getFile () << ";\n";
 }
