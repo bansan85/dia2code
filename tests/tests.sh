@@ -951,44 +951,51 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-#rm -Rf result/*
-#../src/dia2code -t java dependances_pack.dia -d result || exit 1
-#if [[ ! -a result/DepClassePack1.java ]] ; then
-#exit 1
-#fi ;
-#if [[ ! -a result/DepClassePack2.java ]] ; then
-#exit 1
-#fi ;
-#if [[ ! -a result/DepClassePack3.java ]] ; then
-#exit 1
-#fi ;
-#if [[ ! -a result/DepClassePack4.java ]] ; then
-#exit 1
-#fi ;
-#if [[ ! -a result/DepPack.java ]] ; then
-#exit 1
-#fi ;
-#diff -pu DepPack.java result/DepPack.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#diff -pu DepClassePack1.java result/DepClassePack1.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#diff -pu DepClassePack2.java result/DepClassePack2.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#diff -pu DepClassePack3.java result/DepClassePack3.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#diff -pu DepClassePack4.java result/DepClassePack4.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#
+rm -Rf result/*
+../src/dia2code -t java dependances_pack.dia -d result || exit 1
+if [[ ! -a result/DepClassePack1.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClassePack2.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClassePack3.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClassePack4.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClasse1.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/DepClasse2.java ]] ; then
+exit 1
+fi ;
+diff -pu DepClasse1.java result/DepClasse1.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClasse2.java result/DepClasse2.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack1.java result/DepClassePack1.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack2.java result/DepClassePack2.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack3.java result/DepClassePack3.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu DepClassePack4.java result/DepClassePack4.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 #rm -Rf result/*
 #../src/dia2code -t java dependances_pack.dia -d result --buildtree || exit 1
 #if [[ ! -a result/DepClassePack1.java ]] ; then
