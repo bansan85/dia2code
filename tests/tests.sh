@@ -1125,14 +1125,13 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-#../src/dia2code -t java template.dia -d result || exit 1
-#if [[ ! -a result/Template.java ]] ; then
-#exit 1
-#fi ;
-#diff -pu Template.java result/Template.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#
-#
+../src/dia2code -t java template.dia -d result || exit 1
+if [[ ! -a result/Template.java ]] ; then
+exit 1
+fi ;
+diff -pu Template.java result/Template.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 exit 0
