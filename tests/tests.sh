@@ -1074,30 +1074,30 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
-#rm -Rf result/*
-#../src/dia2code -t java inherence.dia -d result --buildtree || exit 1
-#if [[ ! -a result/InherenceClasseChildren.java ]] ; then
-#exit 1
-#fi ;
-#if [[ ! -a result/InherenceClasseParent.java ]] ; then
-#exit 1
-#fi ;
-#if [[ ! -a result/InherencePack1/InherenceClasseParent2.java ]] ; then
-#exit 1
-#fi ;
-#diff -pu InherenceClasseChildren-b.java result/InherenceClasseChildren.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#diff -pu InherenceClasseParent-b.java result/InherenceClasseParent.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#diff -pu InherenceClasseParent2-b.java result/InherencePack1/InherenceClasseParent2.java > result.txt
-#if [[ -s result.txt ]] ; then
-#exit 1
-#fi ;
-#
+rm -Rf result/*
+../src/dia2code -t java inherence.dia -d result --buildtree || exit 1
+if [[ ! -a result/InherenceClasseChildren.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InherenceClasseParent.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InherencePack1/InherenceClasseParent2.java ]] ; then
+exit 1
+fi ;
+diff -pu InherenceClasseChildren-b.java result/InherenceClasseChildren.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InherenceClasseParent-b.java result/InherenceClasseParent.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InherenceClasseParent2-b.java result/InherencePack1/InherenceClasseParent2.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 #../src/dia2code -t java typedef.dia -d result || exit 1
 #if [[ ! -a result/TypeDef.java ]] ; then
 #exit 1
