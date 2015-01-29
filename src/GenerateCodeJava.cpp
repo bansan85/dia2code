@@ -251,13 +251,9 @@ GenerateCodeJava::writeClass (const umlClassNode & node) {
     if (!node.getParents ().empty ()) {
         std::list <umlClass *>::const_iterator parent;
         parent = node.getParents ().begin ();
-        getFile () << " : ";
         while (parent != node.getParents ().end ()) {
-            getFile () << "public " << fqname (**parent, false);
+            getFile () << " extends " << fqname (**parent, false);
             ++parent;
-            if (parent != node.getParents ().end ()) {
-                getFile () << ", ";
-            }
         }
     }
 #ifdef ENABLE_CORBA
