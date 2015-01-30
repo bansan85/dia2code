@@ -105,7 +105,7 @@ void
 GenerateCodeJava::writeInclude (std::list <std::string> & name) {
     std::list <std::string>::const_iterator namei = name.begin ();
 
-    if (name.size () == 0) {
+    if (name.empty ()) {
         return;
     }
 

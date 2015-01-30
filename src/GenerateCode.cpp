@@ -200,7 +200,7 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
     for (std::list <std::string> namei : incfile) {
         writeInclude (namei);
     }
-    if (incfile.size () != 0) {
+    if (!incfile.empty ()) {
         getFile () << "\n";
     }
 
@@ -357,7 +357,7 @@ isOoClass (umlClass &cl) {
 #endif
 
 const char *
-GenerateCode::cppName (std::string name) const {
+GenerateCode::cppName (std::string name) {
     static std::string buf;
 #ifdef ENABLE_CORBA
     if (dia.getUseCorba ()) {

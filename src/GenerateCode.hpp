@@ -99,7 +99,7 @@ class GenerateCode {
 
         void genClass (const umlClassNode & node);
 
-        const char * cppName (std::string name) const;
+        static const char * cppName (std::string name);
 
         virtual const char * fqname (const umlClassNode & node,
                                      bool use_ref_type) = 0;

@@ -120,7 +120,7 @@ void
 GenerateCodeCpp::writeInclude (std::list <std::string> & name) {
     std::list <std::string>::const_iterator namei;
 
-    if (name.size () == 0) {
+    if (name.empty ()) {
         return;
     }
 
