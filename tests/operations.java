@@ -7,8 +7,7 @@ public class operations {
      * @param arg3 (???) 
      * @return type
     */
-    abstract private type test (type1 arg1, type2 arg2, type3 arg3) {
-    }
+    private abstract type test (type1 arg1, type2 arg2, type3 arg3);
     protected test4 () {
     }
     public static test2 () {

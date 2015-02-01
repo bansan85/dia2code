@@ -27,6 +27,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <libxml/tree.h>
 
+enum class Inherence {
+    INHERENCE_ABSTRACT,
+    INHERENCE_VIRTUAL,
+    INHERENCE_FINAL
+};
+
 class umlAttribute {
     private :
         std::string name;
@@ -34,7 +40,7 @@ class umlAttribute {
         std::string type;
         std::string comment;
         char visibility;
-        unsigned char inherence : 2;
+        Inherence inherence;
         unsigned char isstatic : 1;
         unsigned char isconstant : 1;
         char kind;
@@ -45,7 +51,7 @@ class umlAttribute {
                       std::string type_,
                       std::string comment_,
                       char visibility_,
-                      unsigned char inherence_,
+                      Inherence inherence_,
                       unsigned char isstatic_,
                       unsigned char isconstant_,
                       char kind_);
@@ -55,7 +61,7 @@ class umlAttribute {
         const std::string & getType () const;
         const std::string & getComment () const;
         char getVisibility () const;
-        unsigned char getInherence () const;
+        Inherence getInherence () const;
         unsigned char isStatic () const;
         unsigned char isConstant () const;
         char getKind () const;
@@ -65,7 +71,7 @@ class umlAttribute {
                      std::string type_,
                      std::string comment_,
                      char visibility_,
-                     unsigned char inherence_,
+                     Inherence inherence_,
                      unsigned char isstatic_,
                      unsigned char isconstant_,
                      char kind_);

@@ -28,7 +28,7 @@ umlAttribute::umlAttribute () :
     type (),
     comment (),
     visibility ('0'),
-    inherence (2),
+    inherence (Inherence::INHERENCE_FINAL),
     isstatic (false),
     isconstant (false),
     kind ('1')
@@ -40,7 +40,7 @@ umlAttribute::umlAttribute (std::string name_,
                             std::string type_,
                             std::string comment_,
                             char visibility_,
-                            unsigned char inherence_,
+                            Inherence inherence_,
                             unsigned char isstatic_,
                             unsigned char isconstant_,
                             char kind_) :
@@ -49,7 +49,7 @@ umlAttribute::umlAttribute (std::string name_,
     type (type_),
     comment (comment_),
     visibility (visibility_),
-    inherence (inherence_ & 3),
+    inherence (inherence_),
     isstatic (isstatic_ & 1),
     isconstant (isconstant_ & 1),
     kind (kind_)
@@ -86,7 +86,7 @@ umlAttribute::getVisibility () const
     return visibility;
 }
 
-unsigned char
+Inherence
 umlAttribute::getInherence () const
 {
     return inherence;
@@ -116,7 +116,7 @@ umlAttribute::assign (std::string name_,
                       std::string type_,
                       std::string comment_,
                       char visibility_,
-                      unsigned char inherence_,
+                      Inherence inherence_,
                       unsigned char isstatic_,
                       unsigned char isconstant_,
                       char kind_)
@@ -126,7 +126,7 @@ umlAttribute::assign (std::string name_,
     type = type_;
     comment = comment_;
     visibility = visibility_;
-    inherence = inherence_ & 3;
+    inherence = inherence_;
     isstatic = isstatic_ & 1;
     isconstant = isconstant_ & 1;
     kind = kind_;
@@ -206,7 +206,25 @@ umlAttribute::parse (xmlNodePtr node) {
 #else
             sscanf (BAD_TSAC2 (attrval), "%c", &inherence_tmp);
 #endif
-            inherence = (inherence_tmp - '0') & 3;
+            switch (inherence_tmp) {
+                case '0' : {
+                    inherence = Inherence::INHERENCE_ABSTRACT;
+                    break;
+                }
+                case '1' : {
+                    inherence = Inherence::INHERENCE_VIRTUAL;
+                    break;
+                }
+                case '2' : {
+                    inherence = Inherence::INHERENCE_FINAL;
+                    break;
+                }
+                default : {
+                    free (attrval);
+                    throw std::string (std::string ("Unknown inherence : ") +
+                                       std::string (1, inherence_tmp));
+                }
+            }
             free (attrval);
         } else if (!strcmp ("class_scope", BAD_TSAC2 (nodename))) {
             isstatic = parseBoolean (node->xmlChildrenNode);
