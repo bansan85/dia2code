@@ -28,3 +28,4 @@ config.guess
 config.log
 config.status
 config.sub
+coverage.info

@@ -102,7 +102,7 @@ GenerateCodeCpp::writeLicense () {
 
     getFile () << "/*\n";
     writeFile ();
-    getFile () << "*/\n\n";
+    getFile () << " */\n\n";
 }
 
 void
@@ -301,7 +301,7 @@ GenerateCodeCpp::writeClassComment (const umlClassNode & node) {
 }
 
 void
-GenerateCodeCpp::writeClass (const umlClassNode & node) {
+GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
     getFile () << spc () << "class " << node.getName ();
     if (!node.getParents ().empty ()) {
         std::list <umlClass *>::const_iterator parent;

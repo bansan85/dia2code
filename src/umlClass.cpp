@@ -61,6 +61,11 @@ umlClass::getComment () const {
     return comment;
 }
 
+bool
+umlClass::isAbstract () const {
+    return isabstract;
+}
+
 const std::list <umlAttribute> &
 umlClass::getAttributes () const {
     return attributes;

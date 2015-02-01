@@ -1,7 +1,7 @@
 /*
 LICENSE
 FILE
-*/
+ */
 
 #ifndef OPERATIONS__HPP
 #define OPERATIONS__HPP

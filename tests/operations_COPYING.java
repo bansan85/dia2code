@@ -1,7 +1,7 @@
 /*
 LICENSE
 FILE
-*/
+ */
 
 public class operations {
     // Operations

@@ -425,8 +425,25 @@ GenerateCode::genClass (const umlClassNode & node) {
         }
     }
 
+    // Check that if class is abstract, at least one class are abstract.
+    if (node.isAbstract ()) {
+        bool absok = false;
+
+        for (const umlOperation & umlo : node.getOperations ()) {
+            if (umlo.getVisibility () == 0) {
+                absok = true;
+            }
+        }
+
+        if (!absok) {
+            fprintf (stderr,
+                     "Class %s is abstract but no operation is defined as abstract.\n",
+                     fqname (node, false));
+        }
+    }
+
     writeClassComment (node);
-    writeClass (node);
+    writeClassStart (node);
     incIndentLevel ();
 
     if (!node.getAssociations ().empty ()) {

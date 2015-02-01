@@ -206,7 +206,7 @@ umlAttribute::parse (xmlNodePtr node) {
 #else
             sscanf (BAD_TSAC2 (attrval), "%c", &inherence_tmp);
 #endif
-            inherence = inherence_tmp & 3;
+            inherence = (inherence_tmp - '0') & 3;
             free (attrval);
         } else if (!strcmp ("class_scope", BAD_TSAC2 (nodename))) {
             isstatic = parseBoolean (node->xmlChildrenNode);

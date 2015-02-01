@@ -42,7 +42,7 @@ class GenerateCodeJava : public GenerateCode {
         void writeComment (const std::string & text);
         void writeComment (const char * text);
         void writeClassComment (const umlClassNode & node);
-        void writeClass (const umlClassNode & node);
+        void writeClassStart (const umlClassNode & node);
         void writeClassEnd ();
         void writeAttribute (const umlAttribute & attr,
                              int * curr_visibility);

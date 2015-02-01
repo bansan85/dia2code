@@ -128,8 +128,7 @@ umlPackage::setParent (umlPackage * pack) {
     parent = pack;
 }
 
-umlPackage::~umlPackage ()
-{
+umlPackage::~umlPackage () {
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

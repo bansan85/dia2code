@@ -69,6 +69,7 @@ class umlClass {
         const std::string & getStereotype () const;
         void setStereotype (std::string & stereo);
         const std::string & getComment () const;
+        bool isAbstract () const;
         const std::list <umlAttribute> & getAttributes () const;
         const std::list <umlOperation> & getOperations () const;
         const umlPackage * getPackage () const;

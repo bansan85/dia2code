@@ -90,7 +90,7 @@ GenerateCodeJava::writeLicense () {
 
     getFile () << "/*\n";
     writeFile ();
-    getFile () << "*/\n\n";
+    getFile () << " */\n\n";
 }
 
 void
@@ -246,7 +246,7 @@ GenerateCodeJava::writeClassComment (const umlClassNode & node) {
 }
 
 void
-GenerateCodeJava::writeClass (const umlClassNode & node) {
+GenerateCodeJava::writeClassStart (const umlClassNode & node) {
     getFile () << spc () << "public class " << node.getName ();
     if (!node.getParents ().empty ()) {
         std::list <umlClass *>::const_iterator parent;
