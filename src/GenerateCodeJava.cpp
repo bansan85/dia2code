@@ -158,14 +158,15 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
     }
 
     getFile () << spc ();
+    getFile () << visibility (ope.getVisibility ());
     if (ope.getInherence () == 0) {
         getFile () << "abstract ";
     }
     else if (ope.getInherence () == 2) {
         fprintf (stderr,
-                 "With Java generator, all function is by default virtual.\n");
+                 "Operation %s: in Java, all function is by default virtual.\n",
+                 ope.getName ().c_str ());
     }
-    getFile () << visibility (ope.getVisibility ());
     if (ope.isStatic ()) {
 #ifdef ENABLE_CORBA
         if (getCorba ()) {
@@ -200,14 +201,20 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
     if (ope.isConstant ()) {
         fprintf (stderr, "Java does not support const method.\n");
     }
-    if (getOpenBraceOnNewline ()) {
-        getFile () << "\n";
-        getFile () << spc () << "{\n";
+    if (ope.getInherence () == 0) {
+        getFile () << ";\n";
     }
-    else {
-        getFile () << " {\n";
+    else
+    {
+        if (getOpenBraceOnNewline ()) {
+            getFile () << "\n";
+            getFile () << spc () << "{\n";
+        }
+        else {
+            getFile () << " {\n";
+        }
+        getFile () << spc () << "}\n";
     }
-    getFile () << spc () << "}\n";
 }
 
 void
@@ -247,7 +254,11 @@ GenerateCodeJava::writeClassComment (const umlClassNode & node) {
 
 void
 GenerateCodeJava::writeClassStart (const umlClassNode & node) {
-    getFile () << spc () << "public class " << node.getName ();
+    getFile () << spc () << "public ";
+    if (node.isAbstract ()) {
+        getFile () << "abstract ";
+    }
+    getFile () << "class " << node.getName ();
     if (!node.getParents ().empty ()) {
         std::list <umlClass *>::const_iterator parent;
         parent = node.getParents ().begin ();

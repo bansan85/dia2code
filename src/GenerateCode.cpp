@@ -430,7 +430,7 @@ GenerateCode::genClass (const umlClassNode & node) {
         bool absok = false;
 
         for (const umlOperation & umlo : node.getOperations ()) {
-            if (umlo.getVisibility () == 0) {
+            if (umlo.getInherence () == 0) {
                 absok = true;
             }
         }
