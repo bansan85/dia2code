@@ -797,6 +797,43 @@ GenerateCode::writeFile () {
 }
 
 
+const char *
+GenerateCode::comment (const std::string & comment_,
+                       const std::string & startFirstLine,
+                       const std::string & startOtherLines) {
+    static std::string buf;
+    size_t start = 0;
+    size_t end;
+
+    buf.clear ();
+
+    end = comment_.find ("\n", start);
+    while (end != std::string::npos)
+    {
+        if (start == 0) {
+            buf.append (startFirstLine);
+        }
+        else {
+            buf.append (startOtherLines);
+        }
+        buf.append (comment_.substr (start, end-start));
+        buf.append ("\n");
+        start = end + 1;
+        end = comment_.find ("\n", start);
+    }
+
+    if (start == 0) {
+        buf.append (startFirstLine);
+    }
+    else {
+        buf.append (startOtherLines);
+    }
+    buf.append (comment_.substr (start, end-start));
+    buf.append ("\n");
+
+    return buf.c_str ();
+}
+
 GenerateCode::~GenerateCode () {
 }
 

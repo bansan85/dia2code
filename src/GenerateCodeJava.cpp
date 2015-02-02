@@ -129,11 +129,19 @@ GenerateCodeJava::writeInclude (const char * name) {
 void
 GenerateCodeJava::writeFunctionComment (const umlOperation & ope) {
     getFile () << spc () << "/**\n";
-    getFile () << spc () << " * " << ope.getComment () << "\n";
+    getFile () << comment (ope.getComment (),
+                           std::string (spc () + " * "),
+                           std::string (spc () + " * "));
     for (const umlAttribute & tmpa2 : ope.getParameters ()) {
-        getFile () << spc () << " * @param " << tmpa2.getName ()
-                   << " (" << kind_str (tmpa2.getKind ()) << ") "
-                   << tmpa2.getComment () << "\n";
+        std::string comment_ (tmpa2.getName () + " (" +
+                              kind_str (tmpa2.getKind ()) +
+                              (tmpa2.getComment ().empty () ?
+                                ")" :
+                                ") " +
+                              tmpa2.getComment ()));
+        getFile () << comment (comment_,
+                               std::string (spc () + " * @param "),
+                               std::string (spc () + " *        "));
     }
     getFile () << spc () << " * @return " << ope.getType () << "\n";
     getFile () << spc () << "*/\n";
@@ -230,24 +238,10 @@ GenerateCodeJava::writeComment (const char * text) {
 void
 GenerateCodeJava::writeClassComment (const umlClassNode & node) {
     if (!node.getComment ().empty ()) {
-        size_t start = 0;
-        size_t end;
-
-        std::string replace (spc ());
-        replace.append (" * ");
-
         getFile () << spc () << "/**\n";
-
-        end = node.getComment ().find ("\n", start);
-        while (end != std::string::npos)
-        {
-            getFile () << spc () << " * "
-                       << node.getComment ().substr (start, end-start) << "\n";
-            start = end + 1;
-            end = node.getComment ().find ("\n", start);
-        }
-        getFile () << spc () << " * "
-                   << node.getComment ().substr (start) << "\n";
+        getFile () << comment (node.getComment (),
+                               std::string (spc () + " * "),
+                               std::string (spc () + " * "));
         getFile () << spc () << "*/\n";
     }
 }
@@ -291,7 +285,9 @@ GenerateCodeJava::writeAttribute (const umlAttribute & attr,
                                  int * curr_visibility) {
     if (!attr.getComment ().empty ()) {
         getFile () << spc () << "/**\n";
-        getFile () << spc () << " * " << attr.getComment () << "\n";
+        getFile () << comment (attr.getComment (),
+                               std::string (spc () + " * "),
+                               std::string (spc () + " * "));
         getFile () << spc () << " */\n";
     }
     getFile () << spc () << visibility (attr.getVisibility ());

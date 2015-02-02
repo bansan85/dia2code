@@ -412,6 +412,15 @@ if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
+../src/dia2code -t cpp multilines.dia -d result || exit 1
+if [[ ! -a result/MultiLines.hpp ]] ; then
+exit 1
+fi ;
+diff -pu MultiLines.hpp result/MultiLines.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
 
 rm -Rf result/*
 
@@ -1148,6 +1157,15 @@ if [[ ! -a result/AbstractClass.java ]] ; then
 exit 1
 fi ;
 diff -pu AbstractClass.java result/AbstractClass.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
+../src/dia2code -t java multilines.dia -d result || exit 1
+if [[ ! -a result/MultiLines.java ]] ; then
+exit 1
+fi ;
+diff -pu MultiLines.java result/MultiLines.java > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;

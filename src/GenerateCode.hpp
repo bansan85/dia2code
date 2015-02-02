@@ -109,6 +109,9 @@ class GenerateCode {
         virtual std::string strPointer (const std::string & type) const = 0;
 
         void writeFile ();
+        const char * comment (const std::string & comment_,
+                              const std::string & startFirstLine,
+                              const std::string & startOtherLines);
         virtual void writeLicense () = 0;
         virtual void writeStartHeader (std::string & name) = 0;
         virtual void writeEndHeader () = 0;

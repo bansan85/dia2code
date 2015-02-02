@@ -156,13 +156,22 @@ GenerateCodeCpp::writeInclude (const char * name) {
 
 void
 GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
-    getFile () << spc () << "/** \\brief " << ope.getComment () << "\n";
+    getFile () << spc () << "/**\n";
+    getFile () << comment (ope.getComment (),
+                           std::string (spc () + " * \\brief "),
+                           std::string (spc () + " *        "));
     for (const umlAttribute & tmpa2 : ope.getParameters ()) {
-        getFile () << spc () << "    \\param " << tmpa2.getName ()
-                   << "\t(" << kind_str (tmpa2.getKind ()) << ") "
-                   << tmpa2.getComment () << "\n";
+        std::string comment_ (tmpa2.getName () + " (" +
+                              kind_str (tmpa2.getKind ()) +
+                              (tmpa2.getComment ().empty () ?
+                                ")" :
+                                ") " +
+                              tmpa2.getComment ()));
+        getFile () << comment (comment_,
+                               std::string (spc () + " * \\param "),
+                               std::string (spc () + " *        "));
     }
-    getFile () << spc () << "*/\n";
+    getFile () << spc () << " */\n";
 }
 
 void
@@ -265,37 +274,12 @@ GenerateCodeCpp::writeComment (const char * text) {
 void
 GenerateCodeCpp::writeClassComment (const umlClassNode & node) {
     if (!node.getComment ().empty ()) {
-        size_t start = 0;
-        size_t end;
-
-        std::string replace (spc ());
-        replace.append (" * ");
-
         getFile () << spc () << "/**\n";
         getFile () << spc () << " * \\class " << node.getName () << "\n";
 
-        end = node.getComment ().find ("\n", start);
-        while (end != std::string::npos)
-        {
-            getFile () << spc () << " * ";
-            if (start == 0) {
-                getFile () << "\\brief ";
-            }
-            else {
-                getFile () << "       ";
-            }
-            getFile () << node.getComment ().substr (start, end-start) << "\n";
-            start = end + 1;
-            end = node.getComment ().find ("\n", start);
-        }
-        getFile () << spc () << " * ";
-        if (start == 0) {
-            getFile () << "\\brief ";
-        }
-        else {
-            getFile () << "       ";
-        }
-        getFile () << node.getComment ().substr (start) << "\n";
+        getFile () << comment (node.getComment (),
+                               std::string (spc () + " * \\brief "),
+                               std::string (spc () + " *        "));
         getFile () << spc () << "*/\n";
     }
 }
@@ -340,7 +324,14 @@ GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
     incIndentLevel ();
     check_visibility (curr_visibility, attr.getVisibility ());
     if (!attr.getComment ().empty ()) {
-        getFile () << spc () << "/// " << attr.getComment () << "\n";
+        if (attr.getComment ().find ("\n", 0) == std::string::npos) {
+            getFile () << spc () << "/// " << attr.getComment () << "\n";
+        }
+        else {
+            getFile () << comment (attr.getComment (),
+                                   std::string (spc () + " /// "),
+                                   std::string (spc () + " /// "));
+        }
     }
     if (attr.isStatic ()) {
         getFile () << spc () << "static " << attr.getType () << " "
