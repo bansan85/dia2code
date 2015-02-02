@@ -321,6 +321,11 @@ GenerateCodeCpp::writeClassEnd () {
 void
 GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
                                  int * curr_visibility) {
+    if (!attr.getValue ().empty ()) {
+        fprintf (stderr,
+                 "Default value for attribut in class is not applicable in C++.\n");
+    }
+
     incIndentLevel ();
     check_visibility (curr_visibility, attr.getVisibility ());
     if (!attr.getComment ().empty ()) {

@@ -5,6 +5,7 @@ class AbstractClass {
     // Operations
     public :
         virtual AbstractOperation () = 0;
+        virtual VirtualOperation ();
         NonAbstractOperation ();
 };
 

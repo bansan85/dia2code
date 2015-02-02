@@ -196,6 +196,11 @@ of stereotype.
 Lines starting with double stars are comments to explain the process of the
 generation of the code.
 
+Common:
+If -1 and --buildtree are not specified, the name of each file will be the
+class name (if not in a package) and the name of the top package either.
+If -1 or --buildtree is specified, the filename will be the class name.
+
 C++ generator:
 
 Header file:
@@ -206,20 +211,40 @@ File bit-by-bit.
  */
 
 ** Header guard
-#ifndef FILENAME__HPP
-#define FILENAME__HPP
+#ifndef README__HPP
+#define README__HPP
 
 ** Header guard
 #include "dependancies.hpp"
 
 ** Namespace if class are in package.
 namespace package {
-    ** Comments are in doxygen format.
-    /**
-     * \class AssociationClass1
-     * \brief Multiple line
-     *        comment
-     */
+    ** Visibility of the attribut / operation. Public, private, protected are
+    ** supported. Implementation is not, default will be public.
+    ** Attributes will be print first, then operation.
+    // Attributes
+    ** Default value are ignored. for attribute.
+    public :
+        ** Comments are in doxygen format.
+        /// Comment for the first
+        /// attribute.
+        type1 nom1;
+    private :
+        /// Exemple of static attribut.
+        static type2 nom2;
+    protected :
+        type3 nom3;
+    public :
+        /**
+         * \class AbstractOperation
+         * \brief Multiple line
+         *        comment
+         */
+        ** An abstact operation must not be define so " = 0".
+        virtual AbstractOperation () = 0;
+        ** A virtual operation must be define in the source code.
+        virtual VirtualOperation ();
+        NonAbstractOperation ();
 }
 
 

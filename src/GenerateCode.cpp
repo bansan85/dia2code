@@ -407,6 +407,10 @@ GenerateCode::genClass (const umlClassNode & node) {
     const char *stype = node.getStereotype ().c_str ();
     int tmpv = -1; // Temporaire visibility
 
+    if (node.getName ().empty ()) {
+        fprintf (stderr, "A class have an empty name.\n");
+    }
+
     if (strlen (stype) > 0) {
         writeComment (std::string ("Stereotype : ") + stype);
 #ifdef ENABLE_CORBA
@@ -435,7 +439,7 @@ GenerateCode::genClass (const umlClassNode & node) {
             }
         }
 
-        if (!absok) {
+        if ((!absok) && (!node.getOperations ().empty ())) {
             fprintf (stderr,
                      "Class %s is abstract but no operation is defined as abstract.\n",
                      fqname (node, false));
@@ -521,6 +525,16 @@ GenerateCode::genClass (const umlClassNode & node) {
         {
             writeComment ("Attributes");
             for (const umlAttribute & umla : node.getAttributes ()) {
+                if (umla.getName ().empty ()) {
+                    fprintf (stderr,
+                             "An attribute of the %s class have an empty name.\n",
+                             fqname (node, false));
+                }
+                if (umla.getType ().empty ()) {
+                    fprintf (stderr,
+                             "An attribute of the %s class have an empty type.\n",
+                             fqname (node, false));
+                }
                 writeAttribute (umla, &tmpv);
             }
         }
