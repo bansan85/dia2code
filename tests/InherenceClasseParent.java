@@ -1,2 +1,2 @@
-public class InherenceClasseParent {
+public class InheritanceClasseParent {
 }

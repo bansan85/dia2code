@@ -1,4 +1,4 @@
-package InherencePack1;
+package InheritancePack1;
 
-public class InherenceClasseParent2 {
+public class InheritanceClasseParent2 {
 }

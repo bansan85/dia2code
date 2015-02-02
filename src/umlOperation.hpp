@@ -43,7 +43,7 @@ class umlOperation : public umlAttribute {
                       std::string type_,
                       std::string comment_,
                       char visibility_,
-                      Inherence inherence_,
+                      Inheritance inheritance_,
                       unsigned char isstatic_,
                       unsigned char isconstant_,
                       char kind_,

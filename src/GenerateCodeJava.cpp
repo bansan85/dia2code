@@ -167,10 +167,10 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
 
     getFile () << spc ();
     getFile () << visibility (ope.getVisibility ());
-    if (ope.getInherence () == Inherence::INHERENCE_ABSTRACT) {
+    if (ope.getInheritance () == Inheritance::INHERENCE_ABSTRACT) {
         getFile () << "abstract ";
     }
-    else if (ope.getInherence () == Inherence::INHERENCE_FINAL) {
+    else if (ope.getInheritance () == Inheritance::INHERENCE_FINAL) {
         fprintf (stderr,
                  "Operation %s: in Java, all function is by default virtual.\n",
                  ope.getName ().c_str ());
@@ -209,7 +209,7 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
     if (ope.isConstant ()) {
         fprintf (stderr, "Java does not support const method.\n");
     }
-    if (ope.getInherence () == Inherence::INHERENCE_ABSTRACT) {
+    if (ope.getInheritance () == Inheritance::INHERENCE_ABSTRACT) {
         getFile () << ";\n";
     }
     else

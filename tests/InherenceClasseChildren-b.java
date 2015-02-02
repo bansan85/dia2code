@@ -1,5 +1,5 @@
-import InherencePack1.InherenceClasseParent2;
-import InherenceClasseParent;
+import InheritancePack1.InheritanceClasseParent2;
+import InheritanceClasseParent;
 
-public class InherenceClasseChildren extends InherencePack1.InherenceClasseParent2 extends InherenceClasseParent {
+public class InheritanceClasseChildren extends InheritancePack1.InheritanceClasseParent2 extends InheritanceClasseParent {
 }

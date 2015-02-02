@@ -80,7 +80,7 @@
         <dia:real val="2.1999999999999997"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#InherenceClasseParent#</dia:string>
+        <dia:string>#InheritanceClasseParent#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -190,7 +190,7 @@
         <dia:real val="2.1999999999999997"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#InherenceClasseChildren#</dia:string>
+        <dia:string>#InheritanceClasseChildren#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -359,7 +359,7 @@
         <dia:string>##</dia:string>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#InherencePack1#</dia:string>
+        <dia:string>#InheritancePack1#</dia:string>
       </dia:attribute>
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O4">
@@ -379,7 +379,7 @@
         <dia:real val="2.1999999999999997"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#InherenceClasseParent2#</dia:string>
+        <dia:string>#InheritanceClasseParent2#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>

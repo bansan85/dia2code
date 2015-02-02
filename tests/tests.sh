@@ -296,73 +296,73 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp inherence.dia -d result || exit 1
-if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
+../src/dia2code -t cpp inheritance.dia -d result || exit 1
+if [[ ! -a result/InheritanceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InherenceClasseParent.hpp ]] ; then
+if [[ ! -a result/InheritanceClasseParent.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InherencePack1.hpp ]] ; then
+if [[ ! -a result/InheritancePack1.hpp ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseChildren.hpp result/InherenceClasseChildren.hpp > result.txt
+diff -pu InheritanceClasseChildren.hpp result/InheritanceClasseChildren.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseParent.hpp result/InherenceClasseParent.hpp > result.txt
+diff -pu InheritanceClasseParent.hpp result/InheritanceClasseParent.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InherencePack1.hpp result/InherencePack1.hpp > result.txt
-if [[ -s result.txt ]] ; then
-exit 1
-fi ;
-
-rm -Rf result/*
-../src/dia2code -t cpp inherence.dia -d result -1 || exit 1
-if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
-exit 1
-fi ;
-if [[ ! -a result/InherenceClasseParent.hpp ]] ; then
-exit 1
-fi ;
-if [[ ! -a result/InherenceClasseParent2.hpp ]] ; then
-exit 1
-fi ;
-diff -pu InherenceClasseChildren-1.hpp result/InherenceClasseChildren.hpp > result.txt
-if [[ -s result.txt ]] ; then
-exit 1
-fi ;
-diff -pu InherenceClasseParent-1.hpp result/InherenceClasseParent.hpp > result.txt
-if [[ -s result.txt ]] ; then
-exit 1
-fi ;
-diff -pu InherenceClasseParent2-1.hpp result/InherenceClasseParent2.hpp > result.txt
+diff -pu InheritancePack1.hpp result/InheritancePack1.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp inherence.dia -d result --buildtree || exit 1
-if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
+../src/dia2code -t cpp inheritance.dia -d result -1 || exit 1
+if [[ ! -a result/InheritanceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InherenceClasseParent.hpp ]] ; then
+if [[ ! -a result/InheritanceClasseParent.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InherencePack1/InherenceClasseParent2.hpp ]] ; then
+if [[ ! -a result/InheritanceClasseParent2.hpp ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseChildren-b.hpp result/InherenceClasseChildren.hpp > result.txt
+diff -pu InheritanceClasseChildren-1.hpp result/InheritanceClasseChildren.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseParent-b.hpp result/InherenceClasseParent.hpp > result.txt
+diff -pu InheritanceClasseParent-1.hpp result/InheritanceClasseParent.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseParent2-b.hpp result/InherencePack1/InherenceClasseParent2.hpp > result.txt
+diff -pu InheritanceClasseParent2-1.hpp result/InheritanceClasseParent2.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
+rm -Rf result/*
+../src/dia2code -t cpp inheritance.dia -d result --buildtree || exit 1
+if [[ ! -a result/InheritanceClasseChildren.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClasseParent.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritancePack1/InheritanceClasseParent2.hpp ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClasseChildren-b.hpp result/InheritanceClasseChildren.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClasseParent-b.hpp result/InheritanceClasseParent.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClasseParent2-b.hpp result/InheritancePack1/InheritanceClasseParent2.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -717,73 +717,73 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp11 inherence.dia -d result || exit 1
-if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
+../src/dia2code -t cpp11 inheritance.dia -d result || exit 1
+if [[ ! -a result/InheritanceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InherenceClasseParent.hpp ]] ; then
+if [[ ! -a result/InheritanceClasseParent.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InherencePack1.hpp ]] ; then
+if [[ ! -a result/InheritancePack1.hpp ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseChildren.hpp result/InherenceClasseChildren.hpp > result.txt
+diff -pu InheritanceClasseChildren.hpp result/InheritanceClasseChildren.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseParent.hpp result/InherenceClasseParent.hpp > result.txt
+diff -pu InheritanceClasseParent.hpp result/InheritanceClasseParent.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InherencePack1.hpp result/InherencePack1.hpp > result.txt
-if [[ -s result.txt ]] ; then
-exit 1
-fi ;
-
-rm -Rf result/*
-../src/dia2code -t cpp11 inherence.dia -d result -1 || exit 1
-if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
-exit 1
-fi ;
-if [[ ! -a result/InherenceClasseParent.hpp ]] ; then
-exit 1
-fi ;
-if [[ ! -a result/InherenceClasseParent2.hpp ]] ; then
-exit 1
-fi ;
-diff -pu InherenceClasseChildren-1.hpp result/InherenceClasseChildren.hpp > result.txt
-if [[ -s result.txt ]] ; then
-exit 1
-fi ;
-diff -pu InherenceClasseParent-1.hpp result/InherenceClasseParent.hpp > result.txt
-if [[ -s result.txt ]] ; then
-exit 1
-fi ;
-diff -pu InherenceClasseParent2-1.hpp result/InherenceClasseParent2.hpp > result.txt
+diff -pu InheritancePack1.hpp result/InheritancePack1.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t cpp11 inherence.dia -d result --buildtree || exit 1
-if [[ ! -a result/InherenceClasseChildren.hpp ]] ; then
+../src/dia2code -t cpp11 inheritance.dia -d result -1 || exit 1
+if [[ ! -a result/InheritanceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InherenceClasseParent.hpp ]] ; then
+if [[ ! -a result/InheritanceClasseParent.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InherencePack1/InherenceClasseParent2.hpp ]] ; then
+if [[ ! -a result/InheritanceClasseParent2.hpp ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseChildren-b.hpp result/InherenceClasseChildren.hpp > result.txt
+diff -pu InheritanceClasseChildren-1.hpp result/InheritanceClasseChildren.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseParent-b.hpp result/InherenceClasseParent.hpp > result.txt
+diff -pu InheritanceClasseParent-1.hpp result/InheritanceClasseParent.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseParent2-b.hpp result/InherencePack1/InherenceClasseParent2.hpp > result.txt
+diff -pu InheritanceClasseParent2-1.hpp result/InheritanceClasseParent2.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+
+rm -Rf result/*
+../src/dia2code -t cpp11 inheritance.dia -d result --buildtree || exit 1
+if [[ ! -a result/InheritanceClasseChildren.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClasseParent.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritancePack1/InheritanceClasseParent2.hpp ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClasseChildren-b.hpp result/InheritanceClasseChildren.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClasseParent-b.hpp result/InheritanceClasseParent.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClasseParent2-b.hpp result/InheritancePack1/InheritanceClasseParent2.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -1069,49 +1069,49 @@ exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t java inherence.dia -d result || exit 1
-if [[ ! -a result/InherenceClasseChildren.java ]] ; then
+../src/dia2code -t java inheritance.dia -d result || exit 1
+if [[ ! -a result/InheritanceClasseChildren.java ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InherenceClasseParent.java ]] ; then
+if [[ ! -a result/InheritanceClasseParent.java ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InherenceClasseParent2.java ]] ; then
+if [[ ! -a result/InheritanceClasseParent2.java ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseChildren.java result/InherenceClasseChildren.java > result.txt
+diff -pu InheritanceClasseChildren.java result/InheritanceClasseChildren.java > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseParent.java result/InherenceClasseParent.java > result.txt
+diff -pu InheritanceClasseParent.java result/InheritanceClasseParent.java > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseParent2.java result/InherenceClasseParent2.java > result.txt
+diff -pu InheritanceClasseParent2.java result/InheritanceClasseParent2.java > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
 
 rm -Rf result/*
-../src/dia2code -t java inherence.dia -d result --buildtree || exit 1
-if [[ ! -a result/InherenceClasseChildren.java ]] ; then
+../src/dia2code -t java inheritance.dia -d result --buildtree || exit 1
+if [[ ! -a result/InheritanceClasseChildren.java ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InherenceClasseParent.java ]] ; then
+if [[ ! -a result/InheritanceClasseParent.java ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InherencePack1/InherenceClasseParent2.java ]] ; then
+if [[ ! -a result/InheritancePack1/InheritanceClasseParent2.java ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseChildren-b.java result/InherenceClasseChildren.java > result.txt
+diff -pu InheritanceClasseChildren-b.java result/InheritanceClasseChildren.java > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseParent-b.java result/InherenceClasseParent.java > result.txt
+diff -pu InheritanceClasseParent-b.java result/InheritanceClasseParent.java > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InherenceClasseParent2-b.java result/InherencePack1/InherenceClasseParent2.java > result.txt
+diff -pu InheritanceClasseParent2-b.java result/InheritancePack1/InheritanceClasseParent2.java > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;

@@ -250,7 +250,7 @@ namespace package {
 
 STEREOTYPES
 
-Only one stereotype can be apply on each class.
+Only one stereotype can be apply on each class, attribute and inheritance.
 
 - Classes:
 
@@ -424,7 +424,7 @@ Write a single comment, not in the well-known format.
 Write the comment for a class by using the well-known format.
 
   - writeClass (const umlClassNode & node);
-Write the beginning of a class (name, inherence and visibility).
+Write the beginning of a class (name, inheritance and visibility).
   - writeClassEnd ();
 End the class.
 

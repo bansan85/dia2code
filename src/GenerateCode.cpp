@@ -434,7 +434,7 @@ GenerateCode::genClass (const umlClassNode & node) {
         bool absok = false;
 
         for (const umlOperation & umlo : node.getOperations ()) {
-            if (umlo.getInherence () == Inherence::INHERENCE_ABSTRACT) {
+            if (umlo.getInheritance () == Inheritance::INHERENCE_ABSTRACT) {
                 absok = true;
             }
         }

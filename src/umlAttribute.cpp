@@ -28,7 +28,7 @@ umlAttribute::umlAttribute () :
     type (),
     comment (),
     visibility ('0'),
-    inherence (Inherence::INHERENCE_FINAL),
+    inheritance (Inheritance::INHERENCE_FINAL),
     isstatic (false),
     isconstant (false),
     kind ('1')
@@ -40,7 +40,7 @@ umlAttribute::umlAttribute (std::string name_,
                             std::string type_,
                             std::string comment_,
                             char visibility_,
-                            Inherence inherence_,
+                            Inheritance inheritance_,
                             unsigned char isstatic_,
                             unsigned char isconstant_,
                             char kind_) :
@@ -49,7 +49,7 @@ umlAttribute::umlAttribute (std::string name_,
     type (type_),
     comment (comment_),
     visibility (visibility_),
-    inherence (inherence_),
+    inheritance (inheritance_),
     isstatic (isstatic_ & 1),
     isconstant (isconstant_ & 1),
     kind (kind_)
@@ -86,10 +86,10 @@ umlAttribute::getVisibility () const
     return visibility;
 }
 
-Inherence
-umlAttribute::getInherence () const
+Inheritance
+umlAttribute::getInheritance () const
 {
-    return inherence;
+    return inheritance;
 }
 
 unsigned char
@@ -116,7 +116,7 @@ umlAttribute::assign (std::string name_,
                       std::string type_,
                       std::string comment_,
                       char visibility_,
-                      Inherence inherence_,
+                      Inheritance inheritance_,
                       unsigned char isstatic_,
                       unsigned char isconstant_,
                       char kind_)
@@ -126,7 +126,7 @@ umlAttribute::assign (std::string name_,
     type = type_;
     comment = comment_;
     visibility = visibility_;
-    inherence = inherence_;
+    inheritance = inheritance_;
     isstatic = isstatic_ & 1;
     isconstant = isconstant_ & 1;
     kind = kind_;
@@ -199,30 +199,30 @@ umlAttribute::parse (xmlNodePtr node) {
 #endif
             free (attrval);
         } else if (!strcmp ("inheritance_type", BAD_TSAC2 (nodename))) {
-            char inherence_tmp;
+            char inheritance_tmp;
             attrval = xmlGetProp (node->xmlChildrenNode, BAD_CAST2 ("val"));
 #if defined(_WIN32) || defined(_WIN64)
-            sscanf_s (BAD_TSAC2 (attrval), "%c", &inherence_tmp);
+            sscanf_s (BAD_TSAC2 (attrval), "%c", &inheritance_tmp);
 #else
-            sscanf (BAD_TSAC2 (attrval), "%c", &inherence_tmp);
+            sscanf (BAD_TSAC2 (attrval), "%c", &inheritance_tmp);
 #endif
-            switch (inherence_tmp) {
+            switch (inheritance_tmp) {
                 case '0' : {
-                    inherence = Inherence::INHERENCE_ABSTRACT;
+                    inheritance = Inheritance::INHERENCE_ABSTRACT;
                     break;
                 }
                 case '1' : {
-                    inherence = Inherence::INHERENCE_VIRTUAL;
+                    inheritance = Inheritance::INHERENCE_VIRTUAL;
                     break;
                 }
                 case '2' : {
-                    inherence = Inherence::INHERENCE_FINAL;
+                    inheritance = Inheritance::INHERENCE_FINAL;
                     break;
                 }
                 default : {
                     free (attrval);
-                    throw std::string (std::string ("Unknown inherence : ") +
-                                       std::string (1, inherence_tmp));
+                    throw std::string (std::string ("Unknown inheritance : ") +
+                                       std::string (1, inheritance_tmp));
                 }
             }
             free (attrval);

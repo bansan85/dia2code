@@ -50,7 +50,7 @@ GenerateCodeCpp11::writeFunction (const umlOperation & ope,
     }
 
     getFile () << spc ();
-    if ((ope.getInherence () != Inherence::INHERENCE_FINAL)
+    if ((ope.getInheritance () != Inheritance::INHERENCE_FINAL)
 #ifdef ENABLE_CORBA
         || (getCorba ())
 #endif
@@ -102,7 +102,7 @@ GenerateCodeCpp11::writeFunction (const umlOperation & ope,
     }
     getFile () << ")";
     // virtual
-    if ((ope.getInherence () == Inherence::INHERENCE_ABSTRACT)
+    if ((ope.getInheritance () == Inheritance::INHERENCE_ABSTRACT)
 #ifdef ENABLE_CORBA
         || (getCorba ())
 #endif
