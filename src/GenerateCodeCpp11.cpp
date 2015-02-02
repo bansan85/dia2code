@@ -28,7 +28,7 @@ GenerateCodeCpp11::GenerateCodeCpp11 (DiaGram & diagram) :
 
 void
 GenerateCodeCpp11::writeFunction (const umlOperation & ope,
-                                int * curr_visibility) {
+                                  Visibility & curr_visibility) {
     incIndentLevel ();
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
@@ -50,7 +50,7 @@ GenerateCodeCpp11::writeFunction (const umlOperation & ope,
     }
 
     getFile () << spc ();
-    if ((ope.getInheritance () != Inheritance::INHERENCE_FINAL)
+    if ((ope.getInheritance () != Inheritance::FINAL)
 #ifdef ENABLE_CORBA
         || (getCorba ())
 #endif
@@ -102,7 +102,7 @@ GenerateCodeCpp11::writeFunction (const umlOperation & ope,
     }
     getFile () << ")";
     // virtual
-    if ((ope.getInheritance () == Inheritance::INHERENCE_ABSTRACT)
+    if ((ope.getInheritance () == Inheritance::ABSTRACT)
 #ifdef ENABLE_CORBA
         || (getCorba ())
 #endif

@@ -27,8 +27,8 @@ umlAttribute::umlAttribute () :
     value (),
     type (),
     comment (),
-    visibility ('0'),
-    inheritance (Inheritance::INHERENCE_FINAL),
+    visibility (Visibility::PUBLIC),
+    inheritance (Inheritance::FINAL),
     isstatic (false),
     isconstant (false),
     kind ('1')
@@ -39,7 +39,7 @@ umlAttribute::umlAttribute (std::string name_,
                             std::string value_,
                             std::string type_,
                             std::string comment_,
-                            char visibility_,
+                            Visibility visibility_,
                             Inheritance inheritance_,
                             unsigned char isstatic_,
                             unsigned char isconstant_,
@@ -80,7 +80,7 @@ umlAttribute::getComment () const
     return comment;
 }
 
-char
+const Visibility &
 umlAttribute::getVisibility () const
 {
     return visibility;
@@ -115,7 +115,7 @@ umlAttribute::assign (std::string name_,
                       std::string value_,
                       std::string type_,
                       std::string comment_,
-                      char visibility_,
+                      Visibility visibility_,
                       Inheritance inheritance_,
                       unsigned char isstatic_,
                       unsigned char isconstant_,
@@ -136,7 +136,7 @@ void
 umlAttribute::check (const char *typename_) const
 {
     /* Check settings that don't make sense for C++ generation.  */
-    if (visibility == '1') {
+    if (visibility == Visibility::PRIVATE) {
         fprintf (stderr,
                  "%s/%s: ignoring non-visibility\n",
                  typename_,
@@ -158,7 +158,7 @@ umlAttribute::parse (xmlNodePtr node) {
     value.clear ();
     type.clear ();
     comment.clear ();
-    visibility = '0';
+    visibility = Visibility::PUBLIC;
     kind = '0';
     while (node != NULL) {
         xmlChar *nodename;
@@ -184,39 +184,51 @@ umlAttribute::parse (xmlNodePtr node) {
           }
         } else if (!strcmp ("kind", BAD_TSAC2 (nodename))) {
             attrval = xmlGetProp (node->xmlChildrenNode, BAD_CAST2 ("val"));
-#if defined(_WIN32) || defined(_WIN64)
-            sscanf_s (BAD_TSAC2 (attrval), "%c", &kind);
-#else
-            sscanf (BAD_TSAC2 (attrval), "%c", &kind);
-#endif
+            kind = attrval[0];
             free (attrval);
         } else if (!strcmp ("visibility", BAD_TSAC2 (nodename))) {
+            char tmp;
             attrval = xmlGetProp (node->xmlChildrenNode, BAD_CAST2 ("val"));
-#if defined(_WIN32) || defined(_WIN64)
-            sscanf_s (BAD_TSAC2 (attrval), "%c", &visibility);
-#else
-            sscanf (BAD_TSAC2 (attrval), "%c", &visibility);
-#endif
+            tmp = attrval[0];
+            switch (tmp) {
+                case '0' : {
+                    visibility = Visibility::PUBLIC;
+                    break;
+                }
+                case '1' : {
+                    visibility = Visibility::PRIVATE;
+                    break;
+                }
+                case '2' : {
+                    visibility = Visibility::PROTECTED;
+                    break;
+                }
+                case '3' : {
+                    visibility = Visibility::IMPLEMENTATION;
+                    break;
+                }
+                default : {
+                    free (attrval);
+                    throw std::string (std::string ("Unknown visibility : ") +
+                                       std::string (1, tmp));
+                }
+            }
             free (attrval);
         } else if (!strcmp ("inheritance_type", BAD_TSAC2 (nodename))) {
             char inheritance_tmp;
             attrval = xmlGetProp (node->xmlChildrenNode, BAD_CAST2 ("val"));
-#if defined(_WIN32) || defined(_WIN64)
-            sscanf_s (BAD_TSAC2 (attrval), "%c", &inheritance_tmp);
-#else
-            sscanf (BAD_TSAC2 (attrval), "%c", &inheritance_tmp);
-#endif
+            inheritance_tmp = attrval[0];
             switch (inheritance_tmp) {
                 case '0' : {
-                    inheritance = Inheritance::INHERENCE_ABSTRACT;
+                    inheritance = Inheritance::ABSTRACT;
                     break;
                 }
                 case '1' : {
-                    inheritance = Inheritance::INHERENCE_VIRTUAL;
+                    inheritance = Inheritance::VIRTUAL;
                     break;
                 }
                 case '2' : {
-                    inheritance = Inheritance::INHERENCE_FINAL;
+                    inheritance = Inheritance::FINAL;
                     break;
                 }
                 default : {

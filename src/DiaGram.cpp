@@ -115,10 +115,11 @@ DiaGram::listClasses (umlClassNode & current_class,
     }
 
     // But not parents, dependencies and associations.
-    for (const umlClass * classit : current_class.getParents ()) {
-        tmpnode = find_by_name (classes, classit->getName ().c_str ());
+    for (const std::pair <umlClass *, Visibility> classit :
+                                                 current_class.getParents ()) {
+        tmpnode = find_by_name (classes, classit.first->getName ().c_str ());
         assert (tmpnode != NULL);
-        if (!find_by_name (res, classit->getName ().c_str ())) {
+        if (!find_by_name (res, classit.first->getName ().c_str ())) {
             res.push_back (*tmpnode);
         }
     }

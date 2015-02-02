@@ -28,7 +28,7 @@ struct umlassoc {
     umlClass key;
     std::string name;
     char composite;
-    char visibility;
+    Visibility visibility;
     // Unused
     char multiplicity[10];
 };

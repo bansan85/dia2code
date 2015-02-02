@@ -31,7 +31,7 @@ class GenerateCodeCpp : public GenerateCode {
         std::string strPackage (const char * package) const;
         std::string strPointer (const std::string & type) const;
         const char * fqname (const umlClassNode & node, bool use_ref_type);
-        void check_visibility (int *curr_vis, int new_vis);
+        void check_visibility (Visibility & curr_vis, Visibility new_vis);
 
         void writeLicense ();
         void writeStartHeader (std::string & name);
@@ -39,21 +39,23 @@ class GenerateCodeCpp : public GenerateCode {
         void writeInclude (std::list <std::string> & name);
         void writeInclude (const char * name);
         void writeFunctionComment (const umlOperation & ope);
-        void writeFunction (const umlOperation & ope, int * curr_visibility);
+        void writeFunction (const umlOperation & ope,
+                            Visibility & curr_visibility);
         void writeComment (const std::string & text);
         void writeComment (const char * text);
         void writeClassComment (const umlClassNode & node);
         void writeClassStart (const umlClassNode & node);
         void writeClassEnd ();
         void writeAttribute (const umlAttribute & attr,
-                             int * curr_visibility);
+                             Visibility & curr_visibility);
         void writeNameSpaceStart (const umlClassNode * node);
         void writeNameSpaceEnd (const umlClassNode * node);
         void writeConst (const umlClassNode & node);
         void writeEnum (const umlClassNode & node);
         void writeStruct (const umlClassNode & node);
         void writeTypedef (const umlClassNode & node);
-        void writeAssociation (const umlassoc & asso, int * curr_visibility);
+        void writeAssociation (const umlassoc & asso,
+                               Visibility & curr_visibility);
         void writeTemplates (
                const std::list <std::pair <std::string, std::string> > & tmps);
         

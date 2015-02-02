@@ -405,7 +405,7 @@ GenerateCode::genClass (const umlClassNode & node) {
     const char *name = node.getName ().c_str ();
 #endif
     const char *stype = node.getStereotype ().c_str ();
-    int tmpv = -1; // Temporaire visibility
+    Visibility tmpv = Visibility::IMPLEMENTATION;
 
     if (node.getName ().empty ()) {
         fprintf (stderr, "A class have an empty name.\n");
@@ -434,7 +434,7 @@ GenerateCode::genClass (const umlClassNode & node) {
         bool absok = false;
 
         for (const umlOperation & umlo : node.getOperations ()) {
-            if (umlo.getInheritance () == Inheritance::INHERENCE_ABSTRACT) {
+            if (umlo.getInheritance () == Inheritance::ABSTRACT) {
                 absok = true;
             }
         }
@@ -453,7 +453,7 @@ GenerateCode::genClass (const umlClassNode & node) {
     if (!node.getAssociations ().empty ()) {
         writeComment ("Associations");
         for (const umlassoc & assoc : node.getAssociations ()) {
-            writeAssociation (assoc, &tmpv);
+            writeAssociation (assoc, tmpv);
         }
     }
 
@@ -535,7 +535,7 @@ GenerateCode::genClass (const umlClassNode & node) {
                              "An attribute of the %s class have an empty type.\n",
                              fqname (node, false));
                 }
-                writeAttribute (umla, &tmpv);
+                writeAttribute (umla, tmpv);
             }
         }
     }
@@ -548,7 +548,7 @@ GenerateCode::genClass (const umlClassNode & node) {
         }
 #endif
         for (const umlOperation & umlo : node.getOperations ()) {
-            writeFunction (umlo, &tmpv);
+            writeFunction (umlo, tmpv);
         }
     }
 

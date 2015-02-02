@@ -99,8 +99,8 @@ umlClass::makeGetSetMethods () {
                                 "",
                                 attrlist.getType (),
                                 "",
-                                '0',
-                                Inheritance::INHERENCE_FINAL,
+                                Visibility::PUBLIC,
+                                Inheritance::FINAL,
                                 false,
                                 false,
                                 '1');
@@ -115,8 +115,8 @@ umlClass::makeGetSetMethods () {
                                 "",
                                 "void",
                                 "",
-                                '0',
-                                Inheritance::INHERENCE_FINAL,
+                                Visibility::PUBLIC,
+                                Inheritance::FINAL,
                                 false,
                                 false,
                                 '1',
@@ -141,8 +141,8 @@ umlClass::makeGetSetMethods () {
                                  "",
                                  attrlist.getType (),
                                  "",
-                                 '0',
-                                 Inheritance::INHERENCE_FINAL,
+                                 Visibility::PUBLIC,
+                                 Inheritance::FINAL,
                                  false,
                                  true,
                                  '1',
@@ -194,7 +194,7 @@ umlClass::lolipop_implementation (std::list <umlClassNode> & classlist,
         key->id.assign ("00");
         parseDiaString (name, key->name);
         key->isabstract = true;
-        implementator->addparent (key);
+        implementator->addparent (key, Visibility::PUBLIC);
     }
 }
 
@@ -205,7 +205,7 @@ associate (std::list <umlClassNode> & classlist,
            const char * base,
            const char * aggregate,
            const char *multiplicity,
-           char visibility) {
+           Visibility visibility) {
     umlClassNode *umlbase, *umlaggregate;
     umlbase = umlClassNode::find (classlist, base);
     umlaggregate = umlClassNode::find (classlist, aggregate);
@@ -246,7 +246,7 @@ inherit_realize (std::list <umlClassNode> & classlist,
     umlbase = umlClassNode::find (classlist, base);
     umlderived = umlClassNode::find (classlist, derived);
     if (umlbase != NULL && umlderived != NULL) {
-        umlderived->addparent (umlbase);
+        umlderived->addparent (umlbase, Visibility::PUBLIC);
     }
 }
 
@@ -372,8 +372,8 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
             const char *multiplicity_b = NULL;
             char direction = 0;
             char composite = 0;
-            char visibility_a = 1;
-            char visibility_b = 1;
+            Visibility visibility_a = Visibility::PUBLIC;
+            Visibility visibility_b = Visibility::PUBLIC;
             xmlNodePtr attribute = object->xmlChildrenNode;
 
             while (attribute != NULL) {
@@ -406,13 +406,57 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                     else if (!strcmp ("visibility_a", attrtype)) {
                         xmlChar *tmptype = xmlGetProp (child,
                                                        BAD_CAST2 ("val"));
-                        visibility_a = tmptype[0];
+                        switch (tmptype[0]) {
+                            case '0' : {
+                                visibility_a = Visibility::PUBLIC;
+                                break;
+                            }
+                            case '1' : {
+                                visibility_a = Visibility::PRIVATE;
+                                break;
+                            }
+                            case '2' : {
+                                visibility_a = Visibility::PROTECTED;
+                                break;
+                            }
+                            case '3' : {
+                                visibility_a = Visibility::IMPLEMENTATION;
+                                break;
+                            }
+                            default : {
+                                free (tmptype);
+                                throw std::string (std::string ("Unknown visibility : ") +
+                                                   std::string (1, tmptype[0]));
+                            }
+                        }
                         free (tmptype);
                     }
                     else if (!strcmp ("visibility_b", attrtype)) {
                         xmlChar *tmptype = xmlGetProp (child,
                                                        BAD_CAST2 ("val"));
-                        visibility_b = tmptype[0];
+                        switch (tmptype[0]) {
+                            case '0' : {
+                                visibility_b = Visibility::PUBLIC;
+                                break;
+                            }
+                            case '1' : {
+                                visibility_b = Visibility::PRIVATE;
+                                break;
+                            }
+                            case '2' : {
+                                visibility_b = Visibility::PROTECTED;
+                                break;
+                            }
+                            case '3' : {
+                                visibility_b = Visibility::IMPLEMENTATION;
+                                break;
+                            }
+                            default : {
+                                free (tmptype);
+                                throw std::string (std::string ("Unknown visibility : ") +
+                                                   std::string (1, tmptype[0]));
+                            }
+                        }
                         free (tmptype);
                     }
                     else if (child->xmlChildrenNode) {

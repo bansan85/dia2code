@@ -42,7 +42,7 @@ class umlOperation : public umlAttribute {
                       std::string value_,
                       std::string type_,
                       std::string comment_,
-                      char visibility_,
+                      Visibility visibility_,
                       Inheritance inheritance_,
                       unsigned char isstatic_,
                       unsigned char isconstant_,

@@ -119,14 +119,14 @@ class GenerateCode {
         virtual void writeInclude (const char * name) = 0;
         virtual void writeFunctionComment (const umlOperation & ope) = 0;
         virtual void writeFunction (const umlOperation & ope,
-                                    int * curr_visibility) = 0;
+                                    Visibility & curr_visibility) = 0;
         virtual void writeComment (const std::string & text) = 0;
         virtual void writeComment (const char * text) = 0;
         virtual void writeClassComment (const umlClassNode & node) = 0;
         virtual void writeClassStart (const umlClassNode & node) = 0;
         virtual void writeClassEnd () = 0;
         virtual void writeAttribute (const umlAttribute & attr,
-                                     int * curr_visibility) = 0;
+                                     Visibility & curr_visibility) = 0;
         virtual void writeNameSpaceStart (const umlClassNode * name) = 0;
         virtual void writeNameSpaceEnd (const umlClassNode * node) = 0;
         virtual void writeConst (const umlClassNode & node) = 0;
@@ -134,7 +134,7 @@ class GenerateCode {
         virtual void writeStruct (const umlClassNode & node) = 0;
         virtual void writeTypedef (const umlClassNode & node) = 0;
         virtual void writeAssociation (const umlassoc & asso,
-                                       int * curr_visibility) = 0;
+                                       Visibility & curr_visibility) = 0;
         virtual void writeTemplates (
            const std::list <std::pair <std::string, std::string> > & tmps) = 0;
 

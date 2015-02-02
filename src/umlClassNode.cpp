@@ -51,7 +51,8 @@ umlClassNode::umlClassNode (const umlClassNode & classnode) :
 }
 
 umlClassNode::umlClassNode (umlClass * _key,
-                            std::list <umlClass *> & parents_,
+                            std::list <std::pair <umlClass *,
+                                                  Visibility> > & parents_,
                             std::list <umlassoc> & associations_,
                             std::list <umlClassNode> & dependencies_) :
     umlClass (*_key),
@@ -69,7 +70,7 @@ umlClassNode::umlClassNode (umlClass & _key) :
 {
 }
 
-const std::list <umlClass *> &
+const std::list <std::pair <umlClass *, Visibility> > &
 umlClassNode::getParents () const {
     return parents;
 }
@@ -142,8 +143,8 @@ umlClassNode::find_class (std::list <declaration> &decl) const {
 }
 
 void
-umlClassNode::addparent (umlClass * key) {
-    parents.push_front (key);
+umlClassNode::addparent (umlClass * key, Visibility inh) {
+    parents.push_front (std::make_pair (key, inh));
 }
 
 void
@@ -157,7 +158,7 @@ umlClassNode::addaggregate (const char *name_,
                             char composite,
                             umlClassNode & base,
                             const char *multiplicity,
-                            char visibility) {
+                            Visibility visibility) {
     umlassoc tmp;
     if (name_ != NULL && strlen (name_) > 2) {
         parseDiaString(name_, tmp.name);

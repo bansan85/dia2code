@@ -63,21 +63,21 @@ GenerateCodeJava::fqname (const umlClassNode &node, bool use_ref_type) {
 }
 
 std::string
-visibility (int vis) {
+visibility (const Visibility & vis) {
     switch (vis) {
-        case '0':
+        case Visibility::PUBLIC:
             return std::string ("public ");
-        case '1':
+        case Visibility::PRIVATE:
             return std::string ("private ");
-        case '2':
+        case Visibility::PROTECTED:
             return std::string ("protected ");
-        case '3':
+        case Visibility::IMPLEMENTATION:
             fprintf (stderr, "Implementation not applicable in Java.\n"
                              "Default: public.");
             return std::string ("public ");
             break;
         default :
-            throw std::string (vis + " : Unknown visibility.\n");
+            throw std::string ("Unknown visibility.\n");
             break;
     }
 }
@@ -149,7 +149,7 @@ GenerateCodeJava::writeFunctionComment (const umlOperation & ope) {
 
 void
 GenerateCodeJava::writeFunction (const umlOperation & ope,
-                                 int * curr_visibility) {
+                                 Visibility & curr_visibility) {
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
         if (ope.getVisibility () != '0') {
@@ -167,10 +167,10 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
 
     getFile () << spc ();
     getFile () << visibility (ope.getVisibility ());
-    if (ope.getInheritance () == Inheritance::INHERENCE_ABSTRACT) {
+    if (ope.getInheritance () == Inheritance::ABSTRACT) {
         getFile () << "abstract ";
     }
-    else if (ope.getInheritance () == Inheritance::INHERENCE_FINAL) {
+    else if (ope.getInheritance () == Inheritance::FINAL) {
         fprintf (stderr,
                  "Operation %s: in Java, all function is by default virtual.\n",
                  ope.getName ().c_str ());
@@ -209,7 +209,7 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
     if (ope.isConstant ()) {
         fprintf (stderr, "Java does not support const method.\n");
     }
-    if (ope.getInheritance () == Inheritance::INHERENCE_ABSTRACT) {
+    if (ope.getInheritance () == Inheritance::ABSTRACT) {
         getFile () << ";\n";
     }
     else
@@ -254,10 +254,11 @@ GenerateCodeJava::writeClassStart (const umlClassNode & node) {
     }
     getFile () << "class " << node.getName ();
     if (!node.getParents ().empty ()) {
-        std::list <umlClass *>::const_iterator parent;
+        std::list <std::pair <umlClass *, Visibility> >::const_iterator
+                                                                        parent;
         parent = node.getParents ().begin ();
         while (parent != node.getParents ().end ()) {
-            getFile () << " extends " << fqname (**parent, false);
+            getFile () << " extends " << fqname (*(*parent).first, false);
             ++parent;
         }
     }
@@ -282,7 +283,7 @@ GenerateCodeJava::writeClassEnd () {
 
 void
 GenerateCodeJava::writeAttribute (const umlAttribute & attr,
-                                 int * curr_visibility) {
+                                  Visibility & curr_visibility) {
     if (!attr.getComment ().empty ()) {
         getFile () << spc () << "/**\n";
         getFile () << comment (attr.getComment (),
@@ -389,7 +390,7 @@ GenerateCodeJava::writeTypedef (const umlClassNode & node) {
 
 void
 GenerateCodeJava::writeAssociation (const umlassoc & asso,
-                                    int * curr_visibility) {
+                                    Visibility & curr_visibility) {
     if (!asso.name.empty ()) {
         getFile () << spc () << visibility (asso.visibility)
                    << cppName (asso.key.getName ());

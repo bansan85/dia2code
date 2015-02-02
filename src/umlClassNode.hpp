@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class umlClassNode : public umlClass {
     private :
-        std::list <umlClass *> parents;
+        std::list <std::pair <umlClass *, Visibility> > parents;
         std::list <umlassoc> associations;
         std::list <umlClassNode> dependencies;
     public :
@@ -36,23 +36,25 @@ class umlClassNode : public umlClass {
         umlClassNode ();
         umlClassNode (const umlClassNode & classnode);
         umlClassNode (umlClass * _key,
-                      std::list <umlClass *> & parents_,
+                      std::list <std::pair <umlClass *,
+                                            Visibility> > & parents_,
                       std::list <umlassoc> & associations_,
                       std::list <umlClassNode> & dependencies_);
         umlClassNode (umlClass & _key);
 
-        const std::list <umlClass *> & getParents () const;
+        const std::list <std::pair <umlClass *, Visibility> > &
+                                                           getParents () const;
         const std::list <umlassoc> & getAssociations () const;
         const std::list <umlClassNode> & getDependencies () const;
 
         declaration * find_class (std::list <declaration> & decl) const;
-        void addparent (umlClass * key);
+        void addparent (umlClass * key, Visibility inh);
         void adddependency (umlClassNode & dependent);
         void addaggregate (const char *name,
                            char composite,
                            umlClassNode & base,
                            const char *multiplicity,
-                           char visibility);
+                           Visibility visibility);
 
         ~umlClassNode ();
 };

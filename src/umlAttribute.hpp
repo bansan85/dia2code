@@ -27,10 +27,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <libxml/tree.h>
 
+enum class Visibility {
+    PUBLIC,
+    PRIVATE,
+    PROTECTED,
+    IMPLEMENTATION
+};
+
 enum class Inheritance {
-    INHERENCE_ABSTRACT,
-    INHERENCE_VIRTUAL,
-    INHERENCE_FINAL
+    ABSTRACT,
+    VIRTUAL,
+    FINAL
 };
 
 class umlAttribute {
@@ -39,7 +46,7 @@ class umlAttribute {
         std::string value;
         std::string type;
         std::string comment;
-        char visibility;
+        Visibility visibility;
         Inheritance inheritance;
         unsigned char isstatic : 1;
         unsigned char isconstant : 1;
@@ -50,7 +57,7 @@ class umlAttribute {
                       std::string value_,
                       std::string type_,
                       std::string comment_,
-                      char visibility_,
+                      Visibility visibility_,
                       Inheritance inheritance_,
                       unsigned char isstatic_,
                       unsigned char isconstant_,
@@ -60,7 +67,7 @@ class umlAttribute {
         const std::string & getValue () const;
         const std::string & getType () const;
         const std::string & getComment () const;
-        char getVisibility () const;
+        const Visibility & getVisibility () const;
         Inheritance getInheritance () const;
         unsigned char isStatic () const;
         unsigned char isConstant () const;
@@ -70,7 +77,7 @@ class umlAttribute {
                      std::string value_,
                      std::string type_,
                      std::string comment_,
-                     char visibility_,
+                     Visibility visibility_,
                      Inheritance inheritance_,
                      unsigned char isstatic_,
                      unsigned char isconstant_,

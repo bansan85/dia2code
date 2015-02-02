@@ -66,31 +66,32 @@ GenerateCodeCpp::fqname (const umlClassNode &node, bool use_ref_type) {
 }
 
 void
-GenerateCodeCpp::check_visibility (int *curr_vis, int new_vis) {
-    if (*curr_vis == new_vis) {
+GenerateCodeCpp::check_visibility (Visibility & curr_vis,
+                                   const Visibility new_vis) {
+    if (curr_vis == new_vis) {
         return;
     }
     decIndentLevel ();
     switch (new_vis) {
-        case '0':
+        case Visibility::PUBLIC :
             getFile () << spc () << "public :\n";
             break;
-        case '1':
+        case Visibility::PRIVATE:
             getFile () << spc () << "private :\n";
             break;
-        case '2':
+        case Visibility::PROTECTED :
             getFile () << spc () << "protected :\n";
             break;
-        case '3':
+        case Visibility::IMPLEMENTATION :
             fprintf (stderr, "Implementation not applicable in C++.\n"
                              "Default: public.");
             getFile () << spc () << "public :\n";
             break;
         default :
-            throw std::string (new_vis + " : Unknown visibility.\n");
+            throw std::string ("Unknown visibility.\n");
             break;
     }
-    *curr_vis = new_vis;
+    curr_vis = new_vis;
     incIndentLevel ();
 }
 
@@ -176,7 +177,7 @@ GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
 
 void
 GenerateCodeCpp::writeFunction (const umlOperation & ope,
-                                int * curr_visibility) {
+                                Visibility & curr_visibility) {
     incIndentLevel ();
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
@@ -198,7 +199,7 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
     }
 
     getFile () << spc ();
-    if ((ope.getInheritance () != Inheritance::INHERENCE_FINAL)
+    if ((ope.getInheritance () != Inheritance::FINAL)
 #ifdef ENABLE_CORBA
         || (getCorba ())
 #endif
@@ -250,7 +251,7 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
         getFile () << " const";
     }
     // virtual
-    if ((ope.getInheritance () == Inheritance::INHERENCE_ABSTRACT)
+    if ((ope.getInheritance () == Inheritance::ABSTRACT)
 #ifdef ENABLE_CORBA
         || (getCorba ())
 #endif
@@ -288,11 +289,12 @@ void
 GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
     getFile () << spc () << "class " << node.getName ();
     if (!node.getParents ().empty ()) {
-        std::list <umlClass *>::const_iterator parent;
+        std::list <std::pair <umlClass *, Visibility> >::const_iterator
+                                                                        parent;
         parent = node.getParents ().begin ();
         getFile () << " : ";
         while (parent != node.getParents ().end ()) {
-            getFile () << "public " << fqname (**parent, false);
+            getFile () << "public " << fqname (*(*parent).first, false);
             ++parent;
             if (parent != node.getParents ().end ()) {
                 getFile () << ", ";
@@ -320,7 +322,7 @@ GenerateCodeCpp::writeClassEnd () {
 
 void
 GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
-                                 int * curr_visibility) {
+                                 Visibility & curr_visibility) {
     if (!attr.getValue ().empty ()) {
         fprintf (stderr,
                  "Default value for attribut in class is not applicable in C++.\n");
@@ -498,7 +500,7 @@ GenerateCodeCpp::writeTypedef (const umlClassNode & node) {
 
 void
 GenerateCodeCpp::writeAssociation (const umlassoc & asso,
-                                   int * curr_visibility) {
+                                   Visibility & curr_visibility) {
     if (!asso.name.empty ()) {
         incIndentLevel ();
         umlClassNode *ref;
