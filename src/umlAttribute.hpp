@@ -40,6 +40,13 @@ enum class Inheritance {
     FINAL
 };
 
+enum class Kind {
+    UNKNOWN,
+    IN,
+    OUT,
+    IN_OUT
+};
+
 class umlAttribute {
     private :
         std::string name;

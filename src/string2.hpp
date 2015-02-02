@@ -31,8 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/stat.h>
 
 #define kind_str(A)  ((A) == '1'?"in":\
-                     ((A) == '2'?"in/out":\
-                     ((A) == '3'?"out":"???")))
+                     ((A) == '2'?"out":\
+                     ((A) == '3'?"in/out":"???")))
 #define BAD_CAST2 reinterpret_cast <const xmlChar *>
 #define BAD_TSAC2 reinterpret_cast <const char *>
 

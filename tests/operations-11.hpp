@@ -6,11 +6,12 @@ class operations {
     private :
         /**
          * \brief comment
-         * \param arg1 (in)
-         * \param arg2 (out) comment2
-         * \param arg3 (???)
+         * \param in (in)
+         * \param inOut (in/out) comment2
+         * \param undef (???)
+         * \param out (out)
          */
-        virtual type test (type1 arg1, type2 arg2, type3 arg3 = 0) = 0;
+        virtual type test (type1 in, type2 inOut, type3 undef = 0, type4 out) = 0;
     protected :
         test4 ();
     public :
