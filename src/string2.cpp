@@ -106,4 +106,30 @@ is_present (std::list <std::string> list, const char *name) {
     return false;
 }
 
+const char *
+kindStr (Kind k) {
+    switch (k) {
+        case Kind::UNKNOWN : {
+            return "???";
+            break;
+        }
+        case Kind::IN : {
+            return "in";
+            break;
+        }
+        case Kind::OUT :  {
+            return "out";
+            break;
+        }
+        case Kind::IN_OUT : {
+            return "in/out";
+            break;
+        }
+        default : {
+            throw std::string ("Unknown kind.\n");
+            break;
+        }
+    }
+}
+
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

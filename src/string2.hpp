@@ -30,9 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define kind_str(A)  ((A) == '1'?"in":\
-                     ((A) == '2'?"out":\
-                     ((A) == '3'?"in/out":"???")))
+#include "umlAttribute.hpp"
+
 #define BAD_CAST2 reinterpret_cast <const xmlChar *>
 #define BAD_TSAC2 reinterpret_cast <const char *>
 
@@ -48,6 +47,7 @@ std::string strtoupper (std::string s);
 std::string strtoupperfirst (std::string s);
 std::list <std::string> parse_class_names (char *s);
 bool is_present (std::list <std::string> list, const char *name);
+const char * kindStr (Kind k);
 
 #endif
 

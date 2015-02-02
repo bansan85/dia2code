@@ -57,7 +57,7 @@ class umlAttribute {
         Inheritance inheritance;
         unsigned char isstatic : 1;
         unsigned char isconstant : 1;
-        char kind;
+        Kind kind;
     public :
         umlAttribute ();
         umlAttribute (std::string name_,
@@ -68,7 +68,7 @@ class umlAttribute {
                       Inheritance inheritance_,
                       unsigned char isstatic_,
                       unsigned char isconstant_,
-                      char kind_);
+                      Kind kind_);
         
         const std::string & getName () const;
         const std::string & getValue () const;
@@ -78,7 +78,7 @@ class umlAttribute {
         Inheritance getInheritance () const;
         unsigned char isStatic () const;
         unsigned char isConstant () const;
-        char getKind () const;
+        Kind getKind () const;
 
         void assign (std::string name_,
                      std::string value_,
@@ -88,7 +88,7 @@ class umlAttribute {
                      Inheritance inheritance_,
                      unsigned char isstatic_,
                      unsigned char isconstant_,
-                     char kind_);
+                     Kind kind_);
 
         void check (const char *typename_) const;
         void parse (xmlNodePtr node);

@@ -84,7 +84,7 @@ umlOperation::umlOperation (std::string name_,
                             Inheritance inheritance_,
                             unsigned char isstatic_,
                             unsigned char isconstant_,
-                            char kind_,
+                            Kind kind_,
                             std::string impl_) :
     umlAttribute (name_,
                   value_,

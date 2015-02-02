@@ -134,7 +134,7 @@ GenerateCodeJava::writeFunctionComment (const umlOperation & ope) {
                            std::string (spc () + " * "));
     for (const umlAttribute & tmpa2 : ope.getParameters ()) {
         std::string comment_ (tmpa2.getName () + " (" +
-                              kind_str (tmpa2.getKind ()) +
+                              kindStr (tmpa2.getKind ()) +
                               (tmpa2.getComment ().empty () ?
                                 ")" :
                                 ") " +

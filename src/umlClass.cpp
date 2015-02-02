@@ -103,7 +103,7 @@ umlClass::makeGetSetMethods () {
                                 Inheritance::FINAL,
                                 false,
                                 false,
-                                '1');
+                                Kind::IN);
         impl.assign ("    ");
         impl.append (attrlist.getName ());
         impl.append (" = value;");
@@ -119,7 +119,7 @@ umlClass::makeGetSetMethods () {
                                 Inheritance::FINAL,
                                 false,
                                 false,
-                                '1',
+                                Kind::IN,
                                 impl);
         operation.addParameter (parameter);
         umlOperation::insert_operation(operation, operations);
@@ -145,7 +145,7 @@ umlClass::makeGetSetMethods () {
                                  Inheritance::FINAL,
                                  false,
                                  true,
-                                 '1',
+                                 Kind::IN,
                                  impl);
         umlOperation::insert_operation (operation2, operations);
     }

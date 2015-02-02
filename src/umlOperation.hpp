@@ -46,7 +46,7 @@ class umlOperation : public umlAttribute {
                       Inheritance inheritance_,
                       unsigned char isstatic_,
                       unsigned char isconstant_,
-                      char kind_,
+                      Kind kind_,
                       std::string impl_);
 
         void addParameter (umlAttribute & attr);

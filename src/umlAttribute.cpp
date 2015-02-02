@@ -31,7 +31,7 @@ umlAttribute::umlAttribute () :
     inheritance (Inheritance::FINAL),
     isstatic (false),
     isconstant (false),
-    kind ('1')
+    kind (Kind::UNKNOWN)
 {
 }
 
@@ -43,7 +43,7 @@ umlAttribute::umlAttribute (std::string name_,
                             Inheritance inheritance_,
                             unsigned char isstatic_,
                             unsigned char isconstant_,
-                            char kind_) :
+                            Kind kind_) :
     name (name_),
     value (value_),
     type (type_),
@@ -104,7 +104,7 @@ umlAttribute::isConstant () const
     return isconstant;
 }
 
-char
+Kind
 umlAttribute::getKind () const
 {
     return kind;
@@ -119,7 +119,7 @@ umlAttribute::assign (std::string name_,
                       Inheritance inheritance_,
                       unsigned char isstatic_,
                       unsigned char isconstant_,
-                      char kind_)
+                      Kind kind_)
 {
     name = name_;
     value = value_;
@@ -159,7 +159,7 @@ umlAttribute::parse (xmlNodePtr node) {
     type.clear ();
     comment.clear ();
     visibility = Visibility::PUBLIC;
-    kind = '0';
+    kind = Kind::UNKNOWN;
     while (node != NULL) {
         xmlChar *nodename;
         nodename = xmlGetProp (node, BAD_CAST2 ("name"));
@@ -183,8 +183,32 @@ umlAttribute::parse (xmlNodePtr node) {
                comment.clear ();
           }
         } else if (!strcmp ("kind", BAD_TSAC2 (nodename))) {
+            char tmp;
             attrval = xmlGetProp (node->xmlChildrenNode, BAD_CAST2 ("val"));
-            kind = attrval[0];
+            tmp = attrval[0];
+            switch (tmp) {
+                case '0' : {
+                    kind = Kind::UNKNOWN;
+                    break;
+                }
+                case '1' : {
+                    kind = Kind::IN;
+                    break;
+                }
+                case '2' : {
+                    kind = Kind::OUT;
+                    break;
+                }
+                case '3' : {
+                    kind = Kind::IN_OUT;
+                    break;
+                }
+                default : {
+                    free (attrval);
+                    throw std::string (std::string ("Unknown kind: ") +
+                                       std::string (1, tmp));
+                }
+            }
             free (attrval);
         } else if (!strcmp ("visibility", BAD_TSAC2 (nodename))) {
             char tmp;
@@ -209,7 +233,7 @@ umlAttribute::parse (xmlNodePtr node) {
                 }
                 default : {
                     free (attrval);
-                    throw std::string (std::string ("Unknown visibility : ") +
+                    throw std::string (std::string ("Unknown visibility: ") +
                                        std::string (1, tmp));
                 }
             }
