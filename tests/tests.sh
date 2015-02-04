@@ -300,7 +300,13 @@ rm -Rf result/*
 if [[ ! -a result/InheritanceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InheritanceClasseParent.hpp ]] ; then
+if [[ ! -a result/InheritanceClasseImplement.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClasseProtected.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClassePublic.hpp ]] ; then
 exit 1
 fi ;
 if [[ ! -a result/InheritancePack1.hpp ]] ; then
@@ -310,7 +316,15 @@ diff -pu InheritanceClasseChildren.hpp result/InheritanceClasseChildren.hpp > re
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InheritanceClasseParent.hpp result/InheritanceClasseParent.hpp > result.txt
+diff -pu InheritanceClasseImplement.hpp result/InheritanceClasseImplement.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClasseProtected.hpp result/InheritanceClasseProtected.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClassePublic.hpp result/InheritanceClassePublic.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -324,21 +338,35 @@ rm -Rf result/*
 if [[ ! -a result/InheritanceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InheritanceClasseParent.hpp ]] ; then
+if [[ ! -a result/InheritanceClasseImplement.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InheritanceClasseParent2.hpp ]] ; then
+if [[ ! -a result/InheritanceClassePrivate.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClasseProtected.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClassePublic.hpp ]] ; then
 exit 1
 fi ;
 diff -pu InheritanceClasseChildren-1.hpp result/InheritanceClasseChildren.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InheritanceClasseParent-1.hpp result/InheritanceClasseParent.hpp > result.txt
+diff -pu InheritanceClasseImplement-1.hpp result/InheritanceClasseImplement.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InheritanceClasseParent2-1.hpp result/InheritanceClasseParent2.hpp > result.txt
+diff -pu InheritanceClassePrivate-1.hpp result/InheritanceClassePrivate.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClasseProtected-1.hpp result/InheritanceClasseProtected.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClassePublic-1.hpp result/InheritanceClassePublic.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -348,21 +376,35 @@ rm -Rf result/*
 if [[ ! -a result/InheritanceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InheritanceClasseParent.hpp ]] ; then
+if [[ ! -a result/InheritanceClasseImplement.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InheritancePack1/InheritanceClasseParent2.hpp ]] ; then
+if [[ ! -a result/InheritanceClasseProtected.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClassePublic.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritancePack1/InheritanceClassePrivate.hpp ]] ; then
 exit 1
 fi ;
 diff -pu InheritanceClasseChildren-b.hpp result/InheritanceClasseChildren.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InheritanceClasseParent-b.hpp result/InheritanceClasseParent.hpp > result.txt
+diff -pu InheritanceClasseImplement-b.hpp result/InheritanceClasseImplement.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InheritanceClasseParent2-b.hpp result/InheritancePack1/InheritanceClasseParent2.hpp > result.txt
+diff -pu InheritanceClasseProtected-b.hpp result/InheritanceClasseProtected.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClassePublic-b.hpp result/InheritanceClassePublic.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClassePrivate-b.hpp result/InheritancePack1/InheritanceClassePrivate.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -721,7 +763,13 @@ rm -Rf result/*
 if [[ ! -a result/InheritanceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InheritanceClasseParent.hpp ]] ; then
+if [[ ! -a result/InheritanceClasseImplement.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClasseProtected.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClassePublic.hpp ]] ; then
 exit 1
 fi ;
 if [[ ! -a result/InheritancePack1.hpp ]] ; then
@@ -731,7 +779,15 @@ diff -pu InheritanceClasseChildren.hpp result/InheritanceClasseChildren.hpp > re
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InheritanceClasseParent.hpp result/InheritanceClasseParent.hpp > result.txt
+diff -pu InheritanceClasseImplement.hpp result/InheritanceClasseImplement.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClasseProtected.hpp result/InheritanceClasseProtected.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClassePublic.hpp result/InheritanceClassePublic.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -745,21 +801,35 @@ rm -Rf result/*
 if [[ ! -a result/InheritanceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InheritanceClasseParent.hpp ]] ; then
+if [[ ! -a result/InheritanceClasseImplement.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InheritanceClasseParent2.hpp ]] ; then
+if [[ ! -a result/InheritanceClassePrivate.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClasseProtected.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClassePublic.hpp ]] ; then
 exit 1
 fi ;
 diff -pu InheritanceClasseChildren-1.hpp result/InheritanceClasseChildren.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InheritanceClasseParent-1.hpp result/InheritanceClasseParent.hpp > result.txt
+diff -pu InheritanceClasseImplement-1.hpp result/InheritanceClasseImplement.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InheritanceClasseParent2-1.hpp result/InheritanceClasseParent2.hpp > result.txt
+diff -pu InheritanceClassePrivate-1.hpp result/InheritanceClassePrivate.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClasseProtected-1.hpp result/InheritanceClasseProtected.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClassePublic-1.hpp result/InheritanceClassePublic.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -769,21 +839,35 @@ rm -Rf result/*
 if [[ ! -a result/InheritanceClasseChildren.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InheritanceClasseParent.hpp ]] ; then
+if [[ ! -a result/InheritanceClasseImplement.hpp ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InheritancePack1/InheritanceClasseParent2.hpp ]] ; then
+if [[ ! -a result/InheritanceClasseProtected.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClassePublic.hpp ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritancePack1/InheritanceClassePrivate.hpp ]] ; then
 exit 1
 fi ;
 diff -pu InheritanceClasseChildren-b.hpp result/InheritanceClasseChildren.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InheritanceClasseParent-b.hpp result/InheritanceClasseParent.hpp > result.txt
+diff -pu InheritanceClasseImplement-b.hpp result/InheritanceClasseImplement.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InheritanceClasseParent2-b.hpp result/InheritancePack1/InheritanceClasseParent2.hpp > result.txt
+diff -pu InheritanceClasseProtected-b.hpp result/InheritanceClasseProtected.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClassePublic-b.hpp result/InheritanceClassePublic.hpp > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClassePrivate-b.hpp result/InheritancePack1/InheritanceClassePrivate.hpp > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -1073,21 +1157,35 @@ rm -Rf result/*
 if [[ ! -a result/InheritanceClasseChildren.java ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InheritanceClasseParent.java ]] ; then
+if [[ ! -a result/InheritanceClasseImplement.java ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InheritanceClasseParent2.java ]] ; then
+if [[ ! -a result/InheritanceClasseProtected.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClassePublic.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClassePrivate.java ]] ; then
 exit 1
 fi ;
 diff -pu InheritanceClasseChildren.java result/InheritanceClasseChildren.java > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InheritanceClasseParent.java result/InheritanceClasseParent.java > result.txt
+diff -pu InheritanceClasseImplement.java result/InheritanceClasseImplement.java > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InheritanceClasseParent2.java result/InheritanceClasseParent2.java > result.txt
+diff -pu InheritanceClasseProtected.java result/InheritanceClasseProtected.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClassePublic.java result/InheritanceClassePublic.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClassePrivate.java result/InheritanceClassePrivate.java > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
@@ -1097,21 +1195,35 @@ rm -Rf result/*
 if [[ ! -a result/InheritanceClasseChildren.java ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InheritanceClasseParent.java ]] ; then
+if [[ ! -a result/InheritanceClasseImplement.java ]] ; then
 exit 1
 fi ;
-if [[ ! -a result/InheritancePack1/InheritanceClasseParent2.java ]] ; then
+if [[ ! -a result/InheritanceClasseProtected.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritanceClassePublic.java ]] ; then
+exit 1
+fi ;
+if [[ ! -a result/InheritancePack1/InheritanceClassePrivate.java ]] ; then
 exit 1
 fi ;
 diff -pu InheritanceClasseChildren-b.java result/InheritanceClasseChildren.java > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InheritanceClasseParent-b.java result/InheritanceClasseParent.java > result.txt
+diff -pu InheritanceClasseImplement-b.java result/InheritanceClasseImplement.java > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;
-diff -pu InheritanceClasseParent2-b.java result/InheritancePack1/InheritanceClasseParent2.java > result.txt
+diff -pu InheritanceClasseProtected-b.java result/InheritanceClasseProtected.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClassePublic-b.java result/InheritanceClassePublic.java > result.txt
+if [[ -s result.txt ]] ; then
+exit 1
+fi ;
+diff -pu InheritanceClassePrivate-b.java result/InheritancePack1/InheritanceClassePrivate.java > result.txt
 if [[ -s result.txt ]] ; then
 exit 1
 fi ;

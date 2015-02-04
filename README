@@ -252,6 +252,12 @@ STEREOTYPES
 
 Only one stereotype can be apply on each class, attribute and inheritance.
 
+- Inheritance or Realization of an interface:
+
+By default, all inheritances are public. Some language, like C++, allow a
+different visibility like protected or private.
+Possible value: public, private, protected, implementation.
+
 - Classes:
 
 CORBAValue To enable Corba to a class, the stereotype must be CORBAValue.

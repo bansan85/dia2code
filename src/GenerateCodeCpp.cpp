@@ -65,6 +65,29 @@ GenerateCodeCpp::fqname (const umlClassNode &node, bool use_ref_type) {
     return buf.c_str ();
 }
 
+const char *
+GenerateCodeCpp::visibility (const Visibility & vis) {
+    switch (vis) {
+        case Visibility::PUBLIC :
+            return "public";
+            break;
+        case Visibility::PRIVATE:
+            return "private";
+            break;
+        case Visibility::PROTECTED :
+            return "protected";
+            break;
+        case Visibility::IMPLEMENTATION :
+            fprintf (stderr, "Implementation not applicable in C++.\n"
+                             "Default: public.\n");
+            return "public";
+            break;
+        default :
+            throw std::string ("Unknown visibility.\n");
+            break;
+    }
+}
+
 void
 GenerateCodeCpp::check_visibility (Visibility & curr_vis,
                                    const Visibility new_vis) {
@@ -72,25 +95,7 @@ GenerateCodeCpp::check_visibility (Visibility & curr_vis,
         return;
     }
     decIndentLevel ();
-    switch (new_vis) {
-        case Visibility::PUBLIC :
-            getFile () << spc () << "public :\n";
-            break;
-        case Visibility::PRIVATE:
-            getFile () << spc () << "private :\n";
-            break;
-        case Visibility::PROTECTED :
-            getFile () << spc () << "protected :\n";
-            break;
-        case Visibility::IMPLEMENTATION :
-            fprintf (stderr, "Implementation not applicable in C++.\n"
-                             "Default: public.");
-            getFile () << spc () << "public :\n";
-            break;
-        default :
-            throw std::string ("Unknown visibility.\n");
-            break;
-    }
+    getFile () << spc () << visibility (new_vis) << " :\n";
     curr_vis = new_vis;
     incIndentLevel ();
 }
@@ -294,7 +299,8 @@ GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
         parent = node.getParents ().begin ();
         getFile () << " : ";
         while (parent != node.getParents ().end ()) {
-            getFile () << "public " << fqname (*(*parent).first, false);
+            getFile () << visibility ((*parent).second) << " "
+                       << fqname (*(*parent).first, false);
             ++parent;
             if (parent != node.getParents ().end ()) {
                 getFile () << ", ";

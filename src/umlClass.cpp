@@ -241,12 +241,13 @@ make_depend (std::list <umlClassNode> & classlist,
 void
 inherit_realize (std::list <umlClassNode> & classlist,
                  const char * base,
-                 const char * derived) {
+                 const char * derived,
+                 Visibility visible) {
     umlClassNode *umlbase, *umlderived;
     umlbase = umlClassNode::find (classlist, base);
     umlderived = umlClassNode::find (classlist, derived);
     if (umlbase != NULL && umlderived != NULL) {
-        umlderived->addparent (umlbase, Visibility::PUBLIC);
+        umlderived->addparent (umlbase, visible);
     }
 }
 
@@ -315,8 +316,8 @@ parse_geom_height (xmlNodePtr attribute, geometry * geom ) {
 void
 umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
     xmlDocPtr ptr;
-    xmlChar *end1 = NULL;
-    xmlChar *end2 = NULL;
+    xmlChar *end1 = nullptr;
+    xmlChar *end2 = nullptr;
 
     xmlNodePtr object = NULL;
     std::list <umlPackage> packagelst;
@@ -324,7 +325,8 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
     ptr = xmlParseFile (diafile);
 
     if (ptr == NULL) {
-        throw std::string ("File " + std::string (diafile) + " does not exist or is not a Dia diagram.\n");
+        throw std::string ("File " + std::string (diafile) +
+                           " does not exist or is not a Dia diagram.\n");
     }
 
     // we search for the first "object" node
@@ -530,15 +532,29 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
             if (end1 != NULL && end2 != NULL) {
                 const char *thisname = name;
                 if (direction == 1) {
-                    if (thisname == NULL || !*thisname || !strcmp ("##", thisname)) {
+                    if ((thisname == NULL) || (!*thisname) ||
+                        (!strcmp ("##", thisname))) {
                         thisname = name_a;
                     }
-                    associate (res, thisname, composite, BAD_TSAC2 (end1), BAD_TSAC2 (end2), multiplicity_a, visibility_a);
+                    associate (res,
+                               thisname,
+                               composite,
+                               BAD_TSAC2 (end1),
+                               BAD_TSAC2 (end2),
+                               multiplicity_a,
+                               visibility_a);
                 } else {
-                    if (thisname == NULL || !*thisname || !strcmp ("##", thisname)) {
+                    if ((thisname == NULL) || (!*thisname) ||
+                        (!strcmp ("##", thisname))) {
                         thisname = name_b;
                     }
-                    associate (res, thisname, composite, BAD_TSAC2 (end2), BAD_TSAC2 (end1), multiplicity_b, visibility_b);
+                    associate (res,
+                               thisname,
+                               composite,
+                               BAD_TSAC2 (end2),
+                               BAD_TSAC2 (end1),
+                               multiplicity_b,
+                               visibility_b);
                 }
                 free (end1);
                 end1 = nullptr;
@@ -562,39 +578,57 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                 }
                 attribute = attribute->next;
             }
-        } else if (!strcmp ("UML - Realizes", BAD_TSAC2 (objtype))) {
+        } else if (!strcmp ("UML - Implements", BAD_TSAC2 (objtype))) {
+            umlClass::lolipop_implementation (res, object);
+        } else if ((!strcmp ("UML - Generalization", BAD_TSAC2 (objtype))) ||
+                   (!strcmp ("UML - Realizes", BAD_TSAC2 (objtype)))) {
             xmlNodePtr attribute = object->xmlChildrenNode;
+            Visibility visible = Visibility::PUBLIC;
+            end1 = nullptr;
+            end2 = nullptr;
             while (attribute != NULL) {
                 if (!strcmp ("connections", BAD_TSAC2 (attribute->name))) {
                     end1 = xmlGetProp (attribute->xmlChildrenNode,
                                        BAD_CAST2 ("to"));
                     end2 = xmlGetProp (attribute->xmlChildrenNode->next,
                                        BAD_CAST2 ("to"));
-                    inherit_realize (res, BAD_TSAC2 (end1), BAD_TSAC2 (end2));
-                    free (end2);
-                    end2 = nullptr;
-                    free (end1);
-                    end1 = nullptr;
+                }
+                else if (!strcmp ("attribute", BAD_TSAC2 (attribute->name))) {
+                    xmlChar *name = xmlGetProp (attribute, BAD_CAST2 ("name"));
+
+                    if (!strcmp ("stereotype", BAD_TSAC2 (name)))
+                    {
+                        std::string stereo;
+                        parseDiaNode (attribute->xmlChildrenNode, stereo);
+                        if (stereo.empty ()) {
+                            visible = Visibility::PUBLIC;
+                        }
+                        else if (stereo.compare ("public") == 0) {
+                            visible = Visibility::PUBLIC;
+                        }
+                        else if (stereo.compare ("private") == 0) {
+                            visible = Visibility::PRIVATE;
+                        }
+                        else if (stereo.compare ("protected") == 0) {
+                            visible = Visibility::PROTECTED;
+                        }
+                        else if (stereo.compare ("implementation") == 0) {
+                            visible = Visibility::IMPLEMENTATION;
+                        }
+                    }
+                    free (name);
                 }
                 attribute = attribute->next;
             }
-        } else if (!strcmp ("UML - Implements", BAD_TSAC2 (objtype))) {
-            umlClass::lolipop_implementation (res, object);
-        } else if (!strcmp ("UML - Generalization", BAD_TSAC2 (objtype))) {
-            xmlNodePtr attribute = object->xmlChildrenNode;
-            while (attribute != NULL) {
-                if (!strcmp ("connections", BAD_TSAC2 (attribute->name))) {
-                    end1 = xmlGetProp (attribute->xmlChildrenNode,
-                                       BAD_CAST2 ("to"));
-                    end2 = xmlGetProp (attribute->xmlChildrenNode->next,
-                                       BAD_CAST2 ("to"));
-                    inherit_realize (res, BAD_TSAC2 (end1), BAD_TSAC2(end2));
-                    free (end2);
-                    end2 = nullptr;
-                    free (end1);
-                    end1 = nullptr;
-                }
-                attribute = attribute->next;
+            if ((end1 != nullptr) && (end2 != nullptr)) {
+                inherit_realize (res,
+                                 BAD_TSAC2 (end1),
+                                 BAD_TSAC2(end2),
+                                 visible);
+                free (end2);
+                end2 = nullptr;
+                free (end1);
+                end1 = nullptr;
             }
         }
         free (objtype);

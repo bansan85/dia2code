@@ -62,19 +62,19 @@ GenerateCodeJava::fqname (const umlClassNode &node, bool use_ref_type) {
     return buf.c_str ();
 }
 
-std::string
-visibility (const Visibility & vis) {
+const char *
+GenerateCodeJava::visibility (const Visibility & vis) {
     switch (vis) {
         case Visibility::PUBLIC:
-            return std::string ("public ");
+            return "public";
         case Visibility::PRIVATE:
-            return std::string ("private ");
+            return "private";
         case Visibility::PROTECTED:
-            return std::string ("protected ");
+            return "protected";
         case Visibility::IMPLEMENTATION:
             fprintf (stderr, "Implementation not applicable in Java.\n"
-                             "Default: public.");
-            return std::string ("public ");
+                             "Default: public.\n");
+            return "public";
             break;
         default :
             throw std::string ("Unknown visibility.\n");
@@ -166,7 +166,7 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
     }
 
     getFile () << spc ();
-    getFile () << visibility (ope.getVisibility ());
+    getFile () << visibility (ope.getVisibility ()) << " ";
     if (ope.getInheritance () == Inheritance::ABSTRACT) {
         getFile () << "abstract ";
     }
@@ -258,6 +258,9 @@ GenerateCodeJava::writeClassStart (const umlClassNode & node) {
                                                                         parent;
         parent = node.getParents ().begin ();
         while (parent != node.getParents ().end ()) {
+            if ((*parent).second != Visibility::PUBLIC) {
+                fprintf (stderr, "Only a public visibility is supported by Java generator.\n");
+            }
             getFile () << " extends " << fqname (*(*parent).first, false);
             ++parent;
         }
@@ -291,7 +294,7 @@ GenerateCodeJava::writeAttribute (const umlAttribute & attr,
                                std::string (spc () + " * "));
         getFile () << spc () << " */\n";
     }
-    getFile () << spc () << visibility (attr.getVisibility ());
+    getFile () << spc () << visibility (attr.getVisibility ()) << " ";
     if (attr.isStatic ()) {
         getFile () << "static " << attr.getType () << " " << attr.getName ();
     }
@@ -392,7 +395,7 @@ void
 GenerateCodeJava::writeAssociation (const umlassoc & asso,
                                     Visibility & curr_visibility) {
     if (!asso.name.empty ()) {
-        getFile () << spc () << visibility (asso.visibility)
+        getFile () << spc () << visibility (asso.visibility) << " "
                    << cppName (asso.key.getName ());
         getFile () << " " << asso.name << ";\n";
     }
