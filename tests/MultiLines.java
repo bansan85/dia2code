@@ -8,7 +8,7 @@ public class MultiLines {
      * Line 3
      * Line 4
      */
-    public  attr1;
+    public type attr1;
     // Operations
     /**
      * Line 5

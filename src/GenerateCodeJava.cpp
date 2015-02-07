@@ -49,7 +49,7 @@ GenerateCodeJava::fqname (const umlClassNode &node, bool use_ref_type) {
     if (node.getPackage () != NULL) {
         std::list <umlPackage> pkglist;
         umlPackage::make_package_list (node.getPackage (), pkglist);
-        for (umlPackage & it : pkglist) {
+        for (const umlPackage & it : pkglist) {
             buf.append (strPackage (it.getName ().c_str ()));
         }
     }
@@ -355,8 +355,26 @@ GenerateCodeJava::writeEnum (const umlClassNode & node) {
     incIndentLevel ();
     while (umla != node.getAttributes ().end ()) {
         const char *literal = (*umla).getName ().c_str ();
-        (*umla).check (node.getName ().c_str ());
-        getFile () << spc () << "/// " << (*umla).getComment () << "\n";
+        if (!(*umla).getType ().empty ()) {
+            fprintf (stderr,
+                     "%s/%s: ignoring type\n",
+                     node.getName ().c_str (),
+                     literal);
+        }
+        if ((*umla).getName ().empty ()) {
+            fprintf (stderr,
+                     "%s: an unamed attribute is found.\n",
+                     node.getName ().c_str ());
+        }
+        if ((*umla).getVisibility () != Visibility::PUBLIC) {
+            fprintf (stderr,
+                     "Enum %s, attribute %s: visibility forced to public.\n",
+                     node.getName ().c_str (),
+                     (*umla).getName ().c_str ());
+        }
+        if (!(*umla).getComment ().empty ()) {
+            getFile () << spc () << "/// " << (*umla).getComment () << "\n";
+        }
         if (!(*umla).getType ().empty ()) {
             fprintf (stderr,
                      "%s/%s: ignoring type\n",

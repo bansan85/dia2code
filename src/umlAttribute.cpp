@@ -86,7 +86,7 @@ umlAttribute::getVisibility () const
     return visibility;
 }
 
-Inheritance
+const Inheritance &
 umlAttribute::getInheritance () const
 {
     return inheritance;
@@ -130,24 +130,6 @@ umlAttribute::assign (std::string name_,
     isstatic = isstatic_ & 1;
     isconstant = isconstant_ & 1;
     kind = kind_;
-}
-
-void
-umlAttribute::check (const char *typename_) const
-{
-    /* Check settings that don't make sense for C++ generation.  */
-    if (visibility == Visibility::PRIVATE) {
-        fprintf (stderr,
-                 "%s/%s: ignoring non-visibility\n",
-                 typename_,
-                 name.c_str ());
-    }
-    if (isstatic) {
-        fprintf (stderr,
-                 "%s/%s: ignoring staticness\n",
-                 typename_,
-                 name.c_str ());
-    }
 }
 
 void
@@ -278,7 +260,8 @@ umlAttribute::parse (xmlNodePtr node) {
 */
 void
 umlAttribute::insert (std::list <umlAttribute> &l) {
-    std::list <umlAttribute>::iterator itl;
+    l.push_back (*this);
+/*    std::list <umlAttribute>::iterator itl;
     
     itl = l.begin ();
     
@@ -295,7 +278,7 @@ umlAttribute::insert (std::list <umlAttribute> &l) {
         else {
             l.insert (std::next (itl), *this);
         }
-    }
+    }*/
 }
 
 umlAttribute::~umlAttribute ()

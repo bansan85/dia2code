@@ -17,11 +17,11 @@ class operations {
          * \param out (out)
          */
         virtual type test (type1 in, type2 inOut, type3 undef = 0, type4 out) = 0;
-    protected :
-        test4 ();
     public :
         virtual static test2 ();
         test3 () const;
+    protected :
+        test4 ();
 };
 
 #endif

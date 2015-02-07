@@ -27,7 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 void
 umlOperation::insert_operation (umlOperation &n, std::list <umlOperation> &l) {
-    std::list <umlOperation>::iterator itl;
+    l.push_back (n);
+/*    std::list <umlOperation>::iterator itl;
 
     itl = l.begin ();
 
@@ -45,7 +46,7 @@ umlOperation::insert_operation (umlOperation &n, std::list <umlOperation> &l) {
         else {
             l.insert (std::next (itl), n);
         }
-    }
+    }*/
 }
 
 void

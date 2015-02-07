@@ -152,13 +152,20 @@ GenerateCodeCpp11::writeEnum (const umlClassNode & node) {
     incIndentLevel ();
     while (umla != node.getAttributes ().end ()) {
         const char *literal = (*umla).getName ().c_str ();
-        (*umla).check (node.getName ().c_str ());
-        getFile () << spc () << "/// " << (*umla).getComment () << "\n";
+        if (!(*umla).getComment ().empty ()) {
+            getFile () << spc () << "/// " << (*umla).getComment () << "\n";
+        }
         if (!(*umla).getType ().empty ()) {
             fprintf (stderr,
                      "%s/%s: ignoring type\n",
                      node.getName ().c_str (),
                      literal);
+        }
+        if ((*umla).getVisibility () != Visibility::PUBLIC) {
+            fprintf (stderr,
+                    "Enum %s, attribute %s: visibility forced to visible.\n",
+                     node.getName ().c_str (),
+                     (*umla).getName ().c_str ());
         }
         getFile () << spc () << literal;
         if (!(*umla).getValue ().empty ()) {

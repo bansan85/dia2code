@@ -9,9 +9,9 @@
 class MultiLines {
     // Attributes
     public :
-         /// Line 3
-         /// Line 4
-         attr1;
+        /// Line 3
+        /// Line 4
+        type attr1;
     // Operations
         /**
          * \brief Line 5

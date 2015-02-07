@@ -75,7 +75,7 @@ class umlAttribute {
         const std::string & getType () const;
         const std::string & getComment () const;
         const Visibility & getVisibility () const;
-        Inheritance getInheritance () const;
+        const Inheritance & getInheritance () const;
         unsigned char isStatic () const;
         unsigned char isConstant () const;
         Kind getKind () const;
@@ -90,7 +90,6 @@ class umlAttribute {
                      unsigned char isconstant_,
                      Kind kind_);
 
-        void check (const char *typename_) const;
         void parse (xmlNodePtr node);
         void insert (std::list <umlAttribute> &l);
 

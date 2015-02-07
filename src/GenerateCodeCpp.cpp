@@ -52,7 +52,7 @@ GenerateCodeCpp::fqname (const umlClassNode &node, bool use_ref_type) {
     if (node.getPackage () != NULL) {
         std::list <umlPackage> pkglist;
         umlPackage::make_package_list (node.getPackage (), pkglist);
-        for (umlPackage & it : pkglist) {
+        for (const umlPackage & it : pkglist) {
             buf.append (strPackage (it.getName ().c_str ()));
         }
     }
@@ -183,6 +183,9 @@ GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
 void
 GenerateCodeCpp::writeFunction (const umlOperation & ope,
                                 Visibility & curr_visibility) {
+    if (ope.getName ().empty ()) {
+        fprintf (stderr, "An unamed operation is found.\n");
+    }
     incIndentLevel ();
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
@@ -342,8 +345,8 @@ GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
         }
         else {
             getFile () << comment (attr.getComment (),
-                                   std::string (spc () + " /// "),
-                                   std::string (spc () + " /// "));
+                                   std::string (spc () + "/// "),
+                                   std::string (spc () + "/// "));
         }
     }
     if (attr.isStatic ()) {
@@ -394,7 +397,9 @@ GenerateCodeCpp::writeConst (const umlClassNode & node) {
     std::list <umlAttribute>::const_iterator umla;
 
     umla = node.getAttributes ().begin ();
-    getFile () << spc () << "/// " << node.getComment () << "\n";
+    if (!node.getComment ().empty ()) {
+        getFile () << spc () << "/// " << node.getComment () << "\n";
+    }
     if (node.getAttributes ().size () != 1) {
         throw std::string ("Error: first attribute not set at " +
                            node.getName () + "\n");
@@ -428,13 +433,25 @@ GenerateCodeCpp::writeEnum (const umlClassNode & node) {
     incIndentLevel ();
     while (umla != node.getAttributes ().end ()) {
         const char *literal = (*umla).getName ().c_str ();
-        (*umla).check (node.getName ().c_str ());
-        getFile () << spc () << "/// " << (*umla).getComment () << "\n";
+        if (!(*umla).getComment ().empty ()) {
+            getFile () << spc () << "/// " << (*umla).getComment () << "\n";
+        }
         if (!(*umla).getType ().empty ()) {
             fprintf (stderr,
                      "%s/%s: ignoring type\n",
                      node.getName ().c_str (),
                      literal);
+        }
+        if ((*umla).getName ().empty ()) {
+            fprintf (stderr,
+                     "%s: an unamed attribute is found.\n",
+                     node.getName ().c_str ());
+        }
+        if ((*umla).getVisibility () != Visibility::PUBLIC) {
+            fprintf (stderr,
+                     "Enum %s, attribute %s: visibility forced to public.\n",
+                     node.getName ().c_str (),
+                     (*umla).getName ().c_str ());
         }
         getFile () << spc () << literal;
         if (!(*umla).getValue ().empty ()) {
@@ -452,9 +469,6 @@ GenerateCodeCpp::writeEnum (const umlClassNode & node) {
 
 void
 GenerateCodeCpp::writeStruct (const umlClassNode & node) {
-    std::list <umlAttribute>::const_iterator umla;
-
-    umla = node.getAttributes ().begin ();
     if (!node.getComment ().empty ()) {
         getFile () << spc () << "/// " << node.getComment () << "\n";
     }
@@ -465,25 +479,33 @@ GenerateCodeCpp::writeStruct (const umlClassNode & node) {
     else {
         getFile () << spc () << "struct " << node.getName () << " {\n";
     }
-    incIndentLevel ();
-    while (umla != node.getAttributes ().end ()) {
-        (*umla).check (node.getName ().c_str ());
-        if (!node.getComment ().empty ()) {
-            getFile () << spc () << "/// " << (*umla).getComment () << "\n";
-        }
-        getFile () << spc () << cppName ((*umla).getType ()) << " "
-             << (*umla).getName ();
-        if (!(*umla).getValue ().empty ()) {
+    for (const umlAttribute & umla : node.getAttributes ()) {
+        if (umla.getName ().empty ()) {
             fprintf (stderr,
-                     "%s/%s: ignoring value %s\n",
-                     node.getName ().c_str (),
-                     (*umla).getName ().c_str (),
-                     (*umla).getValue ().c_str ());
+                     "%s: an unamed attribute is found.\n",
+                     node.getName ().c_str ());
         }
-        getFile () << ";\n";
-        ++umla;
+        if (umla.getVisibility () != Visibility::PUBLIC) {
+            fprintf (stderr,
+                    "Struct %s, attribute %s: visibility forced to visible.\n",
+                     node.getName ().c_str (),
+                     umla.getName ().c_str ());
+        }
+        // Use of a tmp value to ignore visibility.
+        Visibility vis = umla.getVisibility ();
+        writeAttribute (umla, vis);
     }
-    decIndentLevel ();
+    for (const umlOperation & umlo : node.getOperations ()) {
+        if (umlo.getVisibility () != Visibility::PUBLIC) {
+            fprintf (stderr,
+                    "Struct %s, operation %s: visibility forced to visible.\n",
+                     node.getName ().c_str (),
+                     umlo.getName ().c_str ());
+        }
+        // Use of a tmp value to ignore visibility.
+        Visibility vis = umlo.getVisibility ();
+        writeFunction (umlo, vis);
+    }
     getFile () << spc () << "};\n";
 }
 

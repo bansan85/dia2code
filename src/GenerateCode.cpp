@@ -296,7 +296,9 @@ isEnumStereo (const char *stereo) {
 bool
 isStructStereo (const char *stereo) {
     return (!strcasecmp (stereo, "struct") ||
-            !strcasecmp (stereo, "structure")
+            !strcasecmp (stereo, "structure") ||
+            !strcasecmp (stereo, "Struct") ||
+            !strcasecmp (stereo, "Structure")
 #ifdef ENABLE_CORBA
             || !strcmp (stereo, "CORBAStruct")
 #endif

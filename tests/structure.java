@@ -8,11 +8,12 @@ public class structure {
      */
     public type1 nom1;
     /**
-     * com3
-     */
-    protected type3 nom3;
-    /**
-     * com2
+     * com2-1
+     * com2-2
      */
     private type2 nom2;
+    protected type3 nom3;
+    // Operations
+    public void operation (type1 attr1) {
+    }
 }
