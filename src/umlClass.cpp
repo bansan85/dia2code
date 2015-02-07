@@ -615,6 +615,12 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                         else if (stereo.compare ("implementation") == 0) {
                             visible = Visibility::IMPLEMENTATION;
                         }
+                        else {
+                            fprintf (stderr,
+                                     "%s: unknown stereotype for %s.\n",
+                                     stereo.c_str (),
+                                     BAD_TSAC2 (objtype));
+                        }
                     }
                     free (name);
                 }

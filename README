@@ -222,7 +222,8 @@ template <type template>
 
 ** Namespace if class are in package.
 namespace package {
-    class Class {
+    ** Class with inheritance if necessary.
+    class Class : public ParentClass {
         ** Visibility of the attribut / operation. Public, private, protected
         ** are supported. Implementation is not, default will be public.
         ** Attributes will be print first, then operations.
@@ -274,16 +275,74 @@ By default, all inheritances are public. Some language, like C++, allow a
 different visibility like protected or private.
 Possible value: public, private, protected, implementation.
 
+C++ generator:
+** The stereotype of Generalization (or Realizes) of three classes are public,
+** protected and private.
+** Implementation visibility is not applicable to C++ generator.
+class InheritanceClasseChildren : public InheritanceClasseImplement, protected InheritanceClasseProtected, private InheritancePack1::InheritanceClassePrivate {
+};
+
 - Classes:
 
-CORBAValue To enable Corba to a class, the stereotype must be CORBAValue.
-GetSet     Generate all get/set functions of all attributes. Their visibility
-           will be public.
-           - A "T getA ();" method, with return type conformant to the type of
-             the attribute. If the type of the attribute is "boolean" then the
-             name will be: "boolean isA ()".
-           - A "void setA (T value);" method, with a parameter, "value", with
-             type conformant to the type of the attribute.
+CORBAValue:
+  To enable Corba to a class, the stereotype must be CORBAValue.
+
+GetSet
+  Generate all get/set functions of all attributes. Their visibility will be
+  public.
+
+  A "T getA ();" method, with return type conformant to the type of the
+  attribute. If the type of the attribute is boolean (boolean, Boolean or bool)
+  then the name will be: "T isA ()".
+
+  A "void setA (T value);" method, with a parameter, "value", with type
+  conformant to the type of the attribute.
+
+C++ generator:
+** The stereotype of the class is GetSet.
+// Stereotype : GetSet
+class GetSet {
+    // Attributes
+    private :
+        char * nom;
+        bool boole;
+    // Operations
+    public :
+        void setNom (char * value);
+        char * getNom () const;
+        void setBoole (bool value);
+        bool isBoole () const
+
+const, constant, Const, Constant or CORBAConstant:
+
+TODO
+
+enum, enumeration, Enum, Enumeration or CORBAEnum:
+
+Generate an enum class. Only attributes will be used. Template or function are
+ignored.
+
+C++ generator:
+/// Comment of the enum
+enum enumeration {
+    /// Comment ENUM_1
+    ENUM_1 = 0,
+    /// Comment ENUM_2
+    ENUM_2,
+    /// Comment ENUM_3
+    ENUM_3
+};
+
+C++11 generator:
+/// Comment of the enum
+enum class enumeration {
+    /// Comment ENUM_1
+    ENUM_1 = 0,
+    /// Comment ENUM_2
+    ENUM_2,
+    /// Comment ENUM_3
+    ENUM_3
+};
 
 - Attributes:
 
@@ -490,9 +549,11 @@ The following files needs to be updated:
      - inside the variable const char *bighelp, change -ext, -bext and -t
        options.
      - and finally add it inside the main loop, in "case 1".
- - src/Makefile.am
+ - src/Makefile.am:
      - add the source in dia2code_SOURCES,
      - add the header in EXTRA_DIST.
+ - README:
+     - add examples for classic classes and for the differents stereotypes.
 And of course, don't forget to run "git add GenerateCodeXXX.?pp".
 
 

@@ -284,7 +284,9 @@ nospc (char *str) {
 bool
 isEnumStereo (const char *stereo) {
     return (!strcasecmp (stereo, "enum") ||
-            !strcasecmp (stereo, "enumeration")
+            !strcasecmp (stereo, "enumeration") ||
+            !strcasecmp (stereo, "Enum") ||
+            !strcasecmp (stereo, "Enumeration")
 #ifdef ENABLE_CORBA
             || !strcmp (stereo, "CORBAEnum")
 #endif
@@ -313,7 +315,9 @@ isTypedefStereo (const char *stereo) {
 bool
 isConstStereo (const char *stereo) {
     return (!strcasecmp (stereo, "const") ||
-            !strcasecmp (stereo, "constant")
+            !strcasecmp (stereo, "constant") ||
+            !strcasecmp (stereo, "Const") ||
+            !strcasecmp (stereo, "Constant")
 #ifdef ENABLE_CORBA
             || !strcmp (stereo, "CORBAConstant")
 #endif
@@ -684,6 +688,21 @@ GenerateCode::genDecl (declaration &d,
         writeConst (*node);
     }
     else if (isEnumStereo (stype)) {
+        if (!node->getOperations ().empty ()) {
+            fprintf (stderr,
+                     "Class %s is enum. All operations are ignored.\n",
+                     node->getName ().c_str ());
+        }
+        if (!node->getTemplates ().empty ()) {
+            fprintf (stderr,
+                     "Class %s is enum. All templates are ignored.\n",
+                     node->getName ().c_str ());
+        }
+        if (node->isAbstract ()) {
+            fprintf (stderr,
+                     "Class %s is abstact. Ignored.\n",
+                     node->getName ().c_str ());
+        }
         writeEnum (*node);
     }
     else if (isStructStereo (stype)) {
