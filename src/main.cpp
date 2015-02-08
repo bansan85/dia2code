@@ -1,6 +1,7 @@
 /*
 This file is part of dia2code. It generates code from an UML Dia Diagram.
 Copyright (C) 2000-2014 Javier O'Hara
+Copyright (C) 2015 Vincent Le Garrec
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -214,7 +215,7 @@ under certain conditions; read the COPYING file for details.\n";
     /* parameter != 0 means the command line was invalid */
 
     if (!infile) {
-        throw std::string ("Error : Dia diagram not specify.\n");
+        throw std::string ("Error : Dia diagram not specified.\n");
     }
 
     if (parameter != 0) {
@@ -222,7 +223,7 @@ under certain conditions; read the COPYING file for details.\n";
     }
 
     if (!generator) {
-        throw std::string ("Error : no generator specify.\n");
+        throw std::string ("Error : no generator specified.\n");
     }
 
     LIBXML_TEST_VERSION;
