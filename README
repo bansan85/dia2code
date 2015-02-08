@@ -267,7 +267,9 @@ namespace package {
 
 STEREOTYPES
 
-Only one stereotype can be apply on each class, attribute and inheritance.
+Only one stereotype can be apply on each class, attribute, operation and
+inheritance.
+
 
 - Inheritance or Realization of an interface:
 
@@ -281,6 +283,7 @@ C++ generator:
 ** Implementation visibility is not applicable to C++ generator.
 class InheritanceClasseChildren : public InheritanceClasseImplement, protected InheritanceClasseProtected, private InheritancePack1::InheritanceClassePrivate {
 };
+
 
 - Classes:
 
@@ -313,9 +316,11 @@ class GetSet {
         void setBoole (bool value);
         bool isBoole () const
 
+
 const, constant, Const, Constant or CORBAConstant:
 
 TODO
+
 
 enum, enumeration, Enum, Enumeration or CORBAEnum:
 
@@ -370,6 +375,28 @@ All other information is ignored.
 
 C++ generator:
 typedef TypeDerivated NewType;
+
+
+- Operation:
+
+delete:
+In C++11, a deleted function must be defined in header.
+
+C++ generator:
+** In C++, delete do not exists. So the commun way to delete a function (like
+** copy constructor) is to make this function private and to not defining it in
+** source.
+class operations {
+    private :
+        test5 ();
+}
+
+C++11 generator:
+class operations {
+    public :
+        test5 () = delete;
+}
+
 
 - Attributes:
 

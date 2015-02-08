@@ -15,4 +15,6 @@ public class operations {
     }
     protected test4 () {
     }
+    public test5 () {
+    }
 }

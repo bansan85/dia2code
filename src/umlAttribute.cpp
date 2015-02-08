@@ -86,6 +86,11 @@ umlAttribute::getVisibility () const
     return visibility;
 }
 
+void
+umlAttribute::setVisibility (Visibility visible) {
+    visibility = visible;
+}
+
 const Inheritance &
 umlAttribute::getInheritance () const
 {

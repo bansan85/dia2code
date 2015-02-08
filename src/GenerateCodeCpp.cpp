@@ -186,6 +186,9 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
     if (ope.getName ().empty ()) {
         fprintf (stderr, "An unamed operation is found.\n");
     }
+    if (ope.getStereotype ().compare ("delete") == 0) {
+        const_cast <umlOperation &> (ope).setVisibility (Visibility::PRIVATE);
+    }
     incIndentLevel ();
 #ifdef ENABLE_CORBA
     if (getCorba ()) {

@@ -22,6 +22,8 @@ class operations {
         test3 () const;
     protected :
         test4 ();
+    private :
+        test5 ();
 };
 
 #endif

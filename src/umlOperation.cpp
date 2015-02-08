@@ -62,15 +62,18 @@ umlOperation::parse_operations (xmlNodePtr node,
 
 umlOperation::umlOperation (xmlNodePtr node) :
     umlAttribute (),
-    implementation (),
+    stereotype (),
     parameters ()
 {
     parse (node);
     while (node != NULL) {
         xmlChar *nodename;
-        nodename = xmlGetProp(node, BAD_CAST2 ("name"));
+        nodename = xmlGetProp (node, BAD_CAST2 ("name"));
         if (!strcmp ("parameters", BAD_TSAC2 (nodename))) {
             parseAttributes (node->xmlChildrenNode, parameters);
+        }
+        else if (!strcmp ("stereotype", BAD_TSAC2 (nodename))) {
+            parseDiaNode (node->xmlChildrenNode, stereotype);
         }
         free (nodename);
         node = node->next;
@@ -86,7 +89,7 @@ umlOperation::umlOperation (std::string name_,
                             unsigned char isstatic_,
                             unsigned char isconstant_,
                             Kind kind_,
-                            std::string impl_) :
+                            std::string stereotype_) :
     umlAttribute (name_,
                   value_,
                   type_,
@@ -96,21 +99,24 @@ umlOperation::umlOperation (std::string name_,
                   isstatic_,
                   isconstant_,
                   kind_),
-    implementation (impl_),
+    stereotype (stereotype_),
     parameters ()
 {
 }
 
 void
-umlOperation::addParameter (umlAttribute & attr)
-{
+umlOperation::addParameter (umlAttribute & attr) {
     parameters.push_back (attr);
 }
 
 const std::list <umlAttribute> &
-umlOperation::getParameters () const
-{
+umlOperation::getParameters () const {
     return parameters;
+}
+
+const std::string &
+umlOperation::getStereotype () const {
+    return stereotype;
 }
 
 umlOperation::~umlOperation ()

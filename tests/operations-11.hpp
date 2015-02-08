@@ -17,6 +17,8 @@ class operations {
         constexpr test3 ();
     protected :
         test4 ();
+    public :
+        test5 () = delete;
 };
 
 #endif

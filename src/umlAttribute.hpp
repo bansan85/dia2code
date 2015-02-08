@@ -75,6 +75,7 @@ class umlAttribute {
         const std::string & getType () const;
         const std::string & getComment () const;
         const Visibility & getVisibility () const;
+        void setVisibility (Visibility visible);
         const Inheritance & getInheritance () const;
         unsigned char isStatic () const;
         unsigned char isConstant () const;

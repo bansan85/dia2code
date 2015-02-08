@@ -101,8 +101,11 @@ GenerateCodeCpp11::writeFunction (const umlOperation & ope,
         }
     }
     getFile () << ")";
+    if (ope.getStereotype ().compare ("delete") == 0) {
+        getFile () << " = delete";
+    }
     // virtual
-    if ((ope.getInheritance () == Inheritance::ABSTRACT)
+    else if ((ope.getInheritance () == Inheritance::ABSTRACT)
 #ifdef ENABLE_CORBA
         || (getCorba ())
 #endif

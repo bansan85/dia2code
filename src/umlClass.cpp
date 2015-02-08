@@ -92,7 +92,7 @@ umlClass::getTemplates () const {
 void
 umlClass::makeGetSetMethods () {
     for (umlAttribute & attrlist : attributes) {
-        std::string tmpname, impl;
+        std::string tmpname;
 
         /* The SET method */
         umlAttribute parameter ("value",
@@ -104,9 +104,6 @@ umlClass::makeGetSetMethods () {
                                 false,
                                 false,
                                 Kind::IN);
-        impl.assign ("    ");
-        impl.append (attrlist.getName ());
-        impl.append (" = value;");
 
         tmpname.assign ("set");
         tmpname.append (strtoupperfirst(attrlist.getName ()));
@@ -120,14 +117,11 @@ umlClass::makeGetSetMethods () {
                                 false,
                                 false,
                                 Kind::IN,
-                                impl);
+                                "");
         operation.addParameter (parameter);
         umlOperation::insert_operation(operation, operations);
 
         /* The GET or IS method */
-        impl.assign ("    return ");
-        impl.append (attrlist.getName ());
-        impl.append (";");
         if ((attrlist.getType ().compare ("boolean") == 0) ||
             (attrlist.getType ().compare ("Boolean") == 0) ||
             (attrlist.getType ().compare ("bool") == 0)) {
@@ -146,7 +140,7 @@ umlClass::makeGetSetMethods () {
                                  false,
                                  true,
                                  Kind::IN,
-                                 impl);
+                                 "");
         umlOperation::insert_operation (operation2, operations);
     }
 }
