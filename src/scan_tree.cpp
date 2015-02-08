@@ -23,14 +23,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 umlClassNode * find_by_name (std::list <umlClassNode> & list,
                              const char * name ) {
+    umlClassNode * ret = NULL;
     if ( name != NULL && strlen (name) > 0 ) {
         for (umlClassNode & it : list) {
             if ( it.getName ().compare (name) == 0) {
-                return &it;
+                if (ret != NULL) {
+                    fprintf (stderr,
+                             "More than one class as the same name %s.\n",
+                             name);
+                }
+                ret = &it;
             }
         }
     }
-    return NULL;
+    return ret;
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

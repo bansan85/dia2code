@@ -172,7 +172,7 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
     }
     else if (ope.getInheritance () == Inheritance::FINAL) {
         fprintf (stderr,
-                 "Operation %s: in Java, all function is by default virtual.\n",
+                 "Operation %s: in Java, all functions are virtual.\n",
                  ope.getName ().c_str ());
     }
     if (ope.isStatic ()) {
