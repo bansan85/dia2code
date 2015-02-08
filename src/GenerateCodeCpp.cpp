@@ -526,8 +526,8 @@ GenerateCodeCpp::writeTypedef (const umlClassNode & node) {
                  "Warning: typedef %s: ignoring name field in implementation type attribute\n",
                  node.getName ().c_str ());
     }
-    getFile () << spc () << "typedef " << cppName ((*umla).getType ()) << " "
-               << node.getName () << (*umla).getValue () << ";\n";
+    getFile () << spc () << "typedef " << cppName ((*umla).getType ())
+               << (*umla).getValue () << " " << node.getName () << ";\n";
 }
 
 void
