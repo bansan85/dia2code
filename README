@@ -346,7 +346,7 @@ enum class enumeration {
 
 struct, structure, Struct, Structure, or CORBAStruct:
 
-A structure is the same as a class.
+A structure is almost the same as a class.
 
 C++ generator:
 ** In C++, all attributes and operations are public.
@@ -362,6 +362,14 @@ struct structure {
 };
 
 typedef, Typedef or CORBATypedef:
+
+A typedef defines a type as a derivated of another one.
+The name of the new type is the name of the classe.
+The name of the derivated type is the name of the first attribute.
+All other information is ignored.
+
+C++ generator:
+typedef TypeDerivated NewType;
 
 - Attributes:
 
