@@ -63,7 +63,45 @@
     </dia:attribute>
   </dia:diagramdata>
   <dia:layer name="Arrière-plan" visible="true" active="true">
-    <dia:object type="UML - Class" version="0" id="O0">
+    <dia:object type="UML - LargePackage" version="0" id="O0">
+      <dia:attribute name="obj_pos">
+        <dia:point val="23.05,0.05"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="23,-1;33.3,7"/>
+      </dia:attribute>
+      <dia:attribute name="meta">
+        <dia:composite type="dict"/>
+      </dia:attribute>
+      <dia:attribute name="elem_corner">
+        <dia:point val="23.05,0.05"/>
+      </dia:attribute>
+      <dia:attribute name="elem_width">
+        <dia:real val="10.199999999999999"/>
+      </dia:attribute>
+      <dia:attribute name="elem_height">
+        <dia:real val="6.9000000000000004"/>
+      </dia:attribute>
+      <dia:attribute name="line_width">
+        <dia:real val="0.10000000149011612"/>
+      </dia:attribute>
+      <dia:attribute name="line_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="fill_colour">
+        <dia:color val="#ffffff"/>
+      </dia:attribute>
+      <dia:attribute name="text_colour">
+        <dia:color val="#000000"/>
+      </dia:attribute>
+      <dia:attribute name="stereotype">
+        <dia:string>##</dia:string>
+      </dia:attribute>
+      <dia:attribute name="name">
+        <dia:string>#Pack#</dia:string>
+      </dia:attribute>
+    </dia:object>
+    <dia:object type="UML - Class" version="0" id="O1">
       <dia:attribute name="obj_pos">
         <dia:point val="10.75,3.15"/>
       </dia:attribute>
@@ -197,15 +235,15 @@
       </dia:attribute>
       <dia:attribute name="templates"/>
     </dia:object>
-    <dia:object type="UML - Class" version="0" id="O1">
+    <dia:object type="UML - Class" version="0" id="O2">
       <dia:attribute name="obj_pos">
-        <dia:point val="25.2,2.2"/>
+        <dia:point val="25.15,1.9"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="25.15,2.15;29.42,4.45"/>
+        <dia:rectangle val="25.1,1.85;29.37,4.15"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="25.2,2.2"/>
+        <dia:point val="25.15,1.9"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="4.1699999999999999"/>
@@ -306,8 +344,9 @@
         <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="templates"/>
+      <dia:childnode parent="O0"/>
     </dia:object>
-    <dia:object type="UML - Class" version="0" id="O2">
+    <dia:object type="UML - Class" version="0" id="O3">
       <dia:attribute name="obj_pos">
         <dia:point val="25.1,8.75"/>
       </dia:attribute>
@@ -441,21 +480,21 @@
       </dia:attribute>
       <dia:attribute name="templates"/>
     </dia:object>
-    <dia:object type="UML - Dependency" version="1" id="O3">
+    <dia:object type="UML - Dependency" version="1" id="O4">
       <dia:attribute name="obj_pos">
-        <dia:point val="28.7912,8.69955"/>
+        <dia:point val="28.7913,8.69955"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="26.835,4.00028;28.8412,8.74955"/>
+        <dia:rectangle val="26.785,3.70028;28.8413,8.74955"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="28.7912,8.69955"/>
-        <dia:point val="28.7912,6.77491"/>
-        <dia:point val="27.285,6.77491"/>
-        <dia:point val="27.285,4.45028"/>
+        <dia:point val="28.7913,8.69955"/>
+        <dia:point val="28.7913,6.62491"/>
+        <dia:point val="27.235,6.62491"/>
+        <dia:point val="27.235,4.15028"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -481,8 +520,8 @@
         <dia:boolean val="true"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O2" connection="10"/>
-        <dia:connection handle="1" to="O1" connection="8"/>
+        <dia:connection handle="0" to="O3" connection="10"/>
+        <dia:connection handle="1" to="O2" connection="8"/>
       </dia:connections>
     </dia:object>
   </dia:layer>

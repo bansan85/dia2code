@@ -418,8 +418,16 @@ GenerateCodeJava::writeTypedef (const umlClassNode & node) {
                  node.getName ().c_str ());
     }
     getFile () << spc () << "class " << cppName (node.getName ())
-               << " extends " << (*umla).getType () << (*umla).getValue ()
-               << " {}\n";
+               << " extends ";
+    const umlClassNode * umlc = find_by_name (getDia ().getUml (),
+                                              (*umla).getType ().c_str ());
+    if (umlc == NULL) {
+        getFile () << cppName ((*umla).getType ());
+    }
+    else {
+        getFile () << fqname (*umlc, false);
+    }
+    getFile () << (*umla).getValue () << " {}\n";
 }
 
 void

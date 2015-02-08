@@ -27,5 +27,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 umlClassNode * find_by_name (std::list <umlClassNode> & list,
                              const char * name);
 
-
 #endif

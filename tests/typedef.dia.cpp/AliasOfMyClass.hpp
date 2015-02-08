@@ -1,8 +1,8 @@
 #ifndef ALIASOFMYCLASS__HPP
 #define ALIASOFMYCLASS__HPP
 
-#include "MyClass.hpp"
+#include "Pack.hpp"
 
-typedef MyClass AliasOfMyClass;
+typedef Pack::MyClass AliasOfMyClass;
 
 #endif

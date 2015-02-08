@@ -34,7 +34,7 @@ DiaGram::DiaGram () :
 #endif
     tmp_classes (),
     includes (),
-    decl (){
+    decl () {
 }
 
 
@@ -147,8 +147,7 @@ module *
 create_nested_modules_from_pkglist (
     const std::list <umlPackage>::iterator &debut,
     const std::list <umlPackage>::iterator &fin,
-    module *m)
-{
+    module *m) {
     bool first = true;
     std::list <umlPackage>::iterator it;
     assert (m != NULL);
@@ -172,8 +171,7 @@ create_nested_modules_from_pkglist (
 module *
 find_or_add_module (std::list <declaration> &dptr,
                     const std::list <umlPackage>::iterator &debut,
-                    const std::list <umlPackage>::iterator &fin)
-{
+                    const std::list <umlPackage>::iterator &fin) {
     declaration d;
     module *m;
 
@@ -205,8 +203,7 @@ find_or_add_module (std::list <declaration> &dptr,
 }
 
 void
-DiaGram::push (umlClassNode & node)
-{
+DiaGram::push (umlClassNode & node) {
     std::list <umlClassNode> used_classes;
     declaration d;
 
@@ -271,8 +268,7 @@ DiaGram::haveInclude (const std::list <std::string> & name) const
 }
 
 void
-DiaGram::addInclude (const std::list <std::string> & name)
-{
+DiaGram::addInclude (const std::list <std::string> & name) {
     if (haveInclude (name)) {
         return;
     }
@@ -281,8 +277,7 @@ DiaGram::addInclude (const std::list <std::string> & name)
 }
 
 void
-DiaGram::pushInclude (umlClassNode &node, bool oneClass, bool buildtree)
-{
+DiaGram::pushInclude (umlClassNode &node, bool oneClass, bool buildtree) {
     std::list <std::string> pkglist;
 
     if (node.getPackage () != NULL) {
@@ -304,8 +299,7 @@ DiaGram::cleanIncludes () {
 }
 
 void
-DiaGram::determineIncludes (declaration &d, bool oneClass, bool buildtree)
-{
+DiaGram::determineIncludes (declaration &d, bool oneClass, bool buildtree) {
     if (d.decl_kind == dk_module) {
         for (declaration & it : d.u.this_module->contents) {
             determineIncludes (it, oneClass, buildtree);
@@ -320,14 +314,12 @@ DiaGram::determineIncludes (declaration &d, bool oneClass, bool buildtree)
 }
 
 std::list <declaration>::iterator
-DiaGram::getDeclBegin ()
-{
+DiaGram::getDeclBegin () {
     return decl.begin ();
 }
 
 std::list <declaration>::iterator
-DiaGram::getDeclEnd ()
-{
+DiaGram::getDeclEnd () {
     return decl.end ();
 }
 

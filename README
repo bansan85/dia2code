@@ -573,11 +573,17 @@ Not applicable in Java.
 
 
 C++ and C++11 generator:
-typedef TypeDerivated NewType;
+#include "Pack.hpp"
+
+typedef PrimitiveType NewType1;
+typedef Pack::ClassType NewType2;
 
 
 Java generator:
-Not applicable.
+import Pack.ClassType;
+
+class NewType1 extends PrimitiveType {}
+class NewType2 extends Pack.ClassType {}
 
 
 - Operation:
@@ -588,7 +594,7 @@ Not applicable in Java.
 
 C++ generator:
 ** In C++, delete do not exists. So the commun way to delete a function (like
-** copy constructor) is to make this function private and to not defining it in
+** copy constructor) is to make this function private and not defining it in
 ** source.
 class operations {
     private :
@@ -604,6 +610,7 @@ class operations {
 
 
 Java generator:
+** Not applicable in Java.
 class operations {
     public test5 () {
     }
