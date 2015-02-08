@@ -201,6 +201,7 @@ If -1 and --buildtree are not specified, the name of each file will be the
 class name (if not in a package) and the name of the top package either.
 If -1 or --buildtree is specified, the filename will be the class name.
 
+
 C++ generator:
 ** The license if specified in command line (-l option).
 /*
@@ -211,7 +212,7 @@ File bit-by-bit.
 #ifndef README__HPP
 #define README__HPP
 
-** Header guard
+** Dependancies
 #include "dependancies.hpp"
 
 ** Templates
@@ -236,6 +237,7 @@ namespace package {
             static type2 nom2;
         protected :
             type3 nom3;
+        // Operations
         public :
             /**
              * \class AbstractOperation
@@ -247,19 +249,22 @@ namespace package {
             ** A virtual operation must be define in the source code.
             virtual VirtualOperation ();
             NonAbstractOperation ();
-    // Operations
-        /**
-         * \brief comment
-         * \param in (in)
-         * \param inOut (in/out) comment2
-         * \param undef (???)
-         * \param out (out)
-         */
-        virtual type test (type1 in, type2 inOut, type3 undef = 0, type4 out) = 0;
-        static test2 ();
-        test3 () const;
+            /**
+             * \brief comment
+             * \param in (in)
+             * \param inOut (in/out) comment2
+             * \param undef (???)
+             * \param out (out)
+             */
+            virtual type test (type1 in, type2 inOut, type3 undef = 0, type4 out) = 0;
+            static test2 ();
+            test3 () const;
     };
 }
+
+** End of header guard
+#endif
+
 
 C++11 generator:
 ** The license if specified in command line (-l option).
@@ -271,7 +276,7 @@ File bit-by-bit.
 #ifndef README__HPP
 #define README__HPP
 
-** Header guard
+** Dependancies
 #include "dependancies.hpp"
 
 ** Templates
@@ -296,6 +301,7 @@ namespace package {
             static type2 nom2;
         protected :
             type3 nom3;
+        // Operations
         public :
             /**
              * \class AbstractOperation
@@ -307,18 +313,67 @@ namespace package {
             ** A virtual operation must be define in the source code.
             virtual VirtualOperation ();
             NonAbstractOperation ();
-    // Operations
-        /**
-         * \brief comment
-         * \param in (in)
-         * \param inOut (in/out) comment2
-         * \param undef (???)
-         * \param out (out)
-         */
-        virtual type test (type1 in, type2 inOut, type3 undef = 0, type4 out) = 0;
-        static test2 ();
-        constexpr test3 ();
+            /**
+             * \brief comment
+             * \param in (in)
+             * \param inOut (in/out) comment2
+             * \param undef (???)
+             * \param out (out)
+             */
+            virtual type test (type1 in, type2 inOut, type3 undef = 0, type4 out) = 0;
+            static test2 ();
+            constexpr test3 ();
     };
+}
+
+** End of header guard
+#endif
+
+
+Java generator:
+** The license if specified in command line (-l option).
+/*
+File bit-by-bit.
+ */
+
+** No header guard
+
+** Dependancies
+import Dependancies;
+
+** Templates not supported.
+
+** If class are in package.
+package Pack;
+
+** Class with inheritance if necessary.
+public class Class extends ParentClass {
+    ** Attributes will be print first, then operations.
+    // Attributes
+    ** Comments are in doxygen format.
+    /**
+     * comment.
+     */
+    public type1 nom1 = val1;
+    private static type2 nom2;
+    protected type3 nom3 = val3;
+    // Operations
+    public abstract AbstractOperation ();
+    ** In Java all operation are virtual.
+    public VirtualOperation ();
+    public NonAbstractOperation ();
+    /**
+     * comment
+     * @param in (in)
+     * @param inOut (in/out) comment2
+     * @param undef (???)
+     * @param out (out)
+     * @return type
+     */
+    public abstract type test (type1 in, type2 inOut, type3 undef = 0, type4 out);
+    public static test2 ();
+    ** There is no const function is Java.
+    public test3 ();
 }
 
 
@@ -340,6 +395,12 @@ C++ and C++11 generator:
 ** Implementation visibility is not applicable to C++ generator.
 class InheritanceClasseChildren : public InheritanceClasseImplement, protected InheritanceClasseProtected, private InheritancePack1::InheritanceClassePrivate {
 };
+
+C++ and C++11 generator:
+** In Java, Generalization are public only.
+class InheritanceClasseChildren extends InheritanceClasseImplement extends InheritanceClasseProtected extends InheritancePack1.InheritanceClassePrivate {
+};
+
 
 
 - Classes:
@@ -391,6 +452,25 @@ class GetSet {
 }
 
 
+Java generator:
+** The stereotype of the class is GetSet.
+// Stereotype : GetSet
+public class GetSet {
+    // Attributes
+    private char * nom;
+    private bool boole;
+    // Operations
+    public void setNom (char * value) {
+    }
+    public char * getNom () {
+    }
+    public void setBoole (bool value) {
+    }
+    public bool isBoole () {
+    }
+}
+
+
 const, constant, Const, Constant or CORBAConstant:
 
 TODO
@@ -400,6 +480,7 @@ enum, enumeration, Enum, Enumeration or CORBAEnum:
 
 Generate an enum class. Only attributes will be used. Template or function are
 ignored.
+
 
 C++ generator:
 /// Comment of the enum
@@ -412,6 +493,7 @@ enum enumeration {
     ENUM_3
 };
 
+
 C++11 generator:
 /// Comment of the enum
 enum class enumeration {
@@ -423,22 +505,63 @@ enum class enumeration {
     ENUM_3
 };
 
+
+Java generator:
+/**
+ * Comment of the enum
+ */
+public enum enumeration {
+    /// Comment ENUM_1
+    ENUM_1 = 0,
+    /// Comment ENUM_2
+    ENUM_2,
+    ENUM_3
+};
+
+
 struct, structure, Struct, Structure, or CORBAStruct:
 
 A structure is almost the same as a class.
+
 
 C++ and C++11 generator:
 ** In C++, all attributes and operations are public.
 /// Comment about the structure.
 struct structure {
+    // Attributes
     /// com1
     type1 nom1;
     /// com2-1
     /// com2-2
     type2 nom2;
     type3 nom3;
+    // Operations
     void operation (type1 attr1);
 };
+
+
+Java generator:
+** In Java, structure is not defined. The equivalent is a class.
+/**
+ * Comment about the structure.
+ */
+public class structure {
+    // Attributes
+    /**
+     * com1
+     */
+    public type1 nom1;
+    /**
+     * com2-1
+     * com2-2
+     */
+    private type2 nom2;
+    protected type3 nom3;
+    // Operations
+    public void operation (type1 attr1) {
+    }
+};
+
 
 typedef, Typedef or CORBATypedef:
 
@@ -446,15 +569,22 @@ A typedef defines a type as a derivated of another one.
 The name of the new type is the name of the classe.
 The name of the derivated type is the name of the first attribute.
 All other information is ignored.
+Not applicable in Java.
+
 
 C++ and C++11 generator:
 typedef TypeDerivated NewType;
+
+
+Java generator:
+Not applicable.
 
 
 - Operation:
 
 delete:
 In C++11, a deleted function must be defined in header.
+Not applicable in Java.
 
 C++ generator:
 ** In C++, delete do not exists. So the commun way to delete a function (like
@@ -465,10 +595,18 @@ class operations {
         test5 ();
 }
 
+
 C++11 generator:
 class operations {
     public :
         test5 () = delete;
+}
+
+
+Java generator:
+class operations {
+    public test5 () {
+    }
 }
 
 

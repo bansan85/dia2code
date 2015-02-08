@@ -18,6 +18,7 @@ class MultiLines {
          *        Line 6
          * \param param1 (???) Line 7
          *        Line 8
+         * \return 
          */
         ope ( param1);
 };

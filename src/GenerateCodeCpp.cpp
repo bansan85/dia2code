@@ -177,6 +177,7 @@ GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
                                std::string (spc () + " * \\param "),
                                std::string (spc () + " *        "));
     }
+    getFile () << spc () << " * \\return " << ope.getType () << "\n";
     getFile () << spc () << " */\n";
 }
 

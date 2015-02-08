@@ -15,6 +15,7 @@ class operations {
          * \param inOut (in/out) comment2
          * \param undef (???)
          * \param out (out)
+         * \return type
          */
         virtual type test (type1 in, type2 inOut, type3 undef = 0, type4 out) = 0;
     public :
