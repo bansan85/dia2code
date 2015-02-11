@@ -299,6 +299,17 @@ GenerateCodeCpp::writeClassComment (const umlClassNode & node) {
 
 void
 GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
+    if (!node.getTemplates ().empty ()) {
+#ifdef ENABLE_CORBA
+        if (isCorba) {
+            fprintf (stderr, "CORBAValue %s: template ignored\n", name);
+        } else
+#endif
+        {
+            writeTemplates (node.getTemplates ());
+        }
+    }
+
     getFile () << spc () << "class " << node.getName ();
     if (!node.getParents ().empty ()) {
         std::list <std::pair <umlClass *, Visibility> >::const_iterator
@@ -543,7 +554,7 @@ GenerateCodeCpp::writeAssociation (const umlassoc & asso,
                                    Visibility & curr_visibility) {
     if (!asso.name.empty ()) {
         incIndentLevel ();
-        umlClassNode *ref;
+        const umlClassNode *ref;
         ref = find_by_name (getDia ().getUml (),
                             asso.key.getName ().c_str ());
         check_visibility (curr_visibility, asso.visibility);
@@ -566,13 +577,21 @@ GenerateCodeCpp::writeTemplates (
                                                      template_ = tmps.begin ();
     getFile () << spc () << "template <";
     while (template_ != tmps.end ()) {
-        getFile () << (*template_).second << " " << (*template_).first;
+        const umlClassNode * umlc = find_by_name (getDia ().getUml (),
+                                                 (*template_).second.c_str ());
+        if (umlc == NULL) {
+            getFile () << cppName ((*template_).second);
+        }
+        else {
+            getFile () << fqname (*umlc, false);
+        }
+        getFile () << " " << (*template_).first;
         ++template_;
         if (template_ != tmps.end ()) {
             getFile () << ", ";
         }
     }
-    getFile () << ">\n";
+    getFile () << ">\n\n";
 }
 
 GenerateCodeCpp::~GenerateCodeCpp () {

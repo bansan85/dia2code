@@ -1,7 +1,10 @@
 #ifndef TEMPLATE__HPP
 #define TEMPLATE__HPP
 
-template <type template>
+#include "Pack.hpp"
+
+template <type template, Pack::ClassTemplate template2>
+
 class Template {
 };
 

@@ -253,6 +253,18 @@ GenerateCodeJava::writeClassStart (const umlClassNode & node) {
         getFile () << "abstract ";
     }
     getFile () << "class " << node.getName ();
+
+    if (!node.getTemplates ().empty ()) {
+#ifdef ENABLE_CORBA
+        if (isCorba) {
+            fprintf (stderr, "CORBAValue %s: template ignored\n", name);
+        } else
+#endif
+        {
+            writeTemplates (node.getTemplates ());
+        }
+    }
+
     if (!node.getParents ().empty ()) {
         std::list <std::pair <umlClass *, Visibility> >::const_iterator
                                                                         parent;
@@ -443,7 +455,25 @@ GenerateCodeJava::writeAssociation (const umlassoc & asso,
 void
 GenerateCodeJava::writeTemplates (
               const std::list <std::pair <std::string, std::string> > & tmps) {
-    fprintf (stderr, "Template in not applicable to Java.\n");
+    std::list <std::pair <std::string, std::string> >::const_iterator
+                                                     template_ = tmps.begin ();
+    getFile () << " <";
+    while (template_ != tmps.end ()) {
+        getFile () << (*template_).first << " extends ";
+        const umlClassNode * umlc = find_by_name (getDia ().getUml (),
+                                                 (*template_).second.c_str ());
+        if (umlc == NULL) {
+            getFile () << cppName ((*template_).second);
+        }
+        else {
+            getFile () << fqname (*umlc, false);
+        }
+        ++template_;
+        if (template_ != tmps.end ()) {
+            getFile () << ", ";
+        }
+    }
+    getFile () << ">";
 }
 
 GenerateCodeJava::~GenerateCodeJava () {

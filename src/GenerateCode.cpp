@@ -424,17 +424,6 @@ GenerateCode::genClass (const umlClassNode & node) {
 #endif
     }
 
-    if (!node.getTemplates ().empty ()) {
-#ifdef ENABLE_CORBA
-        if (isCorba) {
-            fprintf (stderr, "CORBAValue %s: template ignored\n", name);
-        } else
-#endif
-        {
-            writeTemplates (node.getTemplates ());
-        }
-    }
-
     // Check that if class is abstract, at least one class are abstract.
     if (node.isAbstract ()) {
         bool absok = false;

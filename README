@@ -330,7 +330,48 @@ namespace package {
 #endif
 
 
+C# generator:
+https://msdn.microsoft.com/en-us/library/ms228500%28v=vs.90%29.aspx
+
+
 Java generator:
+Convention naming:
+http://www.oracle.com/technetwork/java/codeconventions-135099.html
+
+Packages: all-lowercase ASCII letters and should be one of the top-level domain
+names, currently com, edu, gov, mil, net, org, or one of the English two-letter
+codes identifying countries as specified in ISO Standard 3166, 1981.
+com.sun.eng
+com.apple.quicktime.v2
+edu.cmu.cs.bovik.cheese
+
+Classes or Interfaces:
+Class names should be nouns, in mixed case with the first letter of each
+internal word capitalized.
+class Raster;
+class ImageSprite
+
+Methods:
+Methods should be verbs, in mixed case with the first letter lowercase, with
+the first letter of each internal word capitalized.
+run ();
+runFast ();
+
+Variables:
+Except for variables, all instance, class, and class constants are in mixed
+case with a lowercase first letter. Internal words start with capital letters.
+Variable names should not start with underscore _ or dollar sign $ characters,
+even though both are allowed.
+int             i;
+char            c;
+float           myWidth;
+
+Constants:
+The names of variables declared class constants and of ANSI constants should be
+all uppercase with words separated by underscores ("_").
+static final int MAX_WIDTH = 999;
+
+
 ** The license if specified in command line (-l option).
 /*
 File bit-by-bit.
@@ -341,13 +382,11 @@ File bit-by-bit.
 ** Dependancies
 import Dependancies;
 
-** Templates not supported.
-
 ** If class are in package.
 package Pack;
 
-** Class with inheritance if necessary.
-public class Class extends ParentClass {
+** Class with inheritance and templates if necessary.
+public class Class <template extends type> extends ParentClass {
     ** Attributes will be print first, then operations.
     // Attributes
     ** Comments are in doxygen format.

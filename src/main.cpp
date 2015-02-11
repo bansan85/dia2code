@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GenerateCodeCpp.hpp"
 #include "GenerateCodeCpp11.hpp"
 #include "GenerateCodeJava.hpp"
+//#include "GenerateCodeCSharp.hpp" CSHARP
 
 int main (int argc, char **argv) {
 try {
@@ -70,9 +71,9 @@ under certain conditions; read the COPYING file for details.\n";
                          Default: 4. Maximum: 8.\n\
     -ext <extension>     Use <extension> as the file extension.\n\
                          Here are the defaults:\n\
-                         ada:\"ads\", c:\"h\", cpp:\"hpp\", idl:\"idl\",\n\
-                         java:\"java\", php:\"php\", python:\"py\",\n\
-                         csharp:\"cs\".\n\
+                         ada:\"ads\", c:\"h\", cpp:\"hpp\", csharp:\"cs\",\n\
+                         idl:\"idl\", java:\"java\", php:\"php\",\n\
+                         python:\"py\".\n\
                          Not applicable to shp, sql.\n\
     -bext <extension>    Use <extension> as the body (implementation) file\n\
                          extension. Only applies to ada and c.\n\
@@ -146,6 +147,8 @@ under certain conditions; read the COPYING file for details.\n";
                 generator = new GenerateCodeCpp (diagram);
             } else if (!strcmp (argv[i], "cpp11")) {
                 generator = new GenerateCodeCpp11 (diagram);
+//            } else if (!strcmp (argv[i], "csharp")) { CSHARP
+//                generator = new GenerateCodeCSharp (diagram);
             } else if (!strcmp (argv[i], "java")) {
                 generator = new GenerateCodeJava (diagram);
                 oneclass = true;
@@ -163,8 +166,6 @@ under certain conditions; read the COPYING file for details.\n";
 //                generator = generators[7];
             } else if (!strcmp (argv[i], "idl")) {
 //                generator = generators[8];
-            } else if (!strcmp (argv[i], "csharp")) {
-//                generator = generators[9];
             } else if (!strcmp(argv[i], "php5")) {
 //                generator = generators[10];
             } else if (!strcmp(argv[i], "ruby")) {
