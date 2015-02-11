@@ -62,10 +62,10 @@ class GenerateCode {
         void generate_code ();
         
         const char * getFileExt () const;
-        void         setFileExt (char * ext);
+        void         setFileExt (const char * ext);
 
         const char * getBodyFileExt () const;
-        void         setBodyFileExt (char * ext);
+        void         setBodyFileExt (const char * ext);
 
         std::ofstream & getFile ();
         
@@ -75,11 +75,11 @@ class GenerateCode {
         void     decIndentLevel ();
 
         const std::string & getLicense () const;
-        void                setLicense (char * lic);
+        void                setLicense (const char * lic);
 
         const char * getOutdir () const;
         const        std::string * getOutdirS () const;
-        void         setOutdir (char * dir);
+        void         setOutdir (const char * dir);
 
         bool getOverwrite () const;
         void setOverwrite (bool over);

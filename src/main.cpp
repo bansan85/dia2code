@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GenerateCodeCpp.hpp"
 #include "GenerateCodeCpp11.hpp"
 #include "GenerateCodeJava.hpp"
-//#include "GenerateCodeCSharp.hpp" CSHARP
+#include "GenerateCodeCSharp.hpp"
 
 int main (int argc, char **argv) {
 try {
@@ -147,8 +147,8 @@ under certain conditions; read the COPYING file for details.\n";
                 generator = new GenerateCodeCpp (diagram);
             } else if (!strcmp (argv[i], "cpp11")) {
                 generator = new GenerateCodeCpp11 (diagram);
-//            } else if (!strcmp (argv[i], "csharp")) { CSHARP
-//                generator = new GenerateCodeCSharp (diagram);
+            } else if (!strcmp (argv[i], "csharp")) {
+                generator = new GenerateCodeCSharp (diagram);
             } else if (!strcmp (argv[i], "java")) {
                 generator = new GenerateCodeJava (diagram);
                 oneclass = true;

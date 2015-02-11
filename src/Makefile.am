@@ -6,6 +6,7 @@ dia2code_SOURCES  = DiaGram.cpp \
 										GenerateCode.cpp \
 										GenerateCodeCpp.cpp \
 										GenerateCodeCpp11.cpp \
+										GenerateCodeCSharp.cpp \
 										GenerateCodeJava.cpp \
                     main.cpp \
 										parse_diagram.cpp \
@@ -28,6 +29,7 @@ EXTRA_DIST = decls.hpp \
 						 GenerateCode.hpp \
 						 GenerateCodeCpp.hpp \
 						 GenerateCodeCpp11.hpp \
+						 GenerateCodeCSharp.hpp \
 						 GenerateCodeJava.hpp \
 						 parse_diagram.hpp \
 						 scan_tree.hpp \

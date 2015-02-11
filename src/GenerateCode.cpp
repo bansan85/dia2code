@@ -71,7 +71,7 @@ GenerateCode::getLicense () const {
 
 
 void
-GenerateCode::setLicense (char * lic) {
+GenerateCode::setLicense (const char * lic) {
     license.assign (lic);
 }
 
@@ -89,7 +89,7 @@ GenerateCode::getOutdirS () const {
 
 
 void
-GenerateCode::setOutdir (char * dir) {
+GenerateCode::setOutdir (const char * dir) {
     outdir.assign (dir);
 }
 
@@ -245,7 +245,7 @@ GenerateCode::getFileExt () const {
 
 
 void
-GenerateCode::setFileExt (char * ext) {
+GenerateCode::setFileExt (const char * ext) {
     file_ext.assign (ext);
 }
 
@@ -257,7 +257,7 @@ GenerateCode::getBodyFileExt () const {
 
 
 void
-GenerateCode::setBodyFileExt (char * ext) {
+GenerateCode::setBodyFileExt (const char * ext) {
     body_file_ext.assign (ext);
 }
 
