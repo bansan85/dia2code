@@ -28,6 +28,9 @@ class GenerateCodeCSharp : public GenerateCodeJava {
     public:
         GenerateCodeCSharp (DiaGram & diagram);
 
+        void writeFunction (const umlOperation & ope,
+                            Visibility & curr_visibility);
+
         ~GenerateCodeCSharp ();
 };
 
