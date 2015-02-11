@@ -31,6 +31,9 @@ class GenerateCodeCSharp : public GenerateCodeJava {
         bool writeInclude (std::list <std::string> & name);
         void writeFunction (const umlOperation & ope,
                             Visibility & curr_visibility);
+        void writeClassComment (const umlClassNode & node);
+        void writeAttribute (const umlAttribute & attr,
+                             Visibility & curr_visibility);
         void writeNameSpaceStart (const umlClassNode * node);
         void writeNameSpaceEnd (const umlClassNode * node);
 

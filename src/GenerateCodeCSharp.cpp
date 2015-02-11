@@ -127,6 +127,40 @@ GenerateCodeCSharp::writeFunction (const umlOperation & ope,
 }
 
 void
+GenerateCodeCSharp::writeClassComment (const umlClassNode & node) {
+    if (!node.getComment ().empty ()) {
+        getFile () << spc () << "/// <summary>\n";
+        getFile () << comment (node.getComment (),
+                               std::string (spc () + "///  "),
+                               std::string (spc () + "///  "));
+        getFile () << spc () << "/// </summary>\n";
+    }
+}
+
+void
+GenerateCodeCSharp::writeAttribute (const umlAttribute & attr,
+                                    Visibility & curr_visibility) {
+    if (!attr.getComment ().empty ()) {
+        getFile () << spc () << "/// <summary>\n";
+        getFile () << comment (attr.getComment (),
+                               std::string (spc () + "///  "),
+                               std::string (spc () + "///  "));
+        getFile () << spc () << "/// </summary>\n";
+    }
+    getFile () << spc () << visibility (attr.getVisibility ()) << " ";
+    if (attr.isStatic ()) {
+        getFile () << "static " << attr.getType () << " " << attr.getName ();
+    }
+    else {
+        getFile () << attr.getType () << " " << attr.getName ();
+    }
+    if (!attr.getValue ().empty ()) {
+        getFile () << " = " << attr.getValue ();
+    }
+    getFile () << ";\n";
+}
+
+void
 GenerateCodeCSharp::writeNameSpaceStart (const umlClassNode * node) {
     if (node->getPackage () != NULL) {
         std::list <umlPackage> pkglist;

@@ -242,7 +242,7 @@ GenerateCodeJava::writeClassComment (const umlClassNode & node) {
         getFile () << comment (node.getComment (),
                                std::string (spc () + " * "),
                                std::string (spc () + " * "));
-        getFile () << spc () << "*/\n";
+        getFile () << spc () << " */\n";
     }
 }
 
