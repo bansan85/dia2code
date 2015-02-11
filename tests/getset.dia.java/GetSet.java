@@ -7,12 +7,12 @@ public class GetSet {
      */
     private bool boole;
     // Operations
-    public void setNom (type value) {
+    public final void setNom (type value) {
     }
-    public type getNom () {
+    public final type getNom () {
     }
-    public void setBoole (bool value) {
+    public final void setBoole (bool value) {
     }
-    public bool isBoole () {
+    public final bool isBoole () {
     }
 }

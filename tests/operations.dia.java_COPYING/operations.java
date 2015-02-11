@@ -16,10 +16,10 @@ public class operations {
     private abstract type test (type1 in, type2 inOut, type3 undef, type4 out);
     public static test2 () {
     }
-    public test3 () {
+    public final test3 () {
     }
-    protected test4 () {
+    protected final test4 () {
     }
-    public test5 () {
+    public final test5 () {
     }
 }

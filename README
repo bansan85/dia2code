@@ -400,9 +400,8 @@ public class Class <template extends type> extends ParentClass {
     protected type3 nom3 = val3;
     // Operations
     public abstract AbstractOperation ();
-    ** In Java all operation are virtual.
     public VirtualOperation ();
-    public NonAbstractOperation ();
+    public final NonAbstractOperation ();
     /**
      * comment
      * @param in (in)

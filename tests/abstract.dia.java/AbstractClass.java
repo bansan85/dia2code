@@ -3,6 +3,6 @@ public abstract class AbstractClass {
     public abstract AbstractOperation ();
     public VirtualOperation () {
     }
-    public NonAbstractOperation () {
+    public final NonAbstractOperation () {
     }
 }

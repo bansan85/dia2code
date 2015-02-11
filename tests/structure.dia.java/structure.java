@@ -14,6 +14,6 @@ public class structure {
     private type2 nom2;
     protected type3 nom3;
     // Operations
-    public void operation (type1 attr1) {
+    public final void operation (type1 attr1) {
     }
 }

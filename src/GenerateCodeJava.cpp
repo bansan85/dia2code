@@ -171,9 +171,7 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
         getFile () << "abstract ";
     }
     else if (ope.getInheritance () == Inheritance::FINAL) {
-        fprintf (stderr,
-                 "Operation %s: in Java, all functions are virtual.\n",
-                 ope.getName ().c_str ());
+        getFile () << "final ";
     }
     if (ope.isStatic ()) {
 #ifdef ENABLE_CORBA
