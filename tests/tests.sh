@@ -1,6 +1,6 @@
 #!/bin/sh
 
-generators="cpp cpp11 java"
+generators="cpp cpp11 csharp java"
 
 if [[ ! -a ../src/dia2code ]] ; then
 echo "Failed to found dia2code."
@@ -15,7 +15,7 @@ do
         echo "dia2code -t $gen $file -d result"
         ../src/dia2code -t $gen $file -d result || exit 1
         diff -pu $file.$gen result > result.txt
-        if [[ $? -eq 1 ]] ; then
+        if [[ ! $? -eq 0 ]] ; then
             exit 1
         fi ;
         echo ""
@@ -33,7 +33,7 @@ do
             echo "dia2code -t $gen $file -d result $extra"
             ../src/dia2code -t $gen $file -d result $extra || exit 1
             diff -pu $file.$gen"$extra" result > result.txt
-            if [[ $? -eq 1 ]] ; then
+            if [[ ! $? -eq 0 ]] ; then
                 exit 1
             fi ;
             echo ""
@@ -47,7 +47,7 @@ do
     echo "dia2code -t $gen operations.dia -d result -l COPYING"
     ../src/dia2code -t $gen operations.dia -d result -l COPYING || exit 1
     diff -pu operations.dia.$gen"_COPYING" result > result.txt
-    if [[ $? -eq 1 ]] ; then
+    if [[ ! $? -eq 0 ]] ; then
         exit 1
     fi ;
     echo ""
