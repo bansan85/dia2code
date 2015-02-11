@@ -197,10 +197,13 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
 #endif
 
     std::list <std::list <std::string> > incfile = getDia ().getIncludes ();
+    bool add = false;
     for (std::list <std::string> namei : incfile) {
-        writeInclude (namei);
+        if (writeInclude (namei)) {
+            add = true;
+        }
     }
-    if (!incfile.empty ()) {
+    if (add) {
         getFile () << "\n";
     }
 

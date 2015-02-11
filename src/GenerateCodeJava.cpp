@@ -101,12 +101,12 @@ void
 GenerateCodeJava::writeEndHeader () {
 }
 
-void
+bool
 GenerateCodeJava::writeInclude (std::list <std::string> & name) {
     std::list <std::string>::const_iterator namei = name.begin ();
 
     if (name.empty ()) {
-        return;
+        return false;
     }
 
     getFile () << spc () << "import ";
@@ -119,6 +119,8 @@ GenerateCodeJava::writeInclude (std::list <std::string> & name) {
         }
     }
     getFile () << ";\n";
+
+    return true;
 }
 
 void

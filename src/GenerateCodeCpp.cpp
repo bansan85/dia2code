@@ -122,12 +122,12 @@ GenerateCodeCpp::writeEndHeader () {
     getFile () << spc () << "#endif\n";
 }
 
-void
+bool
 GenerateCodeCpp::writeInclude (std::list <std::string> & name) {
     std::list <std::string>::const_iterator namei;
 
     if (name.empty ()) {
-        return;
+        return false;
     }
 
     getFile () << spc () << "#include \"";
@@ -153,6 +153,8 @@ GenerateCodeCpp::writeInclude (std::list <std::string> & name) {
     }
 
     getFile () << "." << getFileExt () << "\"\n";
+
+    return true;
 }
 
 void

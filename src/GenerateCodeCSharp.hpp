@@ -28,8 +28,11 @@ class GenerateCodeCSharp : public GenerateCodeJava {
     public:
         GenerateCodeCSharp (DiaGram & diagram);
 
+        bool writeInclude (std::list <std::string> & name);
         void writeFunction (const umlOperation & ope,
                             Visibility & curr_visibility);
+        void writeNameSpaceStart (const umlClassNode * node);
+        void writeNameSpaceEnd (const umlClassNode * node);
 
         ~GenerateCodeCSharp ();
 };

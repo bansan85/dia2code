@@ -20,10 +20,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config.h"
 
 #include "GenerateCodeCSharp.hpp"
+#include "umlClassNode.hpp"
 
 GenerateCodeCSharp::GenerateCodeCSharp (DiaGram & diagram) :
     GenerateCodeJava (diagram) {
     setFileExt ("cs");
+}
+
+bool
+GenerateCodeCSharp::writeInclude (std::list <std::string> & name) {
+    std::list <std::string>::const_iterator namei = name.begin ();
+
+    if (name.empty ()) {
+        return false;
+    }
+
+    getFile () << spc () << "using ";
+
+    while (namei != name.end ()) {
+        getFile () << *namei;
+        ++namei;
+        // We don't add the name of the class.
+        if (namei != name.end ()) {
+            break;
+        }
+    }
+    getFile () << ";\n";
+
+    return true;
 }
 
 void
@@ -100,6 +124,37 @@ GenerateCodeCSharp::writeFunction (const umlOperation & ope,
         }
         getFile () << spc () << "}\n";
     }
+}
+
+void
+GenerateCodeCSharp::writeNameSpaceStart (const umlClassNode * node) {
+    if (node->getPackage () != NULL) {
+        std::list <umlPackage> pkglist;
+        umlPackage::make_package_list (node->getPackage (), pkglist);
+        for (const umlPackage & it : pkglist) {
+            if (getOpenBraceOnNewline ()) {
+                getFile () << spc () << "namespace " << it.getName () << "\n"
+                           << spc () << "{\n";
+            }
+            else {
+                getFile () << spc () << "namespace " << it.getName ()
+                           << " {\n";
+            }
+            incIndentLevel ();
+        }
+    }
+}
+
+void
+GenerateCodeCSharp::writeNameSpaceEnd (const umlClassNode * node) {
+    const umlPackage *pack = node->getPackage ();
+
+    while (pack != NULL) {
+        decIndentLevel ();
+        getFile () << spc () << "};\n";
+        pack = pack->getParent ();
+    }
+    getFile () << spc () << "\n";
 }
 
 GenerateCodeCSharp::~GenerateCodeCSharp () {
