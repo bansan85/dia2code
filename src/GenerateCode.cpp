@@ -188,7 +188,7 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
     writeStartHeader (tmpname);
 
     getDia ().cleanIncludes ();
-    getDia ().determineIncludes (d, oneClassOneHeader, buildtree);
+    getDia ().determineIncludes (d, false);
 #ifdef ENABLE_CORBA
     if (getDia ().getUseCorba ()) {
         writeInclude ("p_orb.h");
@@ -196,9 +196,11 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
     }
 #endif
 
-    std::list <std::list <std::string> > incfile = getDia ().getIncludes ();
+    std::list <std::pair <std::list <umlPackage>, umlClassNode * > > incfile;
+
+    incfile = getDia ().getIncludes ();
     bool add = false;
-    for (std::list <std::string> namei : incfile) {
+    for (std::pair <std::list <umlPackage>, umlClassNode * > namei : incfile) {
         if (writeInclude (namei)) {
             add = true;
         }

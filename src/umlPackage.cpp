@@ -91,23 +91,6 @@ umlPackage::makePackageList (const umlPackage *package,
     return;
 }
 
-void
-umlPackage::makePackageListName (const umlPackage *package,
-                                    std::list <std::string> & res) {
-    umlPackage *par;
-
-    if (package == NULL) {
-        return;
-    }
-    res.push_back (package->getName ());
-    par = package->parent;
-    while (par != NULL) {
-        res.push_front (par->getName ());
-        par = par->parent;
-    }
-    return;
-}
-
 const std::string &
 umlPackage::getId () const {
     return id;

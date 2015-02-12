@@ -40,18 +40,25 @@ class DiaGram {
 #endif
         
         std::list <std::string> tmp_classes;
-        std::list <std::list <std::string> > includes;
+        std::list <std::pair <std::list <umlPackage>, umlClassNode * > >
+                                                                      includes;
         std::list <declaration> decl;
         
+        // if expandPackages then all classes in the package and in the
+        // sub-packages are add to resCla
         void listClasses (umlClassNode & current_class,
-                          std::list <umlClassNode> & res);
+                          std::list <umlClassNode> & resCla,
+                          std::list <umlPackage> & resPac,
+                          bool expandPackages);
 
         /**
          * openOutfile() returns NULL if the file exists and is not rewritten
          * due to a clobber prohibition. Does an exit(1) if serious problems happen.
         */
-        bool haveInclude (const std::list <std::string> & name) const;
-        void addInclude (const std::list <std::string> & name);
+        bool haveInclude (std::list <umlPackage> & packages,
+                          umlClassNode * cla) const;
+        void addInclude (std::list <umlPackage> & packages,
+                         umlClassNode * cla);
         void pushInclude (umlClassNode & node);
     public:
         DiaGram ();
@@ -71,9 +78,10 @@ class DiaGram {
 #endif
 
         void push (umlClassNode &node);
-        std::list <std::list <std::string> > getIncludes () const;
+        std::list <std::pair <std::list <umlPackage>,
+                              umlClassNode * > > getIncludes () const;
         void cleanIncludes ();
-        void determineIncludes (declaration &d, bool oneClass, bool buildtree);
+        void determineIncludes (declaration &d, bool expandPackages);
         
         std::list <declaration>::iterator getDeclBegin ();
         std::list <declaration>::iterator getDeclEnd ();

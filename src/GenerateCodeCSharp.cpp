@@ -28,23 +28,31 @@ GenerateCodeCSharp::GenerateCodeCSharp (DiaGram & diagram) :
 }
 
 bool
-GenerateCodeCSharp::writeInclude (std::list <std::string> & name) {
-    std::list <std::string>::const_iterator namei = name.begin ();
-
-    if (name.empty ()) {
+GenerateCodeCSharp::writeInclude (std::pair <std::list <umlPackage>,
+                                  umlClassNode * > & name) {
+    if (name.second == NULL) {
         return false;
     }
 
     getFile () << spc () << "using ";
 
-    while (namei != name.end ()) {
-        getFile () << *namei;
-        ++namei;
-        // We don't add the name of the class.
-        if (namei != name.end ()) {
-            break;
+    if (!name.first.empty ()) {
+        std::list <umlPackage>::const_iterator namei;
+
+        namei = name.first.begin ();
+        while (namei != name.first.end ()) {
+            getFile () << (*namei).getName ();
+            ++namei;
+            if (namei != name.first.end ()) {
+                getFile () << ".";
+            }
         }
+        // We don't add the name of the class.
     }
+    else {
+        getFile () << name.second->getName ();
+    }
+
     getFile () << ";\n";
 
     return true;

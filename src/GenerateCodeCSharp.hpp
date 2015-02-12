@@ -28,7 +28,8 @@ class GenerateCodeCSharp : public GenerateCodeJava {
     public:
         GenerateCodeCSharp (DiaGram & diagram);
 
-        bool writeInclude (std::list <std::string> & name);
+        bool writeInclude (std::pair <std::list <umlPackage>,
+                                      umlClassNode * > & name);
         void writeFunction (const umlOperation & ope,
                             Visibility & curr_visibility);
         void writeClassComment (const umlClassNode & node);

@@ -123,36 +123,40 @@ GenerateCodeCpp::writeEndHeader () {
 }
 
 bool
-GenerateCodeCpp::writeInclude (std::list <std::string> & name) {
-    std::list <std::string>::const_iterator namei;
+GenerateCodeCpp::writeInclude (std::pair <std::list <umlPackage>,
+                               umlClassNode * > & name) {
+    std::list <umlPackage>::const_iterator namei;
 
-    if (name.empty ()) {
+    if (name.second == NULL) {
         return false;
     }
 
     getFile () << spc () << "#include \"";
     
     if (getBuildTree ()) {
-        namei = name.begin ();
-        while (namei != name.end ()) {
-            getFile () << *namei;
-            ++namei;
-            if (namei != name.end ()) {
-                getFile () << SEPARATOR;
+        if (!name.first.empty ()) {
+            for (const umlPackage & pack : name.first) {
+                getFile () << pack.getName () << SEPARATOR;
             }
         }
+        getFile () << name.second->getName () << "." << getFileExt ()
+                   << "\"\n";
     }
     else if (getOneClass ()) {
-        namei = name.end ();
-        --namei;
-        getFile () << *namei;
+        getFile () << name.second->getName () << "." << getFileExt ()
+                   << "\"\n";
     }
     else {
-        namei = name.begin ();
-        getFile () << *namei;
+        if (!name.first.empty ()) {
+            namei = name.first.begin ();
+            getFile () << (*namei).getName () << "." << getFileExt ()
+                       << "\"\n";
+        }
+        else {
+            getFile () << name.second->getName () << "." << getFileExt ()
+            << "\"\n";
+        }
     }
-
-    getFile () << "." << getFileExt () << "\"\n";
 
     return true;
 }

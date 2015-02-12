@@ -102,23 +102,21 @@ GenerateCodeJava::writeEndHeader () {
 }
 
 bool
-GenerateCodeJava::writeInclude (std::list <std::string> & name) {
-    std::list <std::string>::const_iterator namei = name.begin ();
-
-    if (name.empty ()) {
+GenerateCodeJava::writeInclude (std::pair <std::list <umlPackage>,
+                                umlClassNode * > & name) {
+    if (name.second == NULL) {
         return false;
     }
 
     getFile () << spc () << "import ";
 
-    while (namei != name.end ()) {
-        getFile () << *namei;
-        ++namei;
-        if (namei != name.end ()) {
-            getFile () << ".";
+    if (!name.first.empty ()) {
+        for (umlPackage & namei : name.first) {
+            getFile () << namei.getName () << ".";
         }
     }
-    getFile () << ";\n";
+
+    getFile () << name.second->getName () << ";\n";
 
     return true;
 }
