@@ -587,7 +587,7 @@ dirName (const umlPackage &pkg) {
 
     buf.clear ();
     std::list <umlPackage> pkglist;
-    umlPackage::make_package_list (&pkg, pkglist);
+    umlPackage::makePackageList (&pkg, pkglist);
     it = pkglist.begin ();
     while (it != pkglist.end ()) {
         buf.append ((*it).getName ());

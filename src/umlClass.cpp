@@ -155,7 +155,7 @@ umlClass::makeGetSetMethods () {
 */
 void
 umlClass::lolipopImplementation (std::list <umlClassNode> & classlist,
-                                  xmlNodePtr object) {
+                                 xmlNodePtr object) {
     xmlNodePtr attribute;
     xmlChar *id = NULL;
     const char *name = NULL;
@@ -214,30 +214,37 @@ associate (std::list <umlClassNode> & classlist,
 
 void
 makeDepend (std::list <umlClassNode> & classlist,
-             std::list <umlPackage> & packagelist,
-             const char * dependent,
-             const char * dependee) {
+            std::list <umlPackage> & packagelist,
+            const char * dependent,
+            const char * dependee) {
     umlClassNode *umldependent, *umldependee;
     umldependent = umlClassNode::find (classlist, dependent);
     umldependee = umlClassNode::find (classlist, dependee);
     if (umldependent != NULL && umldependee != NULL) {
         umldependee->addDependency (*umldependent);
     }
+    // The dependence is a package
+    else if (umldependent == NULL) {
+        umlPackage *umldependent2 = umlPackage::find (packagelist, dependent);
+        if (umldependent2 != NULL) {
+            umldependee->addDependency (*umldependent2);
+        }
+        else {
+            fprintf (stderr, "Failed to find dependence %s.\n", dependent);
+        }
+    }
+    // A package has a dependence.
     else {
         fprintf (stderr,
-                 "Failed to find dependance between id=%s and id=%s. "
-                 "Maybe id=%s is not a class (package for example).\n",
-                 dependent,
-                 dependee,
-                 umldependent == NULL ? dependent : dependee);
+                 "A package can not have a dependence, only class.\n");
     }
 }
 
 void
 inheritRealize (std::list <umlClassNode> & classlist,
-                 const char * base,
-                 const char * derived,
-                 Visibility visible) {
+                const char * base,
+                const char * derived,
+                Visibility visible) {
     umlClassNode *umlbase, *umlderived;
     umlbase = umlClassNode::find (classlist, base);
     umlderived = umlClassNode::find (classlist, derived);
@@ -252,7 +259,7 @@ inheritRealize (std::list <umlClassNode> & classlist,
 */
 int
 isInside (const geometry & geom1,
-           const geometry & geom2) {
+          const geometry & geom2) {
     return geom1.posX < geom2.posX &&
            geom2.posX < geom1.posX + geom1.width &&
            geom1.posY < geom2.posY &&

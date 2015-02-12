@@ -51,7 +51,7 @@ GenerateCodeCpp::fqname (const umlClassNode &node, bool use_ref_type) {
     buf.clear ();
     if (node.getPackage () != NULL) {
         std::list <umlPackage> pkglist;
-        umlPackage::make_package_list (node.getPackage (), pkglist);
+        umlPackage::makePackageList (node.getPackage (), pkglist);
         for (const umlPackage & it : pkglist) {
             buf.append (strPackage (it.getName ().c_str ()));
         }
@@ -382,7 +382,7 @@ void
 GenerateCodeCpp::writeNameSpaceStart (const umlClassNode * node) {
     if (node->getPackage () != NULL) {
         std::list <umlPackage> pkglist;
-        umlPackage::make_package_list (node->getPackage (), pkglist);
+        umlPackage::makePackageList (node->getPackage (), pkglist);
         for (const umlPackage & it : pkglist) {
             if (getOpenBraceOnNewline ()) {
                 getFile () << spc () << "namespace " << it.getName () << "\n"

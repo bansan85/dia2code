@@ -87,7 +87,7 @@ DiaGram::setUseCorba (bool corba) {
    given batch */
 void
 DiaGram::listClasses (umlClassNode & current_class,
-                       std::list <umlClassNode> & res) {
+                      std::list <umlClassNode> & res) {
     std::list <umlClassNode> classes = getUml ();
     umlClassNode * tmpnode;
 
@@ -144,10 +144,9 @@ DiaGram::listClasses (umlClassNode & current_class,
 }
 
 module *
-create_nested_modules_from_pkglist (
-    const std::list <umlPackage>::iterator &debut,
-    const std::list <umlPackage>::iterator &fin,
-    module *m) {
+createNestedModulesFromPkglist (const std::list <umlPackage>::iterator &debut,
+                                const std::list <umlPackage>::iterator &fin,
+                                module *m) {
     bool first = true;
     std::list <umlPackage>::iterator it;
     assert (m != NULL);
@@ -169,9 +168,9 @@ create_nested_modules_from_pkglist (
 }
 
 module *
-find_or_add_module (std::list <declaration> &dptr,
-                    const std::list <umlPackage>::iterator &debut,
-                    const std::list <umlPackage>::iterator &fin) {
+findOrAddModule (std::list <declaration> &dptr,
+                 const std::list <umlPackage>::iterator &debut,
+                 const std::list <umlPackage>::iterator &fin) {
     declaration d;
     module *m;
 
@@ -188,9 +187,9 @@ find_or_add_module (std::list <declaration> &dptr,
                 return m;
             }
             if (m->contents.empty ()) {
-                return create_nested_modules_from_pkglist (debut, fin, m);
+                return createNestedModulesFromPkglist (debut, fin, m);
             }
-            return find_or_add_module (m->contents, std::next (debut), fin);
+            return findOrAddModule (m->contents, std::next (debut), fin);
         }
     }
     d.decl_kind = dk_module;
@@ -199,7 +198,7 @@ find_or_add_module (std::list <declaration> &dptr,
     m->pkg = *debut;
     dptr.push_back (d);
 
-    return create_nested_modules_from_pkglist (debut, fin, m);
+    return createNestedModulesFromPkglist (debut, fin, m);
 }
 
 void
@@ -229,8 +228,8 @@ DiaGram::push (umlClassNode & node) {
     if (node.getPackage () != NULL) {
         std::list <umlPackage> pkglist;
         module *m;
-        umlPackage::make_package_list (node.getPackage (), pkglist);
-        m = find_or_add_module (decl, pkglist.begin (), pkglist.end ());
+        umlPackage::makePackageList (node.getPackage (), pkglist);
+        m = findOrAddModule (decl, pkglist.begin (), pkglist.end ());
         m->contents.push_back (d);
     } else {
         decl.push_back (d);
@@ -277,11 +276,11 @@ DiaGram::addInclude (const std::list <std::string> & name) {
 }
 
 void
-DiaGram::pushInclude (umlClassNode &node, bool oneClass, bool buildtree) {
+DiaGram::pushInclude (umlClassNode &node) {
     std::list <std::string> pkglist;
 
     if (node.getPackage () != NULL) {
-        umlPackage::make_package_list_name (node.getPackage (), pkglist);
+        umlPackage::makePackageListName (node.getPackage (), pkglist);
     }
     pkglist.push_back (node.getName ());
     addInclude (pkglist);
@@ -308,7 +307,7 @@ DiaGram::determineIncludes (declaration &d, bool oneClass, bool buildtree) {
         std::list <umlClassNode> cl;
         listClasses (*d.u.this_class, cl);
         for (umlClassNode & it : cl) {
-            pushInclude (it, oneClass, buildtree);
+            pushInclude (it);
         }
     }
 }

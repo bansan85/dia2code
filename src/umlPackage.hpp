@@ -38,15 +38,18 @@ class umlPackage {
         umlPackage (xmlNodePtr package, std::string id_);
         umlPackage (const umlPackage & pack);
 
-        const std::string getName () const;
+        const std::string & getId () const;
+        const std::string & getName () const;
         const geometry & getGeometry () const;
         const umlPackage * getParent () const;
         void setParent (umlPackage * pack);
 
-        static void make_package_list (const umlPackage * package,
+        static void makePackageList (const umlPackage * package,
                                        std::list <umlPackage> & res);
-        static void make_package_list_name (const umlPackage * package,
+        static void makePackageListName (const umlPackage * package,
                                             std::list <std::string> & res);
+        static umlPackage * find (std::list <umlPackage> & packagelist,
+                                  const char *id);
         
         ~umlPackage ();
 };

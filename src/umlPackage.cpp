@@ -75,7 +75,7 @@ umlPackage::umlPackage (const umlPackage & pack) :
     package will be the last.
 */
 void
-umlPackage::make_package_list (const umlPackage *package,
+umlPackage::makePackageList (const umlPackage *package,
                                std::list <umlPackage> &res) {
     umlPackage *par;
     
@@ -92,7 +92,7 @@ umlPackage::make_package_list (const umlPackage *package,
 }
 
 void
-umlPackage::make_package_list_name (const umlPackage *package,
+umlPackage::makePackageListName (const umlPackage *package,
                                     std::list <std::string> & res) {
     umlPackage *par;
 
@@ -108,7 +108,12 @@ umlPackage::make_package_list_name (const umlPackage *package,
     return;
 }
 
-const std::string
+const std::string &
+umlPackage::getId () const {
+    return id;
+}
+
+const std::string &
 umlPackage::getName () const {
     return name;
 }
@@ -126,6 +131,18 @@ umlPackage::getParent () const {
 void
 umlPackage::setParent (umlPackage * pack) {
     parent = pack;
+}
+
+umlPackage *
+umlPackage::find (std::list <umlPackage> & packagelist, const char *id) {
+    if (id != NULL) {
+        for (umlPackage & it : packagelist) {
+            if (it.getId ().compare (id) == 0) {
+                return &it;
+            }
+        }
+    }
+    return NULL;
 }
 
 umlPackage::~umlPackage () {

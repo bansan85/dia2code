@@ -52,7 +52,7 @@ class DiaGram {
         */
         bool haveInclude (const std::list <std::string> & name) const;
         void addInclude (const std::list <std::string> & name);
-        void pushInclude (umlClassNode & node, bool oneClass, bool buildtree);
+        void pushInclude (umlClassNode & node);
     public:
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;

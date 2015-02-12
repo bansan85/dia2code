@@ -52,6 +52,7 @@ class umlClassNode : public umlClass {
         declaration * findClass (std::list <declaration> & decl) const;
         void addParent (umlClass * key, Visibility inh);
         void addDependency (umlClassNode & dependent);
+        void addDependency (umlPackage & dependent);
         void addAggregate (const char *name,
                            char composite,
                            umlClassNode & base,

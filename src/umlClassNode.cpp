@@ -126,7 +126,7 @@ umlClassNode::findClass (std::list <declaration> &decl) const {
 
     if (getPackage ()) {
         std::list <umlPackage> pkglist;
-        umlPackage::make_package_list (getPackage (), pkglist);
+        umlPackage::makePackageList (getPackage (), pkglist);
         module *m = findModule (decl, pkglist.begin (), pkglist.end ());
         if (m == NULL || m->contents.empty ()) {
             return nullptr;
@@ -154,16 +154,20 @@ umlClassNode::addParent (umlClass * key, Visibility inh) {
 
 void
 umlClassNode::addDependency (umlClassNode & dependent) {
-    umlClassNode tmp (dependent);
     classDep.push_front (dependent);
 }
 
 void
+umlClassNode::addDependency (umlPackage & dependent) {
+    packageDep.push_front (dependent);
+}
+
+void
 umlClassNode::addAggregate (const char *name_,
-                            char composite,
-                            umlClassNode & base,
-                            const char *multiplicity,
-                            Visibility visibility) {
+        char composite,
+        umlClassNode & base,
+        const char *multiplicity,
+        Visibility visibility) {
     umlassoc tmp;
     if (name_ != NULL && strlen (name_) > 2) {
         parseDiaString(name_, tmp.name);

@@ -48,7 +48,7 @@ GenerateCodeJava::fqname (const umlClassNode &node, bool use_ref_type) {
     buf.clear ();
     if (node.getPackage () != NULL) {
         std::list <umlPackage> pkglist;
-        umlPackage::make_package_list (node.getPackage (), pkglist);
+        umlPackage::makePackageList (node.getPackage (), pkglist);
         for (const umlPackage & it : pkglist) {
             buf.append (strPackage (it.getName ().c_str ()));
         }
@@ -323,7 +323,7 @@ void
 GenerateCodeJava::writeNameSpaceStart (const umlClassNode * node) {
     if (node->getPackage () != NULL) {
         std::list <umlPackage> pkglist;
-        umlPackage::make_package_list (node->getPackage (), pkglist);
+        umlPackage::makePackageList (node->getPackage (), pkglist);
         std::list <umlPackage>::const_iterator it = pkglist.begin ();
 
         getFile () << spc () << "package ";
