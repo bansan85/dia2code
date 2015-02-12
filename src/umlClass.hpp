@@ -34,15 +34,15 @@ class umlClassNode;
 class umlPackage;
 
 struct geometry {
-    float pos_x;
-    float pos_y;
+    float posX;
+    float posY;
     float width;
     float height;
 };
 
-void parse_geom_position (xmlNodePtr attribute, geometry * geom);
-void parse_geom_width (xmlNodePtr attribute, geometry * geom);
-void parse_geom_height (xmlNodePtr attribute, geometry * geom);
+void parseGeomPosition (xmlNodePtr attribute, geometry * geom);
+void parseGeomWidth (xmlNodePtr attribute, geometry * geom);
+void parseGeomHeight (xmlNodePtr attribute, geometry * geom);
 
 class umlClass {
     private :
@@ -50,7 +50,7 @@ class umlClass {
         std::string name;
         std::string stereotype;
         std::string comment;
-        bool isabstract;
+        bool abstract;
         std::list <umlAttribute> attributes;
         std::list <umlOperation> operations;
 /*
@@ -77,11 +77,11 @@ class umlClass {
                                                          getTemplates () const;
         
         void makeGetSetMethods ();
-        static void lolipop_implementation (std::list <umlClassNode> & classlist,
-                                            xmlNodePtr object);
-        static void parse_diagram (char *diafile,
-                                   std::list <umlClassNode> & res);
-        void parse_class (xmlNodePtr class_);
+        static void lolipopImplementation (std::list <umlClassNode> & classlist,
+                                           xmlNodePtr object);
+        static void parseDiagram (char *diafile,
+                                  std::list <umlClassNode> & res);
+        void parseClass (xmlNodePtr class_);
 
         ~umlClass ();
 };

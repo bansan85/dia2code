@@ -38,7 +38,8 @@ umlClassNode::umlClassNode () :
     umlClass (),
     parents (),
     associations (),
-    dependencies ()
+    classDep (),
+    packageDep ()
 {
 }
 
@@ -46,7 +47,8 @@ umlClassNode::umlClassNode (const umlClassNode & classnode) :
     umlClass (classnode),
     parents (classnode.parents),
     associations (classnode.associations),
-    dependencies (classnode.dependencies)
+    classDep (classnode.classDep),
+    packageDep (classnode.packageDep)
 {
 }
 
@@ -54,11 +56,13 @@ umlClassNode::umlClassNode (umlClass * _key,
                             std::list <std::pair <umlClass *,
                                                   Visibility> > & parents_,
                             std::list <umlassoc> & associations_,
-                            std::list <umlClassNode> & dependencies_) :
+                            std::list <umlClassNode> & classDep_,
+                            std::list <umlPackage> & packageDep_) :
     umlClass (*_key),
     parents (parents_),
     associations (associations_),
-    dependencies (dependencies_)
+    classDep (classDep_),
+    packageDep (packageDep_)
 {
 }
 
@@ -66,7 +70,8 @@ umlClassNode::umlClassNode (umlClass & _key) :
     umlClass (_key),
     parents (),
     associations (),
-    dependencies ()
+    classDep (),
+    packageDep ()
 {
 }
 
@@ -82,11 +87,11 @@ umlClassNode::getAssociations () const {
 
 const std::list <umlClassNode> &
 umlClassNode::getDependencies () const {
-    return dependencies;
+    return classDep;
 }
 
 module *
-find_module (std::list <declaration> &dptr,
+findModule (std::list <declaration> &dptr,
              std::list <umlPackage>::iterator begin,
              std::list <umlPackage>::iterator end) {
     std::list <declaration>::iterator it = dptr.begin ();
@@ -102,7 +107,7 @@ find_module (std::list <declaration> &dptr,
                     }
                     else {
                         liste.push_back (*m->contents.begin ());
-                        return find_module (liste, std::next (begin), end);
+                        return findModule (liste, std::next (begin), end);
                     }
                 }
                 else {
@@ -116,13 +121,13 @@ find_module (std::list <declaration> &dptr,
 }
 
 declaration *
-umlClassNode::find_class (std::list <declaration> &decl) const {
+umlClassNode::findClass (std::list <declaration> &decl) const {
     std::list <declaration> *d;
 
     if (getPackage ()) {
         std::list <umlPackage> pkglist;
         umlPackage::make_package_list (getPackage (), pkglist);
-        module *m = find_module (decl, pkglist.begin (), pkglist.end ());
+        module *m = findModule (decl, pkglist.begin (), pkglist.end ());
         if (m == NULL || m->contents.empty ()) {
             return nullptr;
         }
@@ -143,18 +148,18 @@ umlClassNode::find_class (std::list <declaration> &decl) const {
 }
 
 void
-umlClassNode::addparent (umlClass * key, Visibility inh) {
+umlClassNode::addParent (umlClass * key, Visibility inh) {
     parents.push_front (std::make_pair (key, inh));
 }
 
 void
-umlClassNode::adddependency (umlClassNode & dependent) {
+umlClassNode::addDependency (umlClassNode & dependent) {
     umlClassNode tmp (dependent);
-    dependencies.push_front (dependent);
+    classDep.push_front (dependent);
 }
 
 void
-umlClassNode::addaggregate (const char *name_,
+umlClassNode::addAggregate (const char *name_,
                             char composite,
                             umlClassNode & base,
                             const char *multiplicity,

@@ -207,7 +207,7 @@ DiaGram::push (umlClassNode & node) {
     std::list <umlClassNode> used_classes;
     declaration d;
 
-    if (node.find_class (decl) != NULL) {
+    if (node.findClass (decl) != NULL) {
         return;
     }
 

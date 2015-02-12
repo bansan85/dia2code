@@ -48,11 +48,11 @@ umlPackage::umlPackage (xmlNodePtr package, std::string id_) :
             if (!strcmp ("name", BAD_TSAC2 (attrname))) {
                 parseDiaNode (attribute->xmlChildrenNode, name);
             } else if (!strcmp ("obj_pos", BAD_TSAC2 (attrname))) {
-                parse_geom_position (attribute->xmlChildrenNode, &geom);
+                parseGeomPosition (attribute->xmlChildrenNode, &geom);
             } else if (!strcmp ("elem_width", BAD_TSAC2 (attrname))) {
-                parse_geom_width (attribute->xmlChildrenNode, &geom);
+                parseGeomWidth (attribute->xmlChildrenNode, &geom);
             } else if (!strcmp ("elem_height", BAD_TSAC2 (attrname))) {
-                parse_geom_height (attribute->xmlChildrenNode, &geom);
+                parseGeomHeight (attribute->xmlChildrenNode, &geom);
             }
             xmlFree (attrname);
         }

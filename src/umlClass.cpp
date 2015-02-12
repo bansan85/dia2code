@@ -28,7 +28,7 @@ umlClass::umlClass () :
     name (),
     stereotype (),
     comment (),
-    isabstract (false),
+    abstract (false),
     attributes (),
     operations (),
     templates (),
@@ -63,7 +63,7 @@ umlClass::getComment () const {
 
 bool
 umlClass::isAbstract () const {
-    return isabstract;
+    return abstract;
 }
 
 const std::list <umlAttribute> &
@@ -154,7 +154,7 @@ umlClass::makeGetSetMethods () {
   into the classlist, so no code can be generated for it.
 */
 void
-umlClass::lolipop_implementation (std::list <umlClassNode> & classlist,
+umlClass::lolipopImplementation (std::list <umlClassNode> & classlist,
                                   xmlNodePtr object) {
     xmlNodePtr attribute;
     xmlChar *id = NULL;
@@ -187,8 +187,8 @@ umlClass::lolipop_implementation (std::list <umlClassNode> & classlist,
         key->package = nullptr;
         key->id.assign ("00");
         parseDiaString (name, key->name);
-        key->isabstract = true;
-        implementator->addparent (key, Visibility::PUBLIC);
+        key->abstract = true;
+        implementator->addParent (key, Visibility::PUBLIC);
     }
 }
 
@@ -204,7 +204,7 @@ associate (std::list <umlClassNode> & classlist,
     umlbase = umlClassNode::find (classlist, base);
     umlaggregate = umlClassNode::find (classlist, aggregate);
     if (umlbase != NULL && umlaggregate != NULL) {
-        umlaggregate->addaggregate (name,
+        umlaggregate->addAggregate (name,
                                     composite,
                                     *umlbase,
                                     multiplicity,
@@ -213,18 +213,19 @@ associate (std::list <umlClassNode> & classlist,
 }
 
 void
-make_depend (std::list <umlClassNode> & classlist,
+makeDepend (std::list <umlClassNode> & classlist,
+             std::list <umlPackage> & packagelist,
              const char * dependent,
              const char * dependee) {
     umlClassNode *umldependent, *umldependee;
     umldependent = umlClassNode::find (classlist, dependent);
     umldependee = umlClassNode::find (classlist, dependee);
     if (umldependent != NULL && umldependee != NULL) {
-        umldependee->adddependency (*umldependent);
+        umldependee->addDependency (*umldependent);
     }
     else {
         fprintf (stderr,
-                 "Impossible to find dependance between id=%s and id=%s. "
+                 "Failed to find dependance between id=%s and id=%s. "
                  "Maybe id=%s is not a class (package for example).\n",
                  dependent,
                  dependee,
@@ -233,7 +234,7 @@ make_depend (std::list <umlClassNode> & classlist,
 }
 
 void
-inherit_realize (std::list <umlClassNode> & classlist,
+inheritRealize (std::list <umlClassNode> & classlist,
                  const char * base,
                  const char * derived,
                  Visibility visible) {
@@ -241,7 +242,7 @@ inherit_realize (std::list <umlClassNode> & classlist,
     umlbase = umlClassNode::find (classlist, base);
     umlderived = umlClassNode::find (classlist, derived);
     if (umlbase != NULL && umlderived != NULL) {
-        umlderived->addparent (umlbase, visible);
+        umlderived->addParent (umlbase, visible);
     }
 }
 
@@ -250,17 +251,17 @@ inherit_realize (std::list <umlClassNode> & classlist,
            0 otherwise
 */
 int
-is_inside (const geometry & geom1,
+isInside (const geometry & geom1,
            const geometry & geom2) {
-    return geom1.pos_x < geom2.pos_x &&
-           geom2.pos_x < geom1.pos_x + geom1.width &&
-           geom1.pos_y < geom2.pos_y &&
-           geom2.pos_y < geom1.pos_y + geom1.height;
+    return geom1.posX < geom2.posX &&
+           geom2.posX < geom1.posX + geom1.width &&
+           geom1.posY < geom2.posY &&
+           geom2.posY < geom1.posY + geom1.height;
 
 }
 
 void
-parse_geom_position (xmlNodePtr attribute, geometry * geom) {
+parseGeomPosition (xmlNodePtr attribute, geometry * geom) {
     xmlChar *val;
     char * token;
 
@@ -270,21 +271,21 @@ parse_geom_position (xmlNodePtr attribute, geometry * geom) {
     char *context = NULL;
 
     token = strtok_s (reinterpret_cast <char *> (val), ",", &context);
-    sscanf_s (token, "%f", &(geom->pos_x) );
+    sscanf_s (token, "%f", &(geom->posX) );
     token = strtok_s(nullptr, ",", &context);
-    sscanf_s (token, "%f", &(geom->pos_y));
+    sscanf_s (token, "%f", &(geom->posY));
 #else
     token = strtok(reinterpret_cast <char *> (val), ",");
-    sscanf (token, "%f", &(geom->pos_x));
+    sscanf (token, "%f", &(geom->posX));
     token = strtok (nullptr, ",");
-    sscanf (token, "%f", &(geom->pos_y));
+    sscanf (token, "%f", &(geom->posY));
 #endif
 
     xmlFree (val);
 }
 
 void
-parse_geom_width (xmlNodePtr attribute, geometry * geom ) {
+parseGeomWidth (xmlNodePtr attribute, geometry * geom ) {
     xmlChar *val;
     val = xmlGetProp (attribute, BAD_CAST2 ("val"));
 #if defined(_WIN32) || defined(_WIN64)
@@ -296,7 +297,7 @@ parse_geom_width (xmlNodePtr attribute, geometry * geom ) {
 }
 
 void
-parse_geom_height (xmlNodePtr attribute, geometry * geom ) {
+parseGeomHeight (xmlNodePtr attribute, geometry * geom ) {
     xmlChar *val;
     val = xmlGetProp (attribute, BAD_CAST2 ("val"));
 #if defined(_WIN32) || defined(_WIN64)
@@ -308,7 +309,7 @@ parse_geom_height (xmlNodePtr attribute, geometry * geom ) {
 }
 
 void
-umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
+umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
     xmlDocPtr ptr;
     xmlChar *end1 = nullptr;
     xmlChar *end2 = nullptr;
@@ -332,7 +333,7 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
         if (strcmp ("UML - Class", BAD_TSAC2 (objtype)) == 0) {
             // Here we have a class definition
             umlClassNode tmplist;
-            tmplist.parse_class (object);
+            tmplist.parseClass (object);
             // We get the ID of the object here
             xmlChar *objid = xmlGetProp (object, BAD_CAST2 ("id"));
             tmplist.id.assign (BAD_TSAC2 (objid));
@@ -564,7 +565,10 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                                        BAD_CAST2 ("to"));
                     end2 = xmlGetProp (attribute->xmlChildrenNode,
                                        BAD_CAST2 ("to"));
-                    make_depend (res, BAD_TSAC2 (end1), BAD_TSAC2 (end2));
+                    makeDepend (res,
+                                packagelst,
+                                BAD_TSAC2 (end1),
+                                BAD_TSAC2 (end2));
                     free (end1);
                     end1 = nullptr;
                     free (end2);
@@ -573,7 +577,7 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                 attribute = attribute->next;
             }
         } else if (!strcmp ("UML - Implements", BAD_TSAC2 (objtype))) {
-            umlClass::lolipop_implementation (res, object);
+            umlClass::lolipopImplementation (res, object);
         } else if ((!strcmp ("UML - Generalization", BAD_TSAC2 (objtype))) ||
                    (!strcmp ("UML - Realizes", BAD_TSAC2 (objtype)))) {
             xmlNodePtr attribute = object->xmlChildrenNode;
@@ -621,10 +625,10 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
                 attribute = attribute->next;
             }
             if ((end1 != nullptr) && (end2 != nullptr)) {
-                inherit_realize (res,
-                                 BAD_TSAC2 (end1),
-                                 BAD_TSAC2(end2),
-                                 visible);
+                inheritRealize (res,
+                                BAD_TSAC2 (end1),
+                                BAD_TSAC2(end2),
+                                visible);
                 free (end2);
                 end2 = nullptr;
                 free (end1);
@@ -643,11 +647,11 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
     // Build the relationships between packages
     for (umlPackage & dummypcklst : packagelst) {
         for (umlPackage & tmppcklst : packagelst) {
-            if (is_inside (dummypcklst.getGeometry (),
+            if (isInside (dummypcklst.getGeometry (),
                            tmppcklst.getGeometry ())) {
                 if ((tmppcklst.getParent () == NULL) ||
-                     (! is_inside (dummypcklst.getGeometry (),
-                                   tmppcklst.getParent ()->getGeometry ()))) {
+                     (! isInside (dummypcklst.getGeometry (),
+                                  tmppcklst.getParent ()->getGeometry ()))) {
                     tmppcklst.setParent (new umlPackage (dummypcklst));
                 }
             }
@@ -657,10 +661,10 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
     // Associate packages to classes
     for (umlPackage & dummypcklst : packagelst) {
         for (umlClassNode & it : res) {
-            if (is_inside (dummypcklst.getGeometry (), it.geom)) {
+            if (isInside (dummypcklst.getGeometry (), it.geom)) {
                 if ((it.package == NULL) ||
-                     (! is_inside (dummypcklst.getGeometry (),
-                                   it.package->getGeometry ()))) {
+                     (! isInside (dummypcklst.getGeometry (),
+                                  it.package->getGeometry ()))) {
                     delete it.package;
                     it.package = new umlPackage (dummypcklst);
                 }
@@ -674,7 +678,7 @@ umlClass::parse_diagram (char *diafile, std::list <umlClassNode> & res) {
 }
 
 void
-umlClass::parse_class (xmlNodePtr class_) {
+umlClass::parseClass (xmlNodePtr class_) {
     xmlNodePtr attribute;
 
     package = nullptr;
@@ -690,11 +694,11 @@ umlClass::parse_class (xmlNodePtr class_) {
         if (!strcmp ("name", BAD_TSAC2 (attrname))) {
             parseDiaNode (attribute->xmlChildrenNode, name);
         } else if (!strcmp ("obj_pos", BAD_TSAC2 (attrname))) {
-            parse_geom_position (attribute->xmlChildrenNode, &geom);
+            parseGeomPosition (attribute->xmlChildrenNode, &geom);
         } else if (!strcmp ("elem_width", BAD_TSAC2 (attrname))) {
-            parse_geom_width (attribute->xmlChildrenNode, &geom);
+            parseGeomWidth (attribute->xmlChildrenNode, &geom);
         } else if (!strcmp ("elem_height", BAD_TSAC2 (attrname))) {
-            parse_geom_height (attribute->xmlChildrenNode, &geom);
+            parseGeomHeight (attribute->xmlChildrenNode, &geom);
         } else if (!strcmp ("comment", BAD_TSAC2 (attrname)))  {
             if (attribute->xmlChildrenNode->xmlChildrenNode != NULL) {
                parseDiaNode (attribute->xmlChildrenNode, comment);
@@ -708,7 +712,7 @@ umlClass::parse_class (xmlNodePtr class_) {
                 stereotype.clear ();
             }
         } else if (!strcmp ("abstract", BAD_TSAC2 (attrname))) {
-            isabstract = parseBoolean (attribute->xmlChildrenNode);
+            abstract = parseBoolean (attribute->xmlChildrenNode);
         } else if (!strcmp ("attributes", BAD_TSAC2 (attrname))) {
             parseAttributes (attribute->xmlChildrenNode, attributes);
         } else if (!strcmp ("operations", BAD_TSAC2 (attrname))) {

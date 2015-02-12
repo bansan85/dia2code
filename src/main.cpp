@@ -231,7 +231,7 @@ under certain conditions; read the COPYING file for details.\n";
     xmlKeepBlanksDefault (0);
 
     // We build the class list from the dia file here
-    umlClass::parse_diagram (infile, diagram.getUml ());
+    umlClass::parseDiagram (infile, diagram.getUml ());
 
     generator->setIndent (tab);
     generator->setOverwrite (overwrite);
