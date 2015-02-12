@@ -1,6 +1,6 @@
 /**
  * com struct
-*/
+ */
 public class structure {
     // Attributes
     /**

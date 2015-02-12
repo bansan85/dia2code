@@ -192,9 +192,6 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
     if (ope.getName ().empty ()) {
         fprintf (stderr, "An unamed operation is found.\n");
     }
-    if (ope.getStereotype ().compare ("delete") == 0) {
-        const_cast <umlOperation &> (ope).setVisibility (Visibility::PRIVATE);
-    }
     incIndentLevel ();
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
@@ -207,7 +204,11 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
     else
 #endif
     {
-        check_visibility (curr_visibility, ope.getVisibility ());
+        if (ope.getStereotype ().compare ("delete") == 0) {
+            check_visibility (curr_visibility, Visibility::PRIVATE);
+        } else {
+            check_visibility (curr_visibility, ope.getVisibility ());
+        }
     }
 
     /* print comments on operation */
