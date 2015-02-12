@@ -339,8 +339,8 @@ GenerateCode::passByReference (umlClass &cl) {
         return true;
     }
     if (isTypedefStereo (st)) {
-        umlClassNode *ref = find_by_name (dia.getUml (),
-                                          cl.getName ().c_str ());
+        umlClassNode *ref = findByName (dia.getUml (),
+                                        cl.getName ().c_str ());
         if (ref == NULL) {
             return false;
         }
@@ -475,7 +475,7 @@ GenerateCode::genClass (const umlClassNode & node) {
                              name,
                              member);
                 }
-                ref = find_by_name (dia.getUml (), umla.getType ().c_str ());
+                ref = findByName (dia.getUml (), umla.getType ().c_str ());
                 if (ref != NULL) {
                     getFile () << spc () << fqname (*ref, true);
                 }
@@ -560,8 +560,8 @@ GenerateCode::genClass (const umlClassNode & node) {
         getFile () << spc () << "private :\n";
         incIndentLevel ();
         for (const umlAttribute & umla : node.getAttributes ()) {
-            umlClassNode *ref = find_by_name (dia.getUml (),
-                                              umla.getType ().c_str ());
+            umlClassNode *ref = findByName (dia.getUml (),
+                                            umla.getType ().c_str ());
             getFile () << spc ();
             if (ref != NULL) {
                 getFile () << fqname (*ref, isOoClass (*ref));

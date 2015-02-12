@@ -429,8 +429,8 @@ GenerateCodeJava::writeTypedef (const umlClassNode & node) {
     }
     getFile () << spc () << "class " << cppName (node.getName ())
                << " extends ";
-    const umlClassNode * umlc = find_by_name (getDia ().getUml (),
-                                              (*umla).getType ().c_str ());
+    const umlClassNode * umlc = findByName (getDia ().getUml (),
+                                            (*umla).getType ().c_str ());
     if (umlc == NULL) {
         getFile () << cppName ((*umla).getType ());
     }
@@ -458,8 +458,8 @@ GenerateCodeJava::writeTemplates (
     getFile () << " <";
     while (template_ != tmps.end ()) {
         getFile () << (*template_).first << " extends ";
-        const umlClassNode * umlc = find_by_name (getDia ().getUml (),
-                                                 (*template_).second.c_str ());
+        const umlClassNode * umlc = findByName (getDia ().getUml (),
+                                                (*template_).second.c_str ());
         if (umlc == NULL) {
             getFile () << cppName ((*template_).second);
         }

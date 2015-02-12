@@ -96,21 +96,21 @@ DiaGram::listClasses (umlClassNode & current_class,
     // Type may be unknown.
     for (const umlAttribute & umla : current_class.getAttributes ()) {
         if (!umla.getType ().empty ()) {
-            tmpnode = find_by_name (classes, umla.getType ().c_str ());
-            if (tmpnode && ! find_by_name (resCla, umla.getType ().c_str ())) {
+            tmpnode = findByName (classes, umla.getType ().c_str ());
+            if (tmpnode && ! findByName (resCla, umla.getType ().c_str ())) {
                 resCla.push_back (*tmpnode);
             }
         }
     }
 
     for (const umlOperation & umlo : current_class.getOperations ()) {
-        tmpnode = find_by_name (classes, umlo.getType ().c_str ());
-        if (tmpnode && ! find_by_name (resCla, umlo.getType ().c_str ())) {
+        tmpnode = findByName (classes, umlo.getType ().c_str ());
+        if (tmpnode && ! findByName (resCla, umlo.getType ().c_str ())) {
             resCla.push_back (*tmpnode);
         }
         for (const umlAttribute & umla : umlo.getParameters ()) {
-            tmpnode = find_by_name (classes, umla.getType ().c_str ());
-            if (tmpnode && !find_by_name (resCla, umla.getType ().c_str ())) {
+            tmpnode = findByName (classes, umla.getType ().c_str ());
+            if (tmpnode && !findByName (resCla, umla.getType ().c_str ())) {
                 resCla.push_back (*tmpnode);
             }
         }
@@ -119,25 +119,25 @@ DiaGram::listClasses (umlClassNode & current_class,
     // But not parents, dependencies and associations.
     for (const std::pair <umlClass *, Visibility> classit :
                                                  current_class.getParents ()) {
-        tmpnode = find_by_name (classes, classit.first->getName ().c_str ());
+        tmpnode = findByName (classes, classit.first->getName ().c_str ());
         assert (tmpnode != NULL);
-        if (!find_by_name (resCla, classit.first->getName ().c_str ())) {
+        if (!findByName (resCla, classit.first->getName ().c_str ())) {
             resCla.push_back (*tmpnode);
         }
     }
 
     for (const umlClassNode & classit : current_class.getDependencies ()) {
-        tmpnode = find_by_name (classes, classit.getName ().c_str ());
+        tmpnode = findByName (classes, classit.getName ().c_str ());
         assert (tmpnode != NULL);
-        if (!find_by_name (resCla, classit.getName ().c_str ())) {
+        if (!findByName (resCla, classit.getName ().c_str ())) {
             resCla.push_back (*tmpnode);
         }
     }
 
     for (const umlassoc & associations : current_class.getAssociations ()) {
-        tmpnode = find_by_name (classes, associations.key.getName ().c_str ());
+        tmpnode = findByName (classes, associations.key.getName ().c_str ());
         assert (tmpnode != NULL);
-        if (!find_by_name (resCla, associations.key.getName ().c_str ())) {
+        if (!findByName (resCla, associations.key.getName ().c_str ())) {
             resCla.push_back (*tmpnode);
         }
     }

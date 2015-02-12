@@ -543,8 +543,8 @@ GenerateCodeCpp::writeTypedef (const umlClassNode & node) {
                  "Warning: typedef %s: ignoring name field in implementation type attribute\n",
                  node.getName ().c_str ());
     }
-    const umlClassNode * umlc = find_by_name (getDia ().getUml (),
-                                              (*umla).getType ().c_str ());
+    const umlClassNode * umlc = findByName (getDia ().getUml (),
+                                            (*umla).getType ().c_str ());
     getFile () << spc () << "typedef ";
     if (umlc == NULL) {
         getFile () << cppName ((*umla).getType ());
@@ -561,8 +561,8 @@ GenerateCodeCpp::writeAssociation (const umlassoc & asso,
     if (!asso.name.empty ()) {
         incIndentLevel ();
         const umlClassNode *ref;
-        ref = find_by_name (getDia ().getUml (),
-                            asso.key.getName ().c_str ());
+        ref = findByName (getDia ().getUml (),
+                          asso.key.getName ().c_str ());
         check_visibility (curr_visibility, asso.visibility);
         getFile () << spc ();
         if (ref != NULL) {
@@ -583,8 +583,8 @@ GenerateCodeCpp::writeTemplates (
                                                      template_ = tmps.begin ();
     getFile () << spc () << "template <";
     while (template_ != tmps.end ()) {
-        const umlClassNode * umlc = find_by_name (getDia ().getUml (),
-                                                 (*template_).second.c_str ());
+        const umlClassNode * umlc = findByName (getDia ().getUml (),
+                                                (*template_).second.c_str ());
         if (umlc == NULL) {
             getFile () << cppName ((*template_).second);
         }

@@ -90,6 +90,11 @@ umlClassNode::getDependencies () const {
     return classDep;
 }
 
+const std::list <umlPackage> &
+umlClassNode::getDependenciesPack () const {
+    return packageDep;
+}
+
 module *
 findModule (std::list <declaration> &dptr,
              std::list <umlPackage>::iterator begin,

@@ -48,6 +48,7 @@ class umlClassNode : public umlClass {
                                                            getParents () const;
         const std::list <umlassoc> & getAssociations () const;
         const std::list <umlClassNode> & getDependencies () const;
+        const std::list <umlPackage> & getDependenciesPack () const;
 
         declaration * findClass (std::list <declaration> & decl) const;
         void addParent (umlClass * key, Visibility inh);

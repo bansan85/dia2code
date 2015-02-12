@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "scan_tree.hpp"
 
-umlClassNode * find_by_name (std::list <umlClassNode> & list,
+umlClassNode * findByName (std::list <umlClassNode> & list,
                              const char * name ) {
     umlClassNode * ret = NULL;
     if ( name != NULL && strlen (name) > 0 ) {
