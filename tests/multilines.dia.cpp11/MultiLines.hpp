@@ -2,7 +2,6 @@
 #define MULTILINES__HPP
 
 /**
- * \class MultiLines
  * \brief Line 1
  *        Line 2
 */

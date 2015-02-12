@@ -42,56 +42,13 @@ GenerateCodeJava::strPackage (const char * package) const {
 }
 
 const char *
-GenerateCodeJava::fqname (const umlClassNode &node, bool use_ref_type) {
-    static std::string buf;
-
-    buf.clear ();
-    if (node.getPackage () != NULL) {
-        std::list <umlPackage*> pkglist;
-
-        umlPackage::makePackageList (node.getPackage (), pkglist);
-        for (const umlPackage * it : pkglist) {
-            buf.append (strPackage (it->getName ().c_str ()));
-        }
-    }
-    if (use_ref_type) {
-        buf.append (strPointer (node.getName ()));
-    }
-    else {
-        buf.append (node.getName ());
-    }
-    return buf.c_str ();
-}
-
-const char *
 GenerateCodeJava::visibility (const Visibility & vis) {
-    switch (vis) {
-        case Visibility::PUBLIC:
-            return "public";
-        case Visibility::PRIVATE:
-            return "private";
-        case Visibility::PROTECTED:
-            return "protected";
-        case Visibility::IMPLEMENTATION:
-            fprintf (stderr, "Implementation not applicable in Java.\n"
-                             "Default: public.\n");
-            return "public";
-            break;
-        default :
-            throw std::string ("Unknown visibility.\n");
-            break;
-    }
+    return visibility1 (vis);
 }
 
 void
 GenerateCodeJava::writeLicense () {
-    if (getLicense ().empty ()) {
-        return;
-    }
-
-    getFile () << "/*\n";
-    writeFile ();
-    getFile () << " */\n\n";
+    writeLicense1 ("/*", " */");
 }
 
 void
@@ -150,7 +107,7 @@ GenerateCodeJava::writeFunctionComment (const umlOperation & ope) {
 }
 
 void
-GenerateCodeJava::writeFunction (const umlOperation & ope,
+GenerateCodeJava::writeFunction1 (const umlOperation & ope,
                                  Visibility & curr_visibility) {
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
@@ -169,12 +126,11 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
 
     getFile () << spc ();
     getFile () << visibility (ope.getVisibility ()) << " ";
-    if (ope.getInheritance () == Inheritance::ABSTRACT) {
-        getFile () << "abstract ";
-    }
-    else if (ope.getInheritance () == Inheritance::FINAL) {
-        getFile () << "final ";
-    }
+}
+
+void
+GenerateCodeJava::writeFunction2 (const umlOperation & ope,
+                                  Visibility & curr_visibility) {
     if (ope.isStatic ()) {
 #ifdef ENABLE_CORBA
         if (getCorba ()) {
@@ -226,6 +182,21 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
 }
 
 void
+GenerateCodeJava::writeFunction (const umlOperation & ope,
+                                 Visibility & curr_visibility) {
+    writeFunction1 (ope, curr_visibility);
+
+    if (ope.getInheritance () == Inheritance::ABSTRACT) {
+        getFile () << "abstract ";
+    }
+    else if (ope.getInheritance () == Inheritance::FINAL) {
+        getFile () << "final ";
+    }
+
+    writeFunction2 (ope, curr_visibility);
+}
+
+void
 GenerateCodeJava::writeComment (const std::string & text) {
     getFile () << spc () << "// " << text << "\n";
 }
@@ -236,10 +207,10 @@ GenerateCodeJava::writeComment (const char * text) {
 }
 
 void
-GenerateCodeJava::writeClassComment (const umlClassNode & node) {
-    if (!node.getComment ().empty ()) {
+GenerateCodeJava::writeClassComment (const std::string & nom) {
+    if (!nom.empty ()) {
         getFile () << spc () << "/**\n";
-        getFile () << comment (node.getComment (),
+        getFile () << comment (nom,
                                std::string (spc () + " * "),
                                std::string (spc () + " * "));
         getFile () << spc () << " */\n";
@@ -299,13 +270,7 @@ GenerateCodeJava::writeClassEnd () {
 void
 GenerateCodeJava::writeAttribute (const umlAttribute & attr,
                                   Visibility & curr_visibility) {
-    if (!attr.getComment ().empty ()) {
-        getFile () << spc () << "/**\n";
-        getFile () << comment (attr.getComment (),
-                               std::string (spc () + " * "),
-                               std::string (spc () + " * "));
-        getFile () << spc () << " */\n";
-    }
+    writeClassComment (attr.getComment ());
     getFile () << spc () << visibility (attr.getVisibility ()) << " ";
     if (attr.isStatic ()) {
         getFile () << "static " << attr.getType () << " " << attr.getName ();
@@ -353,11 +318,7 @@ GenerateCodeJava::writeEnum (const umlClassNode & node) {
     std::list <umlAttribute>::const_iterator umla;
 
     umla = node.getAttributes ().begin ();
-    if (!node.getComment ().empty ()) {
-        getFile () << spc () << "/**\n";
-        getFile () << spc () << " * " << node.getComment () << "\n";
-        getFile () << spc () << " */\n";
-    }
+    writeClassComment (node.getComment ());
     if (getOpenBraceOnNewline ()) {
         getFile () << spc () << "public enum " << node.getName () << "\n";
         getFile () << spc () << "{\n";
@@ -385,9 +346,7 @@ GenerateCodeJava::writeEnum (const umlClassNode & node) {
                      node.getName ().c_str (),
                      (*umla).getName ().c_str ());
         }
-        if (!(*umla).getComment ().empty ()) {
-            getFile () << spc () << "/// " << (*umla).getComment () << "\n";
-        }
+        writeClassComment ((*umla).getComment ());
         if (!(*umla).getType ().empty ()) {
             fprintf (stderr,
                      "%s/%s: ignoring type\n",

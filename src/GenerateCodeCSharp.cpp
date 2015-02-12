@@ -60,111 +60,27 @@ GenerateCodeCSharp::writeInclude (std::pair <std::list <umlPackage *>,
 void
 GenerateCodeCSharp::writeFunction (const umlOperation & ope,
                                    Visibility & curr_visibility) {
-#ifdef ENABLE_CORBA
-    if (getCorba ()) {
-        if (ope.getVisibility () != '0') {
-            fprintf (stderr,
-                     "CORBAValue %s: must be public\n",
-                     ope.getName ().c_str ());
-        }
-    }
-#endif
+    writeFunction1 (ope, curr_visibility);
 
-    /* print comments on operation */
-    if (!ope.getComment ().empty ()) {
-        writeFunctionComment (ope);
-    }
-
-    getFile () << spc ();
-    getFile () << visibility (ope.getVisibility ()) << " ";
     if (ope.getInheritance () == Inheritance::ABSTRACT) {
         getFile () << "abstract ";
     }
     else if (ope.getInheritance () == Inheritance::VIRTUAL) {
         getFile () << "virtual ";
     }
-    if (ope.isStatic ()) {
-#ifdef ENABLE_CORBA
-        if (getCorba ()) {
-            fprintf (stderr,
-                     "CORBAValue %s: static not supported\n",
-                     ope.getName ().c_str ());
-        }
-        else
-#endif
-        {
-            getFile () << "static ";
-        }
-    }
-    if (!ope.getType ().empty ()) {
-        getFile () << cppName (ope.getType ()) << " ";
-    }
-    getFile () << ope.getName () << " (";
 
-    std::list <umlAttribute>::const_iterator tmpa;
-    tmpa = ope.getParameters ().begin ();
-    while (tmpa != ope.getParameters ().end ()) {
-        getFile () << (*tmpa).getType () << " " << (*tmpa).getName ();
-        if (!(*tmpa).getValue ().empty ()) {
-            fprintf (stderr, "Java does not support param default.\n");
-        }
-        ++tmpa;
-        if (tmpa != ope.getParameters ().end ()) {
-            getFile () << ", ";
-        }
-    }
-    getFile () << ")";
-    if (ope.isConstant ()) {
-        fprintf (stderr, "Java does not support const method.\n");
-    }
-    if (ope.getInheritance () == Inheritance::ABSTRACT) {
-        getFile () << ";\n";
-    }
-    else
-    {
-        if (getOpenBraceOnNewline ()) {
-            getFile () << "\n";
-            getFile () << spc () << "{\n";
-        }
-        else {
-            getFile () << " {\n";
-        }
-        getFile () << spc () << "}\n";
-    }
+    writeFunction2 (ope, curr_visibility);
 }
 
 void
-GenerateCodeCSharp::writeClassComment (const umlClassNode & node) {
-    if (!node.getComment ().empty ()) {
+GenerateCodeCSharp::writeClassComment (const std::string & nom) {
+    if (!nom.empty ()) {
         getFile () << spc () << "/// <summary>\n";
-        getFile () << comment (node.getComment (),
+        getFile () << comment (nom,
                                std::string (spc () + "///  "),
                                std::string (spc () + "///  "));
         getFile () << spc () << "/// </summary>\n";
     }
-}
-
-void
-GenerateCodeCSharp::writeAttribute (const umlAttribute & attr,
-                                    Visibility & curr_visibility) {
-    if (!attr.getComment ().empty ()) {
-        getFile () << spc () << "/// <summary>\n";
-        getFile () << comment (attr.getComment (),
-                               std::string (spc () + "///  "),
-                               std::string (spc () + "///  "));
-        getFile () << spc () << "/// </summary>\n";
-    }
-    getFile () << spc () << visibility (attr.getVisibility ()) << " ";
-    if (attr.isStatic ()) {
-        getFile () << "static " << attr.getType () << " " << attr.getName ();
-    }
-    else {
-        getFile () << attr.getType () << " " << attr.getName ();
-    }
-    if (!attr.getValue ().empty ()) {
-        getFile () << " = " << attr.getValue ();
-    }
-    getFile () << ";\n";
 }
 
 void
@@ -197,69 +113,6 @@ GenerateCodeCSharp::writeNameSpaceEnd (const umlClassNode * node) {
         pack = pack->getParent ();
     }
     getFile () << spc () << "\n";
-}
-
-void
-GenerateCodeCSharp::writeEnum (const umlClassNode & node) {
-    std::list <umlAttribute>::const_iterator umla;
-
-    umla = node.getAttributes ().begin ();
-    if (!node.getComment ().empty ()) {
-        getFile () << spc () << "/// <summary>\n";
-        getFile () << comment (node.getComment (),
-                               std::string (spc () + "///  "),
-                               std::string (spc () + "///  "));
-        getFile () << spc () << "/// </summary>\n";
-    }
-    if (getOpenBraceOnNewline ()) {
-        getFile () << spc () << "public enum " << node.getName () << "\n";
-        getFile () << spc () << "{\n";
-    }
-    else {
-        getFile () << spc () << "public enum " << node.getName () << " {\n";
-    }
-    incIndentLevel ();
-    while (umla != node.getAttributes ().end ()) {
-        const char *literal = (*umla).getName ().c_str ();
-        if (!(*umla).getType ().empty ()) {
-            fprintf (stderr,
-                     "%s/%s: ignoring type\n",
-                     node.getName ().c_str (),
-                     literal);
-        }
-        if ((*umla).getName ().empty ()) {
-            fprintf (stderr,
-                     "%s: an unamed attribute is found.\n",
-                     node.getName ().c_str ());
-        }
-        if ((*umla).getVisibility () != Visibility::PUBLIC) {
-            fprintf (stderr,
-                     "Enum %s, attribute %s: visibility forced to public.\n",
-                     node.getName ().c_str (),
-                     (*umla).getName ().c_str ());
-        }
-        if (!(*umla).getComment ().empty ()) {
-            getFile () << spc () << "/// <summary>" << (*umla).getComment ()
-                       << "</summary>" << "\n";
-        }
-        if (!(*umla).getType ().empty ()) {
-            fprintf (stderr,
-                     "%s/%s: ignoring type\n",
-                     node.getName ().c_str (),
-                     literal);
-        }
-        getFile () << spc () << literal;
-        if (!(*umla).getValue ().empty ()) {
-            getFile () << " = " << (*umla).getValue ();
-        }
-        ++umla;
-        if (umla != node.getAttributes ().end ()) {
-            getFile () << ",";
-        }
-        getFile () << "\n";
-    }
-    decIndentLevel ();
-    getFile () << spc () << "};\n";
 }
 
 GenerateCodeCSharp::~GenerateCodeCSharp () {

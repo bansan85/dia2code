@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config.h"
 
 #include "GenerateCodeCpp.hpp"
+#include "GenerateCodeJava.hpp"
 #include "string2.hpp"
 #include "scan_tree.hpp"
 
@@ -45,48 +46,13 @@ GenerateCodeCpp::strPackage (const char * package) const {
 }
 
 const char *
-GenerateCodeCpp::fqname (const umlClassNode &node, bool use_ref_type) {
-    static std::string buf;
-
-    buf.clear ();
-    if (node.getPackage () != NULL) {
-        std::list <umlPackage *> pkglist;
-
-        umlPackage::makePackageList (node.getPackage (), pkglist);
-        for (const umlPackage * it : pkglist) {
-            buf.append (strPackage (it->getName ().c_str ()));
-        }
-    }
-    if (use_ref_type) {
-        buf.append (strPointer (node.getName ()));
-    }
-    else {
-        buf.append (node.getName ());
-    }
-    return buf.c_str ();
+GenerateCodeCpp::visibility (const Visibility & vis) {
+    return visibility1 (vis);
 }
 
-const char *
-GenerateCodeCpp::visibility (const Visibility & vis) {
-    switch (vis) {
-        case Visibility::PUBLIC :
-            return "public";
-            break;
-        case Visibility::PRIVATE:
-            return "private";
-            break;
-        case Visibility::PROTECTED :
-            return "protected";
-            break;
-        case Visibility::IMPLEMENTATION :
-            fprintf (stderr, "Implementation not applicable in C++.\n"
-                             "Default: public.\n");
-            return "public";
-            break;
-        default :
-            throw std::string ("Unknown visibility.\n");
-            break;
-    }
+void
+GenerateCodeCpp::writeLicense () {
+    writeLicense1 ("/*", " */");
 }
 
 void
@@ -99,17 +65,6 @@ GenerateCodeCpp::check_visibility (Visibility & curr_vis,
     getFile () << spc () << visibility (new_vis) << " :\n";
     curr_vis = new_vis;
     incIndentLevel ();
-}
-
-void
-GenerateCodeCpp::writeLicense () {
-    if (getLicense ().empty ()) {
-        return;
-    }
-
-    getFile () << "/*\n";
-    writeFile ();
-    getFile () << " */\n\n";
 }
 
 void
@@ -187,30 +142,17 @@ GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
 }
 
 void
-GenerateCodeCpp::writeFunction (const umlOperation & ope,
-                                Visibility & curr_visibility) {
+GenerateCodeCpp::writeFunction1 (const umlOperation & ope,
+                                 Visibility & curr_visibility) {
     if (ope.getName ().empty ()) {
         fprintf (stderr, "An unamed operation is found.\n");
     }
     incIndentLevel ();
-#ifdef ENABLE_CORBA
-    if (getCorba ()) {
-        if (ope.getVisibility () != '0') {
-            fprintf (stderr,
-                     "CORBAValue %s: must be public\n",
-                     ope.getName ().c_str ());
-        }
-    }
-    else
-#endif
-    {
-        if (ope.getStereotype ().compare ("delete") == 0) {
-            check_visibility (curr_visibility, Visibility::PRIVATE);
-        } else {
-            check_visibility (curr_visibility, ope.getVisibility ());
-        }
-    }
+}
 
+void
+GenerateCodeCpp::writeFunction2 (const umlOperation & ope,
+                                 Visibility & curr_visibility) {
     /* print comments on operation */
     if (!ope.getComment ().empty ()) {
         writeFunctionComment (ope);
@@ -237,6 +179,11 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
             getFile () << "static ";
         }
     }
+}
+
+void
+GenerateCodeCpp::writeFunction3 (const umlOperation & ope,
+                                 Visibility & curr_visibility) {
     if (!ope.getType ().empty ()) {
         getFile () << cppName (ope.getType ()) << " ";
     }
@@ -265,6 +212,37 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
         }
     }
     getFile () << ")";
+}
+
+void
+GenerateCodeCpp::writeFunction (const umlOperation & ope,
+                                Visibility & curr_visibility) {
+    // Check validity of ope and indent.
+    writeFunction1 (ope, curr_visibility);
+
+#ifdef ENABLE_CORBA
+    if (getCorba ()) {
+        if (ope.getVisibility () != '0') {
+            fprintf (stderr,
+                     "CORBAValue %s: must be public\n",
+                     ope.getName ().c_str ());
+        }
+    }
+    else
+#endif
+    {
+        if (ope.getStereotype ().compare ("delete") == 0) {
+            check_visibility (curr_visibility, Visibility::PRIVATE);
+        } else {
+            check_visibility (curr_visibility, ope.getVisibility ());
+        }
+    }
+
+    // Write comment and start function with virtual and static.
+    writeFunction2 (ope, curr_visibility);
+    // Write the reste of the function until the ")"
+    writeFunction3 (ope, curr_visibility);
+
     if (ope.isConstant ()) {
         getFile () << " const";
     }
@@ -291,12 +269,10 @@ GenerateCodeCpp::writeComment (const char * text) {
 }
 
 void
-GenerateCodeCpp::writeClassComment (const umlClassNode & node) {
-    if (!node.getComment ().empty ()) {
+GenerateCodeCpp::writeClassComment (const std::string & nom) {
+    if (!nom.empty ()) {
         getFile () << spc () << "/**\n";
-        getFile () << spc () << " * \\class " << node.getName () << "\n";
-
-        getFile () << comment (node.getComment (),
+        getFile () << comment (nom,
                                std::string (spc () + " * \\brief "),
                                std::string (spc () + " *        "));
         getFile () << spc () << "*/\n";
@@ -361,14 +337,9 @@ GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
     incIndentLevel ();
     check_visibility (curr_visibility, attr.getVisibility ());
     if (!attr.getComment ().empty ()) {
-        if (attr.getComment ().find ("\n", 0) == std::string::npos) {
-            getFile () << spc () << "/// " << attr.getComment () << "\n";
-        }
-        else {
-            getFile () << comment (attr.getComment (),
-                                   std::string (spc () + "/// "),
-                                   std::string (spc () + "/// "));
-        }
+        getFile () << comment (attr.getComment (),
+                               std::string (spc () + "/// "),
+                               std::string (spc () + "/// "));
     }
     if (attr.isStatic ()) {
         getFile () << spc () << "static " << attr.getType () << " "
@@ -415,30 +386,36 @@ GenerateCodeCpp::writeNameSpaceEnd (const umlClassNode * node) {
 }
 
 void
-GenerateCodeCpp::writeConst (const umlClassNode & node) {
-    std::list <umlAttribute>::const_iterator umla;
-
-    umla = node.getAttributes ().begin ();
-    if (!node.getComment ().empty ()) {
-        getFile () << spc () << "/// " << node.getComment () << "\n";
-    }
+GenerateCodeCpp::writeConst1 (const umlClassNode & node,
+                              const char * constAbbr) {
     if (node.getAttributes ().size () != 1) {
         throw std::string ("Error: first attribute not set at " +
                            node.getName () + "\n");
     }
-    if (!(*umla).getName ().empty ()) {
+
+    const umlAttribute & umla = *node.getAttributes ().begin ();
+
+    if (!node.getComment ().empty ()) {
+        getFile () << spc () << "/// " << node.getComment () << "\n";
+    }
+    if (!umla.getName ().empty ()) {
         fprintf (stderr,
                  "Warning: ignoring attribute name at %s\n",
                  node.getName ().c_str ());
     }
 
-    getFile () << spc () << "const " << cppName ((*umla).getType ())
-               << " " << node.getName () << " = " << (*umla).getValue ()
-               << ";\n";
+    getFile () << spc () << constAbbr << cppName (umla.getType ()) << " "
+               << node.getName () << " = " << umla.getValue () << ";\n";
 }
 
 void
-GenerateCodeCpp::writeEnum (const umlClassNode & node) {
+GenerateCodeCpp::writeConst (const umlClassNode & node) {
+    writeConst1 (node, "const ");
+}
+
+void
+GenerateCodeCpp::writeEnum1 (const umlClassNode & node,
+                             const char * enumAbbr) {
     std::list <umlAttribute>::const_iterator umla;
 
     umla = node.getAttributes ().begin ();
@@ -446,11 +423,11 @@ GenerateCodeCpp::writeEnum (const umlClassNode & node) {
         getFile () << spc () << "/// " << node.getComment () << "\n";
     }
     if (getOpenBraceOnNewline ()) {
-        getFile () << spc () << "enum " << node.getName () << "\n";
+        getFile () << spc () << enumAbbr << node.getName () << "\n";
         getFile () << spc () << "{\n";
     }
     else {
-        getFile () << spc () << "enum " << node.getName () << " {\n";
+        getFile () << spc () << enumAbbr << node.getName () << " {\n";
     }
     incIndentLevel ();
     while (umla != node.getAttributes ().end ()) {
@@ -487,6 +464,11 @@ GenerateCodeCpp::writeEnum (const umlClassNode & node) {
     }
     decIndentLevel ();
     getFile () << spc () << "};\n";
+}
+
+void
+GenerateCodeCpp::writeEnum (const umlClassNode & node) {
+    writeEnum1 (node, "enum ");
 }
 
 void

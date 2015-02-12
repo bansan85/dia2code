@@ -4,7 +4,6 @@
 #include "AssociationPack.hpp"
 
 /**
- * \class AssociationClass1
  * \brief Multiple line
  *        comment
 */

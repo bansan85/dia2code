@@ -32,12 +32,9 @@ class GenerateCodeCSharp : public GenerateCodeJava {
                                       umlClassNode * > & name);
         void writeFunction (const umlOperation & ope,
                             Visibility & curr_visibility);
-        void writeClassComment (const umlClassNode & node);
-        void writeAttribute (const umlAttribute & attr,
-                             Visibility & curr_visibility);
+        void writeClassComment (const std::string & nom);
         void writeNameSpaceStart (const umlClassNode * node);
         void writeNameSpaceEnd (const umlClassNode * node);
-        void writeEnum (const umlClassNode & node);
 
         ~GenerateCodeCSharp ();
 };

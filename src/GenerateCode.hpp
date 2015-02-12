@@ -101,8 +101,8 @@ class GenerateCode {
 
         static const char * cppName (std::string name);
 
-        virtual const char * fqname (const umlClassNode & node,
-                                     bool use_ref_type) = 0;
+        const char * fqname (const umlClassNode & node,
+                             bool use_ref_type);
         virtual const char * visibility (const Visibility & vis) = 0;
         std::string spc () const;
 
@@ -125,7 +125,7 @@ class GenerateCode {
                                     Visibility & curr_visibility) = 0;
         virtual void writeComment (const std::string & text) = 0;
         virtual void writeComment (const char * text) = 0;
-        virtual void writeClassComment (const umlClassNode & node) = 0;
+        virtual void writeClassComment (const std::string & com) = 0;
         virtual void writeClassStart (const umlClassNode & node) = 0;
         virtual void writeClassEnd () = 0;
         virtual void writeAttribute (const umlAttribute & attr,
@@ -140,6 +140,9 @@ class GenerateCode {
                                        Visibility & curr_visibility) = 0;
         virtual void writeTemplates (
            const std::list <std::pair <std::string, std::string> > & tmps) = 0;
+
+        static const char * visibility1 (const Visibility & vis);
+        void writeLicense1 (const char * start, const char * end);
 
         virtual ~GenerateCode ();
 };

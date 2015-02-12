@@ -30,7 +30,6 @@ class GenerateCodeCpp : public GenerateCode {
 
         std::string strPackage (const char * package) const;
         std::string strPointer (const std::string & type) const;
-        const char * fqname (const umlClassNode & node, bool use_ref_type);
         const char * visibility (const Visibility & vis);
         void check_visibility (Visibility & curr_vis, Visibility new_vis);
 
@@ -45,7 +44,7 @@ class GenerateCodeCpp : public GenerateCode {
                             Visibility & curr_visibility);
         void writeComment (const std::string & text);
         void writeComment (const char * text);
-        void writeClassComment (const umlClassNode & node);
+        void writeClassComment (const std::string & nom);
         void writeClassStart (const umlClassNode & node);
         void writeClassEnd ();
         void writeAttribute (const umlAttribute & attr,
@@ -60,7 +59,16 @@ class GenerateCodeCpp : public GenerateCode {
                                Visibility & curr_visibility);
         void writeTemplates (
                const std::list <std::pair <std::string, std::string> > & tmps);
-        
+
+        void writeFunction1 (const umlOperation & ope,
+                            Visibility & curr_visibility);
+        void writeFunction2 (const umlOperation & ope,
+                            Visibility & curr_visibility);
+        void writeFunction3 (const umlOperation & ope,
+                            Visibility & curr_visibility);
+        void writeConst1 (const umlClassNode & node, const char * constAbbr);
+        void writeEnum1 (const umlClassNode & node, const char * enumAbbr);
+
         ~GenerateCodeCpp ();
 };
 

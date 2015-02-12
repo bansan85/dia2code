@@ -411,6 +411,28 @@ GenerateCode::cppName (std::string name) {
     return buf.c_str ();
 }
 
+const char *
+GenerateCode::fqname (const umlClassNode &node, bool use_ref_type) {
+    static std::string buf;
+
+    buf.clear ();
+    if (node.getPackage () != NULL) {
+        std::list <umlPackage *> pkglist;
+
+        umlPackage::makePackageList (node.getPackage (), pkglist);
+        for (const umlPackage * it : pkglist) {
+            buf.append (strPackage (it->getName ().c_str ()));
+        }
+    }
+    if (use_ref_type) {
+        buf.append (strPointer (node.getName ()));
+    }
+    else {
+        buf.append (node.getName ());
+    }
+    return buf.c_str ();
+}
+
 void
 GenerateCode::genClass (const umlClassNode & node) {
 #ifdef ENABLE_CORBA
@@ -447,7 +469,7 @@ GenerateCode::genClass (const umlClassNode & node) {
         }
     }
 
-    writeClassComment (node);
+    writeClassComment (node.getComment ());
     writeClassStart (node);
     incIndentLevel ();
 
@@ -862,6 +884,35 @@ GenerateCode::comment (const std::string & comment_,
     buf.append ("\n");
 
     return buf.c_str ();
+}
+
+void
+GenerateCode::writeLicense1 (const char * start, const char * end) {
+    if (getLicense ().empty ()) {
+        return;
+    }
+
+    getFile () << start << "\n";
+    writeFile ();
+    getFile () << end << "\n\n";
+}
+
+const char *
+GenerateCode::visibility1 (const Visibility & vis) {
+    switch (vis) {
+        case Visibility::PUBLIC :
+            return "public";
+        case Visibility::PRIVATE :
+            return "private";
+        case Visibility::PROTECTED :
+            return "protected";
+        case Visibility::IMPLEMENTATION :
+            fprintf (stderr, "Implementation not applicable.\n"
+                             "Default: public.\n");
+            return "public";
+        default :
+            throw std::string ("Unknown visibility.\n");
+    }
 }
 
 GenerateCode::~GenerateCode () {

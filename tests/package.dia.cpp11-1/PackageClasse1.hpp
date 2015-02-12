@@ -3,7 +3,6 @@
 
 namespace package {
     /**
-     * \class PackageClasse1
      * \brief Classe 1
     */
     class PackageClasse1 {
