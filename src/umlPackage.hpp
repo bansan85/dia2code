@@ -41,12 +41,12 @@ class umlPackage {
         const std::string & getId () const;
         const std::string & getName () const;
         const geometry & getGeometry () const;
-        const umlPackage * getParent () const;
+        umlPackage * getParent () const;
         void setParent (umlPackage * pack);
 
-        static void makePackageList (const umlPackage * package,
-                                     std::list <umlPackage> & res);
-        static umlPackage * find (std::list <umlPackage> & packagelist,
+        static void makePackageList (umlPackage * package,
+                                     std::list <umlPackage *> & res);
+        static umlPackage * find (std::list <umlPackage *> & packagelist,
                                   const char *id);
         
         ~umlPackage ();

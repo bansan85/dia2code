@@ -37,7 +37,7 @@ class GenerateCodeCpp : public GenerateCode {
         void writeLicense ();
         void writeStartHeader (std::string & name);
         void writeEndHeader ();
-        bool writeInclude (std::pair <std::list <umlPackage>,
+        bool writeInclude (std::pair <std::list <umlPackage *>,
                                       umlClassNode * > & name);
         void writeInclude (const char * name);
         void writeFunctionComment (const umlOperation & ope);

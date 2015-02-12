@@ -1,4 +1,5 @@
-import DepPack.*;
+using DepPack;
 
 public class DepClassePack1 {
 }
+

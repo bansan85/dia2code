@@ -196,11 +196,12 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
     }
 #endif
 
-    std::list <std::pair <std::list <umlPackage>, umlClassNode * > > incfile;
+    std::list <std::pair <std::list <umlPackage *>, umlClassNode * > > incfile;
 
     incfile = getDia ().getIncludes ();
     bool add = false;
-    for (std::pair <std::list <umlPackage>, umlClassNode * > namei : incfile) {
+    for (std::pair <std::list <umlPackage *>, umlClassNode * > namei :
+                                                                     incfile) {
         if (writeInclude (namei)) {
             add = true;
         }
@@ -583,16 +584,16 @@ GenerateCode::genClass (const umlClassNode & node) {
 }
 
 const char *
-dirName (const umlPackage &pkg) {
+dirName (umlPackage * pkg) {
     static std::string buf;
-    std::list <umlPackage>::const_iterator it;
+    std::list <umlPackage *>::const_iterator it;
+    std::list <umlPackage *> pkglist;
 
     buf.clear ();
-    std::list <umlPackage> pkglist;
-    umlPackage::makePackageList (&pkg, pkglist);
+    umlPackage::makePackageList (pkg, pkglist);
     it = pkglist.begin ();
     while (it != pkglist.end ()) {
-        buf.append ((*it).getName ());
+        buf.append ((*it)->getName ());
         ++it;
         if (it != pkglist.end ()) {
             buf.append (1, SEPARATOR);
@@ -640,11 +641,11 @@ GenerateCode::genDecl (declaration &d,
                 name_ = dirName (d.u.this_module->pkg);
             }
             else {
-                name_ = d.u.this_module->pkg.getName ();
+                name_ = d.u.this_module->pkg->getName ();
             }
         } else {
             if ((buildtree) && (d.u.this_class->getPackage () != NULL)) {
-                name_.assign (dirName (*d.u.this_class->getPackage ()));
+                name_.assign (dirName (d.u.this_class->getPackage ()));
                 name_.append (1, SEPARATOR);
             }
             name_.append (d.u.this_class->getName ());

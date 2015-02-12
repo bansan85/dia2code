@@ -50,10 +50,11 @@ GenerateCodeCpp::fqname (const umlClassNode &node, bool use_ref_type) {
 
     buf.clear ();
     if (node.getPackage () != NULL) {
-        std::list <umlPackage> pkglist;
+        std::list <umlPackage *> pkglist;
+
         umlPackage::makePackageList (node.getPackage (), pkglist);
-        for (const umlPackage & it : pkglist) {
-            buf.append (strPackage (it.getName ().c_str ()));
+        for (const umlPackage * it : pkglist) {
+            buf.append (strPackage (it->getName ().c_str ()));
         }
     }
     if (use_ref_type) {
@@ -123,11 +124,10 @@ GenerateCodeCpp::writeEndHeader () {
 }
 
 bool
-GenerateCodeCpp::writeInclude (std::pair <std::list <umlPackage>,
+GenerateCodeCpp::writeInclude (std::pair <std::list <umlPackage *>,
                                umlClassNode * > & name) {
-    std::list <umlPackage>::const_iterator namei;
-
     if (name.second == NULL) {
+        fprintf (stderr, "TODO: dependence of package is not implemented.\n");
         return false;
     }
 
@@ -135,8 +135,8 @@ GenerateCodeCpp::writeInclude (std::pair <std::list <umlPackage>,
     
     if (getBuildTree ()) {
         if (!name.first.empty ()) {
-            for (const umlPackage & pack : name.first) {
-                getFile () << pack.getName () << SEPARATOR;
+            for (const umlPackage * pack : name.first) {
+                getFile () << pack->getName () << SEPARATOR;
             }
         }
         getFile () << name.second->getName () << "." << getFileExt ()
@@ -148,13 +148,12 @@ GenerateCodeCpp::writeInclude (std::pair <std::list <umlPackage>,
     }
     else {
         if (!name.first.empty ()) {
-            namei = name.first.begin ();
-            getFile () << (*namei).getName () << "." << getFileExt ()
-                       << "\"\n";
+            getFile () << (*name.first.begin ())->getName () << "."
+                       << getFileExt () << "\"\n";
         }
         else {
             getFile () << name.second->getName () << "." << getFileExt ()
-            << "\"\n";
+                       << "\"\n";
         }
     }
 
@@ -385,15 +384,16 @@ GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
 void
 GenerateCodeCpp::writeNameSpaceStart (const umlClassNode * node) {
     if (node->getPackage () != NULL) {
-        std::list <umlPackage> pkglist;
+        std::list <umlPackage *> pkglist;
+
         umlPackage::makePackageList (node->getPackage (), pkglist);
-        for (const umlPackage & it : pkglist) {
+        for (const umlPackage * it : pkglist) {
             if (getOpenBraceOnNewline ()) {
-                getFile () << spc () << "namespace " << it.getName () << "\n"
+                getFile () << spc () << "namespace " << it->getName () << "\n"
                            << spc () << "{\n";
             }
             else {
-                getFile () << spc () << "namespace " << it.getName ()
+                getFile () << spc () << "namespace " << it->getName ()
                            << " {\n";
             }
             incIndentLevel ();

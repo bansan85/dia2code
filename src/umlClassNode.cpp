@@ -57,7 +57,7 @@ umlClassNode::umlClassNode (umlClass * _key,
                                                   Visibility> > & parents_,
                             std::list <umlassoc> & associations_,
                             std::list <umlClassNode> & classDep_,
-                            std::list <umlPackage> & packageDep_) :
+                            std::list <umlPackage *> & packageDep_) :
     umlClass (*_key),
     parents (parents_),
     associations (associations_),
@@ -90,20 +90,20 @@ umlClassNode::getDependencies () const {
     return classDep;
 }
 
-const std::list <umlPackage> &
-umlClassNode::getDependenciesPack () const {
+std::list <umlPackage *> &
+umlClassNode::getDependenciesPack () {
     return packageDep;
 }
 
 module *
 findModule (std::list <declaration> &dptr,
-             std::list <umlPackage>::iterator begin,
-             std::list <umlPackage>::iterator end) {
+             std::list <umlPackage *>::iterator begin,
+             std::list <umlPackage *>::iterator end) {
     std::list <declaration>::iterator it = dptr.begin ();
     while (it != dptr.end ()) {
         if ((*it).decl_kind == dk_module) {
             module *m = (*it).u.this_module;
-            if (m->pkg.getName ().compare ((*begin).getName ()) == 0) {
+            if (m->pkg->getName ().compare ((*begin)->getName ()) == 0) {
                 if (std::next (begin) != end) {
                     std::list<declaration> liste;
 
@@ -130,7 +130,8 @@ umlClassNode::findClass (std::list <declaration> &decl) const {
     std::list <declaration> *d;
 
     if (getPackage ()) {
-        std::list <umlPackage> pkglist;
+        std::list <umlPackage *> pkglist;
+
         umlPackage::makePackageList (getPackage (), pkglist);
         module *m = findModule (decl, pkglist.begin (), pkglist.end ());
         if (m == NULL || m->contents.empty ()) {
@@ -163,7 +164,7 @@ umlClassNode::addDependency (umlClassNode & dependent) {
 }
 
 void
-umlClassNode::addDependency (umlPackage & dependent) {
+umlClassNode::addDependency (umlPackage * dependent) {
     packageDep.push_front (dependent);
 }
 

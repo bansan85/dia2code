@@ -76,7 +76,7 @@ umlClass::getOperations () const {
     return operations;
 }
 
-const umlPackage *
+umlPackage *
 umlClass::getPackage () const {
     return package;
 }
@@ -214,7 +214,7 @@ associate (std::list <umlClassNode> & classlist,
 
 void
 makeDepend (std::list <umlClassNode> & classlist,
-            std::list <umlPackage> & packagelist,
+            std::list <umlPackage *> & packagelist,
             const char * dependent,
             const char * dependee) {
     umlClassNode *umldependent, *umldependee;
@@ -227,7 +227,7 @@ makeDepend (std::list <umlClassNode> & classlist,
     else if (umldependent == NULL) {
         umlPackage *umldependent2 = umlPackage::find (packagelist, dependent);
         if (umldependent2 != NULL) {
-            umldependee->addDependency (*umldependent2);
+            umldependee->addDependency (umldependent2);
         }
         else {
             fprintf (stderr, "Failed to find dependence %s.\n", dependent);
@@ -322,7 +322,7 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
     xmlChar *end2 = nullptr;
 
     xmlNodePtr object = NULL;
-    std::list <umlPackage> packagelst;
+    std::list <umlPackage *> packagelst;
 
     ptr = xmlParseFile (diafile);
 
@@ -351,7 +351,7 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
         } else if (!strcmp ("UML - LargePackage", BAD_TSAC2 (objtype)) ||
                    !strcmp ("UML - SmallPackage", BAD_TSAC2 (objtype))) {
             xmlChar *objid = xmlGetProp (object, BAD_CAST2 ("id"));
-            umlPackage tmppck (object, BAD_TSAC2 (objid));
+            umlPackage *tmppck = new umlPackage (object, BAD_TSAC2 (objid));
             free (objid);
 
             // We insert it here
@@ -652,28 +652,27 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
        to each class. */
 
     // Build the relationships between packages
-    for (umlPackage & dummypcklst : packagelst) {
-        for (umlPackage & tmppcklst : packagelst) {
-            if (isInside (dummypcklst.getGeometry (),
-                           tmppcklst.getGeometry ())) {
-                if ((tmppcklst.getParent () == NULL) ||
-                     (! isInside (dummypcklst.getGeometry (),
-                                  tmppcklst.getParent ()->getGeometry ()))) {
-                    tmppcklst.setParent (new umlPackage (dummypcklst));
+    for (umlPackage * dummypcklst : packagelst) {
+        for (umlPackage * tmppcklst : packagelst) {
+            if (isInside (dummypcklst->getGeometry (),
+                           tmppcklst->getGeometry ())) {
+                if ((tmppcklst->getParent () == NULL) ||
+                     (! isInside (dummypcklst->getGeometry (),
+                                  tmppcklst->getParent ()->getGeometry ()))) {
+                    tmppcklst->setParent (dummypcklst);
                 }
             }
         }
     }
 
     // Associate packages to classes
-    for (umlPackage & dummypcklst : packagelst) {
+    for (umlPackage * dummypcklst : packagelst) {
         for (umlClassNode & it : res) {
-            if (isInside (dummypcklst.getGeometry (), it.geom)) {
+            if (isInside (dummypcklst->getGeometry (), it.geom)) {
                 if ((it.package == NULL) ||
-                     (! isInside (dummypcklst.getGeometry (),
+                     (! isInside (dummypcklst->getGeometry (),
                                   it.package->getGeometry ()))) {
-                    delete it.package;
-                    it.package = new umlPackage (dummypcklst);
+                    it.package = dummypcklst;
                 }
             }
         }

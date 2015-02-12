@@ -30,7 +30,7 @@ class umlClassNode : public umlClass {
         std::list <std::pair <umlClass *, Visibility> > parents;
         std::list <umlassoc> associations;
         std::list <umlClassNode> classDep;
-        std::list <umlPackage> packageDep;
+        std::list <umlPackage *> packageDep;
     public :
         static umlClassNode * find (std::list <umlClassNode> & list,
                                     const char *id);
@@ -41,19 +41,19 @@ class umlClassNode : public umlClass {
                                             Visibility> > & parents_,
                       std::list <umlassoc> & associations_,
                       std::list <umlClassNode> & classDep_,
-                      std::list <umlPackage> & packageDep_);
+                      std::list <umlPackage *> & packageDep_);
         umlClassNode (umlClass & _key);
 
         const std::list <std::pair <umlClass *, Visibility> > &
                                                            getParents () const;
         const std::list <umlassoc> & getAssociations () const;
         const std::list <umlClassNode> & getDependencies () const;
-        const std::list <umlPackage> & getDependenciesPack () const;
+        std::list <umlPackage *> & getDependenciesPack ();
 
         declaration * findClass (std::list <declaration> & decl) const;
         void addParent (umlClass * key, Visibility inh);
         void addDependency (umlClassNode & dependent);
-        void addDependency (umlPackage & dependent);
+        void addDependency (umlPackage * dependent);
         void addAggregate (const char *name,
                            char composite,
                            umlClassNode & base,

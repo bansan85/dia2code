@@ -72,7 +72,7 @@ class umlClass {
         bool isAbstract () const;
         const std::list <umlAttribute> & getAttributes () const;
         const std::list <umlOperation> & getOperations () const;
-        const umlPackage * getPackage () const;
+        umlPackage * getPackage () const;
         const std::list <std::pair <std::string, std::string> > &
                                                          getTemplates () const;
         

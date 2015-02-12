@@ -28,20 +28,16 @@ GenerateCodeCSharp::GenerateCodeCSharp (DiaGram & diagram) :
 }
 
 bool
-GenerateCodeCSharp::writeInclude (std::pair <std::list <umlPackage>,
+GenerateCodeCSharp::writeInclude (std::pair <std::list <umlPackage *>,
                                   umlClassNode * > & name) {
-    if (name.second == NULL) {
-        return false;
-    }
-
     getFile () << spc () << "using ";
 
     if (!name.first.empty ()) {
-        std::list <umlPackage>::const_iterator namei;
+        std::list <umlPackage *>::const_iterator namei;
 
         namei = name.first.begin ();
         while (namei != name.first.end ()) {
-            getFile () << (*namei).getName ();
+            getFile () << (*namei)->getName ();
             ++namei;
             if (namei != name.first.end ()) {
                 getFile () << ".";
@@ -49,8 +45,11 @@ GenerateCodeCSharp::writeInclude (std::pair <std::list <umlPackage>,
         }
         // We don't add the name of the class.
     }
-    else {
+    else if (name.second != NULL) {
         getFile () << name.second->getName ();
+    }
+    else {
+        return false;
     }
 
     getFile () << ";\n";
@@ -171,15 +170,16 @@ GenerateCodeCSharp::writeAttribute (const umlAttribute & attr,
 void
 GenerateCodeCSharp::writeNameSpaceStart (const umlClassNode * node) {
     if (node->getPackage () != NULL) {
-        std::list <umlPackage> pkglist;
+        std::list <umlPackage *> pkglist;
+
         umlPackage::makePackageList (node->getPackage (), pkglist);
-        for (const umlPackage & it : pkglist) {
+        for (const umlPackage * it : pkglist) {
             if (getOpenBraceOnNewline ()) {
-                getFile () << spc () << "namespace " << it.getName () << "\n"
+                getFile () << spc () << "namespace " << it->getName () << "\n"
                            << spc () << "{\n";
             }
             else {
-                getFile () << spc () << "namespace " << it.getName ()
+                getFile () << spc () << "namespace " << it->getName ()
                            << " {\n";
             }
             incIndentLevel ();

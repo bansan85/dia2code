@@ -75,17 +75,17 @@ umlPackage::umlPackage (const umlPackage & pack) :
     package will be the last.
 */
 void
-umlPackage::makePackageList (const umlPackage *package,
-                               std::list <umlPackage> &res) {
+umlPackage::makePackageList (umlPackage *package,
+                             std::list <umlPackage *> &res) {
     umlPackage *par;
     
     if (package == NULL) {
         return;
     }
-    res.push_back (*package);
+    res.push_back (package);
     par = package->parent;
     while (par != NULL) {
-        res.push_front (*par);
+        res.push_front (par);
         par = par->parent;
     }
     return;
@@ -106,7 +106,7 @@ umlPackage::getGeometry () const {
     return geom;
 }
 
-const umlPackage *
+umlPackage *
 umlPackage::getParent () const {
     return parent;
 }
@@ -117,11 +117,11 @@ umlPackage::setParent (umlPackage * pack) {
 }
 
 umlPackage *
-umlPackage::find (std::list <umlPackage> & packagelist, const char *id) {
+umlPackage::find (std::list <umlPackage *> & packagelist, const char *id) {
     if (id != NULL) {
-        for (umlPackage & it : packagelist) {
-            if (it.getId ().compare (id) == 0) {
-                return &it;
+        for (umlPackage * it : packagelist) {
+            if (it->getId ().compare (id) == 0) {
+                return it;
             }
         }
     }

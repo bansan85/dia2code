@@ -88,7 +88,7 @@ DiaGram::setUseCorba (bool corba) {
 void
 DiaGram::listClasses (umlClassNode & current_class,
                       std::list <umlClassNode> & resCla,
-                      std::list <umlPackage> & resPac,
+                      std::list <umlPackage *> & resPac,
                       bool expandPackages) {
     std::list <umlClassNode> classes = getUml ();
     umlClassNode * tmpnode;
@@ -146,11 +146,11 @@ DiaGram::listClasses (umlClassNode & current_class,
 }
 
 module *
-createNestedModulesFromPkglist (const std::list <umlPackage>::iterator &debut,
-                                const std::list <umlPackage>::iterator &fin,
+createNestedModulesFromPkglist (const std::list <umlPackage*>::iterator &debut,
+                                const std::list <umlPackage*>::iterator &fin,
                                 module *m) {
     bool first = true;
-    std::list <umlPackage>::iterator it;
+    std::list <umlPackage *>::iterator it;
     assert (m != NULL);
     /* Expects pkglist and m to be non-NULL and m->contents to be NULL.
        Returns a reference to the innermost module created.  */
@@ -171,8 +171,8 @@ createNestedModulesFromPkglist (const std::list <umlPackage>::iterator &debut,
 
 module *
 findOrAddModule (std::list <declaration> &dptr,
-                 const std::list <umlPackage>::iterator &debut,
-                 const std::list <umlPackage>::iterator &fin) {
+                 const std::list <umlPackage *>::iterator &debut,
+                 const std::list <umlPackage *>::iterator &fin) {
     declaration d;
     module *m;
 
@@ -182,8 +182,8 @@ findOrAddModule (std::list <declaration> &dptr,
     
     for (declaration & it : dptr) {
         if (it.decl_kind == dk_module &&
-            it.u.this_module->pkg.getName ().compare (
-                                        (*debut).getName ()) == 0) {
+            it.u.this_module->pkg->getName ().compare (
+                                                  (*debut)->getName ()) == 0) {
             m = it.u.this_module;
             if (std::next (debut) == fin) {
                 return m;
@@ -206,7 +206,7 @@ findOrAddModule (std::list <declaration> &dptr,
 void
 DiaGram::push (umlClassNode & node) {
     std::list <umlClassNode> usedClasses;
-    std::list <umlPackage> usedPackages;
+    std::list <umlPackage *> usedPackages;
     declaration d;
 
     if (node.findClass (decl) != NULL) {
@@ -229,8 +229,9 @@ DiaGram::push (umlClassNode & node) {
     d.u.this_class = new umlClassNode (node);
 
     if (node.getPackage () != NULL) {
-        std::list <umlPackage> pkglist;
+        std::list <umlPackage *> pkglist;
         module *m;
+
         umlPackage::makePackageList (node.getPackage (), pkglist);
         m = findOrAddModule (decl, pkglist.begin (), pkglist.end ());
         m->contents.push_back (d);
@@ -246,18 +247,19 @@ DiaGram::push (umlClassNode & node) {
 }
 
 bool
-DiaGram::haveInclude (std::list <umlPackage> & packages,
+DiaGram::haveInclude (std::list <umlPackage *> & packages,
                       umlClassNode * cla) const
 {
-    for (std::pair <std::list <umlPackage>, umlClassNode * > inc : includes) {
+    for (std::pair <std::list <umlPackage *>,
+                    umlClassNode * > inc : includes) {
         bool idem = true;
-        std::list <umlPackage>::const_iterator namei = packages.begin ();
+        std::list <umlPackage *>::const_iterator namei = packages.begin ();
 
         if ((inc.first.size () != packages.size ()) || (cla != inc.second)) {
             continue;
         }
-        for (const umlPackage & inc2 : inc.first) {
-            if (inc2.getId ().compare (namei->getId ()) != 0) {
+        for (umlPackage * inc2 : inc.first) {
+            if (inc2->getId ().compare ((*namei)->getId ()) != 0) {
                 idem = false;
                 break;
             }
@@ -271,7 +273,7 @@ DiaGram::haveInclude (std::list <umlPackage> & packages,
 }
 
 void
-DiaGram::addInclude (std::list <umlPackage> & packages,
+DiaGram::addInclude (std::list <umlPackage *> & packages,
                      umlClassNode * cla) {
     if (haveInclude (packages, cla)) {
         return;
@@ -281,8 +283,8 @@ DiaGram::addInclude (std::list <umlPackage> & packages,
 }
 
 void
-DiaGram::pushInclude (umlClassNode & node) {
-    std::list <umlPackage> pkglist;
+DiaGram::pushInclude (const umlClassNode & node) {
+    std::list <umlPackage *> pkglist;
 
     if (node.getPackage () != NULL) {
         umlPackage::makePackageList (node.getPackage (), pkglist);
@@ -290,11 +292,18 @@ DiaGram::pushInclude (umlClassNode & node) {
     addInclude (pkglist, new umlClassNode (node));
 }
 
-std::list <std::pair <std::list <umlPackage>, umlClassNode * > >
+void
+DiaGram::pushInclude (umlPackage * node) {
+    std::list <umlPackage *> pkglist;
+
+    umlPackage::makePackageList (node, pkglist);
+    addInclude (pkglist, nullptr);
+}
+
+std::list <std::pair <std::list <umlPackage *>, umlClassNode * > >
 DiaGram::getIncludes () const {
     return includes;
 }
-
 
 void
 DiaGram::cleanIncludes () {
@@ -310,9 +319,14 @@ DiaGram::determineIncludes (declaration &d,
         }
     } else {
         std::list <umlClassNode> cl;
-        std::list <umlPackage> pa;
+        std::list <umlPackage *> pa;
+
         listClasses (*d.u.this_class, cl, pa, expandPackages);
-        for (umlClassNode & it : cl) {
+        for (const umlClassNode & it : cl) {
+            pushInclude (it);
+        }
+        
+        for (umlPackage * it : d.u.this_class->getDependenciesPack ()) {
             pushInclude (it);
         }
     }

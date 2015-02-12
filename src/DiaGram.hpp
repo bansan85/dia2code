@@ -40,7 +40,7 @@ class DiaGram {
 #endif
         
         std::list <std::string> tmp_classes;
-        std::list <std::pair <std::list <umlPackage>, umlClassNode * > >
+        std::list <std::pair <std::list <umlPackage *>, umlClassNode * > >
                                                                       includes;
         std::list <declaration> decl;
         
@@ -48,18 +48,19 @@ class DiaGram {
         // sub-packages are add to resCla
         void listClasses (umlClassNode & current_class,
                           std::list <umlClassNode> & resCla,
-                          std::list <umlPackage> & resPac,
+                          std::list <umlPackage *> & resPac,
                           bool expandPackages);
 
         /**
          * openOutfile() returns NULL if the file exists and is not rewritten
          * due to a clobber prohibition. Does an exit(1) if serious problems happen.
         */
-        bool haveInclude (std::list <umlPackage> & packages,
+        bool haveInclude (std::list <umlPackage *> & packages,
                           umlClassNode * cla) const;
-        void addInclude (std::list <umlPackage> & packages,
+        void addInclude (std::list <umlPackage *> & packages,
                          umlClassNode * cla);
-        void pushInclude (umlClassNode & node);
+        void pushInclude (const umlClassNode & node);
+        void pushInclude (umlPackage * node);
     public:
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;
@@ -78,7 +79,7 @@ class DiaGram {
 #endif
 
         void push (umlClassNode &node);
-        std::list <std::pair <std::list <umlPackage>,
+        std::list <std::pair <std::list <umlPackage *>,
                               umlClassNode * > > getIncludes () const;
         void cleanIncludes ();
         void determineIncludes (declaration &d, bool expandPackages);

@@ -47,10 +47,11 @@ GenerateCodeJava::fqname (const umlClassNode &node, bool use_ref_type) {
 
     buf.clear ();
     if (node.getPackage () != NULL) {
-        std::list <umlPackage> pkglist;
+        std::list <umlPackage*> pkglist;
+
         umlPackage::makePackageList (node.getPackage (), pkglist);
-        for (const umlPackage & it : pkglist) {
-            buf.append (strPackage (it.getName ().c_str ()));
+        for (const umlPackage * it : pkglist) {
+            buf.append (strPackage (it->getName ().c_str ()));
         }
     }
     if (use_ref_type) {
@@ -102,21 +103,22 @@ GenerateCodeJava::writeEndHeader () {
 }
 
 bool
-GenerateCodeJava::writeInclude (std::pair <std::list <umlPackage>,
+GenerateCodeJava::writeInclude (std::pair <std::list <umlPackage *>,
                                 umlClassNode * > & name) {
-    if (name.second == NULL) {
-        return false;
-    }
-
     getFile () << spc () << "import ";
 
     if (!name.first.empty ()) {
-        for (umlPackage & namei : name.first) {
-            getFile () << namei.getName () << ".";
+        for (umlPackage * namei : name.first) {
+            getFile () << namei->getName () << ".";
         }
     }
 
-    getFile () << name.second->getName () << ";\n";
+    if (name.second == NULL) {
+        getFile () << "*;\n";
+    }
+    else {
+        getFile () << name.second->getName () << ";\n";
+    }
 
     return true;
 }
@@ -320,13 +322,14 @@ GenerateCodeJava::writeAttribute (const umlAttribute & attr,
 void
 GenerateCodeJava::writeNameSpaceStart (const umlClassNode * node) {
     if (node->getPackage () != NULL) {
-        std::list <umlPackage> pkglist;
+        std::list <umlPackage*> pkglist;
+
         umlPackage::makePackageList (node->getPackage (), pkglist);
-        std::list <umlPackage>::const_iterator it = pkglist.begin ();
+        std::list <umlPackage *>::const_iterator it = pkglist.begin ();
 
         getFile () << spc () << "package ";
         while (it != pkglist.end ()) {
-            getFile () << (*it).getName ();
+            getFile () << (*it)->getName ();
             ++it;
             if (it != pkglist.end ()) {
                 getFile () << ".";
