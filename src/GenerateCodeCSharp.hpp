@@ -37,6 +37,7 @@ class GenerateCodeCSharp : public GenerateCodeJava {
                              Visibility & curr_visibility);
         void writeNameSpaceStart (const umlClassNode * node);
         void writeNameSpaceEnd (const umlClassNode * node);
+        void writeEnum (const umlClassNode & node);
 
         ~GenerateCodeCSharp ();
 };

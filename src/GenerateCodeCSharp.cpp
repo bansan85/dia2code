@@ -199,6 +199,69 @@ GenerateCodeCSharp::writeNameSpaceEnd (const umlClassNode * node) {
     getFile () << spc () << "\n";
 }
 
+void
+GenerateCodeCSharp::writeEnum (const umlClassNode & node) {
+    std::list <umlAttribute>::const_iterator umla;
+
+    umla = node.getAttributes ().begin ();
+    if (!node.getComment ().empty ()) {
+        getFile () << spc () << "/// <summary>\n";
+        getFile () << comment (node.getComment (),
+                               std::string (spc () + "///  "),
+                               std::string (spc () + "///  "));
+        getFile () << spc () << "/// </summary>\n";
+    }
+    if (getOpenBraceOnNewline ()) {
+        getFile () << spc () << "public enum " << node.getName () << "\n";
+        getFile () << spc () << "{\n";
+    }
+    else {
+        getFile () << spc () << "public enum " << node.getName () << " {\n";
+    }
+    incIndentLevel ();
+    while (umla != node.getAttributes ().end ()) {
+        const char *literal = (*umla).getName ().c_str ();
+        if (!(*umla).getType ().empty ()) {
+            fprintf (stderr,
+                     "%s/%s: ignoring type\n",
+                     node.getName ().c_str (),
+                     literal);
+        }
+        if ((*umla).getName ().empty ()) {
+            fprintf (stderr,
+                     "%s: an unamed attribute is found.\n",
+                     node.getName ().c_str ());
+        }
+        if ((*umla).getVisibility () != Visibility::PUBLIC) {
+            fprintf (stderr,
+                     "Enum %s, attribute %s: visibility forced to public.\n",
+                     node.getName ().c_str (),
+                     (*umla).getName ().c_str ());
+        }
+        if (!(*umla).getComment ().empty ()) {
+            getFile () << spc () << "/// <summary>" << (*umla).getComment ()
+                       << "</summary>" << "\n";
+        }
+        if (!(*umla).getType ().empty ()) {
+            fprintf (stderr,
+                     "%s/%s: ignoring type\n",
+                     node.getName ().c_str (),
+                     literal);
+        }
+        getFile () << spc () << literal;
+        if (!(*umla).getValue ().empty ()) {
+            getFile () << " = " << (*umla).getValue ();
+        }
+        ++umla;
+        if (umla != node.getAttributes ().end ()) {
+            getFile () << ",";
+        }
+        getFile () << "\n";
+    }
+    decIndentLevel ();
+    getFile () << spc () << "};\n";
+}
+
 GenerateCodeCSharp::~GenerateCodeCSharp () {
 }
 
