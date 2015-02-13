@@ -428,7 +428,6 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
                                 break;
                             }
                             default : {
-                                free (tmptype);
                                 throw std::string (std::string ("Unknown visibility : ") +
                                                    std::string (1, tmptype[0]));
                             }
@@ -456,7 +455,6 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
                                 break;
                             }
                             default : {
-                                free (tmptype);
                                 throw std::string (std::string ("Unknown visibility : ") +
                                                    std::string (1, tmptype[0]));
                             }
