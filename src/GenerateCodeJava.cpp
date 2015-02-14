@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "scan_tree.hpp"
 
 GenerateCodeJava::GenerateCodeJava (DiaGram & diagram) :
-    GenerateCode (diagram, "java") {
+    GenerateCode (diagram, "java", true) {
 }
 
 std::string

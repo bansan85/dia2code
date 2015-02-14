@@ -47,6 +47,9 @@ class GenerateCode {
         bool        buildtree : 1;
         bool        bOpenBraceOnNewline : 1;
         bool        oneClassOneHeader : 1;
+        // If the language handles include package. If not, include ALL classes
+        // inside the package and their children.
+        bool        handleIncludePackage : 1;
 #ifdef ENABLE_CORBA
         bool        isCorba : 1;
 #endif
@@ -56,7 +59,9 @@ class GenerateCode {
         void closeOutfile ();
         void genDecl (declaration &d, bool forceOpen);
     public:
-        GenerateCode (DiaGram & diagram, const char * ext);
+        GenerateCode (DiaGram & diagram,
+                      const char * ext,
+                      bool handleIncludePackage_);
 
         DiaGram & getDia ();
         void generate_code ();

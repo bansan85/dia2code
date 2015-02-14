@@ -22,15 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "scan_tree.hpp"
 
 umlClassNode * findByName (std::list <umlClassNode> & list,
-                             const char * name ) {
+                           const std::string & name ) {
     umlClassNode * ret = NULL;
-    if ( name != NULL && strlen (name) > 0 ) {
+    if (!name.empty ()) {
         for (umlClassNode & it : list) {
             if ( it.getName ().compare (name) == 0) {
                 if (ret != NULL) {
                     fprintf (stderr,
                              "More than one class as the same name %s.\n",
-                             name);
+                             name.c_str ());
                 }
                 ret = &it;
             }

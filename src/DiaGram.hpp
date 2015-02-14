@@ -46,9 +46,8 @@ class DiaGram {
         
         // if expandPackages then all classes in the package and in the
         // sub-packages are add to resCla
-        void listClasses (umlClassNode & current_class,
+        void listClasses (umlClassNode & current,
                           std::list <umlClassNode> & resCla,
-                          std::list <umlPackage *> & resPac,
                           bool expandPackages);
 
         /**

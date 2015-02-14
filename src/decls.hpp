@@ -56,8 +56,6 @@ struct declaration {
         module *this_module;
     /* case dk_class:  */
         umlClassNode *this_class;
-        /* In `this_class', `next' is not used since we use our own
-           sequencing (see `prev' and `next' below.)  */
     } u;
 };
 #endif  /* DECLS_H */

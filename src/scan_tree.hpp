@@ -25,6 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "umlClassNode.hpp"
 
 umlClassNode * findByName (std::list <umlClassNode> & list,
-                             const char * name);
+                           const std::string & name);
 
 #endif

@@ -39,7 +39,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define eq  !strcmp
 
 GenerateCode::GenerateCode (DiaGram    & diagram,
-                            const char * ext) :
+                            const char * ext,
+                            bool handleIncludePackage_) :
     dia (diagram),
     license (),
     outdir ("."),
@@ -50,7 +51,8 @@ GenerateCode::GenerateCode (DiaGram    & diagram,
     overwrite (true),
     buildtree (false),
     bOpenBraceOnNewline (false),
-    oneClassOneHeader (false)
+    oneClassOneHeader (false),
+    handleIncludePackage (handleIncludePackage_)
 #ifdef ENABLE_CORBA
     , isCorba (false)
 #endif
@@ -188,7 +190,7 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
     writeStartHeader (tmpname);
 
     getDia ().cleanIncludes ();
-    getDia ().determineIncludes (d, false);
+    getDia ().determineIncludes (d, !handleIncludePackage);
 #ifdef ENABLE_CORBA
     if (getDia ().getUseCorba ()) {
         writeInclude ("p_orb.h");
