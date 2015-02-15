@@ -79,7 +79,7 @@ class umlClass {
         void makeGetSetMethods ();
         static void lolipopImplementation (std::list <umlClassNode> & classlist,
                                            xmlNodePtr object);
-        static void parseDiagram (char *diafile,
+        static bool parseDiagram (char *diafile,
                                   std::list <umlClassNode> & res);
         void parseClass (xmlNodePtr class_);
 

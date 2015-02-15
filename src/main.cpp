@@ -40,7 +40,7 @@ try {
     bool    overwrite = true, buildtree = false, newline = false,
             oneclass = false;
 
-    GenerateCode *generator;
+    GenerateCode *generator = nullptr;
 
     const char * notice = "\
 dia2code version " VERSION ", Copyright (C) 2000-2014 Javier O'Hara\n\
@@ -90,8 +90,6 @@ under certain conditions; read the COPYING file for details.\n";
     <diagramfile>        The Dia file that holds the diagram to be read.\n\
 \n\
     Note: parameters can be specified in any order.";
-
-    generator = nullptr;
 
     if (argc < 2) {
         throw std::string (std::string (notice) + "\nUsage: " + std::string (argv[0]) + " " + std::string (help) + "\n");
@@ -216,14 +214,17 @@ under certain conditions; read the COPYING file for details.\n";
     /* parameter != 0 means the command line was invalid */
 
     if (!infile) {
+        delete generator;
         throw std::string ("Error : Dia diagram not specified.\n");
     }
 
     if (parameter != 0) {
+        delete generator;
         throw std::string (std::string (notice) + "\nUsage: " + std::string (argv[0]) + " " + std::string (help) + "\n\n" + std::string (bighelp) + "\n");
     }
 
     if (!generator) {
+        delete generator;
         throw std::string ("Error : no generator specified.\n");
     }
 
@@ -231,7 +232,11 @@ under certain conditions; read the COPYING file for details.\n";
     xmlKeepBlanksDefault (0);
 
     // We build the class list from the dia file here
-    umlClass::parseDiagram (infile, diagram.getUml ());
+    if (!umlClass::parseDiagram (infile, diagram.getUml ())) {
+        delete generator;
+        throw std::string ("File " + std::string (infile) +
+                           " does not exist or is not a Dia diagram.\n");
+    }
 
     generator->setIndent (tab);
     generator->setOverwrite (overwrite);

@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
+#include <iostream>
+
 #include "umlClass.hpp"
 #include "string2.hpp"
 #include "parse_diagram.hpp"
@@ -315,7 +317,7 @@ parseGeomHeight (xmlNodePtr attribute, geometry * geom ) {
     xmlFree (val);
 }
 
-void
+bool
 umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
     xmlDocPtr ptr;
     xmlChar *end1 = nullptr;
@@ -327,8 +329,7 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
     ptr = xmlParseFile (diafile);
 
     if (ptr == NULL) {
-        throw std::string ("File " + std::string (diafile) +
-                           " does not exist or is not a Dia diagram.\n");
+        return false;
     }
 
     // we search for the first "object" node
@@ -428,8 +429,9 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
                                 break;
                             }
                             default : {
-                                throw std::string (std::string ("Unknown visibility : ") +
-                                                   std::string (1, tmptype[0]));
+                                std::cout << "Unknown visibility : "
+                                          << tmptype[0] << "\n";
+                                return false;
                             }
                         }
                         free (tmptype);
@@ -455,8 +457,9 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
                                 break;
                             }
                             default : {
-                                throw std::string (std::string ("Unknown visibility : ") +
-                                                   std::string (1, tmptype[0]));
+                                std::cout << "Unknown visibility : "
+                                          << tmptype[0] << "\n";
+                                return false;
                             }
                         }
                         free (tmptype);
@@ -678,7 +681,7 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
 
     xmlFreeDoc (ptr);
 
-    return;
+    return true;
 }
 
 void

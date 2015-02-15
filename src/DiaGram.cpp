@@ -324,6 +324,10 @@ DiaGram::getIncludes () const {
 
 void
 DiaGram::cleanIncludes () {
+    for (std::pair <std::list <umlPackage *>, umlClassNode * > & it :
+                                                                    includes) {
+        delete it.second;
+    }
     includes.clear ();
 }
 
@@ -359,6 +363,15 @@ DiaGram::getDeclEnd () {
 }
 
 DiaGram::~DiaGram () {
+    for (declaration & d : decl) {
+        if (d.decl_kind == dk_class) {
+            delete d.u.this_class;
+        }
+        else if (d.decl_kind == dk_module) {
+            delete d.u.this_module;
+        }
+    }
+    cleanIncludes ();
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
