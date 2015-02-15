@@ -1,1 +1,1 @@
-class ArrayOfBool extends bool[3][10] {}
+public class ArrayOfBool extends bool[3][10] {}

@@ -1,3 +1,3 @@
 import Pack.MyClass;
 
-class AliasOfMyClass extends Pack.MyClass {}
+public class AliasOfMyClass extends Pack.MyClass {}
