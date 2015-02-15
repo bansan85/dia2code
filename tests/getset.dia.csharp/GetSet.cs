@@ -5,13 +5,13 @@ public class GetSet {
     /// <summary>com2</summary>
     private bool boole;
     // Operations
-    public void setNom (type value) {
-    }
     public type getNom () {
     }
-    public void setBoole (bool value) {
+    public void setNom (type value) {
     }
     public bool isBoole () {
+    }
+    public void setBoole (bool value) {
     }
 }
 

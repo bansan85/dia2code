@@ -517,10 +517,10 @@ public class GetSet {
         bool boole;
     // Operations
     public :
-        void setNom (char * value);
         char * getNom () const;
-        void setBoole (bool value);
+        void setNom (char * value);
         bool isBoole () const;
+        void setBoole (bool value);
 }
 
 C++11 generator:
@@ -533,10 +533,10 @@ public class GetSet {
         bool boole;
     // Operations
     public :
-        void setNom (char * value);
         constexpr char * getNom ();
-        void setBoole (bool value);
+        void setNom (char * value);
         constexpr bool isBoole ();
+        void setBoole (bool value);
 }
 
 C# generator:
@@ -547,13 +547,13 @@ public class GetSet {
     /// <summary>com2</summary>
     private bool boole;
     // Operations
-    public void setNom (type value) {
-    }
     public type getNom () {
     }
-    public void setBoole (bool value) {
+    public void setNom (type value) {
     }
     public bool isBoole () {
+    }
+    public void setBoole (bool value) {
     }
 }
 
@@ -567,13 +567,13 @@ public class GetSet {
     private char * nom;
     private bool boole;
     // Operations
-    public void setNom (char * value) {
-    }
     public char * getNom () {
     }
-    public void setBoole (bool value) {
+    public void setNom (char * value) {
     }
     public bool isBoole () {
+    }
+    public void setBoole (bool value) {
     }
 }
 

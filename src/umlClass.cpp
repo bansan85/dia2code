@@ -94,6 +94,28 @@ umlClass::makeGetSetMethods () {
     for (umlAttribute & attrlist : attributes) {
         std::string tmpname;
 
+        /* The GET or IS method */
+        if ((attrlist.getType ().compare ("boolean") == 0) ||
+            (attrlist.getType ().compare ("Boolean") == 0) ||
+            (attrlist.getType ().compare ("bool") == 0)) {
+            tmpname.assign ("is");
+        } else {
+            tmpname.assign ("get");
+        }
+        tmpname.append (strtoupperfirst (attrlist.getName ()));
+
+        umlOperation operation2 (tmpname,
+                                 "",
+                                 attrlist.getType (),
+                                 "",
+                                 Visibility::PUBLIC,
+                                 Inheritance::FINAL,
+                                 false,
+                                 true,
+                                 Kind::IN,
+                                 "");
+        umlOperation::insert_operation (operation2, operations);
+
         /* The SET method */
         umlAttribute parameter ("value",
                                 "",
@@ -120,28 +142,6 @@ umlClass::makeGetSetMethods () {
                                 "");
         operation.addParameter (parameter);
         umlOperation::insert_operation(operation, operations);
-
-        /* The GET or IS method */
-        if ((attrlist.getType ().compare ("boolean") == 0) ||
-            (attrlist.getType ().compare ("Boolean") == 0) ||
-            (attrlist.getType ().compare ("bool") == 0)) {
-            tmpname.assign ("is");
-        } else {
-            tmpname.assign ("get");
-        }
-        tmpname.append (strtoupperfirst (attrlist.getName ()));
-
-        umlOperation operation2 (tmpname,
-                                 "",
-                                 attrlist.getType (),
-                                 "",
-                                 Visibility::PUBLIC,
-                                 Inheritance::FINAL,
-                                 false,
-                                 true,
-                                 Kind::IN,
-                                 "");
-        umlOperation::insert_operation (operation2, operations);
     }
 }
 
