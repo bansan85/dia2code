@@ -450,7 +450,9 @@ GenerateCodeJava::writeStruct (const umlClassNode & node) {
 }
 
 void
-GenerateCodeJava::writeTypedef (const umlClassNode & node) {
+GenerateCodeJava::writeTypedef1 (const umlClassNode & node,
+                                 const char * extends,
+                                 bool compName) {
     std::list <umlAttribute>::const_iterator umla;
 
     umla = node.getAttributes ().begin ();
@@ -462,17 +464,27 @@ GenerateCodeJava::writeTypedef (const umlClassNode & node) {
                  "Warning: typedef %s: ignoring name field in implementation type attribute\n",
                  node.getName ().c_str ());
     }
-    getFile () << spc () << "class " << cppName (node.getName ())
-               << " extends ";
-    const umlClassNode * umlc = findByName (getDia ().getUml (),
-                                            (*umla).getType ().c_str ());
-    if (umlc == NULL) {
-        getFile () << cppName ((*umla).getType ());
+    getFile () << spc () << "public class " << cppName (node.getName ())
+               << extends;
+    if (compName) {
+        const umlClassNode * umlc = findByName (getDia ().getUml (),
+                                                (*umla).getType ().c_str ());
+        if (umlc == NULL) {
+            getFile () << cppName ((*umla).getType ());
+        }
+        else {
+            getFile () << fqname (*umlc, false);
+        }
     }
     else {
-        getFile () << fqname (*umlc, false);
+        getFile () << cppName ((*umla).getType ());
     }
     getFile () << (*umla).getValue () << " {}\n";
+}
+
+void
+GenerateCodeJava::writeTypedef (const umlClassNode & node) {
+    writeTypedef1 (node, " extends ", true);
 }
 
 void

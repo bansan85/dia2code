@@ -246,6 +246,11 @@ GenerateCodeCSharp::writeStruct (const umlClassNode & node) {
 }
 
 void
+GenerateCodeCSharp::writeTypedef (const umlClassNode & node) {
+    writeTypedef1 (node, " : ", false);
+}
+
+void
 GenerateCodeCSharp::writeTemplates (
               const std::list <std::pair <std::string, std::string> > & tmps) {
     std::list <std::pair <std::string, std::string> >::const_iterator

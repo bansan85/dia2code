@@ -66,6 +66,9 @@ class GenerateCodeJava : public GenerateCode {
         void writeClassStart1 (const umlClassNode & node,
                                const char * inheritance,
                                bool compName);
+        void writeTypedef1 (const umlClassNode & node,
+                            const char * extends,
+                            bool compName);
 
         ~GenerateCodeJava ();
 };
