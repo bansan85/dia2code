@@ -50,10 +50,6 @@ class DiaGram {
                           std::list <umlClassNode> & resCla,
                           bool expandPackages);
 
-        /**
-         * openOutfile() returns NULL if the file exists and is not rewritten
-         * due to a clobber prohibition. Does an exit(1) if serious problems happen.
-        */
         bool haveInclude (std::list <umlPackage *> & packages,
                           umlClassNode * cla) const;
         void addInclude (std::list <umlPackage *> & packages,
@@ -78,8 +74,8 @@ class DiaGram {
 #endif
 
         void push (umlClassNode &node);
-        std::list <std::pair <std::list <umlPackage *>,
-                              umlClassNode * > > getIncludes () const;
+        const std::list <std::pair <std::list <umlPackage *>,
+                              umlClassNode * > > & getIncludes () const;
         void cleanIncludes ();
         void determineIncludes (declaration &d, bool expandPackages);
         

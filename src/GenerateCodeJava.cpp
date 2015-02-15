@@ -60,24 +60,81 @@ GenerateCodeJava::writeEndHeader () {
 }
 
 bool
-GenerateCodeJava::writeInclude (std::pair <std::list <umlPackage *>,
-                                umlClassNode * > & name) {
-    getFile () << spc () << "import ";
+GenerateCodeJava::writeInclude (const std::list <std::pair <
+                                                   std::list <umlPackage *>,
+                                                   umlClassNode * > > & name) {
+    bool ret = false;
+    std::list <std::string> incs;
 
-    if (!name.first.empty ()) {
-        for (umlPackage * namei : name.first) {
-            getFile () << namei->getName () << ".";
+    for (const std::pair <std::list <umlPackage *>, umlClassNode *> & it : 
+                                                                        name) {
+        std::string include;
+
+        if (!it.first.empty ()) {
+            for (umlPackage * namei : it.first) {
+                include.append (namei->getName ());
+                include.append (".");
+            }
+        }
+
+        if (it.second == NULL) {
+            include.append ("*");
+        }
+        else {
+            include.append (it.second->getName ());
+        }
+
+        bool found = false;
+        std::list <std::string>::const_iterator inc = incs.begin ();
+        size_t taille = include.length ();
+
+        while (inc != incs.end ()) {
+            std::string search;
+            size_t taille2 = (*inc).length ();
+
+            if (taille == taille2) {
+                if (include.compare (*inc) == 0) {
+                    found = true;
+                }
+                ++inc;
+            }
+            else {
+                // Check if include = "pack.class" or "pack.pack2.*" and
+                // *inc = "pack.*"
+                // if so, no need to include.
+                if (taille > taille2) {
+                    if (include.compare (0, taille2 - 1, *inc) == 0) {
+                        found = true;
+                    }
+                    ++inc;
+                }
+                // Check if include = "pack.*" and
+                // *inc = "pack.class"
+                // if so, remove *inc.
+                else {
+                    if (include.compare (0, taille - 1, *inc) == 0) {
+                        inc = incs.erase (inc);
+                    }
+                    else {
+                        ++inc;
+                    }
+                }
+            }
+        }
+        if (!found) {
+            incs.push_back (include);
         }
     }
 
-    if (name.second == NULL) {
-        getFile () << "*;\n";
-    }
-    else {
-        getFile () << name.second->getName () << ";\n";
+    for (std::string it : incs) {
+        getFile () << spc () << "import " << it << ";\n";
     }
 
-    return true;
+    if (!incs.empty ()) {
+        getFile () << "\n";
+    }
+
+    return ret;
 }
 
 void

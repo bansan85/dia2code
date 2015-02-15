@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
+#include <algorithm>
+
 #include "GenerateCodeCpp.hpp"
 #include "GenerateCodeJava.hpp"
 #include "string2.hpp"
@@ -79,40 +81,63 @@ GenerateCodeCpp::writeEndHeader () {
 }
 
 bool
-GenerateCodeCpp::writeInclude (std::pair <std::list <umlPackage *>,
-                               umlClassNode * > & name) {
-    if (name.second == NULL) {
-        fprintf (stderr, "TODO: dependence of package is not implemented.\n");
-        return false;
-    }
+GenerateCodeCpp::writeInclude (const std::list <std::pair <
+                                                    std::list <umlPackage *>,
+                                                    umlClassNode *> > & name) {
+    bool ret = false;
+    std::list <std::string> incs;
 
-    getFile () << spc () << "#include \"";
-    
-    if (getBuildTree ()) {
-        if (!name.first.empty ()) {
-            for (const umlPackage * pack : name.first) {
-                getFile () << pack->getName () << SEPARATOR;
-            }
+    for (const std::pair <std::list <umlPackage *>, umlClassNode *> & it :
+                                                                        name) {
+        std::string include;
+
+        if (it.second == NULL) {
+            continue;;
         }
-        getFile () << name.second->getName () << "." << getFileExt ()
-                   << "\"\n";
-    }
-    else if (getOneClass ()) {
-        getFile () << name.second->getName () << "." << getFileExt ()
-                   << "\"\n";
-    }
-    else {
-        if (!name.first.empty ()) {
-            getFile () << (*name.first.begin ())->getName () << "."
-                       << getFileExt () << "\"\n";
+
+        ret = true;
+    
+        if (getBuildTree ()) {
+            if (!it.first.empty ()) {
+                for (const umlPackage * pack : it.first) {
+                    include.append (pack->getName ());
+                    include.append (1, SEPARATOR);
+                }
+            }
+            include.append (it.second->getName ());
+            include.append (".");
+            include.append (getFileExt ());
+        }
+        else if (getOneClass ()) {
+            include.append (it.second->getName ());
+            include.append (".");
+            include.append (getFileExt ());
         }
         else {
-            getFile () << name.second->getName () << "." << getFileExt ()
-                       << "\"\n";
+            if (!it.first.empty ()) {
+                include.append ((*it.first.begin ())->getName ());
+                include.append (".");
+                include.append (getFileExt ());
+            }
+            else {
+                include.append (it.second->getName ());
+                include.append (".");
+                include.append (getFileExt ());
+            }
+        }
+        if (std::find (incs.begin (), incs.end (), include) == incs.end ()) {
+            incs.push_back (include);
         }
     }
 
-    return true;
+    for (std::string it : incs) {
+        getFile () << spc () << "#include \"" << it << "\"\n";
+    }
+    if (!incs.empty ()) {
+        getFile () << "\n";
+    }
+
+    return ret;
 }
 
 void

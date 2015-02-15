@@ -198,19 +198,7 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
     }
 #endif
 
-    std::list <std::pair <std::list <umlPackage *>, umlClassNode * > > incfile;
-
-    incfile = getDia ().getIncludes ();
-    bool add = false;
-    for (std::pair <std::list <umlPackage *>, umlClassNode * > namei :
-                                                                     incfile) {
-        if (writeInclude (namei)) {
-            add = true;
-        }
-    }
-    if (add) {
-        getFile () << "\n";
-    }
+    writeInclude (getDia ().getIncludes ());
 
     return;
 }
@@ -909,8 +897,7 @@ GenerateCode::visibility1 (const Visibility & vis) {
         case Visibility::PROTECTED :
             return "protected";
         case Visibility::IMPLEMENTATION :
-            fprintf (stderr, "Implementation not applicable.\n"
-                             "Default: public.\n");
+            fprintf (stderr, "Implementation not applicable. Default: public.\n");
             return "public";
         default :
             throw std::string ("Unknown visibility.\n");

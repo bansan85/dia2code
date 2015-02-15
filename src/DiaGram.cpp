@@ -317,7 +317,7 @@ DiaGram::pushInclude (umlPackage * node) {
     addInclude (pkglist, nullptr);
 }
 
-std::list <std::pair <std::list <umlPackage *>, umlClassNode * > >
+const std::list <std::pair <std::list <umlPackage *>, umlClassNode * > > &
 DiaGram::getIncludes () const {
     return includes;
 }
