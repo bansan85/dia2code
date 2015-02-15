@@ -245,6 +245,32 @@ GenerateCodeCSharp::writeStruct (const umlClassNode & node) {
     getFile () << spc () << "};\n";
 }
 
+void
+GenerateCodeCSharp::writeTemplates (
+              const std::list <std::pair <std::string, std::string> > & tmps) {
+    std::list <std::pair <std::string, std::string> >::const_iterator
+                                                     template_ = tmps.begin ();
+    getFile () << " <";
+    while (template_ != tmps.end ()) {
+        getFile () << (*template_).first;
+        ++template_;
+        if (template_ != tmps.end ()) {
+            getFile () << ", ";
+        }
+    }
+    getFile () << "> ";
+
+    template_ = tmps.begin ();
+    while (template_ != tmps.end ()) {
+        getFile () << "where " << (*template_).first << " : " 
+                   << cppName ((*template_).second);
+        ++template_;
+        if (template_ != tmps.end ()) {
+            getFile () << " ";
+        }
+    }
+}
+
 GenerateCodeCSharp::~GenerateCodeCSharp () {
 }
 
