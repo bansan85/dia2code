@@ -31,3 +31,4 @@ config.sub
 coverage.info
 cov-*
 callgrind.out.*
+tests/*.dia*.txt

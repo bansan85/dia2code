@@ -1,6 +1,7 @@
 #!/bin/sh
 
 generators="cpp cpp11 csharp java"
+res="true"
 
 if [[ ! -a ../src/dia2code ]] ; then
 echo "Failed to found dia2code."
@@ -14,9 +15,10 @@ do
         rm -Rf result/*
         echo "dia2code -t $gen $file -d result"
         ../src/dia2code -t $gen $file -d result || exit 1
-        diff -pu $file.$gen result > result.txt
+        diff -pu $file.$gen result > $file.$gen.result.txt
         if [[ ! $? -eq 0 ]] ; then
-            exit 1
+            echo $file.$gen FAILED
+            res="false"
         fi ;
         echo ""
     done
@@ -32,9 +34,10 @@ do
             rm -Rf result/*
             echo "dia2code -t $gen $file -d result $extra"
             ../src/dia2code -t $gen $file -d result $extra || exit 1
-            diff -pu $file.$gen"$extra" result > result.txt
+            diff -pu $file.$gen"$extra" result > $file.$gen"$extra".result.txt
             if [[ ! $? -eq 0 ]] ; then
-                exit 1
+                echo $file.$gen"$extra" FAILED
+                res="false"
             fi ;
             echo ""
         done
@@ -46,11 +49,16 @@ do
     rm -Rf result/*
     echo "dia2code -t $gen operations.dia -d result -l COPYING"
     ../src/dia2code -t $gen operations.dia -d result -l COPYING || exit 1
-    diff -pu operations.dia.$gen"_COPYING" result > result.txt
+    diff -pu operations.dia.$gen"_COPYING" result > operations.dia.$gen"_COPYING"result.txt
     if [[ ! $? -eq 0 ]] ; then
-        exit 1
+        echo operations.dia.$gen"_COPYING" FAILED
+        res="false"
     fi ;
     echo ""
 done
+
+if [[ $res == "false" ]] ; then
+    exit 1
+fi;
 
 exit 0
