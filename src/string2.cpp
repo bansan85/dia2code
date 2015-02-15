@@ -86,7 +86,7 @@ is_present (std::list <std::string> list, const char *name) {
         const char *namei = str.c_str ();
         size_t len;
         const char* mask;
-        if ( ! strcmp (namei, name) ) {
+        if ((namei == NULL) || (strcmp (namei, name) == 0)) {
             return true;
         }
         len = strlen (namei);
