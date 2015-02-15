@@ -198,6 +198,53 @@ GenerateCodeCSharp::writeNameSpaceEnd (const umlClassNode * node) {
     getFile () << spc () << "\n";
 }
 
+void
+GenerateCodeCSharp::writeStruct (const umlClassNode & node) {
+    if (!node.getComment ().empty ()) {
+        getFile () << spc () << "/// <summary>" << node.getComment ()
+                   << "</summary>\n";
+    }
+    if (getOpenBraceOnNewline ()) {
+        getFile () << spc () << "public struct " << node.getName () << "\n";
+        getFile () << spc () << "{\n";
+    }
+    else {
+        getFile () << spc () << "public struct " << node.getName () << " {\n";
+    }
+    incIndentLevel ();
+    for (const umlAttribute & umla : node.getAttributes ()) {
+        if (umla.getName ().empty ()) {
+            fprintf (stderr,
+                     "%s: an unamed attribute is found.\n",
+                     node.getName ().c_str ());
+        }
+        if (umla.getVisibility () != Visibility::PUBLIC) {
+            fprintf (stderr,
+                    "Struct %s, attribute %s: visibility forced to visible.\n",
+                     node.getName ().c_str (),
+                     umla.getName ().c_str ());
+        }
+        // Use of a tmp value to ignore visibility.
+        Visibility vis = Visibility::PUBLIC;
+        const_cast <umlAttribute &> (umla).setVisibility (Visibility::PUBLIC);
+        writeAttribute (umla, vis);
+    }
+    for (const umlOperation & umlo : node.getOperations ()) {
+        if (umlo.getVisibility () != Visibility::PUBLIC) {
+            fprintf (stderr,
+                    "Struct %s, operation %s: visibility forced to visible.\n",
+                     node.getName ().c_str (),
+                     umlo.getName ().c_str ());
+        }
+        // Use of a tmp value to ignore visibility.
+        Visibility vis = Visibility::PUBLIC;
+        const_cast <umlOperation &> (umlo).setVisibility (Visibility::PUBLIC);
+        writeFunction (umlo, vis);
+    }
+    decIndentLevel ();
+    getFile () << spc () << "};\n";
+}
+
 GenerateCodeCSharp::~GenerateCodeCSharp () {
 }
 

@@ -37,6 +37,7 @@ class GenerateCodeCSharp : public GenerateCodeJava {
         void writeClassStart (const umlClassNode & node);
         void writeNameSpaceStart (const umlClassNode * node);
         void writeNameSpaceEnd (const umlClassNode * node);
+        void writeStruct (const umlClassNode & node);
 
         ~GenerateCodeCSharp ();
 };
