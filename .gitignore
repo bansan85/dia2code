@@ -30,3 +30,4 @@ config.status
 config.sub
 coverage.info
 cov-*
+callgrind.out.*

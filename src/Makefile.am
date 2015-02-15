@@ -1,6 +1,6 @@
 bin_PROGRAMS = dia2code
 dia2code_CPPFLAGS = @XML_CFLAGS@
-dia2code_CXXFLAGS = @XML_CFLAGS@ -std=c++11 -Wall -Wextra -Wpacked -Wmissing-format-attribute -fstrict-aliasing -Wstrict-aliasing=3 -Wuninitialized -Wfloat-equal -Wno-comment -Wswitch-enum -Wswitch-default -Wshadow -Wpedantic -Wformat=2 -Wformat-nonliteral -Wformat-security -Winit-self -fstrict-overflow -Wstrict-overflow=5 -Wno-unused-parameter -Wconversion -Wold-style-cast -Wno-overloaded-virtual -Wwrite-strings -Wcast-qual -Wcast-align -Wredundant-decls -Wlogical-op -Wpointer-arith -fprofile-arcs -ftest-coverage -g3 -ggdb3 -O0 -pipe -fno-omit-frame-pointer -ftrapv -Wzero-as-null-pointer-constant
+dia2code_CXXFLAGS = @XML_CFLAGS@ -std=c++11 -Wall -Wextra -Wpacked -Wmissing-format-attribute -fstrict-aliasing -Wstrict-aliasing=3 -Wuninitialized -Wfloat-equal -Wno-comment -Wswitch-enum -Wswitch-default -Wshadow -Wpedantic -Wformat=2 -Wformat-nonliteral -Wformat-security -Winit-self -fstrict-overflow -Wstrict-overflow=5 -Wno-unused-parameter -Wconversion -Wold-style-cast -Wno-overloaded-virtual -Wwrite-strings -Wcast-qual -Wcast-align -Wredundant-decls -Wlogical-op -Wpointer-arith -g3 -ggdb3 -O0 -pipe -fno-omit-frame-pointer -ftrapv -Wzero-as-null-pointer-constant
 dia2code_LDADD    = @XML_LIBS@
 dia2code_SOURCES  = DiaGram.cpp \
 										GenerateCode.cpp \

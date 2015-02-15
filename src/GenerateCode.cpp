@@ -770,14 +770,11 @@ GenerateCode::genDecl (declaration &d,
 }
 
 
-std::string
+std::string &
 GenerateCode::spc () const {
-    std::string spcbuf ("");
-    int n_spaces = indent * indentlevel, i;
+    static std::string spcbuf;
 
-    for (i = 0; i < n_spaces; i++) {
-        spcbuf.append (" ");
-    }
+    spcbuf.assign (indent * indentlevel, ' ');
 
     return spcbuf;
 }

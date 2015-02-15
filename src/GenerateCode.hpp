@@ -109,7 +109,7 @@ class GenerateCode {
         const char * fqname (const umlClassNode & node,
                              bool use_ref_type);
         virtual const char * visibility (const Visibility & vis) = 0;
-        std::string spc () const;
+        std::string & spc () const;
 
         virtual std::string strPackage (const char * package) const = 0;
         virtual std::string strPointer (const std::string & type) const = 0;
