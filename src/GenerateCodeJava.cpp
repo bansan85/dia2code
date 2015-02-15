@@ -189,7 +189,8 @@ GenerateCodeJava::writeFunction1 (const umlOperation & ope,
 
 void
 GenerateCodeJava::writeFunction2 (const umlOperation & ope,
-                                  Visibility & curr_visibility) {
+                                  Visibility & curr_visibility,
+                                  bool defaultparam) {
     if (ope.isStatic ()) {
 #ifdef ENABLE_CORBA
         if (getCorba ()) {
@@ -212,8 +213,15 @@ GenerateCodeJava::writeFunction2 (const umlOperation & ope,
     tmpa = ope.getParameters ().begin ();
     while (tmpa != ope.getParameters ().end ()) {
         getFile () << (*tmpa).getType () << " " << (*tmpa).getName ();
-        if (!(*tmpa).getValue ().empty ()) {
-            fprintf (stderr, "Java does not support param default.\n");
+        if (!defaultparam) {
+            if (!(*tmpa).getValue ().empty ()) {
+                fprintf (stderr, "Generator doesn't support param default.\n");
+            }
+        }
+        else {
+            if (!(*tmpa).getValue ().empty ()) {
+                getFile () << " = " << (*tmpa).getValue ();
+            }
         }
         ++tmpa;
         if (tmpa != ope.getParameters ().end ()) {
@@ -222,7 +230,7 @@ GenerateCodeJava::writeFunction2 (const umlOperation & ope,
     }
     getFile () << ")";
     if (ope.isConstant ()) {
-        fprintf (stderr, "Java does not support const method.\n");
+        fprintf (stderr, "Generator doesn't support const method.\n");
     }
     if (ope.getInheritance () == Inheritance::ABSTRACT) {
         getFile () << ";\n";
@@ -252,7 +260,7 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
         getFile () << "final ";
     }
 
-    writeFunction2 (ope, curr_visibility);
+    writeFunction2 (ope, curr_visibility, false);
 }
 
 void

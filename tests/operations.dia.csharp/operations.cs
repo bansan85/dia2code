@@ -6,7 +6,7 @@ public class operations {
     /// <param name="undef">(???)</param>
     /// <param name="out">(out)</param>
     /// <returns>type</returns>
-    private abstract type test (type1 in, type2 inOut, type3 undef, type4 out);
+    private abstract type test (type1 in, type2 inOut, type3 undef = 0, type4 out);
     public virtual static test2 () {
     }
     public test3 () {

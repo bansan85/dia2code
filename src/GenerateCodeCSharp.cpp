@@ -148,7 +148,7 @@ GenerateCodeCSharp::writeFunction (const umlOperation & ope,
         getFile () << "virtual ";
     }
 
-    writeFunction2 (ope, curr_visibility);
+    writeFunction2 (ope, curr_visibility, true);
 }
 
 void

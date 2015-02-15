@@ -285,7 +285,7 @@ template <type template>
 ** Namespace if class are in package.
 namespace package {
     ** Class with inheritance if necessary.
-    class Class : public ParentClass {
+    public class Class : public ParentClass {
         ** Visibility of the attribut / operation. Public, private, protected
         ** are supported. Implementation is not, default will be public.
         ** Attributes will be print first, then operations.
@@ -335,6 +335,47 @@ https://msdn.microsoft.com/en-us/library/ms228500%28v=vs.90%29.aspx
 
 XML Documentation Comments
 https://msdn.microsoft.com/en-us/library/b2s063f7.aspx
+
+** The license if specified in command line (-l option).
+/*
+File bit-by-bit.
+ */
+
+** No header guard
+
+** Dependancies
+using dependancies;
+
+** Templates
+template <type template>
+
+** Namespace if class are in package.
+namespace package {
+    ** Class with inheritance and templates if necessary.
+    public class Class <template> : ParentClass where template : type  {
+        ** Attributes will be print first, then operations.
+        // Attributes
+        ** Comments are in XML format.
+        /// <summary>com1</summary>
+        public type1 nom1 = val1;
+        private static type2 nom2;
+        protected type3 nom3 = val3;
+        // Operations
+        public abstract AbstractOperation ();
+        public virtual VirtualOperation ();
+        public NonAbstractOperation ();
+        /// <summary>comment</summary>
+        /// <param name="in">(in)</param>
+        /// <param name="inOut">(in/out) comment2</param>
+        /// <param name="undef">(???)</param>
+        /// <param name="out">(out)</param>
+        /// <returns>type</returns>
+        public abstract type test (type1 in, type2 inOut, type3 undef = 0, type4 out);
+        public static test2 ();
+        ** There is no const function in C#.
+        public test3 ();
+    };
+}
 
 
 Java generator:
@@ -411,9 +452,10 @@ public class Class <template extends type> extends ParentClass {
      * @param out (out)
      * @return type
      */
+    ** There is no default param in Java.
     public abstract type test (type1 in, type2 inOut, type3 undef = 0, type4 out);
     public static test2 ();
-    ** There is no const function is Java.
+    ** There is no const function in Java.
     public test3 ();
 }
 
@@ -437,7 +479,12 @@ C++ and C++11 generator:
 class InheritanceClasseChildren : public InheritanceClasseImplement, protected InheritanceClasseProtected, private InheritancePack1::InheritanceClassePrivate {
 };
 
-C++ and C++11 generator:
+C# generator:
+** Generalization are public only.
+class InheritanceClasseChildren : InheritanceClasseImplement : InheritanceClasseProtected : InheritanceClassePrivate {
+};
+
+Java generator:
 ** In Java, Generalization are public only.
 class InheritanceClasseChildren extends InheritanceClasseImplement extends InheritanceClasseProtected extends InheritancePack1.InheritanceClassePrivate {
 };
@@ -463,7 +510,7 @@ GetSet
 C++ generator:
 ** The stereotype of the class is GetSet.
 // Stereotype : GetSet
-class GetSet {
+public class GetSet {
     // Attributes
     private :
         char * nom;
@@ -479,7 +526,7 @@ class GetSet {
 C++11 generator:
 ** The stereotype of the class is GetSet.
 // Stereotype : GetSet
-class GetSet {
+public class GetSet {
     // Attributes
     private :
         char * nom;
@@ -491,6 +538,25 @@ class GetSet {
         void setBoole (bool value);
         constexpr bool isBoole ();
 }
+
+C# generator:
+// Stereotype : GetSet
+public class GetSet {
+    // Attributes
+    public type nom;
+    /// <summary>com2</summary>
+    private bool boole;
+    // Operations
+    public void setNom (type value) {
+    }
+    public type getNom () {
+    }
+    public void setBoole (bool value) {
+    }
+    public bool isBoole () {
+    }
+}
+
 
 
 Java generator:
@@ -547,6 +613,17 @@ enum class enumeration {
 };
 
 
+C# generator:
+/// <summary>Comment of the enum</summary>
+public enum enumeration {
+    /// <summary>enum1</summary>
+    ENUM_1 = 0,
+    /// <summary>enum2</summary>
+    ENUM_2,
+    ENUM_3
+};
+
+
 Java generator:
 /**
  * Comment of the enum
@@ -578,6 +655,19 @@ struct structure {
     type3 nom3;
     // Operations
     void operation (type1 attr1);
+};
+
+
+C# generator:
+public struct structure {
+    /// <summary>com1</summary>
+    public type1 nom1;
+    /// <summary>com2-1
+    /// com2-2</summary>
+    public type2 nom2;
+    public type3 nom3;
+    public void operation (type1 attr1) {
+    }
 };
 
 
@@ -619,6 +709,12 @@ C++ and C++11 generator:
 typedef PrimitiveType NewType1;
 typedef Pack::ClassType NewType2;
 
+C# generator:
+using Pack;
+
+public class AliasOfMyClass : MyClass {}
+public class ArrayOfBool : bool[3][10] {}
+
 
 Java generator:
 import Pack.ClassType;
@@ -647,6 +743,14 @@ C++11 generator:
 class operations {
     public :
         test5 () = delete;
+}
+
+
+C# generator:
+** Not applicable in C#.
+class operations {
+    public test5 () {
+    }
 }
 
 
