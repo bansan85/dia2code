@@ -147,7 +147,8 @@ GenerateCodeJava::writeFunctionComment (const umlOperation & ope) {
     getFile () << spc () << "/**\n";
     getFile () << comment (ope.getComment (),
                            std::string (spc () + " * "),
-                           std::string (spc () + " * "));
+                           std::string (spc () + " * "),
+                           "\n");
     for (const umlAttribute & tmpa2 : ope.getParameters ()) {
         std::string comment_ (tmpa2.getName () + " (" +
                               kindStr (tmpa2.getKind ()) +
@@ -157,7 +158,8 @@ GenerateCodeJava::writeFunctionComment (const umlOperation & ope) {
                               tmpa2.getComment ()));
         getFile () << comment (comment_,
                                std::string (spc () + " * @param "),
-                               std::string (spc () + " *        "));
+                               std::string (spc () + " *        "),
+                               "\n");
     }
     getFile () << spc () << " * @return " << ope.getType () << "\n";
     getFile () << spc () << "*/\n";
@@ -269,13 +271,16 @@ GenerateCodeJava::writeClassComment (const std::string & nom) {
         getFile () << spc () << "/**\n";
         getFile () << comment (nom,
                                std::string (spc () + " * "),
-                               std::string (spc () + " * "));
+                               std::string (spc () + " * "),
+                               "\n");
         getFile () << spc () << " */\n";
     }
 }
 
 void
-GenerateCodeJava::writeClassStart (const umlClassNode & node) {
+GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
+                                    const char * inheritance,
+                                    bool compName) {
     getFile () << spc () << "public ";
     if (node.isAbstract ()) {
         getFile () << "abstract ";
@@ -299,9 +304,15 @@ GenerateCodeJava::writeClassStart (const umlClassNode & node) {
         parent = node.getParents ().begin ();
         while (parent != node.getParents ().end ()) {
             if ((*parent).second != Visibility::PUBLIC) {
-                fprintf (stderr, "Only a public visibility is supported by Java generator.\n");
+                fprintf (stderr, "Only a public visibility is supported.\n");
             }
-            getFile () << " extends " << fqname (*(*parent).first, false);
+            getFile () << inheritance;
+            if (compName) {
+                getFile () << fqname (*(*parent).first, false);
+            }
+            else {
+                getFile () << (*parent).first->getName ();
+            }
             ++parent;
         }
     }
@@ -317,6 +328,11 @@ GenerateCodeJava::writeClassStart (const umlClassNode & node) {
     else {
         getFile () << " {\n";
     }
+}
+
+void
+GenerateCodeJava::writeClassStart (const umlClassNode & node) {
+    writeClassStart1 (node, " extends ", true);
 }
 
 void

@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "GenerateCodeCSharp.hpp"
 #include "umlClassNode.hpp"
+#include "string2.hpp"
 
 GenerateCodeCSharp::GenerateCodeCSharp (DiaGram & diagram) :
     GenerateCodeJava (diagram) {
@@ -114,6 +115,28 @@ GenerateCodeCSharp::writeInclude (const std::list <std::pair <
 }
 
 void
+GenerateCodeCSharp::writeFunctionComment (const umlOperation & ope) {
+    getFile () << comment (ope.getComment (),
+                           std::string (spc () + "/// <summary>"),
+                           std::string (spc () + "/// "),
+                           "</summary>\n");
+    for (const umlAttribute & tmpa2 : ope.getParameters ()) {
+        std::string comment_ ("<param name=\"" + tmpa2.getName () + "\">(" +
+                              kindStr (tmpa2.getKind ()) +
+                              (tmpa2.getComment ().empty () ?
+                                ")" :
+                                ") " +
+                              tmpa2.getComment ()));
+        getFile () << comment (comment_,
+                               std::string (spc () + "/// "),
+                               std::string (spc () + "/// "),
+                               "</param>\n");
+    }
+    getFile () << spc () << "/// <returns>" << ope.getType ()
+               << "</returns>\n";
+}
+
+void
 GenerateCodeCSharp::writeFunction (const umlOperation & ope,
                                    Visibility & curr_visibility) {
     writeFunction1 (ope, curr_visibility);
@@ -131,12 +154,16 @@ GenerateCodeCSharp::writeFunction (const umlOperation & ope,
 void
 GenerateCodeCSharp::writeClassComment (const std::string & nom) {
     if (!nom.empty ()) {
-        getFile () << spc () << "/// <summary>\n";
         getFile () << comment (nom,
-                               std::string (spc () + "///  "),
-                               std::string (spc () + "///  "));
-        getFile () << spc () << "/// </summary>\n";
+                               std::string (spc () + "/// <summary>"),
+                               std::string (spc () + "/// "),
+                               "</summary>\n");
     }
+}
+
+void
+GenerateCodeCSharp::writeClassStart (const umlClassNode & node) {
+    writeClassStart1 (node, " : ", false);
 }
 
 void

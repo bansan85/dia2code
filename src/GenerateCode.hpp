@@ -117,7 +117,8 @@ class GenerateCode {
         void writeFile ();
         const char * comment (const std::string & comment_,
                               const std::string & startFirstLine,
-                              const std::string & startOtherLines);
+                              const std::string & startOtherLines,
+                              const char * endLastLine);
         virtual void writeLicense () = 0;
         virtual void writeStartHeader (std::string & name) = 0;
         virtual void writeEndHeader () = 0;

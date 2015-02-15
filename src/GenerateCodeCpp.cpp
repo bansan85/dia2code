@@ -150,7 +150,8 @@ GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
     getFile () << spc () << "/**\n";
     getFile () << comment (ope.getComment (),
                            std::string (spc () + " * \\brief "),
-                           std::string (spc () + " *        "));
+                           std::string (spc () + " *        "),
+                           "\n");
     for (const umlAttribute & tmpa2 : ope.getParameters ()) {
         std::string comment_ (tmpa2.getName () + " (" +
                               kindStr (tmpa2.getKind ()) +
@@ -160,7 +161,8 @@ GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
                               tmpa2.getComment ()));
         getFile () << comment (comment_,
                                std::string (spc () + " * \\param "),
-                               std::string (spc () + " *        "));
+                               std::string (spc () + " *        "),
+                               "\n");
     }
     getFile () << spc () << " * \\return " << ope.getType () << "\n";
     getFile () << spc () << " */\n";
@@ -299,7 +301,8 @@ GenerateCodeCpp::writeClassComment (const std::string & nom) {
         getFile () << spc () << "/**\n";
         getFile () << comment (nom,
                                std::string (spc () + " * \\brief "),
-                               std::string (spc () + " *        "));
+                               std::string (spc () + " *        "),
+                               "\n");
         getFile () << spc () << "*/\n";
     }
 }
@@ -364,7 +367,8 @@ GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
     if (!attr.getComment ().empty ()) {
         getFile () << comment (attr.getComment (),
                                std::string (spc () + "/// "),
-                               std::string (spc () + "/// "));
+                               std::string (spc () + "/// "),
+                               "\n");
     }
     if (attr.isStatic ()) {
         getFile () << spc () << "static " << attr.getType () << " "

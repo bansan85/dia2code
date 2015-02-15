@@ -2,9 +2,7 @@
 public class GetSet {
     // Attributes
     public type nom;
-    /// <summary>
-    ///  com2
-    /// </summary>
+    /// <summary>com2</summary>
     private bool boole;
     // Operations
     public void setNom (type value) {

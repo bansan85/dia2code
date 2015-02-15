@@ -842,7 +842,8 @@ GenerateCode::writeFile () {
 const char *
 GenerateCode::comment (const std::string & comment_,
                        const std::string & startFirstLine,
-                       const std::string & startOtherLines) {
+                       const std::string & startOtherLines,
+                       const char * endLastLine) {
     static std::string buf;
     size_t start = 0;
     size_t end;
@@ -871,7 +872,7 @@ GenerateCode::comment (const std::string & comment_,
         buf.append (startOtherLines);
     }
     buf.append (comment_.substr (start, end-start));
-    buf.append ("\n");
+    buf.append (endLastLine);
 
     return buf.c_str ();
 }
