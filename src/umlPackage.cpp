@@ -53,6 +53,14 @@ umlPackage::umlPackage (xmlNodePtr package, std::string id_) :
                 parseGeomWidth (attribute->xmlChildrenNode, &geom);
             } else if (!strcmp ("elem_height", BAD_TSAC2 (attrname))) {
                 parseGeomHeight (attribute->xmlChildrenNode, &geom);
+            } else if (!strcmp ("stereotype", BAD_TSAC2 (attrname))) {
+                std::string stereo;
+                parseDiaNode (attribute->xmlChildrenNode, stereo);
+                if (!stereo.empty ()) {
+                    fprintf (stderr, "Unknown stereotype: %s\n"
+                                     "No stereotype is allowed for package.",
+                                     stereo.c_str ());
+                }
             }
             xmlFree (attrname);
         }
