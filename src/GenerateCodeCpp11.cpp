@@ -35,9 +35,7 @@ GenerateCodeCpp11::writeFunction (const umlOperation & ope,
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
         if (ope.getVisibility () != '0') {
-            fprintf (stderr,
-                     "CORBAValue %s: must be public\n",
-                     ope.getName ().c_str ());
+            std::cerr << "CORBAValue " << ope.getName () << ": must be public\n";
         }
     }
     else

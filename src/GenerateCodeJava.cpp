@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
+#include <iostream>
+
 #include "GenerateCodeJava.hpp"
 #include "string2.hpp"
 #include "scan_tree.hpp"
@@ -171,9 +173,8 @@ GenerateCodeJava::writeFunction1 (const umlOperation & ope,
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
         if (ope.getVisibility () != '0') {
-            fprintf (stderr,
-                     "CORBAValue %s: must be public\n",
-                     ope.getName ().c_str ());
+            std::cerr << "CORBAValue " << ope.getName ()
+                      << ": must be public.\n";
         }
     }
 #endif
@@ -194,9 +195,8 @@ GenerateCodeJava::writeFunction2 (const umlOperation & ope,
     if (ope.isStatic ()) {
 #ifdef ENABLE_CORBA
         if (getCorba ()) {
-            fprintf (stderr,
-                     "CORBAValue %s: static not supported\n",
-                     ope.getName ().c_str ());
+            std::cerr << "CORBAValue " << ope.getName ()
+                      << ": static not supported.\n";
         }
         else
 #endif
@@ -215,7 +215,7 @@ GenerateCodeJava::writeFunction2 (const umlOperation & ope,
         getFile () << (*tmpa).getType () << " " << (*tmpa).getName ();
         if (!defaultparam) {
             if (!(*tmpa).getValue ().empty ()) {
-                fprintf (stderr, "Generator doesn't support param default.\n");
+                std::cerr << "Generator doesn't support param default.\n";
             }
         }
         else {
@@ -230,7 +230,7 @@ GenerateCodeJava::writeFunction2 (const umlOperation & ope,
     }
     getFile () << ")";
     if (ope.isConstant ()) {
-        fprintf (stderr, "Generator doesn't support const method.\n");
+        std::cerr << "Generator doesn't support const method.\n";
     }
     if (ope.getInheritance () == Inheritance::ABSTRACT) {
         getFile () << ";\n";
@@ -298,7 +298,7 @@ GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
     if (!node.getTemplates ().empty ()) {
 #ifdef ENABLE_CORBA
         if (isCorba) {
-            fprintf (stderr, "CORBAValue %s: template ignored\n", name);
+            std::cerr << "CORBAValue " << name << ": template ignored.\n";
         } else
 #endif
         {
@@ -312,7 +312,7 @@ GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
         parent = node.getParents ().begin ();
         while (parent != node.getParents ().end ()) {
             if ((*parent).second != Visibility::PUBLIC) {
-                fprintf (stderr, "Only a public visibility is supported.\n");
+                std::cerr << "Only a public visibility is supported.\n";
             }
             getFile () << inheritance;
             if (compName) {
@@ -391,7 +391,7 @@ GenerateCodeJava::writeNameSpaceEnd (const umlClassNode * node) {
 
 void
 GenerateCodeJava::writeConst (const umlClassNode & node) {
-    fprintf (stderr, "Const stereotype in not applicable to Java.\n");
+    std::cerr << "Const stereotype in not applicable to Java.\n";
 }
 
 void
@@ -411,28 +411,22 @@ GenerateCodeJava::writeEnum (const umlClassNode & node) {
     while (umla != node.getAttributes ().end ()) {
         const char *literal = (*umla).getName ().c_str ();
         if (!(*umla).getType ().empty ()) {
-            fprintf (stderr,
-                     "%s/%s: ignoring type\n",
-                     node.getName ().c_str (),
-                     literal);
+            std::cerr << node.getName () << "/" << literal
+                      << ": ignoring type.\n";
         }
         if ((*umla).getName ().empty ()) {
-            fprintf (stderr,
-                     "%s: an unamed attribute is found.\n",
-                     node.getName ().c_str ());
+            std::cerr << node.getName ()
+                      << ": an unamed attribute is found.\n";
         }
         if ((*umla).getVisibility () != Visibility::PUBLIC) {
-            fprintf (stderr,
-                     "Enum %s, attribute %s: visibility forced to public.\n",
-                     node.getName ().c_str (),
-                     (*umla).getName ().c_str ());
+            std::cerr << "Enum " << node.getName () << ", attribute "
+                      << (*umla).getName ()
+                      << ": visibility forced to public.\n";
         }
         writeClassComment ((*umla).getComment ());
         if (!(*umla).getType ().empty ()) {
-            fprintf (stderr,
-                     "%s/%s: ignoring type\n",
-                     node.getName ().c_str (),
-                     literal);
+            std::cerr << node.getName () << "/" << literal
+                      << ": ignoring type.\n";
         }
         getFile () << spc () << literal;
         if (!(*umla).getValue ().empty ()) {
@@ -468,9 +462,8 @@ GenerateCodeJava::writeTypedef1 (const umlClassNode & node,
         throw std::string ("Error: first attribute (impl type) not set at typedef " + node.getName () + ".\n");
     }
     if (!(*umla).getName ().empty ())  {
-        fprintf (stderr,
-                 "Warning: typedef %s: ignoring name field in implementation type attribute\n",
-                 node.getName ().c_str ());
+        std::cerr << "Typedef " << node.getName ()
+                  << ": ignoring name field in implementation type attribute.\n";
     }
     getFile () << spc () << "public class " << cppName (node.getName ())
                << extends;

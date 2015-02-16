@@ -432,7 +432,7 @@ GenerateCode::genClass (const umlClassNode & node) {
     Visibility tmpv = Visibility::IMPLEMENTATION;
 
     if (node.getName ().empty ()) {
-        fprintf (stderr, "A class have an empty name.\n");
+        std::cerr << "A class have an empty name.\n";
     }
 
     if (strlen (stype) > 0) {
@@ -453,9 +453,8 @@ GenerateCode::genClass (const umlClassNode & node) {
         }
 
         if ((!absok) && (!node.getOperations ().empty ())) {
-            fprintf (stderr,
-                     "Class %s is abstract but no operation is defined as abstract.\n",
-                     fqname (node, false));
+            std::cerr << "Class " << fqname (node, false)
+                      << " is abstract but no operation is defined as abstract.\n";
         }
     }
 
@@ -483,10 +482,8 @@ GenerateCode::genClass (const umlClassNode & node) {
                     continue;
                 }
                 if (umla.isStatic ()) {
-                    fprintf (stderr,
-                             "CORBAValue %s/%s: static not supported\n",
-                             name,
-                             member);
+                    std::cerr << "CORBAValue " << name << "/" << member
+                              << ": static not supported.\n",
                 }
                 ref = findByName (dia.getUml (), umla.getType ().c_str ());
                 if (ref != NULL) {
@@ -539,14 +536,13 @@ GenerateCode::genClass (const umlClassNode & node) {
             writeComment ("Attributes");
             for (const umlAttribute & umla : node.getAttributes ()) {
                 if (umla.getName ().empty ()) {
-                    fprintf (stderr,
-                             "An attribute of the %s class have an empty name.\n",
-                             fqname (node, false));
+                    std::cerr << "An attribute of the "
+                              << fqname (node, false)
+                              << " class have an empty name.\n";
                 }
                 if (umla.getType ().empty ()) {
-                    fprintf (stderr,
-                             "An attribute of the %s class have an empty type.\n",
-                             fqname (node, false));
+                    std::cerr << "An attribute of the " << fqname (node, false)
+                              << " class have an empty type.\n";
                 }
                 writeAttribute (umla, tmpv);
             }
@@ -698,19 +694,16 @@ GenerateCode::genDecl (declaration &d,
     }
     else if (isEnumStereo (stype)) {
         if (!node->getOperations ().empty ()) {
-            fprintf (stderr,
-                     "Class %s is enum. All operations are ignored.\n",
-                     node->getName ().c_str ());
+            std::cerr << "Class " << node->getName ()
+                      << " is enum. All operations are ignored.\n";
         }
         if (!node->getTemplates ().empty ()) {
-            fprintf (stderr,
-                     "Class %s is enum. All templates are ignored.\n",
-                     node->getName ().c_str ());
+            std::cerr << "Class " << node->getName ()
+                      << " is enum. All templates are ignored.\n";
         }
         if (node->isAbstract ()) {
-            fprintf (stderr,
-                     "Class %s is abstact. Ignored.\n",
-                     node->getName ().c_str ());
+            std::cerr << "Class " << node->getName ()
+                      << " is abstact. Ignored.\n";
         }
         writeEnum (*node);
     }
@@ -719,15 +712,14 @@ GenerateCode::genDecl (declaration &d,
     }
 #ifdef ENABLE_CORBA
     else if (eq (stype, "CORBAException")) {
-        fprintf (stderr, "%s: CORBAException not yet implemented\n", name);
+        std::cerr << name << ": CORBAException not yet implemented.\n";
 
     }
     else if (eq (stype, "CORBAUnion")) {
         if (umla == node->getAttributes ().end ()) {
-            fprintf (stderr, "Error: attributes not set at union %s\n", name);
-            exit (1);
+            throw std::string ("Attributes not set at union " + name + "\n");
         }
-        fprintf (stderr, "%s: CORBAUnion not yet fully implemented\n", name);
+        std::cerr << name << ": CORBAUnion not yet fully implemented.\n";
         if (bOpenBraceOnNewline) {
             writeComment ("CORBAUnion");
             getFile () << spc () << "class " << name << "\n";
@@ -895,7 +887,7 @@ GenerateCode::visibility1 (const Visibility & vis) {
         case Visibility::PROTECTED :
             return "protected";
         case Visibility::IMPLEMENTATION :
-            fprintf (stderr, "Implementation not applicable. Default: public.\n");
+            std::cerr << "Implementation not applicable. Default: public.\n";
             return "public";
         default :
             throw std::string ("Unknown visibility.\n");

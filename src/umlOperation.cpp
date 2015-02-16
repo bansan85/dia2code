@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
+#include <iostream>
+
 #include "umlOperation.hpp"
 #include "parse_diagram.hpp"
 #include "string2.hpp"
@@ -79,7 +81,8 @@ umlOperation::umlOperation (xmlNodePtr node) :
                 stereotypeDelete = true;
             }
             else if (!stereo.empty ()) {
-                fprintf (stderr, "Unknown stereotype: %s\n", stereo.c_str ());
+                std::cerr << "Unknown stereotype: " << stereo << ".\n"
+                          << "Allow stereotype is: \"delete\".\n";
             }
         }
         free (nodename);

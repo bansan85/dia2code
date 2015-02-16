@@ -197,8 +197,7 @@ under certain conditions; read the COPYING file for details.\n";
         case 8: { // Number of spaces for one indentation
             int num = atoi (argv[i]);
             if ((num < 1) || (num > 8)) {
-                fprintf (stderr,
-        "The number of spaces for one indentation must be between 1 and 8.\n");
+                std::cerr << "The number of spaces for one indentation must be between 1 and 8.\n";
             }
             else {
                 tab = static_cast <uint8_t> (num);
@@ -207,7 +206,7 @@ under certain conditions; read the COPYING file for details.\n";
             break;
         }
         default : {
-            fprintf (stderr, "Ignore unknown parameter : %s.\n", argv[i]);
+            std::cerr << "Ignore unknown parameter: " << argv[i] << ".\n";
         }
         }
     }
@@ -263,7 +262,7 @@ under certain conditions; read the COPYING file for details.\n";
     return 0;
 }
 catch (const std::string & Msg) {
-    std::cout << Msg;
+    std::cerr << Msg;
 }
 }
 

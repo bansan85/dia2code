@@ -232,13 +232,13 @@ makeDepend (std::list <umlClassNode> & classlist,
             umldependee->addDependency (umldependent2);
         }
         else {
-            fprintf (stderr, "Failed to find dependence %s.\n", dependent);
+            std::cerr << "Failed to find dependence for " << dependent
+                      << ".\n";
         }
     }
     // A package has a dependence.
     else {
-        fprintf (stderr,
-                 "A package can not have a dependence, only class.\n");
+        std::cerr << "A package can not have a dependence, only class.\n";
     }
 }
 
@@ -622,10 +622,9 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
                             visible = Visibility::IMPLEMENTATION;
                         }
                         else {
-                            fprintf (stderr,
-                                     "%s: unknown stereotype for %s.\n",
-                                     stereo.c_str (),
-                                     BAD_TSAC2 (objtype));
+                            std::cerr << "Unknown stereotype: " << stereo
+                                      << ".\n"
+                                      << "Allow stereotype is: \"public\", \"private\", \"protected\" and \"implementation\".\n";
                         }
                     }
                     free (name);

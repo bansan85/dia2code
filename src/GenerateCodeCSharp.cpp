@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
+#include <iostream>
+
 #include "GenerateCodeCSharp.hpp"
 #include "umlClassNode.hpp"
 #include "string2.hpp"
@@ -214,15 +216,12 @@ GenerateCodeCSharp::writeStruct (const umlClassNode & node) {
     incIndentLevel ();
     for (const umlAttribute & umla : node.getAttributes ()) {
         if (umla.getName ().empty ()) {
-            fprintf (stderr,
-                     "%s: an unamed attribute is found.\n",
-                     node.getName ().c_str ());
+            std::cerr << node.getName () << ": an unamed attribute is found.\n";
         }
         if (umla.getVisibility () != Visibility::PUBLIC) {
-            fprintf (stderr,
-                    "Struct %s, attribute %s: visibility forced to visible.\n",
-                     node.getName ().c_str (),
-                     umla.getName ().c_str ());
+            std::cerr << "Struct " << node.getName () << ", attribute "
+                      << umla.getName ()
+                      << ": visibility forced to visible.\n";
         }
         // Use of a tmp value to ignore visibility.
         Visibility vis = Visibility::PUBLIC;
@@ -231,10 +230,9 @@ GenerateCodeCSharp::writeStruct (const umlClassNode & node) {
     }
     for (const umlOperation & umlo : node.getOperations ()) {
         if (umlo.getVisibility () != Visibility::PUBLIC) {
-            fprintf (stderr,
-                    "Struct %s, operation %s: visibility forced to visible.\n",
-                     node.getName ().c_str (),
-                     umlo.getName ().c_str ());
+            std::cerr << "Struct " << node.getName () << ", operation "
+                      << umlo.getName ()
+                      << ": visibility forced to visible.\n";
         }
         // Use of a tmp value to ignore visibility.
         Visibility vis = Visibility::PUBLIC;

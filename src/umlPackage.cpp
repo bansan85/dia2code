@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
+#include <iostream>
+
 #include "parse_diagram.hpp"
 #include "umlPackage.hpp"
 #include "string2.hpp"
@@ -57,9 +59,8 @@ umlPackage::umlPackage (xmlNodePtr package, std::string id_) :
                 std::string stereo;
                 parseDiaNode (attribute->xmlChildrenNode, stereo);
                 if (!stereo.empty ()) {
-                    fprintf (stderr, "Unknown stereotype: %s\n"
-                                     "No stereotype is allowed for package.",
-                                     stereo.c_str ());
+                    std::cerr << "Unknown stereotype: " << stereo << ".\n"
+                              << "No stereotype is allowed for package.\n";
                 }
             }
             xmlFree (attrname);

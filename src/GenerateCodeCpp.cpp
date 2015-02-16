@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config.h"
 
 #include <algorithm>
+#include <iostream>
 
 #include "GenerateCodeCpp.hpp"
 #include "GenerateCodeJava.hpp"
@@ -171,7 +172,7 @@ GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
 void
 GenerateCodeCpp::writeFunction1 (const umlOperation & ope) {
     if (ope.getName ().empty ()) {
-        fprintf (stderr, "An unamed operation is found.\n");
+        std::cerr << "An unamed operation is found.\n";
     }
     incIndentLevel ();
 }
@@ -194,9 +195,8 @@ GenerateCodeCpp::writeFunction2 (const umlOperation & ope) {
     if (ope.isStatic ()) {
 #ifdef ENABLE_CORBA
         if (getCorba ()) {
-            fprintf (stderr,
-                     "CORBAValue %s: static not supported\n",
-                     ope.getName ().c_str ());
+            std::cerr << "CORBAValue " << ope.getName ()
+                      << ": static not supported.\n";
         }
         else
 #endif
@@ -220,9 +220,7 @@ GenerateCodeCpp::writeFunction3 (const umlOperation & ope) {
         if (!(*tmpa).getValue ().empty ()) {
 #ifdef ENABLE_CORBA
             if (getCorba ()) {
-                fprintf (stderr,
-                         "CORBAValue %s: param default not supported\n",
-                         ope.getName ().c_str ());
+                std::cerr << "CORBAValue " << ope.getName () << ": param default not supported.\n";
             }
             else
 #endif
@@ -247,16 +245,14 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
         if (ope.getVisibility () != '0') {
-            fprintf (stderr,
-                     "CORBAValue %s: must be public\n",
-                     ope.getName ().c_str ());
+            std::cerr << "CORBAValue " << ope.getName ()
+                      << ": must be public.\n";
         }
     }
     else
 #endif
     {
         if (ope.isStereotypeDelete ()) {
-            printf ("etisrauetisruateisra\n");
             check_visibility (curr_visibility, Visibility::PRIVATE);
         } else {
             check_visibility (curr_visibility, ope.getVisibility ());
@@ -310,7 +306,7 @@ GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
     if (!node.getTemplates ().empty ()) {
 #ifdef ENABLE_CORBA
         if (isCorba) {
-            fprintf (stderr, "CORBAValue %s: template ignored\n", name);
+            std::cerr << "CORBAValue " << name << ": template ignored.\n";
         } else
 #endif
         {
@@ -356,8 +352,7 @@ void
 GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
                                  Visibility & curr_visibility) {
     if (!attr.getValue ().empty ()) {
-        fprintf (stderr,
-                 "Default value for attribut in class is not applicable in C++.\n");
+        std::cerr << "Default value for attribut in class is not applicable in C++.\n";
     }
 
     incIndentLevel ();
@@ -426,9 +421,7 @@ GenerateCodeCpp::writeConst1 (const umlClassNode & node,
         getFile () << spc () << "/// " << node.getComment () << "\n";
     }
     if (!umla.getName ().empty ()) {
-        fprintf (stderr,
-                 "Warning: ignoring attribute name at %s\n",
-                 node.getName ().c_str ());
+        std::cerr << "Ignoring attribute name at " << node.getName () << ".\n";
     }
 
     getFile () << spc () << constAbbr << cppName (umla.getType ()) << " "
@@ -463,21 +456,17 @@ GenerateCodeCpp::writeEnum1 (const umlClassNode & node,
             getFile () << spc () << "/// " << (*umla).getComment () << "\n";
         }
         if (!(*umla).getType ().empty ()) {
-            fprintf (stderr,
-                     "%s/%s: ignoring type\n",
-                     node.getName ().c_str (),
-                     literal);
+            std::cerr << node.getName () << "/" << literal
+                      << ": ignoring type.\n";
         }
         if ((*umla).getName ().empty ()) {
-            fprintf (stderr,
-                     "%s: an unamed attribute is found.\n",
-                     node.getName ().c_str ());
+            std::cerr << node.getName ()
+                      << ": an unamed attribute is found.\n";
         }
         if ((*umla).getVisibility () != Visibility::PUBLIC) {
-            fprintf (stderr,
-                     "Enum %s, attribute %s: visibility forced to public.\n",
-                     node.getName ().c_str (),
-                     (*umla).getName ().c_str ());
+            std::cerr << "Enum " << node.getName () << ", attribute "
+                      << (*umla).getName ()
+                      << ": visibility forced to public.\n";
         }
         getFile () << spc () << literal;
         if (!(*umla).getValue ().empty ()) {
@@ -512,15 +501,13 @@ GenerateCodeCpp::writeStruct (const umlClassNode & node) {
     }
     for (const umlAttribute & umla : node.getAttributes ()) {
         if (umla.getName ().empty ()) {
-            fprintf (stderr,
-                     "%s: an unamed attribute is found.\n",
-                     node.getName ().c_str ());
+            std::cerr << node.getName ()
+                      << ": an unamed attribute is found.\n";
         }
         if (umla.getVisibility () != Visibility::PUBLIC) {
-            fprintf (stderr,
-                    "Struct %s, attribute %s: visibility forced to visible.\n",
-                     node.getName ().c_str (),
-                     umla.getName ().c_str ());
+            std::cerr << "Struct " << node.getName () << ", attribute "
+                      << umla.getName ()
+                      << ": visibility forced to visible.\n";
         }
         // Use of a tmp value to ignore visibility.
         Visibility vis = umla.getVisibility ();
@@ -528,10 +515,9 @@ GenerateCodeCpp::writeStruct (const umlClassNode & node) {
     }
     for (const umlOperation & umlo : node.getOperations ()) {
         if (umlo.getVisibility () != Visibility::PUBLIC) {
-            fprintf (stderr,
-                    "Struct %s, operation %s: visibility forced to visible.\n",
-                     node.getName ().c_str (),
-                     umlo.getName ().c_str ());
+            std::cerr << "Struct " << node.getName () << ", operation "
+                      << umlo.getName ()
+                      << ": visibility forced to visible.\n";
         }
         // Use of a tmp value to ignore visibility.
         Visibility vis = umlo.getVisibility ();
@@ -549,9 +535,8 @@ GenerateCodeCpp::writeTypedef (const umlClassNode & node) {
         throw std::string ("Error: first attribute (impl type) not set at typedef " + node.getName () + ".\n");
     }
     if (!(*umla).getName ().empty ())  {
-        fprintf (stderr,
-                 "Warning: typedef %s: ignoring name field in implementation type attribute\n",
-                 node.getName ().c_str ());
+        std::cerr << "Typedef " << node.getName ()
+                  << ": ignoring name field in implementation type attribute\n";
     }
     const umlClassNode * umlc = findByName (getDia ().getUml (),
                                             (*umla).getType ().c_str ());
