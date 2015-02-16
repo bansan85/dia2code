@@ -115,7 +115,7 @@ umlClass::makeGetSetMethods () {
                                  false,
                                  true,
                                  Kind::IN,
-                                 "");
+                                 false);
         umlOperation::insert_operation (operation2, operations);
 
         /* The SET method */
@@ -141,7 +141,7 @@ umlClass::makeGetSetMethods () {
                                 false,
                                 false,
                                 Kind::IN,
-                                "");
+                                false);
         operation.addParameter (parameter);
         umlOperation::insert_operation(operation, operations);
     }

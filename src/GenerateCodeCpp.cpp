@@ -169,8 +169,7 @@ GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
 }
 
 void
-GenerateCodeCpp::writeFunction1 (const umlOperation & ope,
-                                 Visibility & curr_visibility) {
+GenerateCodeCpp::writeFunction1 (const umlOperation & ope) {
     if (ope.getName ().empty ()) {
         fprintf (stderr, "An unamed operation is found.\n");
     }
@@ -178,8 +177,7 @@ GenerateCodeCpp::writeFunction1 (const umlOperation & ope,
 }
 
 void
-GenerateCodeCpp::writeFunction2 (const umlOperation & ope,
-                                 Visibility & curr_visibility) {
+GenerateCodeCpp::writeFunction2 (const umlOperation & ope) {
     /* print comments on operation */
     if (!ope.getComment ().empty ()) {
         writeFunctionComment (ope);
@@ -209,8 +207,7 @@ GenerateCodeCpp::writeFunction2 (const umlOperation & ope,
 }
 
 void
-GenerateCodeCpp::writeFunction3 (const umlOperation & ope,
-                                 Visibility & curr_visibility) {
+GenerateCodeCpp::writeFunction3 (const umlOperation & ope) {
     if (!ope.getType ().empty ()) {
         getFile () << cppName (ope.getType ()) << " ";
     }
@@ -245,7 +242,7 @@ void
 GenerateCodeCpp::writeFunction (const umlOperation & ope,
                                 Visibility & curr_visibility) {
     // Check validity of ope and indent.
-    writeFunction1 (ope, curr_visibility);
+    writeFunction1 (ope);
 
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
@@ -258,7 +255,8 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
     else
 #endif
     {
-        if (ope.getStereotype ().compare ("delete") == 0) {
+        if (ope.isStereotypeDelete ()) {
+            printf ("etisrauetisruateisra\n");
             check_visibility (curr_visibility, Visibility::PRIVATE);
         } else {
             check_visibility (curr_visibility, ope.getVisibility ());
@@ -266,9 +264,9 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
     }
 
     // Write comment and start function with virtual and static.
-    writeFunction2 (ope, curr_visibility);
+    writeFunction2 (ope);
     // Write the reste of the function until the ")"
-    writeFunction3 (ope, curr_visibility);
+    writeFunction3 (ope);
 
     if (ope.isConstant ()) {
         getFile () << " const";

@@ -62,7 +62,7 @@ umlOperation::parse_operations (xmlNodePtr node,
 
 umlOperation::umlOperation (xmlNodePtr node) :
     umlAttribute (),
-    stereotype (),
+    stereotypeDelete (false),
     parameters ()
 {
     parse (node);
@@ -73,7 +73,14 @@ umlOperation::umlOperation (xmlNodePtr node) :
             parseAttributes (node->xmlChildrenNode, parameters);
         }
         else if (!strcmp ("stereotype", BAD_TSAC2 (nodename))) {
-            parseDiaNode (node->xmlChildrenNode, stereotype);
+            std::string stereo;
+            parseDiaNode (node->xmlChildrenNode, stereo);
+            if (stereo.compare ("delete") == 0) {
+                stereotypeDelete = true;
+            }
+            else if (!stereo.empty ()) {
+                fprintf (stderr, "Unknown stereotype: %s\n", stereo.c_str ());
+            }
         }
         free (nodename);
         node = node->next;
@@ -89,7 +96,7 @@ umlOperation::umlOperation (std::string name_,
                             unsigned char isstatic_,
                             unsigned char isconstant_,
                             Kind kind_,
-                            std::string stereotype_) :
+                            bool stereotypeDelete_) :
     umlAttribute (name_,
                   value_,
                   type_,
@@ -99,7 +106,7 @@ umlOperation::umlOperation (std::string name_,
                   isstatic_,
                   isconstant_,
                   kind_),
-    stereotype (stereotype_),
+    stereotypeDelete (stereotypeDelete_),
     parameters ()
 {
 }
@@ -114,9 +121,9 @@ umlOperation::getParameters () const {
     return parameters;
 }
 
-const std::string &
-umlOperation::getStereotype () const {
-    return stereotype;
+bool
+umlOperation::isStereotypeDelete () const {
+    return stereotypeDelete;
 }
 
 umlOperation::~umlOperation ()

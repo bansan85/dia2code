@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // public umlAttribute will avoid an private attribute + the get/set function.
 class umlOperation : public umlAttribute {
     private :
-        std::string stereotype;
+        bool stereotypeDelete : 1;
         std::list <umlAttribute> parameters;
     public :
         static void insert_operation (umlOperation &n,
@@ -47,10 +47,10 @@ class umlOperation : public umlAttribute {
                       unsigned char isstatic_,
                       unsigned char isconstant_,
                       Kind kind_,
-                      std::string stereotype_);
+                      bool stereotypeDelete);
 
         void addParameter (umlAttribute & attr);
-        const std::string & getStereotype () const;
+        bool isStereotypeDelete () const;
         const std::list <umlAttribute> & getParameters () const;
 
         ~umlOperation ();

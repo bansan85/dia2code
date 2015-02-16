@@ -60,12 +60,9 @@ class GenerateCodeCpp : public GenerateCode {
         void writeTemplates (
                const std::list <std::pair <std::string, std::string> > & tmps);
 
-        void writeFunction1 (const umlOperation & ope,
-                            Visibility & curr_visibility);
-        void writeFunction2 (const umlOperation & ope,
-                            Visibility & curr_visibility);
-        void writeFunction3 (const umlOperation & ope,
-                            Visibility & curr_visibility);
+        void writeFunction1 (const umlOperation & ope);
+        void writeFunction2 (const umlOperation & ope);
+        void writeFunction3 (const umlOperation & ope);
         void writeConst1 (const umlClassNode & node, const char * constAbbr);
         void writeEnum1 (const umlClassNode & node, const char * enumAbbr);
 

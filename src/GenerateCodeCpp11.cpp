@@ -30,7 +30,7 @@ void
 GenerateCodeCpp11::writeFunction (const umlOperation & ope,
                                   Visibility & curr_visibility) {
     // Check validity of ope and indent.
-    writeFunction1 (ope, curr_visibility);
+    writeFunction1 (ope);
 
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
@@ -47,16 +47,16 @@ GenerateCodeCpp11::writeFunction (const umlOperation & ope,
     }
 
     // Write comment and start function with virtual and static.
-    writeFunction2 (ope, curr_visibility);
+    writeFunction2 (ope);
 
     if (ope.isConstant ()) {
         getFile () << "constexpr ";
     }
 
     // Write the reste of the function until the ")"
-    writeFunction3 (ope, curr_visibility);
+    writeFunction3 (ope);
 
-    if (ope.getStereotype ().compare ("delete") == 0) {
+    if (ope.isStereotypeDelete ()) {
         getFile () << " = delete";
     }
     // virtual
