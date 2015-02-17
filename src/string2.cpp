@@ -111,23 +111,18 @@ kindStr (Kind k) {
     switch (k) {
         case Kind::UNKNOWN : {
             return "???";
-            break;
         }
         case Kind::IN : {
             return "in";
-            break;
         }
         case Kind::OUT :  {
             return "out";
-            break;
         }
         case Kind::IN_OUT : {
             return "in/out";
-            break;
         }
         default : {
             throw std::string ("Unknown kind.\n");
-            break;
         }
     }
 }

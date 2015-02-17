@@ -107,7 +107,7 @@ class GenerateCode {
         static const char * cppName (std::string name);
 
         const char * fqname (const umlClassNode & node,
-                             bool use_ref_type);
+                             bool use_ref_type) const;
         virtual const char * visibility (const Visibility & vis) = 0;
         std::string & spc () const;
 
@@ -115,10 +115,10 @@ class GenerateCode {
         virtual std::string strPointer (const std::string & type) const = 0;
 
         void writeFile ();
-        const char * comment (const std::string & comment_,
-                              const std::string & startFirstLine,
-                              const std::string & startOtherLines,
-                              const char * endLastLine);
+        static const char * comment (const std::string & comment_,
+                                     const std::string & startFirstLine,
+                                     const std::string & startOtherLines,
+                                     const char * endLastLine);
         virtual void writeLicense () = 0;
         virtual void writeStartHeader (std::string & name) = 0;
         virtual void writeEndHeader () = 0;

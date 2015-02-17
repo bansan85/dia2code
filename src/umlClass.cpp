@@ -324,7 +324,7 @@ makeDepend (std::list <umlClassNode> & classlist,
         umldependee->addDependency (*umldependent);
     }
     // The dependence is a package
-    else if (umldependent == NULL) {
+    else if (umldependent == NULL && umldependee != NULL) {
         umlPackage *umldependent2 = umlPackage::find (packagelist, dependent);
         if (umldependent2 != NULL) {
             umldependee->addDependency (umldependent2);

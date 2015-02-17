@@ -352,7 +352,7 @@ GenerateCode::cppName (std::string name) {
 }
 
 const char *
-GenerateCode::fqname (const umlClassNode &node, bool use_ref_type) {
+GenerateCode::fqname (const umlClassNode &node, bool use_ref_type) const {
     static std::string buf;
 
     buf.clear ();

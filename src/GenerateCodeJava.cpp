@@ -91,7 +91,6 @@ GenerateCodeJava::writeInclude (const std::list <std::pair <
         size_t taille = include.length ();
 
         while (inc != incs.end ()) {
-            std::string search;
             size_t taille2 = (*inc).length ();
 
             if (taille == taille2) {
@@ -445,7 +444,6 @@ GenerateCodeJava::writeEnum (const umlClassNode & node) {
 void
 GenerateCodeJava::writeStruct (const umlClassNode & node) {
     umlClassNode & nodetmp = const_cast <umlClassNode &> (node);
-    std::string stereo;
 
     nodetmp.setStereotypeStruct (false);
     genClass (nodetmp);
