@@ -277,59 +277,9 @@ nospc (char *str) {
     return subst (str, ' ', '_');
 }
 
-bool
-isEnumStereo (const char *stereo) {
-    return (!strcasecmp (stereo, "enum") ||
-            !strcasecmp (stereo, "enumeration") ||
-            !strcasecmp (stereo, "Enum") ||
-            !strcasecmp (stereo, "Enumeration")
-#ifdef ENABLE_CORBA
-            || !strcmp (stereo, "CORBAEnum")
-#endif
-            );
-}
-
-bool
-isStructStereo (const char *stereo) {
-    return (!strcasecmp (stereo, "struct") ||
-            !strcasecmp (stereo, "structure") ||
-            !strcasecmp (stereo, "Struct") ||
-            !strcasecmp (stereo, "Structure")
-#ifdef ENABLE_CORBA
-            || !strcmp (stereo, "CORBAStruct")
-#endif
-            );
-}
-
-bool
-isTypedefStereo (const char *stereo) {
-    return (!strcasecmp (stereo, "typedef")
-#ifdef ENABLE_CORBA
-            || !strcmp (stereo, "CORBATypedef")
-#endif
-            );
-}
-
-bool
-isConstStereo (const char *stereo) {
-    return (!strcasecmp (stereo, "const") ||
-            !strcasecmp (stereo, "constant") ||
-            !strcasecmp (stereo, "Const") ||
-            !strcasecmp (stereo, "Constant")
-#ifdef ENABLE_CORBA
-            || !strcmp (stereo, "CORBAConstant")
-#endif
-            );
-}
-
 int
-GenerateCode::passByReference (umlClass &cl) {
-    const char *st;
-    st = cl.getStereotype ().c_str ();
-    if (strlen (st) == 0) {
-        return true;
-    }
-    if (isTypedefStereo (st)) {
+GenerateCode::passByReference (umlClass & cl) {
+    if (cl.isStereotypeTypedef ()) {
         umlClassNode *ref = findByName (dia.getUml (),
                                         cl.getName ().c_str ());
         if (ref == NULL) {
@@ -337,8 +287,8 @@ GenerateCode::passByReference (umlClass &cl) {
         }
         return passByReference (*ref);
     }
-    return (!isConstStereo (st) &&
-            !isEnumStereo (st));
+    return (!cl.isStereotypeConst () &&
+            !cl.isStereotypeEnum ());
 }
 
 #ifdef ENABLE_CORBA
@@ -428,19 +378,15 @@ GenerateCode::genClass (const umlClassNode & node) {
 #ifdef ENABLE_CORBA
     const char *name = node.getName ().c_str ();
 #endif
-    const char *stype = node.getStereotype ().c_str ();
     Visibility tmpv = Visibility::IMPLEMENTATION;
 
     if (node.getName ().empty ()) {
         std::cerr << "A class have an empty name.\n";
     }
 
-    if (strlen (stype) > 0) {
-        writeComment (std::string ("Stereotype : ") + stype);
 #ifdef ENABLE_CORBA
-        isCorba = eq (stype, "CORBAValue");
+    isCorba = node.isStereotypeCorba ();
 #endif
-    }
 
     // Check that if class is abstract, at least one class are abstract.
     if (node.isAbstract ()) {
@@ -617,7 +563,6 @@ GenerateCode::genDecl (declaration &d,
     const char *name;
     std::list <umlAttribute>::const_iterator umla;
 #endif
-    const char *stype;
     const umlClassNode *node;
 
     if ((buildtree) && (d.decl_kind == dk_module)) {
@@ -675,7 +620,6 @@ GenerateCode::genDecl (declaration &d,
     writeNameSpaceStart (d.u.this_class);
 
     node = d.u.this_class;
-    stype = node->getStereotype ().c_str ();
 #ifdef ENABLE_CORBA
     name = node->getName ().c_str ();
     umla = node->getAttributes ().begin ();
@@ -689,10 +633,10 @@ GenerateCode::genDecl (declaration &d,
     }
     else
 #endif
-    if (isConstStereo (stype)) {
+    if (node->isStereotypeConst ()) {
         writeConst (*node);
     }
-    else if (isEnumStereo (stype)) {
+    else if (node->isStereotypeEnum ()) {
         if (!node->getOperations ().empty ()) {
             std::cerr << "Class " << node->getName ()
                       << " is enum. All operations are ignored.\n";
@@ -707,7 +651,7 @@ GenerateCode::genDecl (declaration &d,
         }
         writeEnum (*node);
     }
-    else if (isStructStereo (stype)) {
+    else if (node->isStereotypeStruct ()) {
         writeStruct (*node);
     }
 #ifdef ENABLE_CORBA
@@ -747,7 +691,7 @@ GenerateCode::genDecl (declaration &d,
 
     }
 #endif
-    else if (isTypedefStereo (stype)) {
+    else if (node->isStereotypeTypedef ()) {
         writeTypedef (*node);
     }
     else {

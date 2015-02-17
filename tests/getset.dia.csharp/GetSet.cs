@@ -1,4 +1,3 @@
-// Stereotype : GetSet
 public class GetSet {
     // Attributes
     public type nom;

@@ -48,9 +48,16 @@ class umlClass {
     private :
         std::string id;
         std::string name;
-        std::string stereotype;
         std::string comment;
-        bool abstract;
+        bool abstract : 1;
+        bool stereotypeTypedef : 1;
+        bool stereotypeEnum : 1;
+        bool stereotypeConst : 1;
+        bool stereotypeStruct : 1;
+        bool stereotypeGetSet : 1;
+#ifdef ENABLE_CORBA
+        bool stereotypeCorba : 1;
+#endif
         std::list <umlAttribute> attributes;
         std::list <umlOperation> operations;
 /*
@@ -61,15 +68,27 @@ class umlClass {
         std::list <std::pair <std::string, std::string> > templates;
         umlPackage *package;
         geometry geom;
+
+        static bool isTypedefStereo (std::string & stereo);
+        static bool isEnumStereo (std::string & stereo);
+        static bool isConstStereo (std::string & stereo);
+        static bool isStructStereo (std::string & stereo);
+        static bool isGetSetStereo (std::string & stereo);
+        static bool isCorbaStereo (std::string & stereo);
     public :
         umlClass ();
         
         const std::string & getId () const;
         const std::string & getName () const;
-        const std::string & getStereotype () const;
-        void setStereotype (std::string & stereo);
         const std::string & getComment () const;
         bool isAbstract () const;
+        bool isStereotypeTypedef () const;
+        bool isStereotypeEnum () const;
+        bool isStereotypeConst () const;
+        bool isStereotypeStruct () const;
+        void setStereotypeStruct (bool val);
+        bool isStereotypeGetSet () const;
+        bool isStereotypeCorba () const;
         const std::list <umlAttribute> & getAttributes () const;
         const std::list <umlOperation> & getOperations () const;
         umlPackage * getPackage () const;

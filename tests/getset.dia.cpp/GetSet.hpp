@@ -1,7 +1,6 @@
 #ifndef GETSET__HPP
 #define GETSET__HPP
 
-// Stereotype : GetSet
 class GetSet {
     // Attributes
     public :

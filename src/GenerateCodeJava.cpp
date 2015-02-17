@@ -447,7 +447,7 @@ GenerateCodeJava::writeStruct (const umlClassNode & node) {
     umlClassNode & nodetmp = const_cast <umlClassNode &> (node);
     std::string stereo;
 
-    nodetmp.setStereotype (stereo);
+    nodetmp.setStereotypeStruct (false);
     genClass (nodetmp);
 }
 

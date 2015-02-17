@@ -28,9 +28,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 umlClass::umlClass () :
     id ("00"),
     name (),
-    stereotype (),
     comment (),
     abstract (false),
+    stereotypeTypedef (false),
+    stereotypeEnum (false),
+    stereotypeConst (false),
+    stereotypeStruct (false),
+    stereotypeGetSet (false),
+#ifdef ENABLE_CORBA
+    stereotypeCorba (false),
+#endif
     attributes (),
     operations (),
     templates (),
@@ -49,16 +56,6 @@ umlClass::getName () const {
 }
 
 const std::string &
-umlClass::getStereotype () const {
-    return stereotype;
-}
-
-void
-umlClass::setStereotype (std::string & stereo) {
-    stereotype = stereo;
-}
-
-const std::string &
 umlClass::getComment () const {
     return comment;
 }
@@ -67,6 +64,43 @@ bool
 umlClass::isAbstract () const {
     return abstract;
 }
+
+bool
+umlClass::isStereotypeTypedef () const {
+    return stereotypeTypedef;
+}
+
+bool
+umlClass::isStereotypeEnum () const {
+    return stereotypeEnum;
+}
+
+bool
+umlClass::isStereotypeConst () const {
+    return stereotypeConst;
+}
+
+bool
+umlClass::isStereotypeStruct () const {
+    return stereotypeStruct;
+}
+
+void
+umlClass::setStereotypeStruct (bool val) {
+    stereotypeStruct = val;
+}
+
+bool
+umlClass::isStereotypeGetSet () const {
+    return stereotypeGetSet;
+}
+
+#ifdef ENABLE_CORBA
+bool
+umlClass::isStereotypeCorba () const {
+    return stereotypeCorba;
+}
+#endif
 
 const std::list <umlAttribute> &
 umlClass::getAttributes () const {
@@ -86,6 +120,70 @@ umlClass::getPackage () const {
 const std::list <std::pair <std::string, std::string> > &
 umlClass::getTemplates () const {
     return templates;
+}
+
+bool
+umlClass::isEnumStereo (std::string & stereo) {
+    return (!stereo.compare ("enum") ||
+            !stereo.compare ("enumeration") ||
+            !stereo.compare ("Enum") ||
+            !stereo.compare ("Enumeration")
+#ifdef ENABLE_CORBA
+            || !stereo.compare ("CORBAEnum")
+#endif
+            );
+}
+
+bool
+umlClass::isStructStereo (std::string & stereo) {
+    return (!stereo.compare ("struct") ||
+            !stereo.compare ("structure") ||
+            !stereo.compare ("Struct") ||
+            !stereo.compare ("Structure")
+#ifdef ENABLE_CORBA
+            || !stereo.compare ("CORBAStruct")
+#endif
+            );
+}
+
+bool
+umlClass::isTypedefStereo (std::string & stereo) {
+    return (!stereo.compare ("typedef")
+#ifdef ENABLE_CORBA
+            || !stereo.compare ("CORBATypedef")
+#endif
+            );
+}
+
+#ifdef ENABLE_CORBA
+bool
+umlClass::isCorbaStereo (std::string & stereo) {
+    return (!stereo.compare (0, 5, "CORBA")
+            || !stereo.compare ("CORBATypedef")
+            );
+}
+#endif
+
+bool
+umlClass::isConstStereo (std::string & stereo) {
+    return (!stereo.compare ("const") ||
+            !stereo.compare ("constant") ||
+            !stereo.compare ("Const") ||
+            !stereo.compare ("Constant")
+#ifdef ENABLE_CORBA
+            || !stereo.compare ("CORBAConstant")
+#endif
+            );
+}
+
+bool
+umlClass::isGetSetStereo (std::string & stereo) {
+    return (!stereo.compare ("getset") ||
+            !stereo.compare ("GetSet")
+#ifdef ENABLE_CORBA
+            || !stereo.compare ("CORBAGetSet")
+#endif
+            );
 }
 
 /**
@@ -622,8 +720,8 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
                             visible = Visibility::IMPLEMENTATION;
                         }
                         else {
-                            std::cerr << "Unknown stereotype: " << stereo
-                                      << ".\n"
+                            std::cerr << "Unknown stereotype for Generalization or Realizes: "
+                                      << stereo << ".\n"
                                       << "Allow stereotype is: \"public\", \"private\", \"protected\" and \"implementation\".\n";
                         }
                     }
@@ -713,9 +811,18 @@ umlClass::parseClass (xmlNodePtr class_) {
             }
         } else if (!strcmp ("stereotype", BAD_TSAC2 (attrname))) {
             if (attribute->xmlChildrenNode->xmlChildrenNode != NULL) {
+                std::string stereotype;
+
                 parseDiaNode (attribute->xmlChildrenNode, stereotype);
-            } else {
-                stereotype.clear ();
+
+                stereotypeTypedef = isTypedefStereo (stereotype);
+                stereotypeEnum = isEnumStereo (stereotype);
+                stereotypeConst = isConstStereo (stereotype);
+                stereotypeStruct = isStructStereo (stereotype);
+                stereotypeGetSet = isGetSetStereo (stereotype);
+#ifdef ENABLE_CORBA
+                stereotypeCorba = isCorbaStereo (stereotype);
+#endif
             }
         } else if (!strcmp ("abstract", BAD_TSAC2 (attrname))) {
             abstract = parseBoolean (attribute->xmlChildrenNode);
@@ -724,7 +831,7 @@ umlClass::parseClass (xmlNodePtr class_) {
         } else if (!strcmp ("operations", BAD_TSAC2 (attrname))) {
             umlOperation::parse_operations (attribute->xmlChildrenNode,
                                             operations);
-            if (stereotype.compare ("GetSet") == 0) {
+            if (stereotypeGetSet) {
                 makeGetSetMethods ();
             }
         } else if (!strcmp ("templates", BAD_TSAC2 (attrname))) {
