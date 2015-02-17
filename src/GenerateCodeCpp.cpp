@@ -86,14 +86,17 @@ GenerateCodeCpp::writeInclude (const std::list <std::pair <
                                                     std::list <umlPackage *>,
                                                     umlClassNode *> > & name) {
     bool ret = false;
-    std::list <std::string> incs;
+    // List of include then if (true) the class is system and should not be
+    // generated.
+    std::list <std::pair <std::string, bool> > incs;
 
     for (const std::pair <std::list <umlPackage *>, umlClassNode *> & it :
                                                                         name) {
         std::string include;
+        std::pair <std::string, bool> add;
 
         if (it.second == NULL) {
-            continue;;
+            continue;
         }
 
         ret = true;
@@ -126,13 +129,22 @@ GenerateCodeCpp::writeInclude (const std::list <std::pair <
                 include.append (getFileExt ());
             }
         }
-        if (std::find (incs.begin (), incs.end (), include) == incs.end ()) {
-            incs.push_back (include);
+        add.first = include;
+        add.second = it.second->isStereotypeExtern ();
+        if (std::find (incs.begin (),
+                       incs.end (),
+                       add) == incs.end ()) {
+            incs.push_back (add);
         }
     }
 
-    for (std::string it : incs) {
-        getFile () << spc () << "#include \"" << it << "\"\n";
+    for (const std::pair <std::string, bool> & add : incs) {
+        if (add.second) {
+            getFile () << spc () << "#include <" << add.first << ">\n";
+        }
+        else {
+            getFile () << spc () << "#include \"" << add.first << "\"\n";
+        }
     }
     if (!incs.empty ()) {
         getFile () << "\n";

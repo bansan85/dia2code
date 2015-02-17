@@ -494,9 +494,11 @@ class InheritanceClasseChildren extends InheritanceClasseImplement extends Inher
 - Classes:
 
 CORBAValue:
+----------
   To enable Corba to a class, the stereotype must be CORBAValue.
 
 GetSet
+------
   Generate all get/set functions of all attributes. Their visibility will be
   public.
 
@@ -523,6 +525,7 @@ public class GetSet {
         void setBoole (bool value);
 }
 
+
 C++11 generator:
 ** The stereotype of the class is GetSet.
 // Stereotype : GetSet
@@ -538,6 +541,7 @@ public class GetSet {
         constexpr bool isBoole ();
         void setBoole (bool value);
 }
+
 
 C# generator:
 // Stereotype : GetSet
@@ -556,7 +560,6 @@ public class GetSet {
     public void setBoole (bool value) {
     }
 }
-
 
 
 Java generator:
@@ -579,11 +582,13 @@ public class GetSet {
 
 
 const, constant, Const, Constant or CORBAConstant:
+-----  --------  -----  --------    -------------
 
 TODO
 
 
 enum, enumeration, Enum, Enumeration or CORBAEnum:
+----  -----------  ----  -----------    ---------
 
 Generate an enum class. Only attributes will be used. Template or function are
 ignored.
@@ -638,6 +643,7 @@ public enum enumeration {
 
 
 struct, structure, Struct, Structure, or CORBAStruct:
+------  ---------  ------  ---------     -----------
 
 A structure is almost the same as a class.
 
@@ -695,6 +701,7 @@ public class structure {
 
 
 typedef, Typedef or CORBATypedef:
+-------  -------    ------------
 
 A typedef defines a type as a derivated of another one.
 The name of the new type is the name of the classe.
@@ -723,9 +730,28 @@ class NewType1 extends PrimitiveType {}
 class NewType2 extends Pack.ClassType {}
 
 
+extern:
+------
+Define a external class. Usefull for external dependencies when you don't want
+to generate the class' source.
+
+
+C++ and C++11 generator:
+#include <Pack/Class.hpp>
+
+
+C# generator:
+using Pack;
+
+
+Java generator:
+import Pack.Class;
+
+
 - Operation:
 
 delete:
+------
 In C++11, a deleted function must be defined in header.
 Not applicable in Java.
 

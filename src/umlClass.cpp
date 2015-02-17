@@ -35,6 +35,7 @@ umlClass::umlClass () :
     stereotypeConst (false),
     stereotypeStruct (false),
     stereotypeGetSet (false),
+    stereotypeExtern (false),
 #ifdef ENABLE_CORBA
     stereotypeCorba (false),
 #endif
@@ -93,6 +94,11 @@ umlClass::setStereotypeStruct (bool val) {
 bool
 umlClass::isStereotypeGetSet () const {
     return stereotypeGetSet;
+}
+
+bool
+umlClass::isStereotypeExtern () const {
+    return stereotypeExtern;
 }
 
 #ifdef ENABLE_CORBA
@@ -820,6 +826,7 @@ umlClass::parseClass (xmlNodePtr class_) {
                 stereotypeConst = isConstStereo (stereotype);
                 stereotypeStruct = isStructStereo (stereotype);
                 stereotypeGetSet = isGetSetStereo (stereotype);
+                stereotypeExtern = stereotype.compare ("extern") == 0;
 #ifdef ENABLE_CORBA
                 stereotypeCorba = isCorbaStereo (stereotype);
 #endif

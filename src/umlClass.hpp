@@ -55,6 +55,7 @@ class umlClass {
         bool stereotypeConst : 1;
         bool stereotypeStruct : 1;
         bool stereotypeGetSet : 1;
+        bool stereotypeExtern : 1;
 #ifdef ENABLE_CORBA
         bool stereotypeCorba : 1;
 #endif
@@ -89,6 +90,7 @@ class umlClass {
         void setStereotypeStruct (bool val);
         bool isStereotypeGetSet () const;
         bool isStereotypeCorba () const;
+        bool isStereotypeExtern () const;
         const std::list <umlAttribute> & getAttributes () const;
         const std::list <umlOperation> & getOperations () const;
         umlPackage * getPackage () const;

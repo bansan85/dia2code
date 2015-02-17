@@ -18,6 +18,8 @@ do
         diff -pu $file.$gen result > $file.$gen.result.txt
         if [[ ! $? -eq 0 ]] ; then
             echo $file.$gen FAILED
+            rm -Rf $file.$gen.fail
+            cp -R result $file.$gen.fail
             res="false"
         fi ;
         echo ""
@@ -37,6 +39,8 @@ do
             diff -pu $file.$gen"$extra" result > $file.$gen"$extra".result.txt
             if [[ ! $? -eq 0 ]] ; then
                 echo $file.$gen"$extra" FAILED
+                rm -Rf $file.$gen"$extra".fail
+                cp -R result $file.$gen"$extra".fail
                 res="false"
             fi ;
             echo ""
@@ -52,6 +56,8 @@ do
     diff -pu operations.dia.$gen"_COPYING" result > operations.dia.$gen"_COPYING"result.txt
     if [[ ! $? -eq 0 ]] ; then
         echo operations.dia.$gen"_COPYING" FAILED
+        rm -Rf operations.dia.$gen"_COPYING".fail
+        cp -R result operations.dia.$gen"_COPYING".fail
         res="false"
     fi ;
     echo ""

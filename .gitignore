@@ -32,3 +32,4 @@ coverage.info
 cov-*
 callgrind.out.*
 tests/*.dia*.txt
+tests/*.fail

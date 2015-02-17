@@ -32,7 +32,7 @@ class umlPackage {
         std::string name;
         geometry geom;
         umlPackage *parent;
-        std::string directory;
+        bool stereotypeExtern : 1;
     public :
         umlPackage ();
         umlPackage (xmlNodePtr package, std::string id_);
@@ -43,6 +43,7 @@ class umlPackage {
         const geometry & getGeometry () const;
         umlPackage * getParent () const;
         void setParent (umlPackage * pack);
+        bool isStereotypeExtern () const;
 
         static void makePackageList (umlPackage * package,
                                      std::list <umlPackage *> & res);

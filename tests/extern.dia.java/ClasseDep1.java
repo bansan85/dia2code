@@ -1,0 +1,2 @@
+public class ClasseDep1 {
+}

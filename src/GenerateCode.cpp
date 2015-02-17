@@ -565,6 +565,14 @@ GenerateCode::genDecl (declaration &d,
 #endif
     const umlClassNode *node;
 
+    if ((d.decl_kind == dk_class) && (d.u.this_class->isStereotypeExtern ())) {
+        return;
+    }
+    if ((d.decl_kind == dk_module) &&
+        (d.u.this_module->pkg->isStereotypeExtern ())) {
+        return;
+    }
+
     if ((buildtree) && (d.decl_kind == dk_module)) {
         std::string folder;
         
@@ -617,9 +625,9 @@ GenerateCode::genDecl (declaration &d,
         return;
     }
 
-    writeNameSpaceStart (d.u.this_class);
-
     node = d.u.this_class;
+
+    writeNameSpaceStart (node);
 #ifdef ENABLE_CORBA
     name = node->getName ().c_str ();
     umla = node->getAttributes ().begin ();

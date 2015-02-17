@@ -41,7 +41,7 @@ struct module {  /* UML package = IDL module
                     What we call `module' equally applies to C++ (namespace)
                     and Ada (package.) I don't know about other languages.  */
     umlPackage * pkg;
-    std::list<declaration> contents;
+    std::list <declaration> contents;
 };
 
 typedef enum {

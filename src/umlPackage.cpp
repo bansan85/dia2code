@@ -29,8 +29,7 @@ umlPackage::umlPackage () :
     name (),
     geom ({0., 0., 0., 0.}),
     parent (nullptr),
-    directory ()
-{
+    stereotypeExtern (false) {
 }
 
 umlPackage::umlPackage (xmlNodePtr package, std::string id_) :
@@ -38,8 +37,7 @@ umlPackage::umlPackage (xmlNodePtr package, std::string id_) :
     name (),
     geom ({0., 0., 0., 0.}),
     parent (nullptr),
-    directory ()
-{
+    stereotypeExtern (false) {
     xmlNodePtr attribute;
 
     attribute = package->xmlChildrenNode;
@@ -57,10 +55,14 @@ umlPackage::umlPackage (xmlNodePtr package, std::string id_) :
                 parseGeomHeight (attribute->xmlChildrenNode, &geom);
             } else if (!strcmp ("stereotype", BAD_TSAC2 (attrname))) {
                 std::string stereo;
+
                 parseDiaNode (attribute->xmlChildrenNode, stereo);
-                if (!stereo.empty ()) {
+                if (!stereo.compare ("extern")) {
+                    stereotypeExtern = true;
+                }
+                else if (!stereo.empty ()) {
                     std::cerr << "Unknown stereotype: " << stereo << ".\n"
-                              << "No stereotype is allowed for package.\n";
+                              << "Stereotype allow for package: extern.\n";
                 }
             }
             xmlFree (attrname);
@@ -74,8 +76,7 @@ umlPackage::umlPackage (const umlPackage & pack) :
     id (pack.id),
     name (pack.name),
     geom (pack.geom),
-    parent (pack.parent),
-    directory (pack.directory) {
+    parent (pack.parent) {
 }
 
 /*
@@ -123,6 +124,11 @@ umlPackage::getParent () const {
 void
 umlPackage::setParent (umlPackage * pack) {
     parent = pack;
+}
+
+bool
+umlPackage::isStereotypeExtern () const {
+    return stereotypeExtern;
 }
 
 umlPackage *
