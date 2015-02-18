@@ -139,9 +139,10 @@ GenerateCodeCSharp::writeFunctionComment (const umlOperation & ope) {
 }
 
 void
-GenerateCodeCSharp::writeFunction (const umlOperation & ope,
+GenerateCodeCSharp::writeFunction (const umlClassNode & node,
+                                   const umlOperation & ope,
                                    Visibility & curr_visibility) {
-    writeFunction1 (ope, curr_visibility);
+    writeFunction1 (node, ope, curr_visibility);
 
     if (ope.getInheritance () == Inheritance::ABSTRACT) {
         getFile () << "abstract ";
@@ -150,14 +151,19 @@ GenerateCodeCSharp::writeFunction (const umlOperation & ope,
         getFile () << "virtual ";
     }
 
-    writeFunction2 (ope, curr_visibility, true);
+    writeFunction2 (node, ope, curr_visibility, true);
 }
 
 void
-GenerateCodeCSharp::writeFunctionGetSet (const umlOperation & ope,
+GenerateCodeCSharp::writeFunctionGetSet (const umlClassNode & node,
+                                         const umlOperation & ope,
                                          Visibility & curr_visibility) {
-    getFile () << spc () << visibility (ope.getVisibility ()) << " "
-               << ope.getType () << " " << strtoupperfirst (ope.getName ());
+    getFile () << spc ()
+               << visibility ("Class \"" + node.getName () + "\", operation \""
+                                         + ope.getName () + "\"",
+                              ope.getVisibility ())
+               << " " << ope.getType () << " "
+               << strtoupperfirst (ope.getName ());
 
     if (getOpenBraceOnNewline ()) {
         getFile () << std::endl;
@@ -255,29 +261,27 @@ GenerateCodeCSharp::writeStruct (const umlClassNode & node) {
     }
     incIndentLevel ();
     for (const umlAttribute & umla : node.getAttributes ()) {
-        if (umla.getName ().empty ()) {
-            std::cerr << node.getName () << ": an unamed attribute is found.\n";
-        }
+        umla.check (node);
         if (umla.getVisibility () != Visibility::PUBLIC) {
-            std::cerr << "Struct " << node.getName () << ", attribute "
+            std::cerr << "Class \"" << node.getName () << "\", attribute \""
                       << umla.getName ()
-                      << ": visibility forced to visible.\n";
+                      << "\": visibility forced to visible.\n";
         }
         // Use of a tmp value to ignore visibility.
         Visibility vis = Visibility::PUBLIC;
         const_cast <umlAttribute &> (umla).setVisibility (Visibility::PUBLIC);
-        writeAttribute (umla, vis);
+        writeAttribute (node, umla, vis, node.getName ());
     }
     for (const umlOperation & umlo : node.getOperations ()) {
         if (umlo.getVisibility () != Visibility::PUBLIC) {
-            std::cerr << "Struct " << node.getName () << ", operation "
+            std::cerr << "Class \"" << node.getName () << "\", operation \""
                       << umlo.getName ()
-                      << ": visibility forced to visible.\n";
+                      << "\": visibility forced to visible.\n";
         }
         // Use of a tmp value to ignore visibility.
         Visibility vis = Visibility::PUBLIC;
         const_cast <umlOperation &> (umlo).setVisibility (Visibility::PUBLIC);
-        writeFunction (umlo, vis);
+        writeFunction (node, umlo, vis);
     }
     decIndentLevel ();
     getFile () << spc () << "};\n";

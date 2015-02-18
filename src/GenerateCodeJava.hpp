@@ -30,7 +30,7 @@ class GenerateCodeJava : public GenerateCode {
 
         std::string strPackage (const char * package) const;
         std::string strPointer (const std::string & type) const;
-        const char * visibility (const Visibility & vis);
+        const char * visibility (std::string desc, const Visibility & vis);
 
         void writeLicense ();
         void writeStartHeader (std::string & name);
@@ -39,31 +39,38 @@ class GenerateCodeJava : public GenerateCode {
                                                     umlClassNode * > > & name);
         void writeInclude (const char * name);
         void writeFunctionComment (const umlOperation & ope);
-        void writeFunction (const umlOperation & ope,
+        void writeFunction (const umlClassNode & node,
+                            const umlOperation & ope,
                             Visibility & curr_visibility);
-        void writeFunctionGetSet (const umlOperation & ope,
+        void writeFunctionGetSet (const umlClassNode & node,
+                                  const umlOperation & ope,
                                   Visibility & curr_visibility);
         void writeComment (const std::string & text);
         void writeComment (const char * text);
         void writeClassComment (const std::string & nom);
         void writeClassStart (const umlClassNode & node);
         void writeClassEnd ();
-        void writeAttribute (const umlAttribute & attr,
-                             Visibility & curr_visibility);
+        void writeAttribute (const umlClassNode & node,
+                             const umlAttribute & attr,
+                             Visibility & curr_visibility,
+                             const std::string & nameClass);
         void writeNameSpaceStart (const umlClassNode * node);
         void writeNameSpaceEnd (const umlClassNode * node);
         void writeConst (const umlClassNode & node);
         void writeEnum (const umlClassNode & node);
         void writeStruct (const umlClassNode & node);
         void writeTypedef (const umlClassNode & node);
-        void writeAssociation (const umlassoc & asso,
+        void writeAssociation (const umlClassNode & node,
+                               const umlassoc & asso,
                                Visibility & curr_visibility);
         void writeTemplates (
                const std::list <std::pair <std::string, std::string> > & tmps);
         
-        void writeFunction1 (const umlOperation & ope,
+        void writeFunction1 (const umlClassNode & node,
+                             const umlOperation & ope,
                              Visibility & curr_visibility);
-        void writeFunction2 (const umlOperation & ope,
+        void writeFunction2 (const umlClassNode & node,
+                             const umlOperation & ope,
                              Visibility & curr_visibility,
                              bool defaultparam);
         void writeClassStart1 (const umlClassNode & node,

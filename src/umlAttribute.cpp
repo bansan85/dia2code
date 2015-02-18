@@ -18,6 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
+#include <iostream>
+
+#include "umlClassNode.hpp"
 #include "umlAttribute.hpp"
 #include "string2.hpp"
 #include "parse_diagram.hpp"
@@ -135,6 +138,30 @@ umlAttribute::assign (std::string name_,
     isstatic = isstatic_ & 1;
     isconstant = isconstant_ & 1;
     kind = kind_;
+}
+
+void
+umlAttribute::check (const umlClassNode & node) const {
+    if (node.isStereotypeTypedef ()) {
+        if (!name.empty ()) {
+            std::cerr << "Typedef \"" << node.getName () << "\", attribute \""
+                      << name
+                      << "\": ignoring name field in typedef class.\n";
+        }
+    }
+    else {
+        if (name.empty ()) {
+            std::cerr << "Class \"" << node.getName () << "\": an unamed attribute is found.\n";
+        }
+    }
+    if ((!node.isStereotypeEnum ()) && (type.empty ())) {
+        std::cerr << "Class \"" << node.getName () << "\", attribute \""
+                  << name << "\": no type defined.\n";
+    }
+    if ((node.isStereotypeEnum ()) && (visibility != Visibility::PUBLIC)) {
+        std::cerr << "Class \"" << node.getName () << "\", attribute \""
+                  << name << "\": visibility forced to public.\n";
+    }
 }
 
 void

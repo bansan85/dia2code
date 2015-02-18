@@ -49,8 +49,9 @@ GenerateCodeCpp::strPackage (const char * package) const {
 }
 
 const char *
-GenerateCodeCpp::visibility (const Visibility & vis) {
-    return visibility1 (vis);
+GenerateCodeCpp::visibility (std::string desc,
+                             const Visibility & vis) {
+    return visibility1 (desc, vis);
 }
 
 void
@@ -59,13 +60,14 @@ GenerateCodeCpp::writeLicense () {
 }
 
 void
-GenerateCodeCpp::check_visibility (Visibility & curr_vis,
+GenerateCodeCpp::check_visibility (std::string desc,
+                                   Visibility & curr_vis,
                                    const Visibility new_vis) {
     if (curr_vis == new_vis) {
         return;
     }
     decIndentLevel ();
-    getFile () << spc () << visibility (new_vis) << " :\n";
+    getFile () << spc () << visibility (desc, new_vis) << " :\n";
     curr_vis = new_vis;
     incIndentLevel ();
 }
@@ -249,7 +251,8 @@ GenerateCodeCpp::writeFunction3 (const umlOperation & ope) {
 }
 
 void
-GenerateCodeCpp::writeFunction (const umlOperation & ope,
+GenerateCodeCpp::writeFunction (const umlClassNode & node,
+                                const umlOperation & ope,
                                 Visibility & curr_visibility) {
     // Check validity of ope and indent.
     writeFunction1 (ope);
@@ -265,9 +268,14 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
 #endif
     {
         if (ope.isStereotypeDelete ()) {
-            check_visibility (curr_visibility, Visibility::PRIVATE);
+            check_visibility ("Class \"" + node.getName () + "\", operation \""
+                                         + ope.getName () + "\"",
+                              curr_visibility,
+                              Visibility::PRIVATE);
         } else {
-            check_visibility (curr_visibility, ope.getVisibility ());
+            check_visibility ("Class \"" + node.getName () + "\", operation \""                                         + ope.getName () + "\"",
+                              curr_visibility,
+                              ope.getVisibility ());
         }
     }
 
@@ -292,9 +300,10 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
 }
 
 void
-GenerateCodeCpp::writeFunctionGetSet (const umlOperation & ope,
+GenerateCodeCpp::writeFunctionGetSet (const umlClassNode & node,
+                                      const umlOperation & ope,
                                       Visibility & curr_visibility) {
-    writeFunctionGetSet1 (ope, curr_visibility);
+    writeFunctionGetSet1 (node, ope, curr_visibility);
 }
 
 void
@@ -339,7 +348,8 @@ GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
         parent = node.getParents ().begin ();
         getFile () << " : ";
         while (parent != node.getParents ().end ()) {
-            getFile () << visibility ((*parent).second) << " "
+            getFile () << visibility ("Class \"" + node.getName () + "\"",
+                                      (*parent).second) << " "
                        << fqname (*(*parent).first, false);
             ++parent;
             if (parent != node.getParents ().end ()) {
@@ -367,14 +377,21 @@ GenerateCodeCpp::writeClassEnd () {
 }
 
 void
-GenerateCodeCpp::writeAttribute (const umlAttribute & attr,
-                                 Visibility & curr_visibility) {
+GenerateCodeCpp::writeAttribute (const umlClassNode & node,
+                                 const umlAttribute & attr,
+                                 Visibility & curr_visibility,
+                                 const std::string & nameClass) {
     if (!attr.getValue ().empty ()) {
-        std::cerr << "Default value for attribut in class is not applicable in C++.\n";
+        std::cerr << "Class \"" << nameClass << "\", attribute \""
+                  << attr.getName ()
+                  << "\": default value for attribut in class is not applicable with this generator.\n";
     }
 
     incIndentLevel ();
-    check_visibility (curr_visibility, attr.getVisibility ());
+    check_visibility ("Class \"" + node.getName () + "\", attribute \""
+                                 + attr.getName () + "\"",
+                      curr_visibility,
+                      attr.getVisibility ());
     if (!attr.getComment ().empty ()) {
         getFile () << comment (attr.getComment (),
                                std::string (spc () + "/// "),
@@ -473,19 +490,7 @@ GenerateCodeCpp::writeEnum1 (const umlClassNode & node,
         if (!(*umla).getComment ().empty ()) {
             getFile () << spc () << "/// " << (*umla).getComment () << "\n";
         }
-        if (!(*umla).getType ().empty ()) {
-            std::cerr << node.getName () << "/" << literal
-                      << ": ignoring type.\n";
-        }
-        if ((*umla).getName ().empty ()) {
-            std::cerr << node.getName ()
-                      << ": an unamed attribute is found.\n";
-        }
-        if ((*umla).getVisibility () != Visibility::PUBLIC) {
-            std::cerr << "Enum " << node.getName () << ", attribute "
-                      << (*umla).getName ()
-                      << ": visibility forced to public.\n";
-        }
+        (*umla).check (node);
         getFile () << spc () << literal;
         if (!(*umla).getValue ().empty ()) {
             getFile () << " = " << (*umla).getValue ();
@@ -518,18 +523,10 @@ GenerateCodeCpp::writeStruct (const umlClassNode & node) {
         getFile () << spc () << "struct " << node.getName () << " {\n";
     }
     for (const umlAttribute & umla : node.getAttributes ()) {
-        if (umla.getName ().empty ()) {
-            std::cerr << node.getName ()
-                      << ": an unamed attribute is found.\n";
-        }
-        if (umla.getVisibility () != Visibility::PUBLIC) {
-            std::cerr << "Struct " << node.getName () << ", attribute "
-                      << umla.getName ()
-                      << ": visibility forced to visible.\n";
-        }
+        umla.check (node);
         // Use of a tmp value to ignore visibility.
         Visibility vis = umla.getVisibility ();
-        writeAttribute (umla, vis);
+        writeAttribute (node, umla, vis, node.getName ());
     }
     for (const umlOperation & umlo : node.getOperations ()) {
         if (umlo.getVisibility () != Visibility::PUBLIC) {
@@ -539,7 +536,7 @@ GenerateCodeCpp::writeStruct (const umlClassNode & node) {
         }
         // Use of a tmp value to ignore visibility.
         Visibility vis = umlo.getVisibility ();
-        writeFunction (umlo, vis);
+        writeFunction (node, umlo, vis);
     }
     getFile () << spc () << "};\n";
 }
@@ -552,10 +549,9 @@ GenerateCodeCpp::writeTypedef (const umlClassNode & node) {
     if (umla == node.getAttributes ().end ()) {
         throw std::string ("Error: first attribute (impl type) not set at typedef " + node.getName () + ".\n");
     }
-    if (!(*umla).getName ().empty ())  {
-        std::cerr << "Typedef " << node.getName ()
-                  << ": ignoring name field in implementation type attribute\n";
-    }
+
+    (*umla).check (node);
+
     const umlClassNode * umlc = findByName (getDia ().getUml (),
                                             (*umla).getType ().c_str ());
     getFile () << spc () << "typedef ";
@@ -569,14 +565,17 @@ GenerateCodeCpp::writeTypedef (const umlClassNode & node) {
 }
 
 void
-GenerateCodeCpp::writeAssociation (const umlassoc & asso,
+GenerateCodeCpp::writeAssociation (const umlClassNode & node,
+                                   const umlassoc & asso,
                                    Visibility & curr_visibility) {
     if (!asso.name.empty ()) {
         incIndentLevel ();
         const umlClassNode *ref;
         ref = findByName (getDia ().getUml (),
                           asso.key.getName ().c_str ());
-        check_visibility (curr_visibility, asso.visibility);
+        check_visibility ("Class \"" + node.getName () + "\"",
+                          curr_visibility,
+                          asso.visibility);
         getFile () << spc ();
         if (ref != NULL) {
             getFile () << fqname (*ref, !asso.composite);

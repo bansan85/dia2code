@@ -27,7 +27,8 @@ GenerateCodeCpp11::GenerateCodeCpp11 (DiaGram & diagram) :
 }
 
 void
-GenerateCodeCpp11::writeFunction (const umlOperation & ope,
+GenerateCodeCpp11::writeFunction (const umlClassNode & node,
+                                  const umlOperation & ope,
                                   Visibility & curr_visibility) {
     // Check validity of ope and indent.
     writeFunction1 (ope);
@@ -41,7 +42,10 @@ GenerateCodeCpp11::writeFunction (const umlOperation & ope,
     else
 #endif
     {
-        check_visibility (curr_visibility, ope.getVisibility ());
+        check_visibility ("Class \"" + node.getName () + "\", operation \""
+                                     + ope.getName () + "\"",
+                          curr_visibility,
+                          ope.getVisibility ());
     }
 
     // Write comment and start function with virtual and static.

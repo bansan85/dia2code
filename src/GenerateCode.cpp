@@ -411,7 +411,7 @@ GenerateCode::genClass (const umlClassNode & node) {
     if (!node.getAssociations ().empty ()) {
         writeComment ("Associations");
         for (const umlassoc & assoc : node.getAssociations ()) {
-            writeAssociation (assoc, tmpv);
+            writeAssociation (node, assoc, tmpv);
         }
     }
 
@@ -490,7 +490,7 @@ GenerateCode::genClass (const umlClassNode & node) {
                     std::cerr << "An attribute of the " << fqname (node, false)
                               << " class have an empty type.\n";
                 }
-                writeAttribute (umla, tmpv);
+                writeAttribute (node, umla, tmpv, node.getName ());
             }
         }
     }
@@ -504,10 +504,10 @@ GenerateCode::genClass (const umlClassNode & node) {
 #endif
         for (const umlOperation & umlo : node.getOperations ()) {
             if (umlo.isStereotypeGetSet ()) {
-                writeFunctionGetSet (umlo, tmpv);
+                writeFunctionGetSet (node, umlo, tmpv);
             }
             else {
-                writeFunction (umlo, tmpv);
+                writeFunction (node, umlo, tmpv);
             }
         }
     }
@@ -651,16 +651,16 @@ GenerateCode::genDecl (declaration &d,
     }
     else if (node->isStereotypeEnum ()) {
         if (!node->getOperations ().empty ()) {
-            std::cerr << "Class " << node->getName ()
-                      << " is enum. All operations are ignored.\n";
+            std::cerr << "Class \"" << node->getName ()
+                      << "\" is enum. All operations are ignored.\n";
         }
         if (!node->getTemplates ().empty ()) {
-            std::cerr << "Class " << node->getName ()
-                      << " is enum. All templates are ignored.\n";
+            std::cerr << "Class \"" << node->getName ()
+                      << "\" is enum. All templates are ignored.\n";
         }
         if (node->isAbstract ()) {
-            std::cerr << "Class " << node->getName ()
-                      << " is abstact. Ignored.\n";
+            std::cerr << "Class \"" << node->getName ()
+                      << "\" is abstact. Ignored.\n";
         }
         writeEnum (*node);
     }
@@ -835,7 +835,8 @@ GenerateCode::writeLicense1 (const char * start, const char * end) {
 }
 
 const char *
-GenerateCode::visibility1 (const Visibility & vis) {
+GenerateCode::visibility1 (std::string desc,
+                           const Visibility & vis) {
     switch (vis) {
         case Visibility::PUBLIC :
             return "public";
@@ -844,7 +845,7 @@ GenerateCode::visibility1 (const Visibility & vis) {
         case Visibility::PROTECTED :
             return "protected";
         case Visibility::IMPLEMENTATION :
-            std::cerr << "Implementation not applicable. Default: public.\n";
+            std::cerr << desc + ": implementation not applicable. Default: public.\n";
             return "public";
         default :
             throw std::string ("Unknown visibility.\n");
@@ -852,7 +853,8 @@ GenerateCode::visibility1 (const Visibility & vis) {
 }
 
 void
-GenerateCode::writeFunctionGetSet1 (const umlOperation & ope,
+GenerateCode::writeFunctionGetSet1 (const umlClassNode & node,
+                                    const umlOperation & ope,
                                     Visibility & curr_visibility) {
     std::string tmpname;
 
@@ -874,7 +876,7 @@ GenerateCode::writeFunctionGetSet1 (const umlOperation & ope,
                        true,
                        false,
                        false);
-    writeFunction (ope2, curr_visibility);
+    writeFunction (node,ope2, curr_visibility);
 
     umlAttribute parameter ("value",
                             "",
@@ -897,7 +899,7 @@ GenerateCode::writeFunctionGetSet1 (const umlOperation & ope,
                          false,
                          false);
     ope2.addParameter (parameter);
-    writeFunction (ope2, curr_visibility);
+    writeFunction (node, ope2, curr_visibility);
 }
 
 GenerateCode::~GenerateCode () {

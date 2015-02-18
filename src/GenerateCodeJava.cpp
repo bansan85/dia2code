@@ -44,8 +44,9 @@ GenerateCodeJava::strPackage (const char * package) const {
 }
 
 const char *
-GenerateCodeJava::visibility (const Visibility & vis) {
-    return visibility1 (vis);
+GenerateCodeJava::visibility (std::string desc,
+                              const Visibility & vis) {
+    return visibility1 (desc, vis);
 }
 
 void
@@ -167,8 +168,9 @@ GenerateCodeJava::writeFunctionComment (const umlOperation & ope) {
 }
 
 void
-GenerateCodeJava::writeFunction1 (const umlOperation & ope,
-                                 Visibility & curr_visibility) {
+GenerateCodeJava::writeFunction1 (const umlClassNode & node,
+                                  const umlOperation & ope,
+                                  Visibility & curr_visibility) {
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
         if (ope.getVisibility () != '0') {
@@ -184,11 +186,14 @@ GenerateCodeJava::writeFunction1 (const umlOperation & ope,
     }
 
     getFile () << spc ();
-    getFile () << visibility (ope.getVisibility ()) << " ";
+    getFile () << visibility ("Class, \"" + node.getName () +
+                                    "\", operation \"" + ope.getName () + "\"",
+                              ope.getVisibility ()) << " ";
 }
 
 void
-GenerateCodeJava::writeFunction2 (const umlOperation & ope,
+GenerateCodeJava::writeFunction2 (const umlClassNode & node,
+                                  const umlOperation & ope,
                                   Visibility & curr_visibility,
                                   bool defaultparam) {
     if (ope.isStatic ()) {
@@ -214,7 +219,10 @@ GenerateCodeJava::writeFunction2 (const umlOperation & ope,
         getFile () << (*tmpa).getType () << " " << (*tmpa).getName ();
         if (!defaultparam) {
             if (!(*tmpa).getValue ().empty ()) {
-                std::cerr << "Generator doesn't support param default.\n";
+                std::cerr << "Class \"" << node.getName ()
+                          << "\", operation \"" << ope.getName ()
+                          << "\", parameter \"" << (*tmpa).getName ()
+                          << "\": this generator doesn't support param default.\n";
             }
         }
         else {
@@ -229,7 +237,9 @@ GenerateCodeJava::writeFunction2 (const umlOperation & ope,
     }
     getFile () << ")";
     if (ope.isConstant ()) {
-        std::cerr << "Generator doesn't support const method.\n";
+        std::cerr << "Class \"" << node.getName () << "\", operation \""
+                  << ope.getName ()
+                  << "\": this generator doesn't support const operation.\n";
     }
     if (ope.getInheritance () == Inheritance::ABSTRACT) {
         getFile () << ";\n";
@@ -248,9 +258,10 @@ GenerateCodeJava::writeFunction2 (const umlOperation & ope,
 }
 
 void
-GenerateCodeJava::writeFunction (const umlOperation & ope,
+GenerateCodeJava::writeFunction (const umlClassNode & node,
+                                 const umlOperation & ope,
                                  Visibility & curr_visibility) {
-    writeFunction1 (ope, curr_visibility);
+    writeFunction1 (node, ope, curr_visibility);
 
     if (ope.getInheritance () == Inheritance::ABSTRACT) {
         getFile () << "abstract ";
@@ -259,13 +270,14 @@ GenerateCodeJava::writeFunction (const umlOperation & ope,
         getFile () << "final ";
     }
 
-    writeFunction2 (ope, curr_visibility, false);
+    writeFunction2 (node, ope, curr_visibility, false);
 }
 
 void
-GenerateCodeJava::writeFunctionGetSet (const umlOperation & ope,
+GenerateCodeJava::writeFunctionGetSet (const umlClassNode & node,
+                                       const umlOperation & ope,
                                        Visibility & curr_visibility) {
-    writeFunctionGetSet1 (ope, curr_visibility);
+    writeFunctionGetSet1 (node, ope, curr_visibility);
 }
 
 void
@@ -317,7 +329,10 @@ GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
         parent = node.getParents ().begin ();
         while (parent != node.getParents ().end ()) {
             if ((*parent).second != Visibility::PUBLIC) {
-                std::cerr << "Only a public visibility is supported.\n";
+                std::cerr << "Class \"" << node.getName ()
+                          << "\", inheritance \""
+                          << (*parent).first->getName ()
+                          << "\": only a public visibility is supported.\n";
             }
             getFile () << inheritance;
             if (compName) {
@@ -354,10 +369,16 @@ GenerateCodeJava::writeClassEnd () {
 }
 
 void
-GenerateCodeJava::writeAttribute (const umlAttribute & attr,
-                                  Visibility & curr_visibility) {
+GenerateCodeJava::writeAttribute (const umlClassNode & node,
+                                  const umlAttribute & attr,
+                                  Visibility & curr_visibility,
+                                  const std::string & nameClass) {
     writeClassComment (attr.getComment ());
-    getFile () << spc () << visibility (attr.getVisibility ()) << " ";
+    getFile () << spc ()
+               << visibility ("Class \"" + node.getName () + "\", attribute \""
+                                         + attr.getName () + "\"",
+                              attr.getVisibility ())
+               << " ";
     if (attr.isStatic ()) {
         getFile () << "static " << attr.getType () << " " << attr.getName ();
     }
@@ -396,7 +417,8 @@ GenerateCodeJava::writeNameSpaceEnd (const umlClassNode * node) {
 
 void
 GenerateCodeJava::writeConst (const umlClassNode & node) {
-    std::cerr << "Const stereotype in not applicable to Java.\n";
+    std::cerr << "Class \"" << node.getName ()
+              << "\": const stereotype in not applicable with this generator.\n";
 }
 
 void
@@ -415,24 +437,10 @@ GenerateCodeJava::writeEnum (const umlClassNode & node) {
     incIndentLevel ();
     while (umla != node.getAttributes ().end ()) {
         const char *literal = (*umla).getName ().c_str ();
-        if (!(*umla).getType ().empty ()) {
-            std::cerr << node.getName () << "/" << literal
-                      << ": ignoring type.\n";
-        }
-        if ((*umla).getName ().empty ()) {
-            std::cerr << node.getName ()
-                      << ": an unamed attribute is found.\n";
-        }
-        if ((*umla).getVisibility () != Visibility::PUBLIC) {
-            std::cerr << "Enum " << node.getName () << ", attribute "
-                      << (*umla).getName ()
-                      << ": visibility forced to public.\n";
-        }
+
+        (*umla).check (node);
+
         writeClassComment ((*umla).getComment ());
-        if (!(*umla).getType ().empty ()) {
-            std::cerr << node.getName () << "/" << literal
-                      << ": ignoring type.\n";
-        }
         getFile () << spc () << literal;
         if (!(*umla).getValue ().empty ()) {
             getFile () << " = " << (*umla).getValue ();
@@ -465,10 +473,9 @@ GenerateCodeJava::writeTypedef1 (const umlClassNode & node,
     if (umla == node.getAttributes ().end ()) {
         throw std::string ("Error: first attribute (impl type) not set at typedef " + node.getName () + ".\n");
     }
-    if (!(*umla).getName ().empty ())  {
-        std::cerr << "Typedef " << node.getName ()
-                  << ": ignoring name field in implementation type attribute.\n";
-    }
+
+    (*umla).check (node);
+
     getFile () << spc () << "public class " << cppName (node.getName ())
                << extends;
     if (compName) {
@@ -493,11 +500,15 @@ GenerateCodeJava::writeTypedef (const umlClassNode & node) {
 }
 
 void
-GenerateCodeJava::writeAssociation (const umlassoc & asso,
+GenerateCodeJava::writeAssociation (const umlClassNode & node,
+                                    const umlassoc & asso,
                                     Visibility & curr_visibility) {
     if (!asso.name.empty ()) {
-        getFile () << spc () << visibility (asso.visibility) << " "
-                   << cppName (asso.key.getName ());
+        getFile () << spc ()
+                   << visibility ("Class \"" + node.getName () +
+                                       "\", association \"" + asso.name + "\"",
+                                  asso.visibility)
+                   << " " << cppName (asso.key.getName ());
         getFile () << " " << asso.name << ";\n";
     }
 }

@@ -108,7 +108,8 @@ class GenerateCode {
 
         const char * fqname (const umlClassNode & node,
                              bool use_ref_type) const;
-        virtual const char * visibility (const Visibility & vis) = 0;
+        virtual const char * visibility (std::string desc,
+                                         const Visibility & vis) = 0;
         std::string & spc () const;
 
         virtual std::string strPackage (const char * package) const = 0;
@@ -128,31 +129,38 @@ class GenerateCode {
                                                 umlClassNode * > > & name) = 0;
         virtual void writeInclude (const char * name) = 0;
         virtual void writeFunctionComment (const umlOperation & ope) = 0;
-        virtual void writeFunction (const umlOperation & ope,
+        virtual void writeFunction (const umlClassNode & node,
+                                    const umlOperation & ope,
                                     Visibility & curr_visibility) = 0;
-        virtual void writeFunctionGetSet (const umlOperation & ope,
+        virtual void writeFunctionGetSet (const umlClassNode & node,
+                                          const umlOperation & ope,
                                           Visibility & curr_visibility) = 0;
         virtual void writeComment (const std::string & text) = 0;
         virtual void writeComment (const char * text) = 0;
         virtual void writeClassComment (const std::string & com) = 0;
         virtual void writeClassStart (const umlClassNode & node) = 0;
         virtual void writeClassEnd () = 0;
-        virtual void writeAttribute (const umlAttribute & attr,
-                                     Visibility & curr_visibility) = 0;
+        virtual void writeAttribute (const umlClassNode & node,
+                                     const umlAttribute & attr,
+                                     Visibility & curr_visibility,
+                                     const std::string & nameClass) = 0;
         virtual void writeNameSpaceStart (const umlClassNode * name) = 0;
         virtual void writeNameSpaceEnd (const umlClassNode * node) = 0;
         virtual void writeConst (const umlClassNode & node) = 0;
         virtual void writeEnum (const umlClassNode & node) = 0;
         virtual void writeStruct (const umlClassNode & node) = 0;
         virtual void writeTypedef (const umlClassNode & node) = 0;
-        virtual void writeAssociation (const umlassoc & asso,
+        virtual void writeAssociation (const umlClassNode & node,
+                                       const umlassoc & asso,
                                        Visibility & curr_visibility) = 0;
         virtual void writeTemplates (
            const std::list <std::pair <std::string, std::string> > & tmps) = 0;
 
-        static const char * visibility1 (const Visibility & vis);
+        static const char * visibility1 (std::string desc,
+                                         const Visibility & vis);
         void writeLicense1 (const char * start, const char * end);
-        void writeFunctionGetSet1 (const umlOperation & ope,
+        void writeFunctionGetSet1 (const umlClassNode & node,
+                                   const umlOperation & ope,
                                    Visibility & curr_visibility);
 
         virtual ~GenerateCode ();

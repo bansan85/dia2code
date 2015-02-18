@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
+class umlClassNode;
+
 #include <list>
 #include <string>
 #include <cstring>
@@ -90,6 +92,8 @@ class umlAttribute {
                      bool isstatic_,
                      bool isconstant_,
                      Kind kind_);
+
+        void check (const umlClassNode & node) const;
 
         void parse (xmlNodePtr node);
         void insert (std::list <umlAttribute> &l);
