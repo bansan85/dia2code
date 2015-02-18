@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * Inserts "n" into the list "l", in orderly fashion
 */
 void
-umlOperation::insert_operation (umlOperation &n, std::list <umlOperation> &l) {
+umlOperation::insertOperation (umlOperation &n, std::list <umlOperation> &l) {
     l.push_back (n);
 /*    std::list <umlOperation>::iterator itl;
 
@@ -52,11 +52,11 @@ umlOperation::insert_operation (umlOperation &n, std::list <umlOperation> &l) {
 }
 
 void
-umlOperation::parse_operations (xmlNodePtr node,
+umlOperation::parseOperations (xmlNodePtr node,
                                 std::list <umlOperation> &res) {
     while (node != NULL) {
         umlOperation on (node->xmlChildrenNode);
-        insert_operation (on, res);
+        insertOperation (on, res);
         node = node->next;
     }
     return;
@@ -80,9 +80,13 @@ umlOperation::umlOperation (xmlNodePtr node) :
             if (stereo.compare ("delete") == 0) {
                 stereotypeDelete = true;
             }
+            else if (stereo.compare ("GetSet") == 0) {
+                stereotypeGetSet = true;
+            }
             else if (!stereo.empty ()) {
                 std::cerr << "Unknown stereotype: " << stereo << ".\n"
-                          << "Allow stereotype is: \"delete\".\n";
+                          << "Allow stereotypes are: "
+                          << "\"delete\", \"GetSet\".\n";
             }
         }
         free (nodename);
@@ -91,25 +95,25 @@ umlOperation::umlOperation (xmlNodePtr node) :
 }
 
 umlOperation::umlOperation (std::string name_,
-                            std::string value_,
                             std::string type_,
                             std::string comment_,
                             Visibility visibility_,
                             Inheritance inheritance_,
-                            unsigned char isstatic_,
-                            unsigned char isconstant_,
-                            Kind kind_,
-                            bool stereotypeDelete_) :
+                            bool isstatic_,
+                            bool isconstant_,
+                            bool stereotypeDelete_,
+                            bool stereotypeGetSet_) :
     umlAttribute (name_,
-                  value_,
+                  "",
                   type_,
                   comment_,
                   visibility_,
                   inheritance_,
                   isstatic_,
                   isconstant_,
-                  kind_),
+                  Kind::UNKNOWN),
     stereotypeDelete (stereotypeDelete_),
+    stereotypeGetSet (stereotypeGetSet_),
     parameters ()
 {
 }
@@ -127,6 +131,11 @@ umlOperation::getParameters () const {
 bool
 umlOperation::isStereotypeDelete () const {
     return stereotypeDelete;
+}
+
+bool
+umlOperation::isStereotypeGetSet () const {
+    return stereotypeGetSet;
 }
 
 umlOperation::~umlOperation ()

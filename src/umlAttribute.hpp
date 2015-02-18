@@ -55,8 +55,8 @@ class umlAttribute {
         std::string comment;
         Visibility visibility;
         Inheritance inheritance;
-        unsigned char isstatic : 1;
-        unsigned char isconstant : 1;
+        bool isstatic : 1;
+        bool isconstant : 1;
         Kind kind;
     public :
         umlAttribute ();
@@ -66,8 +66,8 @@ class umlAttribute {
                       std::string comment_,
                       Visibility visibility_,
                       Inheritance inheritance_,
-                      unsigned char isstatic_,
-                      unsigned char isconstant_,
+                      bool isstatic_,
+                      bool isconstant_,
                       Kind kind_);
         
         const std::string & getName () const;
@@ -77,8 +77,8 @@ class umlAttribute {
         const Visibility & getVisibility () const;
         void setVisibility (Visibility visible);
         const Inheritance & getInheritance () const;
-        unsigned char isStatic () const;
-        unsigned char isConstant () const;
+        bool isStatic () const;
+        bool isConstant () const;
         Kind getKind () const;
 
         void assign (std::string name_,
@@ -87,8 +87,8 @@ class umlAttribute {
                      std::string comment_,
                      Visibility visibility_,
                      Inheritance inheritance_,
-                     unsigned char isstatic_,
-                     unsigned char isconstant_,
+                     bool isstatic_,
+                     bool isconstant_,
                      Kind kind_);
 
         void parse (xmlNodePtr node);

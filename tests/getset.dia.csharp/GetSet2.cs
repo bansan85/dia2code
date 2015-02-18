@@ -1,7 +1,6 @@
-public class GetSet {
+public class GetSet2 {
     // Attributes
-    public type nom;
-    /// <summary>com2</summary>
+    private type nom;
     private bool boole;
     // Operations
     public type Nom {
@@ -10,7 +9,7 @@ public class GetSet {
         set {
         }
     }
-    public bool Boole {
+    private bool Boole {
         get {
         }
         set {

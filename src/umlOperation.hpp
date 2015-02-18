@@ -31,26 +31,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class umlOperation : public umlAttribute {
     private :
         bool stereotypeDelete : 1;
+        bool stereotypeGetSet : 1;
         std::list <umlAttribute> parameters;
     public :
-        static void insert_operation (umlOperation &n,
+        static void insertOperation (umlOperation &n,
                                       std::list <umlOperation> &l);
-        static void parse_operations (xmlNodePtr node,
+        static void parseOperations (xmlNodePtr node,
                                       std::list <umlOperation> &res);
         umlOperation (xmlNodePtr node);
         umlOperation (std::string name_,
-                      std::string value_,
                       std::string type_,
                       std::string comment_,
                       Visibility visibility_,
                       Inheritance inheritance_,
-                      unsigned char isstatic_,
-                      unsigned char isconstant_,
-                      Kind kind_,
-                      bool stereotypeDelete);
+                      bool isstatic_,
+                      bool isconstant_,
+                      bool stereotypeDelete,
+                      bool stereotypeGetSet);
 
         void addParameter (umlAttribute & attr);
         bool isStereotypeDelete () const;
+        bool isStereotypeGetSet () const;
         const std::list <umlAttribute> & getParameters () const;
 
         ~umlOperation ();

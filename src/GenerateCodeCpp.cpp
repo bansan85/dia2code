@@ -292,6 +292,12 @@ GenerateCodeCpp::writeFunction (const umlOperation & ope,
 }
 
 void
+GenerateCodeCpp::writeFunctionGetSet (const umlOperation & ope,
+                                      Visibility & curr_visibility) {
+    writeFunctionGetSet1 (ope, curr_visibility);
+}
+
+void
 GenerateCodeCpp::writeComment (const std::string & text) {
     getFile () << spc () << "// " << text << "\n";
 }

@@ -154,6 +154,46 @@ GenerateCodeCSharp::writeFunction (const umlOperation & ope,
 }
 
 void
+GenerateCodeCSharp::writeFunctionGetSet (const umlOperation & ope,
+                                         Visibility & curr_visibility) {
+    getFile () << spc () << visibility (ope.getVisibility ()) << " "
+               << ope.getType () << " " << strtoupperfirst (ope.getName ());
+
+    if (getOpenBraceOnNewline ()) {
+        getFile () << std::endl;
+        getFile () << spc () << "{" << std::endl;
+    }
+    else {
+        getFile () << " {" << std::endl;
+    }
+
+    incIndentLevel ();
+
+    getFile () << spc () << "get";
+    if (getOpenBraceOnNewline ()) {
+        getFile () << std::endl;
+        getFile () << spc () << "{" << std::endl;
+    }
+    else {
+        getFile () << " {" << std::endl;
+    }
+    getFile () << spc () << "}" << std::endl;
+
+    getFile () << spc () << "set";
+    if (getOpenBraceOnNewline ()) {
+        getFile () << std::endl;
+        getFile () << spc () << "{" << std::endl;
+    }
+    else {
+        getFile () << " {" << std::endl;
+    }
+    getFile () << spc () << "}" << std::endl;
+
+    decIndentLevel ();
+    getFile () << spc () << "}" << std::endl;
+}
+
+void
 GenerateCodeCSharp::writeClassComment (const std::string & nom) {
     if (!nom.empty ()) {
         getFile () << comment (nom,

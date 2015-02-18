@@ -43,10 +43,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SEPARATOR '/'
 #endif
 
-std::string strtoupper (std::string s);
-std::string strtoupperfirst (std::string s);
-std::list <std::string> parse_class_names (char *s);
-bool is_present (std::list <std::string> list, const char *name);
+std::string strtoupper (const std::string & s);
+std::string strtoupperfirst (const std::string & s);
+std::list <std::string> parseClassNames (char *s);
+bool isPresent (std::list <std::string> list, const char *name);
 const char * kindStr (Kind k);
 
 #endif

@@ -130,6 +130,8 @@ class GenerateCode {
         virtual void writeFunctionComment (const umlOperation & ope) = 0;
         virtual void writeFunction (const umlOperation & ope,
                                     Visibility & curr_visibility) = 0;
+        virtual void writeFunctionGetSet (const umlOperation & ope,
+                                          Visibility & curr_visibility) = 0;
         virtual void writeComment (const std::string & text) = 0;
         virtual void writeComment (const char * text) = 0;
         virtual void writeClassComment (const std::string & com) = 0;
@@ -150,6 +152,8 @@ class GenerateCode {
 
         static const char * visibility1 (const Visibility & vis);
         void writeLicense1 (const char * start, const char * end);
+        void writeFunctionGetSet1 (const umlOperation & ope,
+                                   Visibility & curr_visibility);
 
         virtual ~GenerateCode ();
 };

@@ -41,8 +41,8 @@ umlAttribute::umlAttribute (std::string name_,
                             std::string comment_,
                             Visibility visibility_,
                             Inheritance inheritance_,
-                            unsigned char isstatic_,
-                            unsigned char isconstant_,
+                            bool isstatic_,
+                            bool isconstant_,
                             Kind kind_) :
     name (name_),
     value (value_),
@@ -50,8 +50,8 @@ umlAttribute::umlAttribute (std::string name_,
     comment (comment_),
     visibility (visibility_),
     inheritance (inheritance_),
-    isstatic (isstatic_ & 1),
-    isconstant (isconstant_ & 1),
+    isstatic (isstatic_),
+    isconstant (isconstant_),
     kind (kind_)
 {
 }
@@ -97,13 +97,13 @@ umlAttribute::getInheritance () const
     return inheritance;
 }
 
-unsigned char
+bool
 umlAttribute::isStatic () const
 {
     return isstatic;
 }
 
-unsigned char
+bool
 umlAttribute::isConstant () const
 {
     return isconstant;
@@ -122,8 +122,8 @@ umlAttribute::assign (std::string name_,
                       std::string comment_,
                       Visibility visibility_,
                       Inheritance inheritance_,
-                      unsigned char isstatic_,
-                      unsigned char isconstant_,
+                      bool isstatic_,
+                      bool isconstant_,
                       Kind kind_)
 {
     name = name_;

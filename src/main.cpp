@@ -179,7 +179,7 @@ under certain conditions; read the COPYING file for details.\n";
             parameter = 0;
             break;
         case 3:   // Which classes to consider
-            diagram.addGenClasses (parse_class_names (argv[i]));
+            diagram.addGenClasses (parseClassNames (argv[i]));
             parameter = 0;
             break;
         case 4:   // Which license file

@@ -198,56 +198,16 @@ umlClass::isGetSetStereo (std::string & stereo) {
 void
 umlClass::makeGetSetMethods () {
     for (umlAttribute & attrlist : attributes) {
-        std::string tmpname;
-
-        /* The GET or IS method */
-        if ((attrlist.getType ().compare ("boolean") == 0) ||
-            (attrlist.getType ().compare ("Boolean") == 0) ||
-            (attrlist.getType ().compare ("bool") == 0)) {
-            tmpname.assign ("is");
-        } else {
-            tmpname.assign ("get");
-        }
-        tmpname.append (strtoupperfirst (attrlist.getName ()));
-
-        umlOperation operation2 (tmpname,
-                                 "",
+        umlOperation operation2 (attrlist.getName (),
                                  attrlist.getType (),
                                  "",
                                  Visibility::PUBLIC,
                                  Inheritance::FINAL,
                                  false,
-                                 true,
-                                 Kind::IN,
-                                 false);
-        umlOperation::insert_operation (operation2, operations);
-
-        /* The SET method */
-        umlAttribute parameter ("value",
-                                "",
-                                attrlist.getType (),
-                                "",
-                                Visibility::PUBLIC,
-                                Inheritance::FINAL,
-                                false,
-                                false,
-                                Kind::IN);
-
-        tmpname.assign ("set");
-        tmpname.append (strtoupperfirst(attrlist.getName ()));
-
-        umlOperation operation (tmpname,
-                                "",
-                                "void",
-                                "",
-                                Visibility::PUBLIC,
-                                Inheritance::FINAL,
-                                false,
-                                false,
-                                Kind::IN,
-                                false);
-        operation.addParameter (parameter);
-        umlOperation::insert_operation(operation, operations);
+                                 false,
+                                 false,
+                                 true);
+        umlOperation::insertOperation (operation2, operations);
     }
 }
 
@@ -836,7 +796,7 @@ umlClass::parseClass (xmlNodePtr class_) {
         } else if (!strcmp ("attributes", BAD_TSAC2 (attrname))) {
             parseAttributes (attribute->xmlChildrenNode, attributes);
         } else if (!strcmp ("operations", BAD_TSAC2 (attrname))) {
-            umlOperation::parse_operations (attribute->xmlChildrenNode,
+            umlOperation::parseOperations (attribute->xmlChildrenNode,
                                             operations);
             if (stereotypeGetSet) {
                 makeGetSetMethods ();

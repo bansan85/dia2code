@@ -500,7 +500,9 @@ CORBAValue:
 GetSet
 ------
   Generate all get/set functions of all attributes. Their visibility will be
-  public.
+  public. If you want to be able to customize the visibility of the functions
+  or generate get/set only for specifics attributes, use instead GetSet
+  stereotype on operation.
 
   A "T getA ();" method, with return type conformant to the type of the
   attribute. If the type of the attribute is boolean (boolean, Boolean or bool)
@@ -551,13 +553,17 @@ public class GetSet {
     /// <summary>com2</summary>
     private bool boole;
     // Operations
-    public type getNom () {
+    public type Nom {
+        get {
+        }
+        set {
+        }
     }
-    public void setNom (type value) {
-    }
-    public bool isBoole () {
-    }
-    public void setBoole (bool value) {
+    public bool Boole {
+        get {
+        }
+        set {
+        }
     }
 }
 
@@ -753,7 +759,7 @@ import Pack.Class;
 delete:
 ------
 In C++11, a deleted function must be defined in header.
-Not applicable in Java.
+Not applicable in C# and Java.
 
 C++ generator:
 ** In C++, delete do not exists. So the commun way to delete a function (like
@@ -786,6 +792,12 @@ class operations {
     public test5 () {
     }
 }
+
+
+GetSet:
+------
+This feature will generate the same output than GetSet for class except it will
+respect the visibility of the operation. You also need to define the attribut.
 
 
 - Attributes:

@@ -41,6 +41,8 @@ class GenerateCodeJava : public GenerateCode {
         void writeFunctionComment (const umlOperation & ope);
         void writeFunction (const umlOperation & ope,
                             Visibility & curr_visibility);
+        void writeFunctionGetSet (const umlOperation & ope,
+                                  Visibility & curr_visibility);
         void writeComment (const std::string & text);
         void writeComment (const char * text);
         void writeClassComment (const std::string & nom);

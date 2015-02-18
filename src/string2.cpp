@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * The char * received may be freed by the caller
 */
 std::string
-strtoupper (std::string s) {
+strtoupper (const std::string & s) {
     std::string tmp (s);
     size_t i, n;
     n = tmp.length ();
@@ -46,7 +46,7 @@ strtoupper (std::string s) {
   * The char * received may be freed by the caller
 */
 std::string
-strtoupperfirst (std::string s) {
+strtoupperfirst (const std::string & s) {
     std::string tmp (s);
     if (s.empty ()) {
         return s;
@@ -57,7 +57,7 @@ strtoupperfirst (std::string s) {
 
 
 std::list <std::string>
-parse_class_names (char *s) {
+parseClassNames (char *s) {
     char *token;
     const char *delim = ",";
     std::list <std::string> list;
@@ -81,7 +81,7 @@ parse_class_names (char *s) {
 
 
 bool
-is_present (std::list <std::string> list, const char *name) {
+isPresent (std::list <std::string> list, const char *name) {
     for (std::string str : list) {
         const char *namei = str.c_str ();
         size_t len;

@@ -218,8 +218,8 @@ GenerateCode::generate_code () {
     std::list <umlClassNode> tmplist = getDia ().getUml ();
     
     for (umlClassNode & it : tmplist) {
-        if (!(is_present (getDia ().getGenClasses (),
-                          it.getName ().c_str ()) ^
+        if (!(isPresent (getDia ().getGenClasses (),
+                         it.getName ().c_str ()) ^
                                                   getDia ().getInvertSel ())) {
             getDia ().push (it);
         }
@@ -503,7 +503,12 @@ GenerateCode::genClass (const umlClassNode & node) {
         }
 #endif
         for (const umlOperation & umlo : node.getOperations ()) {
-            writeFunction (umlo, tmpv);
+            if (umlo.isStereotypeGetSet ()) {
+                writeFunctionGetSet (umlo, tmpv);
+            }
+            else {
+                writeFunction (umlo, tmpv);
+            }
         }
     }
 
@@ -844,6 +849,55 @@ GenerateCode::visibility1 (const Visibility & vis) {
         default :
             throw std::string ("Unknown visibility.\n");
     }
+}
+
+void
+GenerateCode::writeFunctionGetSet1 (const umlOperation & ope,
+                                    Visibility & curr_visibility) {
+    std::string tmpname;
+
+    if ((!ope.getType ().compare ("bool")) ||
+        (!ope.getType ().compare ("boolean")) ||
+        (!ope.getType ().compare ("Boolean"))) {
+        tmpname.assign ("is");
+    }
+    else {
+        tmpname.assign ("get");
+    }
+    tmpname.append (strtoupperfirst (ope.getName ()));
+    umlOperation ope2 (tmpname,
+                       ope.getType (),
+                       "",
+                       ope.getVisibility (),
+                       ope.getInheritance (),
+                       ope.isStatic (),
+                       true,
+                       false,
+                       false);
+    writeFunction (ope2, curr_visibility);
+
+    umlAttribute parameter ("value",
+                            "",
+                            ope.getType (),
+                            "",
+                            ope.getVisibility (),
+                            ope.getInheritance (),
+                            ope.isStatic (),
+                            ope.isConstant (),
+                            Kind::IN);
+    tmpname.assign ("set");
+    tmpname.append (strtoupperfirst (ope.getName ()));
+    ope2 = umlOperation (tmpname,
+                         "void",
+                         "",
+                         ope.getVisibility (),
+                         ope.getInheritance (),
+                         ope.isStatic (),
+                         false,
+                         false,
+                         false);
+    ope2.addParameter (parameter);
+    writeFunction (ope2, curr_visibility);
 }
 
 GenerateCode::~GenerateCode () {
