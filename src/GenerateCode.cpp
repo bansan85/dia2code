@@ -543,7 +543,7 @@ GenerateCode::genClass (const umlClassNode & node) {
 }
 
 const char *
-dirName (umlPackage * pkg) {
+dirName (umlPackage * pkg, char separator) {
     static std::string buf;
     std::list <umlPackage *>::const_iterator it;
     std::list <umlPackage *> pkglist;
@@ -555,7 +555,7 @@ dirName (umlPackage * pkg) {
         buf.append ((*it)->getName ());
         ++it;
         if (it != pkglist.end ()) {
-            buf.append (1, SEPARATOR);
+            buf.append (1, separator);
         }
     }
     return buf.c_str ();
@@ -583,7 +583,7 @@ GenerateCode::genDecl (declaration &d,
         
         folder.assign (outdir);
         folder.append (1, SEPARATOR);
-        folder.append (dirName (d.u.this_module->pkg));
+        folder.append (dirName (d.u.this_module->pkg, SEPARATOR));
 
         if (
 #if defined(_WIN32) || defined(_WIN64)
@@ -604,15 +604,23 @@ GenerateCode::genDecl (declaration &d,
 
         if (d.decl_kind == dk_module) {
             if (buildtree) {
-                name_ = dirName (d.u.this_module->pkg);
+                name_ = dirName (d.u.this_module->pkg, SEPARATOR);
             }
             else {
-                name_ = d.u.this_module->pkg->getName ();
+                name_ = dirName (d.u.this_module->pkg, '-');
             }
         } else {
-            if ((buildtree) && (d.u.this_class->getPackage () != NULL)) {
-                name_.assign (dirName (d.u.this_class->getPackage ()));
-                name_.append (1, SEPARATOR);
+            if (d.u.this_class->getPackage () != NULL) {
+                if (buildtree) {
+                    name_.assign (dirName (d.u.this_class->getPackage (),
+                                           SEPARATOR));
+                    name_.append (1, SEPARATOR);
+                }
+                else {
+                    name_.assign (dirName (d.u.this_class->getPackage (),
+                                           '-'));
+                    name_.append (1, '-');
+                }
             }
             name_.append (d.u.this_class->getName ());
         }

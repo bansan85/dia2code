@@ -33,7 +33,7 @@ strtoupper (const std::string & s) {
     n = tmp.length ();
     for (i = 0; i < n; i++) {
         tmp[i] = static_cast <char> (toupper (tmp[i]));
-        if (tmp[i] == SEPARATOR) {
+        if ((tmp[i] == SEPARATOR) || (tmp[i] == '-')) {
             tmp[i] = '_';
         }
     }

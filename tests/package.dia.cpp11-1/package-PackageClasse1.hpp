@@ -1,5 +1,5 @@
-#ifndef PACKAGECLASSE1__HPP
-#define PACKAGECLASSE1__HPP
+#ifndef PACKAGE_PACKAGECLASSE1__HPP
+#define PACKAGE_PACKAGECLASSE1__HPP
 
 namespace package {
     /**

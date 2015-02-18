@@ -53,7 +53,7 @@ do
     rm -Rf result/*
     echo "dia2code -t $gen operations.dia -d result -l COPYING"
     ../src/dia2code -t $gen operations.dia -d result -l COPYING || exit 1
-    diff -pu operations.dia.$gen"_COPYING" result > operations.dia.$gen"_COPYING"result.txt
+    diff -pu operations.dia.$gen"_COPYING" result > operations.dia.$gen"_COPYING".result.txt
     if [[ ! $? -eq 0 ]] ; then
         echo operations.dia.$gen"_COPYING" FAILED
         rm -Rf operations.dia.$gen"_COPYING".fail

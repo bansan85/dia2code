@@ -115,6 +115,12 @@ GenerateCodeCpp::writeInclude (const std::list <std::pair <
             include.append (getFileExt ());
         }
         else if (getOneClass ()) {
+            if (!it.first.empty ()) {
+                for (const umlPackage * pack : it.first) {
+                    include.append (pack->getName ());
+                    include.append ("-");
+                }
+            }
             include.append (it.second->getName ());
             include.append (".");
             include.append (getFileExt ());

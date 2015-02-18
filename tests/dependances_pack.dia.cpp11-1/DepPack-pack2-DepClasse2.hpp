@@ -1,5 +1,5 @@
-#ifndef DEPCLASSE2__HPP
-#define DEPCLASSE2__HPP
+#ifndef DEPPACK_PACK2_DEPCLASSE2__HPP
+#define DEPPACK_PACK2_DEPCLASSE2__HPP
 
 namespace DepPack {
     namespace pack2 {

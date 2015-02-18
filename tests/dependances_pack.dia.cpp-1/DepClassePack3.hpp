@@ -1,7 +1,7 @@
 #ifndef DEPCLASSEPACK3__HPP
 #define DEPCLASSEPACK3__HPP
 
-#include "DepClasse2.hpp"
+#include "DepPack-pack2-DepClasse2.hpp"
 
 class DepClassePack3 {
 };

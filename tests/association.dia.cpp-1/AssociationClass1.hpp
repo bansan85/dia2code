@@ -1,7 +1,7 @@
 #ifndef ASSOCIATIONCLASS1__HPP
 #define ASSOCIATIONCLASS1__HPP
 
-#include "AssociationClass2.hpp"
+#include "AssociationPack-AssociationClass2.hpp"
 
 /**
  * \brief Multiple line

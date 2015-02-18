@@ -1,5 +1,5 @@
-#ifndef PACKAGECLASSE2__HPP
-#define PACKAGECLASSE2__HPP
+#ifndef PACKAGE_PACK2_PACKAGECLASSE2__HPP
+#define PACKAGE_PACK2_PACKAGECLASSE2__HPP
 
 namespace package {
     namespace pack2 {
