@@ -136,7 +136,12 @@ GenerateCodeCpp::writeInclude (const std::list <std::pair <
         if (std::find (incs.begin (),
                        incs.end (),
                        add) == incs.end ()) {
-            incs.push_back (add);
+            if (add.second) {
+                incs.push_front (add);
+            }
+            else {
+                incs.push_back (add);
+            }
         }
     }
 
