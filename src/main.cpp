@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GenerateCodeCpp11.hpp"
 #include "GenerateCodeJava.hpp"
 #include "GenerateCodeCSharp.hpp"
+#include "GenerateCodePhp.hpp"
 
 int main (int argc, char **argv) {
 try {
@@ -51,7 +52,7 @@ under certain conditions; read the COPYING file for details.\n";
     const char *help = "[-h|--help] [-d <dir>] [--buildtree] [-l <license file>\n\
        [-nc] [-cl <classlist>] [-v] [--version] [--tab <number>]\n\
        [-ext <extension>] [-bext <extension>] [-nl] [-1] \n\
-       <-t (ada|as3|c|cpp|csharp|idl|java|php|php5|python|ruby|shp|sql)>\n\
+       <-t (ada|as3|c|cpp|csharp|idl|java|php4|php(5)|python|ruby|shp|sql)>\n\
        <diagramfile>";
 
     const char *bighelp = "\
@@ -85,8 +86,8 @@ under certain conditions; read the COPYING file for details.\n";
                          --buildtree.\n\
                          Off by default but java.\n\
     -t <target>          Selects the output language. <target> can be one of:\n\
-                         ada,as3,c,cpp,cpp11,csharp,idl,java,php,php5,python,\n\
-                         ruby,shp,sql.\n\
+                         ada,as3,c,cpp,cpp11,csharp,idl,java,php4,php(5),\n\
+                         python,ruby,shp,sql.\n\
     <diagramfile>        The Dia file that holds the diagram to be read.\n\
 \n\
     Note: parameters can be specified in any order.";
@@ -150,6 +151,9 @@ under certain conditions; read the COPYING file for details.\n";
             } else if (!strcmp (argv[i], "java")) {
                 generator = new GenerateCodeJava (diagram);
                 oneclass = true;
+            } else if ((!strcmp (argv[i], "php")) ||
+                       (!strcmp (argv[i], "php5"))) {
+                generator = new GenerateCodePhp (diagram);
             } else if (!strcmp (argv[i], "c")) {
 //                generator = generators[2];
             } else if (!strcmp (argv[i], "sql")) {

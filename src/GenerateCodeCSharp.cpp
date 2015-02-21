@@ -144,6 +144,11 @@ GenerateCodeCSharp::writeFunction (const umlClassNode & node,
                                    Visibility & curr_visibility) {
     writeFunction1 (node, ope, curr_visibility);
 
+
+    getFile () << spc ();
+    getFile () << visibility ("Class, \"" + node.getName () +
+                                    "\", operation \"" + ope.getName () + "\"",
+                              ope.getVisibility ()) << " ";
     if (ope.getInheritance () == Inheritance::ABSTRACT) {
         getFile () << "abstract ";
     }
@@ -211,7 +216,7 @@ GenerateCodeCSharp::writeClassComment (const std::string & nom) {
 
 void
 GenerateCodeCSharp::writeClassStart (const umlClassNode & node) {
-    writeClassStart1 (node, " : ", false);
+    writeClassStart1 (node, " : ", false, true);
 }
 
 void

@@ -999,17 +999,19 @@ Add a new generator to the main program:
 The following files needs to be updated:
  - src/main.cpp:
      - add a new include at the top of the file with the header of the new
-       generator.
+       generator,
      - inside the variable const char *help, add the abreviation of the
-       language.
+       language,
      - inside the variable const char *bighelp, change -ext, -bext and -t
-       options.
+       options,
      - and finally add it inside the main loop, in "case 1".
  - src/Makefile.am:
      - add the source in dia2code_SOURCES,
      - add the header in EXTRA_DIST.
  - README:
      - add examples for classic classes and for the differents stereotypes.
+ - tests/tests.sh:
+     - add your new generator to generators.
 And of course, don't forget to run "git add GenerateCodeXXX.?pp".
 
 

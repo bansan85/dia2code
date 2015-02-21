@@ -184,11 +184,6 @@ GenerateCodeJava::writeFunction1 (const umlClassNode & node,
     if (!ope.getComment ().empty ()) {
         writeFunctionComment (ope);
     }
-
-    getFile () << spc ();
-    getFile () << visibility ("Class, \"" + node.getName () +
-                                    "\", operation \"" + ope.getName () + "\"",
-                              ope.getVisibility ()) << " ";
 }
 
 void
@@ -263,6 +258,10 @@ GenerateCodeJava::writeFunction (const umlClassNode & node,
                                  Visibility & curr_visibility) {
     writeFunction1 (node, ope, curr_visibility);
 
+    getFile () << spc ();
+    getFile () << visibility ("Class, \"" + node.getName () +
+                                    "\", operation \"" + ope.getName () + "\"",
+                              ope.getVisibility ()) << " ";
     if (ope.getInheritance () == Inheritance::ABSTRACT) {
         getFile () << "abstract ";
     }
@@ -305,8 +304,11 @@ GenerateCodeJava::writeClassComment (const std::string & nom) {
 void
 GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
                                     const char * inheritance,
-                                    bool compName) {
-    getFile () << spc () << "public ";
+                                    bool compName,
+                                    bool visible) {
+    if (visible) {
+        getFile () << spc () << "public ";
+    }
     if (node.isAbstract ()) {
         getFile () << "abstract ";
     }
@@ -360,7 +362,7 @@ GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
 
 void
 GenerateCodeJava::writeClassStart (const umlClassNode & node) {
-    writeClassStart1 (node, " extends ", true);
+    writeClassStart1 (node, " extends ", true, true);
 }
 
 void

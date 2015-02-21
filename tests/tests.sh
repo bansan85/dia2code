@@ -1,6 +1,6 @@
 #!/bin/sh
 
-generators="cpp cpp11 csharp java"
+generators="cpp cpp11 csharp java php"
 res="true"
 
 if [[ ! -a ../src/dia2code ]] ; then
