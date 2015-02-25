@@ -388,6 +388,16 @@ GenerateCodeCpp::writeClassEnd () {
 }
 
 void
+GenerateCodeCpp::writeAttributeComment (const umlAttribute & attr) {
+    if (!attr.getComment ().empty ()) {
+        getFile () << comment (attr.getComment (),
+                               std::string (spc () + "/// "),
+                               std::string (spc () + "/// "),
+                               "\n");
+    }
+}
+
+void
 GenerateCodeCpp::writeAttribute (const umlClassNode & node,
                                  const umlAttribute & attr,
                                  Visibility & curr_visibility,
@@ -403,12 +413,7 @@ GenerateCodeCpp::writeAttribute (const umlClassNode & node,
                                  + attr.getName () + "\"",
                       curr_visibility,
                       attr.getVisibility ());
-    if (!attr.getComment ().empty ()) {
-        getFile () << comment (attr.getComment (),
-                               std::string (spc () + "/// "),
-                               std::string (spc () + "/// "),
-                               "\n");
-    }
+    writeAttributeComment (attr);
     if (attr.isStatic ()) {
         getFile () << spc () << "static " << attr.getType () << " "
                    << attr.getName ();

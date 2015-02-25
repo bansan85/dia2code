@@ -41,18 +41,19 @@ class GenerateCodeJava : public GenerateCode {
         void writeFunctionComment (const umlOperation & ope);
         void writeFunction (const umlClassNode & node,
                             const umlOperation & ope,
-                            Visibility & curr_visibility);
+                            Visibility & currVisibility);
         void writeFunctionGetSet (const umlClassNode & node,
                                   const umlOperation & ope,
-                                  Visibility & curr_visibility);
+                                  Visibility & currVisibility);
         void writeComment (const std::string & text);
         void writeComment (const char * text);
         void writeClassComment (const std::string & nom);
         void writeClassStart (const umlClassNode & node);
         void writeClassEnd ();
+        void writeAttributeComment (const umlAttribute & attr);
         void writeAttribute (const umlClassNode & node,
                              const umlAttribute & attr,
-                             Visibility & curr_visibility,
+                             Visibility & currVisibility,
                              const std::string & nameClass);
         void writeNameSpaceStart (const umlClassNode * node);
         void writeNameSpaceEnd (const umlClassNode * node);
@@ -62,21 +63,30 @@ class GenerateCodeJava : public GenerateCode {
         void writeTypedef (const umlClassNode & node);
         void writeAssociation (const umlClassNode & node,
                                const umlassoc & asso,
-                               Visibility & curr_visibility);
+                               Visibility & currVisibility);
         void writeTemplates (
                const std::list <std::pair <std::string, std::string> > & tmps);
         
+        void writeFunctionComment1 (const umlOperation & ope,
+                                    bool showType,
+                                    const char prefixName);
         void writeFunction1 (const umlClassNode & node,
                              const umlOperation & ope,
-                             Visibility & curr_visibility);
+                             Visibility & currVisibility);
         void writeFunction2 (const umlClassNode & node,
                              const umlOperation & ope,
-                             Visibility & curr_visibility,
-                             bool defaultparam);
+                             Visibility & currVisibility,
+                             bool defaultParam);
         void writeClassStart1 (const umlClassNode & node,
                                const char * inheritance,
                                bool compName,
                                bool visible);
+        void writeAttribute1 (const umlClassNode & node,
+                              const umlAttribute & attr,
+                              Visibility & currVisibility,
+                              const std::string & nameClass,
+                              bool showType,
+                              const char * prefix);
         void writeTypedef1 (const umlClassNode & node,
                             const char * extends,
                             bool compName);

@@ -40,6 +40,11 @@ GenerateCodePhp::writeEndHeader () {
 }
 
 void
+GenerateCodePhp::writeFunctionComment (const umlOperation & ope) {
+    writeFunctionComment1 (ope, true, '$');
+}
+
+void
 GenerateCodePhp::writeFunction (const umlClassNode & node,
                                 const umlOperation & ope,
                                 Visibility & curr_visibility) {
@@ -66,6 +71,26 @@ GenerateCodePhp::writeFunction (const umlClassNode & node,
 void
 GenerateCodePhp::writeClassStart (const umlClassNode & node) {
     writeClassStart1 (node, " extends ", true, false);
+}
+
+void
+GenerateCodePhp::writeAttributeComment (const umlAttribute & attr) {
+    if (!attr.getComment ().empty ()) {
+        getFile () << comment (attr.getComment (),
+                               std::string (spc () + "/** @var " +
+                                            attr.getType () + " "),
+                               std::string (spc () + " *       "),
+                               " */\n");
+    }
+}
+
+void
+GenerateCodePhp::writeAttribute (const umlClassNode & node,
+                                 const umlAttribute & attr,
+                                 Visibility & curr_visibility,
+                                 const std::string & nameClass) {
+    writeAttributeComment (attr);
+    writeAttribute1 (node, attr, curr_visibility, nameClass, false, "$");
 }
 
 GenerateCodePhp::~GenerateCodePhp () {

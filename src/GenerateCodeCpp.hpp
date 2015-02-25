@@ -53,6 +53,7 @@ class GenerateCodeCpp : public GenerateCode {
         void writeClassComment (const std::string & nom);
         void writeClassStart (const umlClassNode & node);
         void writeClassEnd ();
+        void writeAttributeComment (const umlAttribute & attr);
         void writeAttribute (const umlClassNode & node,
                              const umlAttribute & attr,
                              Visibility & curr_visibility,

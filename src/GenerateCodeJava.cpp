@@ -145,19 +145,27 @@ GenerateCodeJava::writeInclude (const char * name) {
 }
 
 void
-GenerateCodeJava::writeFunctionComment (const umlOperation & ope) {
+GenerateCodeJava::writeFunctionComment1 (const umlOperation & ope,
+                                         bool showType,
+                                         const char prefixName) {
     getFile () << spc () << "/**\n";
     getFile () << comment (ope.getComment (),
                            std::string (spc () + " * "),
                            std::string (spc () + " * "),
                            "\n");
     for (const umlAttribute & tmpa2 : ope.getParameters ()) {
-        std::string comment_ (tmpa2.getName () + " (" +
-                              kindStr (tmpa2.getKind ()) +
-                              (tmpa2.getComment ().empty () ?
-                                ")" :
-                                ") " +
-                              tmpa2.getComment ()));
+        std::string comment_;
+
+        if (showType) {
+            comment_.append (tmpa2.getType () + " ");
+        }
+        comment_.append (prefixName + tmpa2.getName ());
+
+        comment_.append (" (" + std::string (kindStr (tmpa2.getKind ())) +
+                         (tmpa2.getComment ().empty () ?
+                           ")" :
+                           ") " +
+                         tmpa2.getComment ()));
         getFile () << comment (comment_,
                                std::string (spc () + " * @param "),
                                std::string (spc () + " *        "),
@@ -168,9 +176,14 @@ GenerateCodeJava::writeFunctionComment (const umlOperation & ope) {
 }
 
 void
+GenerateCodeJava::writeFunctionComment (const umlOperation & ope) {
+    writeFunctionComment1 (ope, false, '\0');
+}
+
+void
 GenerateCodeJava::writeFunction1 (const umlClassNode & node,
                                   const umlOperation & ope,
-                                  Visibility & curr_visibility) {
+                                  Visibility & currVisibility) {
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
         if (ope.getVisibility () != '0') {
@@ -189,8 +202,8 @@ GenerateCodeJava::writeFunction1 (const umlClassNode & node,
 void
 GenerateCodeJava::writeFunction2 (const umlClassNode & node,
                                   const umlOperation & ope,
-                                  Visibility & curr_visibility,
-                                  bool defaultparam) {
+                                  Visibility & currVisibility,
+                                  bool defaultParam) {
     if (ope.isStatic ()) {
 #ifdef ENABLE_CORBA
         if (getCorba ()) {
@@ -212,7 +225,7 @@ GenerateCodeJava::writeFunction2 (const umlClassNode & node,
     tmpa = ope.getParameters ().begin ();
     while (tmpa != ope.getParameters ().end ()) {
         getFile () << (*tmpa).getType () << " " << (*tmpa).getName ();
-        if (!defaultparam) {
+        if (!defaultParam) {
             if (!(*tmpa).getValue ().empty ()) {
                 std::cerr << "Class \"" << node.getName ()
                           << "\", operation \"" << ope.getName ()
@@ -255,8 +268,8 @@ GenerateCodeJava::writeFunction2 (const umlClassNode & node,
 void
 GenerateCodeJava::writeFunction (const umlClassNode & node,
                                  const umlOperation & ope,
-                                 Visibility & curr_visibility) {
-    writeFunction1 (node, ope, curr_visibility);
+                                 Visibility & currVisibility) {
+    writeFunction1 (node, ope, currVisibility);
 
     getFile () << spc ();
     getFile () << visibility ("Class, \"" + node.getName () +
@@ -269,14 +282,14 @@ GenerateCodeJava::writeFunction (const umlClassNode & node,
         getFile () << "final ";
     }
 
-    writeFunction2 (node, ope, curr_visibility, false);
+    writeFunction2 (node, ope, currVisibility, false);
 }
 
 void
 GenerateCodeJava::writeFunctionGetSet (const umlClassNode & node,
                                        const umlOperation & ope,
-                                       Visibility & curr_visibility) {
-    writeFunctionGetSet1 (node, ope, curr_visibility);
+                                       Visibility & currVisibility) {
+    writeFunctionGetSet1 (node, ope, currVisibility);
 }
 
 void
@@ -371,26 +384,44 @@ GenerateCodeJava::writeClassEnd () {
 }
 
 void
-GenerateCodeJava::writeAttribute (const umlClassNode & node,
-                                  const umlAttribute & attr,
-                                  Visibility & curr_visibility,
-                                  const std::string & nameClass) {
-    writeClassComment (attr.getComment ());
+GenerateCodeJava::writeAttribute1 (const umlClassNode & node,
+                                   const umlAttribute & attr,
+                                   Visibility & currVisibility,
+                                   const std::string & nameClass,
+                                   bool showType,
+                                   const char * prefix) {
     getFile () << spc ()
                << visibility ("Class \"" + node.getName () + "\", attribute \""
                                          + attr.getName () + "\"",
                               attr.getVisibility ())
                << " ";
     if (attr.isStatic ()) {
-        getFile () << "static " << attr.getType () << " " << attr.getName ();
+        getFile () << "static ";
     }
-    else {
-        getFile () << attr.getType () << " " << attr.getName ();
+
+    if (showType) {
+        getFile () << attr.getType () << " ";
     }
+    getFile () << prefix << attr.getName ();
+
     if (!attr.getValue ().empty ()) {
         getFile () << " = " << attr.getValue ();
     }
     getFile () << ";\n";
+}
+
+void
+GenerateCodeJava::writeAttributeComment (const umlAttribute & attr) {
+    writeClassComment (attr.getComment ());
+}
+
+void
+GenerateCodeJava::writeAttribute (const umlClassNode & node,
+                                  const umlAttribute & attr,
+                                  Visibility & currVisibility,
+                                  const std::string & nameClass) {
+    writeAttributeComment (attr);
+    writeAttribute1 (node, attr, currVisibility, nameClass, true, "");
 }
 
 void
@@ -504,7 +535,7 @@ GenerateCodeJava::writeTypedef (const umlClassNode & node) {
 void
 GenerateCodeJava::writeAssociation (const umlClassNode & node,
                                     const umlassoc & asso,
-                                    Visibility & curr_visibility) {
+                                    Visibility & currVisibility) {
     if (!asso.name.empty ()) {
         getFile () << spc ()
                    << visibility ("Class \"" + node.getName () +

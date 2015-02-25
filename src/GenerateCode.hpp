@@ -140,6 +140,7 @@ class GenerateCode {
         virtual void writeClassComment (const std::string & com) = 0;
         virtual void writeClassStart (const umlClassNode & node) = 0;
         virtual void writeClassEnd () = 0;
+        virtual void writeAttributeComment (const umlAttribute & attr) = 0;
         virtual void writeAttribute (const umlClassNode & node,
                                      const umlAttribute & attr,
                                      Visibility & curr_visibility,
