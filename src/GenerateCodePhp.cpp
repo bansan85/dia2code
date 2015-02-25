@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "GenerateCodePhp.hpp"
 #include "umlClassNode.hpp"
+#include "string2.hpp"
 
 GenerateCodePhp::GenerateCodePhp (DiaGram & diagram) :
     GenerateCodeJava (diagram) {
@@ -37,6 +38,22 @@ GenerateCodePhp::writeStartHeader (std::string & name) {
 void
 GenerateCodePhp::writeEndHeader () {
     getFile () << "?>";
+}
+
+bool
+GenerateCodePhp::writeInclude (const std::list <std::pair <
+                                                   std::list <umlPackage *>,
+                                                   umlClassNode * > > & name) {
+    return writeInclude1 (name,
+                          "require_once '",
+                          "';\n",
+                          "require_once '",
+                          "';\n");
+}
+
+void
+GenerateCodePhp::writeInclude (const char * name) {
+    getFile () << spc () << "require_once '" << name << "';\n";
 }
 
 void

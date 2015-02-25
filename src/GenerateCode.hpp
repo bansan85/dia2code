@@ -163,6 +163,13 @@ class GenerateCode {
         void writeFunctionGetSet1 (const umlClassNode & node,
                                    const umlOperation & ope,
                                    Visibility & curr_visibility);
+        bool writeInclude1 (const std::list <std::pair <
+                                                     std::list <umlPackage *>,
+                                                     umlClassNode *> > & name,
+                            const char * startIncludeSystem,
+                            const char * endIncludeSystem,
+                            const char * startIncludeFile,
+                            const char * endIncludeFile);
 
         virtual ~GenerateCode ();
 };

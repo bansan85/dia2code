@@ -30,6 +30,9 @@ class GenerateCodePhp : public GenerateCodeJava {
 
         void writeStartHeader (std::string & name);
         void writeEndHeader ();
+        bool writeInclude (const std::list <std::pair <std::list <umlPackage*>,
+                                                    umlClassNode * > > & name);
+        void writeInclude (const char * name);
         void writeFunctionComment (const umlOperation & ope);
         void writeFunction (const umlClassNode & node,
                             const umlOperation & ope,

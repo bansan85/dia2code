@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
-#include <algorithm>
 #include <iostream>
 
 #include "GenerateCodeCpp.hpp"
@@ -87,83 +86,7 @@ bool
 GenerateCodeCpp::writeInclude (const std::list <std::pair <
                                                     std::list <umlPackage *>,
                                                     umlClassNode *> > & name) {
-    bool ret = false;
-    // List of include then if (true) the class is system and should not be
-    // generated.
-    std::list <std::pair <std::string, bool> > incs;
-
-    for (const std::pair <std::list <umlPackage *>, umlClassNode *> & it :
-                                                                        name) {
-        std::string include;
-        std::pair <std::string, bool> add;
-
-        if (it.second == NULL) {
-            continue;
-        }
-
-        ret = true;
-    
-        if (getBuildTree ()) {
-            if (!it.first.empty ()) {
-                for (const umlPackage * pack : it.first) {
-                    include.append (pack->getName ());
-                    include.append (1, SEPARATOR);
-                }
-            }
-            include.append (it.second->getName ());
-            include.append (".");
-            include.append (getFileExt ());
-        }
-        else if (getOneClass ()) {
-            if (!it.first.empty ()) {
-                for (const umlPackage * pack : it.first) {
-                    include.append (pack->getName ());
-                    include.append ("-");
-                }
-            }
-            include.append (it.second->getName ());
-            include.append (".");
-            include.append (getFileExt ());
-        }
-        else {
-            if (!it.first.empty ()) {
-                include.append ((*it.first.begin ())->getName ());
-                include.append (".");
-                include.append (getFileExt ());
-            }
-            else {
-                include.append (it.second->getName ());
-                include.append (".");
-                include.append (getFileExt ());
-            }
-        }
-        add.first = include;
-        add.second = it.second->isStereotypeExtern ();
-        if (std::find (incs.begin (),
-                       incs.end (),
-                       add) == incs.end ()) {
-            if (add.second) {
-                incs.push_front (add);
-            }
-            else {
-                incs.push_back (add);
-            }
-        }
-    }
-
-    for (const std::pair <std::string, bool> & add : incs) {
-        if (add.second) {
-            getFile () << spc () << "#include <" << add.first << ">\n";
-        }
-        else {
-            getFile () << spc () << "#include \"" << add.first << "\"\n";
-        }
-    }
-    if (!incs.empty ()) {
-        getFile () << "\n";
-    }
-
-    return ret;
+    return writeInclude1 (name, "#include <", ">\n", "#include \"", "\"\n");
 }
 
 void
