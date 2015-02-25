@@ -40,6 +40,8 @@ class GenerateCodePhp : public GenerateCodeJava {
                              const umlAttribute & attr,
                              Visibility & curr_visibility,
                              const std::string & nameClass);
+        void writeNameSpaceStart (const umlClassNode * node);
+        void writeNameSpaceEnd (const umlClassNode * node);
 
         ~GenerateCodePhp ();
 };

@@ -319,8 +319,9 @@ GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
                                     const char * inheritance,
                                     bool compName,
                                     bool visible) {
+    getFile () << spc ();
     if (visible) {
-        getFile () << spc () << "public ";
+        getFile () << "public ";
     }
     if (node.isAbstract ()) {
         getFile () << "abstract ";

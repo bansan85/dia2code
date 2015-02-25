@@ -93,6 +93,35 @@ GenerateCodePhp::writeAttribute (const umlClassNode & node,
     writeAttribute1 (node, attr, curr_visibility, nameClass, false, "$");
 }
 
+void
+GenerateCodePhp::writeNameSpaceStart (const umlClassNode * node) {
+    if (node->getPackage () != NULL) {
+        std::list <umlPackage *> pkglist;
+        std::list <umlPackage *>::const_iterator it;
+
+        umlPackage::makePackageList (node->getPackage (), pkglist);
+        getFile () << spc () << "namespace ";
+        it = pkglist.begin ();
+        while (it != pkglist.end ()) {
+            getFile () << (*it)->getName ();
+            ++it;
+            if (it != pkglist.end ()) {
+                getFile () << "/";
+            }
+        }
+        getFile () << spc () << " {\n";
+        incIndentLevel ();
+    }
+}
+
+void
+GenerateCodePhp::writeNameSpaceEnd (const umlClassNode * node) {
+    if (node->getPackage () != NULL) {
+        decIndentLevel ();
+        getFile () << spc () << "}\n";
+    }
+}
+
 GenerateCodePhp::~GenerateCodePhp () {
 }
 
