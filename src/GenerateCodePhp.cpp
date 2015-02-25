@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 GenerateCodePhp::GenerateCodePhp (DiaGram & diagram) :
     GenerateCodeJava (diagram) {
     setFileExt ("php");
+    setHandleIncludePackage (false);
 }
 
 void
@@ -37,7 +38,7 @@ GenerateCodePhp::writeStartHeader (std::string & name) {
 
 void
 GenerateCodePhp::writeEndHeader () {
-    getFile () << "?>";
+    getFile () << "?>\n";
 }
 
 bool

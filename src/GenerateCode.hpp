@@ -98,6 +98,8 @@ class GenerateCode {
         bool getOneClass () const;
         void setOneClass (bool val);
 
+        void setHandleIncludePackage (bool val);
+
 #ifdef ENABLE_CORBA
         bool getCorba () const;
 #endif

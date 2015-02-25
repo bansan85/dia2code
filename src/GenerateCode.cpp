@@ -148,6 +148,11 @@ GenerateCode::setOneClass (bool value) {
     oneClassOneHeader = value;
 }
 
+void
+GenerateCode::setHandleIncludePackage (bool val) {
+    handleIncludePackage = val;
+}
+
 
 #ifdef ENABLE_CORBA
 bool
