@@ -1,3 +1,5 @@
+import Pack.*;
+
 public class attributes {
     // Attributes
     /**
@@ -7,7 +9,7 @@ public class attributes {
     /**
      * com2
      */
-    private static type2 nom2 = val2;
+    private static Classe nom2;
     /**
      * com3
      */

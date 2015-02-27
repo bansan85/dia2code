@@ -105,7 +105,12 @@ GenerateCodeJava::writeInclude (const std::list <std::pair <
                 // *inc = "pack.*"
                 // if so, no need to include.
                 if (taille > taille2) {
-                    if (include.compare (0, taille2 - 1, *inc) == 0) {
+                    if ((include.compare (0,
+                                          taille2 - 1,
+                                          *inc,
+                                          0,
+                                          taille2 - 1) == 0) &&
+                        ((*inc)[taille2 - 1] == '*')) {
                         found = true;
                     }
                     ++inc;
@@ -114,7 +119,12 @@ GenerateCodeJava::writeInclude (const std::list <std::pair <
                 // *inc = "pack.class"
                 // if so, remove *inc.
                 else {
-                    if (include.compare (0, taille - 1, *inc) == 0) {
+                    if ((include.compare (0,
+                                          taille - 1,
+                                          *inc,
+                                          0,
+                                          taille - 1) == 0) &&
+                        (include[taille - 1] == '*')) {
                         inc = incs.erase (inc);
                     }
                     else {

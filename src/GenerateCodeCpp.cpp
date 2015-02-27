@@ -325,6 +325,8 @@ GenerateCodeCpp::writeAttribute (const umlClassNode & node,
                                  const umlAttribute & attr,
                                  Visibility & curr_visibility,
                                  const std::string & nameClass) {
+    const umlClassNode *ref;
+
     if (!attr.getValue ().empty ()) {
         std::cerr << "Class \"" << nameClass << "\", attribute \""
                   << attr.getName ()
@@ -337,14 +339,19 @@ GenerateCodeCpp::writeAttribute (const umlClassNode & node,
                       curr_visibility,
                       attr.getVisibility ());
     writeAttributeComment (attr);
+    getFile () << spc ();
     if (attr.isStatic ()) {
-        getFile () << spc () << "static " << attr.getType () << " "
-                   << attr.getName ();
+        getFile () << "static ";
+    }
+    ref = findByName (getDia ().getUml (),
+                      attr.getType ());
+    if (ref != NULL) {
+        getFile () << fqname (*ref, false);
     }
     else {
-        getFile () << spc () << attr.getType () << " "
-                   << attr.getName ();
+        getFile () << cppName (attr.getType ());
     }
+    getFile () << " " << attr.getName ();
     getFile () << ";\n";
     decIndentLevel ();
 }
