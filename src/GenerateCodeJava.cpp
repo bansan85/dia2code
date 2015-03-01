@@ -213,7 +213,9 @@ void
 GenerateCodeJava::writeFunction2 (const umlClassNode & node,
                                   const umlOperation & ope,
                                   Visibility & currVisibility,
-                                  bool defaultParam) {
+                                  bool defaultParam,
+                                  bool showType,
+                                  char prefix) {
     if (ope.isStatic ()) {
 #ifdef ENABLE_CORBA
         if (getCorba ()) {
@@ -226,7 +228,7 @@ GenerateCodeJava::writeFunction2 (const umlClassNode & node,
             getFile () << "static ";
         }
     }
-    if (!ope.getType ().empty ()) {
+    if ((!ope.getType ().empty ()) && (showType)) {
         getFile () << cppName (ope.getType ()) << " ";
     }
     getFile () << ope.getName () << " (";
@@ -234,7 +236,13 @@ GenerateCodeJava::writeFunction2 (const umlClassNode & node,
     std::list <umlAttribute>::const_iterator tmpa;
     tmpa = ope.getParameters ().begin ();
     while (tmpa != ope.getParameters ().end ()) {
-        getFile () << (*tmpa).getType () << " " << (*tmpa).getName ();
+        if (showType) {
+            getFile () << (*tmpa).getType () << " ";
+        }
+        if (prefix != '\0') {
+            getFile () << prefix;
+        }
+        getFile () << (*tmpa).getName ();
         if (!defaultParam) {
             if (!(*tmpa).getValue ().empty ()) {
                 std::cerr << "Class \"" << node.getName ()
@@ -292,7 +300,7 @@ GenerateCodeJava::writeFunction (const umlClassNode & node,
         getFile () << "final ";
     }
 
-    writeFunction2 (node, ope, currVisibility, false);
+    writeFunction2 (node, ope, currVisibility, false, true, '\0');
 }
 
 void

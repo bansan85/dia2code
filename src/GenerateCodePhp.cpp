@@ -84,7 +84,7 @@ GenerateCodePhp::writeFunction (const umlClassNode & node,
                               ope.getVisibility ()) << " ";
 
     getFile () << "function ";
-    writeFunction2 (node, ope, curr_visibility, false);
+    writeFunction2 (node, ope, curr_visibility, false, false, '$');
 }
 
 void

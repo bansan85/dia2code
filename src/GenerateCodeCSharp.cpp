@@ -156,7 +156,7 @@ GenerateCodeCSharp::writeFunction (const umlClassNode & node,
         getFile () << "virtual ";
     }
 
-    writeFunction2 (node, ope, curr_visibility, true);
+    writeFunction2 (node, ope, curr_visibility, true, true, '\0');
 }
 
 void
