@@ -15,7 +15,7 @@ class MultiLines {
      * @param typeparam $param1 (???) Line 7
      *        Line 8
      * @return void
-    */
+     */
     public function ope ($param1) {
     }
 }

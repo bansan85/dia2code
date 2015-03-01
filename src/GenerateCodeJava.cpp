@@ -185,7 +185,7 @@ GenerateCodeJava::writeFunctionComment1 (const umlOperation & ope,
                                "\n");
     }
     getFile () << spc () << " * @return " << ope.getType () << "\n";
-    getFile () << spc () << "*/\n";
+    getFile () << spc () << " */\n";
 }
 
 void
