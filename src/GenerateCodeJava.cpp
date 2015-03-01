@@ -219,18 +219,6 @@ GenerateCodeJava::writeFunction2 (const umlClassNode & node,
                                   bool defaultParam,
                                   bool showType,
                                   char prefix) {
-    if (ope.isStatic ()) {
-#ifdef ENABLE_CORBA
-        if (getCorba ()) {
-            std::cerr << "CORBAValue " << ope.getName ()
-                      << ": static not supported.\n";
-        }
-        else
-#endif
-        {
-            getFile () << "static ";
-        }
-    }
     if ((!ope.getType ().empty ()) && (showType)) {
         getFile () << cppName (ope.getType ()) << " ";
     }
@@ -303,6 +291,18 @@ GenerateCodeJava::writeFunction (const umlClassNode & node,
         getFile () << "final ";
     }
 
+    if (ope.isStatic ()) {
+#ifdef ENABLE_CORBA
+        if (getCorba ()) {
+            std::cerr << "CORBAValue " << ope.getName ()
+                      << ": static not supported.\n";
+        }
+        else
+#endif
+        {
+            getFile () << "static ";
+        }
+    }
     writeFunction2 (node, ope, currVisibility, false, true, '\0');
 }
 

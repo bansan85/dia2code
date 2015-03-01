@@ -7,7 +7,7 @@ public class operations {
      * @param undef (???)
      * @param out (out)
      * @return type
-    */
+     */
     private abstract type test (type1 in, type2 inOut, type3 undef, type4 out);
     public static test2 () {
     }

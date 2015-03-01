@@ -156,6 +156,18 @@ GenerateCodeCSharp::writeFunction (const umlClassNode & node,
         getFile () << "virtual ";
     }
 
+    if (ope.isStatic ()) {
+#ifdef ENABLE_CORBA
+        if (getCorba ()) {
+            std::cerr << "CORBAValue " << ope.getName ()
+                      << ": static not supported.\n";
+        }
+        else
+#endif
+        {
+            getFile () << "static ";
+        }
+    }
     writeFunction2 (node, ope, curr_visibility, true, true, '\0');
 }
 

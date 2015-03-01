@@ -96,6 +96,18 @@ GenerateCodePhp::writeFunction (const umlClassNode & node,
                                     "\", operation \"" + ope.getName () + "\"",
                               ope.getVisibility ()) << " ";
 
+    if (ope.isStatic ()) {
+#ifdef ENABLE_CORBA
+        if (getCorba ()) {
+            std::cerr << "CORBAValue " << ope.getName ()
+                      << ": static not supported.\n";
+        }
+        else
+#endif
+        {
+            getFile () << "static ";
+        }
+    }
     getFile () << "function ";
     writeFunction2 (node, ope, curr_visibility, false, false, '$');
 }
