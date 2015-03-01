@@ -32,6 +32,19 @@ GenerateCodePhp::GenerateCodePhp (DiaGram & diagram) :
     setHandleIncludePackage (false);
 }
 
+std::string
+GenerateCodePhp::strPackage (const char * package) const {
+    std::string retour;
+
+    if (package[0] != '\\') {
+        retour.append ("\\");
+    }
+    retour.append (package);
+    retour.append ("\\");
+
+    return retour;
+}
+
 void
 GenerateCodePhp::writeStartHeader (std::string & name) {
     getFile () << "<?php" << std::endl;

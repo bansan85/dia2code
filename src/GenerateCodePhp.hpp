@@ -28,6 +28,8 @@ class GenerateCodePhp : public GenerateCodeJava {
     public:
         GenerateCodePhp (DiaGram & diagram);
 
+        std::string strPackage (const char * package) const;
+
         void writeStartHeader (std::string & name);
         void writeEndHeader ();
         bool writeInclude (const std::list <std::pair <std::list <umlPackage*>,
