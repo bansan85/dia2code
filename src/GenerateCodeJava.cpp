@@ -169,7 +169,10 @@ GenerateCodeJava::writeFunctionComment1 (const umlOperation & ope,
         if (showType) {
             comment_.append (tmpa2.getType () + " ");
         }
-        comment_.append (prefixName + tmpa2.getName ());
+        if (prefixName != '\0') {
+            comment_.append (1, prefixName);
+        }
+        comment_.append (tmpa2.getName ());
 
         comment_.append (" (" + std::string (kindStr (tmpa2.getKind ())) +
                          (tmpa2.getComment ().empty () ?

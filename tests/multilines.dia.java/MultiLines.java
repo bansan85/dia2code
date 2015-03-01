@@ -15,8 +15,8 @@ public class MultiLines {
      * Line 6
      * @param param1 (???) Line 7
      *        Line 8
-     * @return 
+     * @return void
     */
-    public final ope ( param1) {
+    public final void ope (typeparam param1) {
     }
 }

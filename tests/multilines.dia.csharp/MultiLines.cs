@@ -10,8 +10,8 @@ public class MultiLines {
     /// Line 6</summary>
     /// <param name="param1">(???) Line 7
     /// Line 8</param>
-    /// <returns></returns>
-    public ope ( param1) {
+    /// <returns>void</returns>
+    public void ope (typeparam param1) {
     }
 }
 
