@@ -480,12 +480,10 @@ GenerateCodeJava::writeEnum (const umlClassNode & node) {
     }
     incIndentLevel ();
     while (umla != node.getAttributes ().end ()) {
-        const char *literal = (*umla).getName ().c_str ();
-
         (*umla).check (node);
 
         writeClassComment ((*umla).getComment ());
-        getFile () << spc () << literal;
+        getFile () << spc () << (*umla).getName ();
         if (!(*umla).getValue ().empty ()) {
             getFile () << " = " << (*umla).getValue ();
         }

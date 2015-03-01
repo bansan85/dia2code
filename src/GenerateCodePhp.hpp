@@ -45,6 +45,7 @@ class GenerateCodePhp : public GenerateCodeJava {
                              const std::string & nameClass);
         void writeNameSpaceStart (const umlClassNode * node);
         void writeNameSpaceEnd (const umlClassNode * node);
+        void writeEnum (const umlClassNode & node);
 
         ~GenerateCodePhp ();
 };

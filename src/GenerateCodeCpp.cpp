@@ -432,12 +432,11 @@ GenerateCodeCpp::writeEnum1 (const umlClassNode & node,
     }
     incIndentLevel ();
     while (umla != node.getAttributes ().end ()) {
-        const char *literal = (*umla).getName ().c_str ();
         if (!(*umla).getComment ().empty ()) {
             getFile () << spc () << "/// " << (*umla).getComment () << "\n";
         }
         (*umla).check (node);
-        getFile () << spc () << literal;
+        getFile () << spc () << (*umla).getName ();
         if (!(*umla).getValue ().empty ()) {
             getFile () << " = " << (*umla).getValue ();
         }

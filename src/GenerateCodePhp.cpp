@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config.h"
 
 #include <iostream>
+#include <stdexcept>
 
 #include "GenerateCodePhp.hpp"
 #include "umlClassNode.hpp"
@@ -138,6 +139,48 @@ GenerateCodePhp::writeNameSpaceEnd (const umlClassNode * node) {
         decIndentLevel ();
         getFile () << spc () << "}\n";
     }
+}
+
+void
+GenerateCodePhp::writeEnum (const umlClassNode & node) {
+    int32_t val = 0;
+
+    writeClassComment (node.getComment ());
+    getFile () << spc () << "class " << node.getName () << " extends SplEnum";
+    if (getOpenBraceOnNewline ()) {
+        getFile () << "\n";
+        getFile () << spc () << "{\n";
+    }
+    else {
+        getFile () << " {\n";
+    }
+    incIndentLevel ();
+    if (!node.getAttributes ().empty ()) {
+        getFile () << spc () << "const __default = self::"
+                   << (*node.getAttributes ().begin ()).getName () << ";\n";
+        getFile () << "\n";
+    }
+    for (const umlAttribute & umla : node.getAttributes ()) {
+        umla.check (node);
+
+        writeClassComment (umla.getComment ());
+        getFile () << spc () << "const " << umla.getName ();
+        if (!umla.getValue ().empty ()) {
+            getFile () << " = " << umla.getValue ();
+            try {
+                val = std::stoi (umla.getValue ()) + 1;
+            }
+            catch (const std::invalid_argument& ia) {
+            }
+        }
+        else {
+            getFile () << " = " << val;
+            val++;
+        }
+        getFile () << ";\n";
+    }
+    decIndentLevel ();
+    getFile () << spc () << "}\n";
 }
 
 GenerateCodePhp::~GenerateCodePhp () {
