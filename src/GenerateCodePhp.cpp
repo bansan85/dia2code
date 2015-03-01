@@ -208,6 +208,10 @@ GenerateCodePhp::writeEnum (const umlClassNode & node) {
     getFile () << spc () << "}\n";
 }
 
+void
+GenerateCodePhp::writeTemplates (
+              const std::list <std::pair <std::string, std::string> > & tmps) {
+}
 GenerateCodePhp::~GenerateCodePhp () {
 }
 
