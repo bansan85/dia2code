@@ -65,6 +65,7 @@ umlOperation::parseOperations (xmlNodePtr node,
 umlOperation::umlOperation (xmlNodePtr node) :
     umlAttribute (),
     stereotypeDelete (false),
+    stereotypeGetSet (false),
     parameters ()
 {
     parse (node);

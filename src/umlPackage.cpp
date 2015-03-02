@@ -76,7 +76,8 @@ umlPackage::umlPackage (const umlPackage & pack) :
     id (pack.id),
     name (pack.name),
     geom (pack.geom),
-    parent (pack.parent) {
+    parent (pack.parent),
+    stereotypeExtern (pack.stereotypeExtern){
 }
 
 /*
