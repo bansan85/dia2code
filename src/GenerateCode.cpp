@@ -189,11 +189,11 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
         throw std::string ("Failed to create " + outfilename + ".\n");
     }
 
-    writeLicense ();
-
     tmpname = strtoupper (filename);
     assert (indentlevel == 0);
     writeStartHeader (tmpname);
+
+    writeLicense ();
 
     getDia ().cleanIncludes ();
     getDia ().determineIncludes (d, !handleIncludePackage);

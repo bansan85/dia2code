@@ -1,10 +1,10 @@
+#ifndef OPERATIONS__HPP
+#define OPERATIONS__HPP
+
 /*
 LICENSE
 FILE
  */
-
-#ifndef OPERATIONS__HPP
-#define OPERATIONS__HPP
 
 class operations {
     // Operations
