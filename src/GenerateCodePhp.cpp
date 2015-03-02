@@ -196,7 +196,7 @@ GenerateCodePhp::writeEnum (const umlClassNode & node) {
             try {
                 val = std::stoi (umla.getValue ()) + 1;
             }
-            catch (const std::invalid_argument& ia) {
+            catch (const std::invalid_argument &) {
             }
         }
         else {

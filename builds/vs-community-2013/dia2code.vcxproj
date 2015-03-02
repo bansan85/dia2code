@@ -17,6 +17,7 @@
     <ClCompile Include="..\..\src\GenerateCodeCpp11.cpp" />
     <ClCompile Include="..\..\src\GenerateCodeCSharp.cpp" />
     <ClCompile Include="..\..\src\GenerateCodeJava.cpp" />
+    <ClCompile Include="..\..\src\GenerateCodePhp.cpp" />
     <ClCompile Include="..\..\src\main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..</AdditionalIncludeDirectories>
     </ClCompile>
@@ -37,6 +38,7 @@
     <ClInclude Include="..\..\src\GenerateCodeCpp11.hpp" />
     <ClInclude Include="..\..\src\GenerateCodeCSharp.hpp" />
     <ClInclude Include="..\..\src\GenerateCodeJava.hpp" />
+    <ClInclude Include="..\..\src\GenerateCodePhp.hpp" />
     <ClInclude Include="..\..\src\parse_diagram.hpp" />
     <ClInclude Include="..\..\src\scan_tree.hpp" />
     <ClInclude Include="..\..\src\string2.hpp" />
