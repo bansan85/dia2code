@@ -549,7 +549,7 @@ GenerateCodeJava::writeTypedef1 (const umlClassNode & node,
 
 void
 GenerateCodeJava::writeTypedef (const umlClassNode & node) {
-    writeTypedef1 (node, " extends ", true);
+    writeTypedef1 (node, " extends ", false);
 }
 
 void
@@ -559,7 +559,7 @@ GenerateCodeJava::writeAssociation (const umlClassNode & node,
     if (!asso.name.empty ()) {
         getFile () << spc ()
                    << visibility ("Class \"" + node.getName () +
-                                       "\", association \"" + asso.name + "\"",
+                                    "\", association \"" + asso.name + "\"",
                                   asso.visibility)
                    << " " << cppName (asso.key.getName ());
         getFile () << " " << asso.name << ";\n";

@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GenerateCodePhp.hpp"
 #include "umlClassNode.hpp"
 #include "string2.hpp"
+#include "scan_tree.hpp"
 
 GenerateCodePhp::GenerateCodePhp (DiaGram & diagram) :
     GenerateCodeJava (diagram) {
@@ -209,9 +210,34 @@ GenerateCodePhp::writeEnum (const umlClassNode & node) {
 }
 
 void
+GenerateCodePhp::writeTypedef (const umlClassNode & node) {
+    std::list <umlAttribute>::const_iterator umla;
+
+    umla = node.getAttributes ().begin ();
+    if (umla == node.getAttributes ().end ()) {
+        throw std::string ("Error: first attribute (impl type) not set at typedef " + node.getName () + ".\n");
+    }
+
+    (*umla).check (node);
+
+    getFile () << spc () << "use ";
+    const umlClassNode * umlc = findByName (getDia ().getUml (),
+                                            (*umla).getType ().c_str ());
+    if (umlc == NULL) {
+        getFile () << cppName ((*umla).getType ());
+    }
+    else {
+        getFile () << fqname (*umlc, false);
+    }
+    getFile () << (*umla).getValue () << " as " << cppName (node.getName ())
+               << ";\n";
+}
+
+void
 GenerateCodePhp::writeTemplates (
               const std::list <std::pair <std::string, std::string> > & tmps) {
 }
+
 GenerateCodePhp::~GenerateCodePhp () {
 }
 
