@@ -133,9 +133,9 @@ DiaGram::listClasses (umlClassNode & current,
     }
 
     for (const umlassoc & associations : current.getAssociations ()) {
-        tmpnode = findByName (uml, associations.key.getName ());
+        tmpnode = findByName (uml, associations.key->getName ());
         assert (tmpnode != NULL);
-        if (!findByName (resCla, associations.key.getName ())) {
+        if (!findByName (resCla, associations.key->getName ())) {
             resCla.push_back (*tmpnode);
         }
     }

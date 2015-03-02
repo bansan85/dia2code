@@ -561,7 +561,7 @@ GenerateCodeJava::writeAssociation (const umlClassNode & node,
                    << visibility ("Class \"" + node.getName () +
                                     "\", association \"" + asso.name + "\"",
                                   asso.visibility)
-                   << " " << cppName (asso.key.getName ());
+                   << " " << cppName (asso.key->getName ());
         getFile () << " " << asso.name << ";\n";
     }
 }

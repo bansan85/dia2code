@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "umlClass.hpp"
 
 struct umlassoc {
-    umlClass key;
+    umlClassNode * key;
     std::string name;
     char composite;
     Visibility visibility;

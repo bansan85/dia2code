@@ -515,19 +515,11 @@ GenerateCodeCpp::writeAssociation (const umlClassNode & node,
                                    Visibility & curr_visibility) {
     if (!asso.name.empty ()) {
         incIndentLevel ();
-        const umlClassNode *ref;
-        ref = findByName (getDia ().getUml (),
-                          asso.key.getName ().c_str ());
         check_visibility ("Class \"" + node.getName () + "\"",
                           curr_visibility,
                           asso.visibility);
         getFile () << spc ();
-        if (ref != NULL) {
-            getFile () << fqname (*ref, !asso.composite);
-        }
-        else {
-            getFile () << cppName (asso.key.getName ());
-        }
+        getFile () << fqname (*asso.key, !asso.composite);
         getFile () << " " << asso.name << ";\n";
         decIndentLevel ();
     }

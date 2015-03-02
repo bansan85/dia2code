@@ -222,7 +222,7 @@ GenerateCodePhp::writeTypedef (const umlClassNode & node) {
 
     getFile () << spc () << "use ";
     const umlClassNode * umlc = findByName (getDia ().getUml (),
-                                            (*umla).getType ().c_str ());
+                                            (*umla).getType ());
     if (umlc == NULL) {
         getFile () << cppName ((*umla).getType ());
     }
@@ -231,6 +231,20 @@ GenerateCodePhp::writeTypedef (const umlClassNode & node) {
     }
     getFile () << (*umla).getValue () << " as " << cppName (node.getName ())
                << ";\n";
+}
+
+void
+GenerateCodePhp::writeAssociation (const umlClassNode & node,
+                                   const umlassoc & asso,
+                                   Visibility & currVisibility) {
+    if (!asso.name.empty ()) {
+        getFile () << spc ()
+                   << visibility ("Class \"" + node.getName () +
+                                    "\", association \"" + asso.name + "\"",
+                                  asso.visibility)
+                   << " " << fqname (*asso.key, false) << " $" << asso.name
+                   << ";\n";
+    }
 }
 
 void
