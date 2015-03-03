@@ -135,7 +135,13 @@ GenerateCodePhp::writeAttribute (const umlClassNode & node,
                                  Visibility & curr_visibility,
                                  const std::string & nameClass) {
     writeAttributeComment (attr);
-    writeAttribute1 (node, attr, curr_visibility, nameClass, false, "$");
+    writeAttribute1 (node,
+                     attr,
+                     curr_visibility,
+                     nameClass,
+                     false,
+                     node.isStereotypeConst () ? "" : "$",
+                     "const");
 }
 
 void

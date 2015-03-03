@@ -232,6 +232,15 @@ GenerateCodeCSharp::writeClassStart (const umlClassNode & node) {
 }
 
 void
+GenerateCodeCSharp::writeAttribute (const umlClassNode & node,
+                                    const umlAttribute & attr,
+                                    Visibility & currVisibility,
+                                    const std::string & nameClass) {
+    writeAttributeComment (attr);
+    writeAttribute1 (node, attr, currVisibility, nameClass, true, "", "const");
+}
+
+void
 GenerateCodeCSharp::writeNameSpaceStart (const umlClassNode * node) {
     if (node->getPackage () != NULL) {
         std::list <umlPackage *> pkglist;
@@ -265,10 +274,8 @@ GenerateCodeCSharp::writeNameSpaceEnd (const umlClassNode * node) {
 
 void
 GenerateCodeCSharp::writeStruct (const umlClassNode & node) {
-    if (!node.getComment ().empty ()) {
-        getFile () << spc () << "/// <summary>" << node.getComment ()
-                   << "</summary>\n";
-    }
+    writeClassComment (node.getComment ());
+
     if (getOpenBraceOnNewline ()) {
         getFile () << spc () << "public struct " << node.getName () << "\n";
         getFile () << spc () << "{\n";

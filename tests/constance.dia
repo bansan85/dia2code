@@ -68,19 +68,19 @@
         <dia:point val="7.6,2.6"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="7.55,2.55;12.73,6.25"/>
+        <dia:rectangle val="7.55,2.55;16.62,6.25"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="7.6,2.6"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="5.0800000000000001"/>
+        <dia:real val="8.9700000000000006"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="3.6000000000000001"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#constance#</dia:string>
+        <dia:string>#Class#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>#const#</dia:string>
@@ -169,7 +169,7 @@
       <dia:attribute name="attributes">
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>##</dia:string>
+            <dia:string>#constance#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#type#</dia:string>

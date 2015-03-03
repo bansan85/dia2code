@@ -57,7 +57,6 @@ class GenerateCodeJava : public GenerateCode {
                              const std::string & nameClass);
         void writeNameSpaceStart (const umlClassNode * node);
         void writeNameSpaceEnd (const umlClassNode * node);
-        void writeConst (const umlClassNode & node);
         void writeEnum (const umlClassNode & node);
         void writeStruct (const umlClassNode & node);
         void writeTypedef (const umlClassNode & node);
@@ -88,7 +87,8 @@ class GenerateCodeJava : public GenerateCode {
                               Visibility & currVisibility,
                               const std::string & nameClass,
                               bool showType,
-                              const char * prefix);
+                              const char * prefix,
+                              const char * constant);
         void writeTypedef1 (const umlClassNode & node,
                             const char * extends,
                             bool compName);

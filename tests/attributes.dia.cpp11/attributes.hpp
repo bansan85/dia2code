@@ -7,13 +7,13 @@ class attributes {
     // Attributes
     public :
         /// com1
-        type1 nom1;
+        type1 nom1 = val1;
     private :
         /// com2
         static Pack::Classe nom2;
     protected :
         /// com3
-        type3 nom3;
+        type3 nom3 = val3;
 };
 
 #endif

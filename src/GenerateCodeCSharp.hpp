@@ -39,6 +39,10 @@ class GenerateCodeCSharp : public GenerateCodeJava {
                                   Visibility & curr_visibility);
         void writeClassComment (const std::string & nom);
         void writeClassStart (const umlClassNode & node);
+        void writeAttribute (const umlClassNode & node,
+                             const umlAttribute & attr,
+                             Visibility & currVisibility,
+                             const std::string & nameClass);
         void writeNameSpaceStart (const umlClassNode * node);
         void writeNameSpaceEnd (const umlClassNode * node);
         void writeStruct (const umlClassNode & node);

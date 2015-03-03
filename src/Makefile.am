@@ -5,7 +5,6 @@ dia2code_LDADD    = @XML_LIBS@
 dia2code_SOURCES  = DiaGram.cpp \
 										GenerateCode.cpp \
 										GenerateCodeCpp.cpp \
-										GenerateCodeCpp11.cpp \
 										GenerateCodeCSharp.cpp \
 										GenerateCodeJava.cpp \
 										GenerateCodePhp.cpp \
@@ -29,7 +28,6 @@ EXTRA_DIST = decls.hpp \
 						 DiaGram.hpp \
 						 GenerateCode.hpp \
 						 GenerateCodeCpp.hpp \
-						 GenerateCodeCpp11.hpp \
 						 GenerateCodeCSharp.hpp \
 						 GenerateCodeJava.hpp \
 						 GenerateCodePhp.hpp \

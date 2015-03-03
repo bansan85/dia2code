@@ -24,7 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "string2.hpp"
 #include "GenerateCodeCpp.hpp"
-#include "GenerateCodeCpp11.hpp"
 #include "GenerateCodeJava.hpp"
 #include "GenerateCodeCSharp.hpp"
 #include "GenerateCodePhp.hpp"
@@ -143,9 +142,9 @@ under certain conditions; read the COPYING file for details.\n";
         case 1:   // Which code generator
             parameter = 0;
             if (!strcmp (argv[i], "cpp")) {
-                generator = new GenerateCodeCpp (diagram);
+                generator = new GenerateCodeCpp (diagram, 99);
             } else if (!strcmp (argv[i], "cpp11")) {
-                generator = new GenerateCodeCpp11 (diagram);
+                generator = new GenerateCodeCpp (diagram, 11);
             } else if (!strcmp (argv[i], "csharp")) {
                 generator = new GenerateCodeCSharp (diagram);
             } else if (!strcmp (argv[i], "java")) {

@@ -41,12 +41,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 GenerateCode::GenerateCode (DiaGram    & diagram,
                             const char * ext,
-                            bool handleIncludePackage_) :
+                            uint8_t      version_,
+                            bool         handleIncludePackage_) :
     dia (diagram),
     license (),
     outdir ("."),
     file_ext (ext),
     file (),
+    version (version_),
     indent (4),
     indentlevel (0),
     overwrite (true),
@@ -283,8 +285,8 @@ nospc (char *str) {
     return subst (str, ' ', '_');
 }
 
-int
-GenerateCode::passByReference (umlClass & cl) {
+bool
+GenerateCode::passByReference (umlClass & cl) const {
     if (cl.isStereotypeTypedef ()) {
         umlClassNode *ref = findByName (dia.getUml (),
                                         cl.getName ().c_str ());
@@ -660,10 +662,7 @@ GenerateCode::genDecl (declaration &d,
     }
     else
 #endif
-    if (node->isStereotypeConst ()) {
-        writeConst (*node);
-    }
-    else if (node->isStereotypeEnum ()) {
+    if (node->isStereotypeEnum ()) {
         if (!node->getOperations ().empty ()) {
             std::cerr << "Class \"" << node->getName ()
                       << "\" is enum. All operations are ignored.\n";
@@ -742,6 +741,15 @@ GenerateCode::spc () const {
     return spcbuf;
 }
 
+uint8_t
+GenerateCode::getVersion () const {
+    return version;
+}
+
+void
+GenerateCode::setVersion (uint8_t version_) {
+    version = version_;
+}
 
 uint32_t
 GenerateCode::getIndent () const {

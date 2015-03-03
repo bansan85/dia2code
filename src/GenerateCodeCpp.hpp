@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class GenerateCodeCpp : public GenerateCode {
     public:
-        GenerateCodeCpp (DiaGram & diagram);
+        GenerateCodeCpp (DiaGram & diagram, uint8_t version_);
 
         std::string strPackage (const char * package) const;
         std::string strPointer (const std::string & type) const;
@@ -60,7 +60,6 @@ class GenerateCodeCpp : public GenerateCode {
                              const std::string & nameClass);
         void writeNameSpaceStart (const umlClassNode * node);
         void writeNameSpaceEnd (const umlClassNode * node);
-        void writeConst (const umlClassNode & node);
         void writeEnum (const umlClassNode & node);
         void writeStruct (const umlClassNode & node);
         void writeTypedef (const umlClassNode & node);
@@ -73,7 +72,6 @@ class GenerateCodeCpp : public GenerateCode {
         void writeFunction1 (const umlOperation & ope);
         void writeFunction2 (const umlOperation & ope);
         void writeFunction3 (const umlOperation & ope);
-        void writeConst1 (const umlClassNode & node, const char * constAbbr);
         void writeEnum1 (const umlClassNode & node, const char * enumAbbr);
 
         ~GenerateCodeCpp ();

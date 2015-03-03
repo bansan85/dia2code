@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "scan_tree.hpp"
 
 GenerateCodeJava::GenerateCodeJava (DiaGram & diagram) :
-    GenerateCode (diagram, "java", true) {
+    GenerateCode (diagram, "java", 7, true) {
 }
 
 std::string
@@ -411,7 +411,8 @@ GenerateCodeJava::writeAttribute1 (const umlClassNode & node,
                                    Visibility & currVisibility,
                                    const std::string & nameClass,
                                    bool showType,
-                                   const char * prefix) {
+                                   const char * prefix,
+                                   const char * constant) {
     getFile () << spc ()
                << visibility ("Class \"" + node.getName () + "\", attribute \""
                                          + attr.getName () + "\"",
@@ -419,6 +420,9 @@ GenerateCodeJava::writeAttribute1 (const umlClassNode & node,
                << " ";
     if (attr.isStatic ()) {
         getFile () << "static ";
+    }
+    if (node.isStereotypeConst ()) {
+        getFile () << constant << " ";
     }
 
     if (showType) {
@@ -443,7 +447,7 @@ GenerateCodeJava::writeAttribute (const umlClassNode & node,
                                   Visibility & currVisibility,
                                   const std::string & nameClass) {
     writeAttributeComment (attr);
-    writeAttribute1 (node, attr, currVisibility, nameClass, true, "");
+    writeAttribute1 (node, attr, currVisibility, nameClass, true, "", "final");
 }
 
 void
@@ -468,12 +472,6 @@ GenerateCodeJava::writeNameSpaceStart (const umlClassNode * node) {
 
 void
 GenerateCodeJava::writeNameSpaceEnd (const umlClassNode * node) {
-}
-
-void
-GenerateCodeJava::writeConst (const umlClassNode & node) {
-    std::cerr << "Class \"" << node.getName ()
-              << "\": const stereotype in not applicable with this generator.\n";
 }
 
 void

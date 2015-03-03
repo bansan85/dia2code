@@ -39,6 +39,7 @@ class GenerateCode {
         std::string file_ext;
         std::string body_file_ext;
         std::list <std::ofstream *> file;
+        uint8_t     version;
         uint8_t     indent : 4;
         uint8_t     indentlevel : 3;
         // Overwrite files while generating code.
@@ -54,13 +55,14 @@ class GenerateCode {
         bool        isCorba : 1;
 #endif
 
-        int passByReference (umlClass &cl);
+        bool passByReference (umlClass &cl) const;
         void openOutfile (const std::string & filename, declaration & d);
         void closeOutfile ();
         void genDecl (declaration &d, bool forceOpen);
     public:
         GenerateCode (DiaGram & diagram,
                       const char * ext,
+                      uint8_t version_,
                       bool handleIncludePackage_);
 
         DiaGram & getDia ();
@@ -73,6 +75,9 @@ class GenerateCode {
         void         setBodyFileExt (const char * ext);
 
         std::ofstream & getFile ();
+
+        uint8_t getVersion () const;
+        void    setVersion (uint8_t version_);
         
         uint32_t getIndent () const;
         void     setIndent (uint8_t spaces);
@@ -149,7 +154,6 @@ class GenerateCode {
                                      const std::string & nameClass) = 0;
         virtual void writeNameSpaceStart (const umlClassNode * name) = 0;
         virtual void writeNameSpaceEnd (const umlClassNode * node) = 0;
-        virtual void writeConst (const umlClassNode & node) = 0;
         virtual void writeEnum (const umlClassNode & node) = 0;
         virtual void writeStruct (const umlClassNode & node) = 0;
         virtual void writeTypedef (const umlClassNode & node) = 0;

@@ -29,8 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "string2.hpp"
 #include "scan_tree.hpp"
 
-GenerateCodeCpp::GenerateCodeCpp (DiaGram & diagram) :
-    GenerateCode (diagram, "hpp", false) {
+GenerateCodeCpp::GenerateCodeCpp (DiaGram & diagram, uint8_t version_) :
+    GenerateCode (diagram, "hpp", version_, false) {
 }
 
 std::string
@@ -152,6 +152,9 @@ GenerateCodeCpp::writeFunction2 (const umlOperation & ope) {
             getFile () << "static ";
         }
     }
+    if ((ope.isConstant ()) && (getVersion () == 11)) {
+        getFile () << "constexpr ";
+    }
 }
 
 void
@@ -201,7 +204,7 @@ GenerateCodeCpp::writeFunction (const umlClassNode & node,
     else
 #endif
     {
-        if (ope.isStereotypeDelete ()) {
+        if (ope.isStereotypeDelete () && (getVersion () == 99)) {
             check_visibility ("Class \"" + node.getName () + "\", operation \""
                                          + ope.getName () + "\"",
                               curr_visibility,
@@ -218,11 +221,14 @@ GenerateCodeCpp::writeFunction (const umlClassNode & node,
     // Write the reste of the function until the ")"
     writeFunction3 (ope);
 
-    if (ope.isConstant ()) {
+    if ((ope.isConstant ()) && (getVersion () == 99)) {
         getFile () << " const";
     }
-    // virtual
-    if ((ope.getInheritance () == Inheritance::ABSTRACT)
+
+    if (ope.isStereotypeDelete () && (getVersion () == 11)) {
+        getFile () << " = delete";
+    }
+    else if ((ope.getInheritance () == Inheritance::ABSTRACT)
 #ifdef ENABLE_CORBA
         || (getCorba ())
 #endif
@@ -327,12 +333,6 @@ GenerateCodeCpp::writeAttribute (const umlClassNode & node,
                                  const std::string & nameClass) {
     const umlClassNode *ref;
 
-    if (!attr.getValue ().empty ()) {
-        std::cerr << "Class \"" << nameClass << "\", attribute \""
-                  << attr.getName ()
-                  << "\": default value for attribut in class is not applicable with this generator.\n";
-    }
-
     incIndentLevel ();
     check_visibility ("Class \"" + node.getName () + "\", attribute \""
                                  + attr.getName () + "\"",
@@ -343,6 +343,14 @@ GenerateCodeCpp::writeAttribute (const umlClassNode & node,
     if (attr.isStatic ()) {
         getFile () << "static ";
     }
+    if (node.isStereotypeConst ()) {
+        if (getVersion () == 99) {
+            getFile () << "const ";
+        }
+        else {
+            getFile () << "constexpr ";
+        }
+    }
     ref = findByName (getDia ().getUml (),
                       attr.getType ());
     if (ref != NULL) {
@@ -352,6 +360,9 @@ GenerateCodeCpp::writeAttribute (const umlClassNode & node,
         getFile () << cppName (attr.getType ());
     }
     getFile () << " " << attr.getName ();
+    if (!attr.getValue ().empty ()) {
+        getFile () << " = " << attr.getValue ();
+    }
     getFile () << ";\n";
     decIndentLevel ();
 }
@@ -389,46 +400,28 @@ GenerateCodeCpp::writeNameSpaceEnd (const umlClassNode * node) {
 }
 
 void
-GenerateCodeCpp::writeConst1 (const umlClassNode & node,
-                              const char * constAbbr) {
-    if (node.getAttributes ().size () != 1) {
-        throw std::string ("Error: first attribute not set at " +
-                           node.getName () + "\n");
-    }
-
-    const umlAttribute & umla = *node.getAttributes ().begin ();
-
-    if (!node.getComment ().empty ()) {
-        getFile () << spc () << "/// " << node.getComment () << "\n";
-    }
-    if (!umla.getName ().empty ()) {
-        std::cerr << "Ignoring attribute name at " << node.getName () << ".\n";
-    }
-
-    getFile () << spc () << constAbbr << cppName (umla.getType ()) << " "
-               << node.getName () << " = " << umla.getValue () << ";\n";
-}
-
-void
-GenerateCodeCpp::writeConst (const umlClassNode & node) {
-    writeConst1 (node, "const ");
-}
-
-void
 GenerateCodeCpp::writeEnum1 (const umlClassNode & node,
                              const char * enumAbbr) {
+}
+
+void
+GenerateCodeCpp::writeEnum (const umlClassNode & node) {
     std::list <umlAttribute>::const_iterator umla;
 
     umla = node.getAttributes ().begin ();
     if (!node.getComment ().empty ()) {
         getFile () << spc () << "/// " << node.getComment () << "\n";
     }
+    getFile () << spc () << "enum ";
+    if (getVersion () == 11) {
+        getFile () << "class ";
+    }
     if (getOpenBraceOnNewline ()) {
-        getFile () << spc () << enumAbbr << node.getName () << "\n";
+        getFile () << node.getName () << "\n";
         getFile () << spc () << "{\n";
     }
     else {
-        getFile () << spc () << enumAbbr << node.getName () << " {\n";
+        getFile () << node.getName () << " {\n";
     }
     incIndentLevel ();
     while (umla != node.getAttributes ().end ()) {
@@ -448,11 +441,6 @@ GenerateCodeCpp::writeEnum1 (const umlClassNode & node,
     }
     decIndentLevel ();
     getFile () << spc () << "};\n";
-}
-
-void
-GenerateCodeCpp::writeEnum (const umlClassNode & node) {
-    writeEnum1 (node, "enum ");
 }
 
 void
