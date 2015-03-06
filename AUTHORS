@@ -25,3 +25,5 @@ Contributors: (in alphabetical order, by last name)
 - Takaaki Tateishi <> Dynamic Shared Objects for dynamic code generator modules.
 - Martin Vidner <mvidner@users.sourceforge.net> Porting to libxml2.
 
+Thanks:
+Collin Starkweather and Slush Gore for the extra help.

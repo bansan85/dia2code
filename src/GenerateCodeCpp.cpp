@@ -400,11 +400,6 @@ GenerateCodeCpp::writeNameSpaceEnd (const umlClassNode * node) {
 }
 
 void
-GenerateCodeCpp::writeEnum1 (const umlClassNode & node,
-                             const char * enumAbbr) {
-}
-
-void
 GenerateCodeCpp::writeEnum (const umlClassNode & node) {
     std::list <umlAttribute>::const_iterator umla;
 

@@ -1008,6 +1008,8 @@ The following files needs to be updated:
  - src/Makefile.am:
      - add the source in dia2code_SOURCES,
      - add the header in EXTRA_DIST.
+ - builds/vs-community-2013/dia2code.vcxproj
+     - add the new source and header files.
  - README:
      - add examples for classic classes and for the differents stereotypes.
  - tests/tests.sh:
@@ -1021,39 +1023,6 @@ KNOWN BUGS
   <dia:childnode parent="O0"/>
 
 
-AUTHOR
+AUTHOR, MAINTAINER and THANKS
 
 Javier O'Hara <joh314@users.sourceforge.net>
-
-
-MAINTAINER
-
-Richard Torkar <richard.torkar@htu.se>
-
-Contributors: (in alphabetical order, by last name)
-- Cyrille Chepelov <chepelov@calixo.net> Pyhton code generation, Debian package
-  management, Hurd conformance.
-- Harald Fielker <hfielker@softsolutions.de> PHP code generation.
-- Oliver Kellogg <okellogg@users.sourceforge.net>, CORBA stereotype and package
-  support
-- Vincent Le Garrec (bansan) <vincent@le-garrec.fr> Conversion to C++.
-- Ruben Lopez <ryu@gpul.org>, C code generation.
-- Steffen Macke <sdteffen@yahoo.com> batch shapefile generation, win32
-  installer.
-- Chris McGee <sirnewton_01@yahoo.ca> Dependencies, Associations,
-  C++ Templates, SQL, IDL code generation.
-- Takashi Okamoto <toraneko@kun.ne.jp> License inclusion mechanism.
-- Thomas Preymesser <tp@odn.de> Ada code generation.
-- Dmitry V. Sabanin <sdmitry@lrn.ru> Ruby code generation.
-- Jérôme Slangen <jeromes@mail.be> Wildcard class list mechanism.
-- Takaaki Tateishi <> Dynamic Shared Objects for dynamic code generator
-  modules. Feature removed.
-- Martin Vidner <mvidner@users.sourceforge.net> Porting to libxml2.
-- Thomas Hansen <thomas.hansen@adramatch.com> C# code generation.
-
-
-THANKS
-
-Thanks to Collin Starkweather and Slush Gore for the extra help.
-Also, thanks to all the people that have contacted me with suggestions and bug
-reports.
