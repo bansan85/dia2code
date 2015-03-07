@@ -1,7 +1,7 @@
 <?php
 /*
-LICENSE
-FILE
+License file,
+bit-by-bit.
  */
 
 class operations {
