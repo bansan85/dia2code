@@ -56,8 +56,7 @@ class GenerateCodeCpp : public GenerateCode {
         void writeAttributeComment (const umlAttribute & attr);
         void writeAttribute (const umlClassNode & node,
                              const umlAttribute & attr,
-                             Visibility & curr_visibility,
-                             const std::string & nameClass);
+                             Visibility & curr_visibility);
         void writeNameSpaceStart (const umlClassNode * node);
         void writeNameSpaceEnd (const umlClassNode * node);
         void writeEnum (const umlClassNode & node);

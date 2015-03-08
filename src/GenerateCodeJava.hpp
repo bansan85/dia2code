@@ -53,8 +53,7 @@ class GenerateCodeJava : public GenerateCode {
         void writeAttributeComment (const umlAttribute & attr);
         void writeAttribute (const umlClassNode & node,
                              const umlAttribute & attr,
-                             Visibility & currVisibility,
-                             const std::string & nameClass);
+                             Visibility & currVisibility);
         void writeNameSpaceStart (const umlClassNode * node);
         void writeNameSpaceEnd (const umlClassNode * node);
         void writeEnum (const umlClassNode & node);
@@ -79,19 +78,14 @@ class GenerateCodeJava : public GenerateCode {
                              bool showType,
                              char prefix);
         void writeClassStart1 (const umlClassNode & node,
-                               const char * inheritance,
-                               const char * implement,
-                               bool compName,
                                bool visible);
         void writeClassStart2 (const umlClassNode & node,
                                const char * inheritance,
                                const char * implement,
-                               bool compName,
-                               bool visible);
+                               bool compName);
         void writeAttribute1 (const umlClassNode & node,
                               const umlAttribute & attr,
                               Visibility & currVisibility,
-                              const std::string & nameClass,
                               bool showType,
                               const char * prefix,
                               const char * constant);

@@ -498,7 +498,7 @@ GenerateCode::genClass (const umlClassNode & node) {
                     std::cerr << "An attribute of the " << fqname (node, false)
                               << " class have an empty type.\n";
                 }
-                writeAttribute (node, umla, tmpv, node.getName ());
+                writeAttribute (node, umla, tmpv);
             }
         }
     }

@@ -41,8 +41,7 @@ class GenerateCodeCSharp : public GenerateCodeJava {
         void writeClassStart (const umlClassNode & node);
         void writeAttribute (const umlClassNode & node,
                              const umlAttribute & attr,
-                             Visibility & currVisibility,
-                             const std::string & nameClass);
+                             Visibility & currVisibility);
         void writeNameSpaceStart (const umlClassNode * node);
         void writeNameSpaceEnd (const umlClassNode * node);
         void writeStruct (const umlClassNode & node);
@@ -53,8 +52,7 @@ class GenerateCodeCSharp : public GenerateCodeJava {
         void writeClassStart2 (const umlClassNode & node,
                                const char * inheritance,
                                const char * implement,
-                               bool compName,
-                               bool visible);
+                               bool compName);
 
         ~GenerateCodeCSharp ();
 };

@@ -150,8 +150,7 @@ class GenerateCode {
         virtual void writeAttributeComment (const umlAttribute & attr) = 0;
         virtual void writeAttribute (const umlClassNode & node,
                                      const umlAttribute & attr,
-                                     Visibility & curr_visibility,
-                                     const std::string & nameClass) = 0;
+                                     Visibility & curr_visibility) = 0;
         virtual void writeNameSpaceStart (const umlClassNode * name) = 0;
         virtual void writeNameSpaceEnd (const umlClassNode * node) = 0;
         virtual void writeEnum (const umlClassNode & node) = 0;

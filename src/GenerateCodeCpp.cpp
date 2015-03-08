@@ -329,8 +329,7 @@ GenerateCodeCpp::writeAttributeComment (const umlAttribute & attr) {
 void
 GenerateCodeCpp::writeAttribute (const umlClassNode & node,
                                  const umlAttribute & attr,
-                                 Visibility & curr_visibility,
-                                 const std::string & nameClass) {
+                                 Visibility & curr_visibility) {
     const umlClassNode *ref;
 
     incIndentLevel ();
@@ -454,7 +453,7 @@ GenerateCodeCpp::writeStruct (const umlClassNode & node) {
         umla.check (node);
         // Use of a tmp value to ignore visibility.
         Visibility vis = umla.getVisibility ();
-        writeAttribute (node, umla, vis, node.getName ());
+        writeAttribute (node, umla, vis);
     }
     for (const umlOperation & umlo : node.getOperations ()) {
         if (umlo.getVisibility () != Visibility::PUBLIC) {

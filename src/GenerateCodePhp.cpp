@@ -47,7 +47,7 @@ GenerateCodePhp::strPackage (const char * package) const {
 }
 
 void
-GenerateCodePhp::writeStartHeader (std::string & name) {
+GenerateCodePhp::writeStartHeader (std::string &) {
     getFile () << "<?php" << std::endl;
 }
 
@@ -115,8 +115,8 @@ GenerateCodePhp::writeFunction (const umlClassNode & node,
 
 void
 GenerateCodePhp::writeClassStart (const umlClassNode & node) {
-    writeClassStart1 (node, " extends ", " implements ", true, false);
-    writeClassStart2 (node, " extends ", " implements ", true, false);
+    writeClassStart1 (node, false);
+    writeClassStart2 (node, " extends ", " implements ", true);
 }
 
 void
@@ -133,13 +133,11 @@ GenerateCodePhp::writeAttributeComment (const umlAttribute & attr) {
 void
 GenerateCodePhp::writeAttribute (const umlClassNode & node,
                                  const umlAttribute & attr,
-                                 Visibility & curr_visibility,
-                                 const std::string & nameClass) {
+                                 Visibility & curr_visibility) {
     writeAttributeComment (attr);
     writeAttribute1 (node,
                      attr,
                      curr_visibility,
-                     nameClass,
                      false,
                      node.isStereotypeConst () ? "" : "$",
                      "const");
@@ -243,7 +241,7 @@ GenerateCodePhp::writeTypedef (const umlClassNode & node) {
 void
 GenerateCodePhp::writeAssociation (const umlClassNode & node,
                                    const umlassoc & asso,
-                                   Visibility & currVisibility) {
+                                   Visibility &) {
     if (!asso.name.empty ()) {
         getFile () << spc ()
                    << visibility ("Class \"" + node.getName () +
@@ -255,8 +253,8 @@ GenerateCodePhp::writeAssociation (const umlClassNode & node,
 }
 
 void
-GenerateCodePhp::writeTemplates (
-              const std::list <std::pair <std::string, std::string> > & tmps) {
+GenerateCodePhp::writeTemplates (const std::list <std::pair <std::string,
+                                                            std::string> > &) {
 }
 
 GenerateCodePhp::~GenerateCodePhp () {

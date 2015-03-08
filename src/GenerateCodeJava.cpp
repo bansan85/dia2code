@@ -55,7 +55,7 @@ GenerateCodeJava::writeLicense () {
 }
 
 void
-GenerateCodeJava::writeStartHeader (std::string & name) {
+GenerateCodeJava::writeStartHeader (std::string &) {
 }
 
 void
@@ -194,9 +194,9 @@ GenerateCodeJava::writeFunctionComment (const umlOperation & ope) {
 }
 
 void
-GenerateCodeJava::writeFunction1 (const umlClassNode & node,
+GenerateCodeJava::writeFunction1 (const umlClassNode &,
                                   const umlOperation & ope,
-                                  Visibility & currVisibility) {
+                                  Visibility &) {
 #ifdef ENABLE_CORBA
     if (getCorba ()) {
         if (ope.getVisibility () != '0') {
@@ -215,7 +215,7 @@ GenerateCodeJava::writeFunction1 (const umlClassNode & node,
 void
 GenerateCodeJava::writeFunction2 (const umlClassNode & node,
                                   const umlOperation & ope,
-                                  Visibility & currVisibility,
+                                  Visibility &,
                                   bool defaultParam,
                                   bool showType,
                                   char prefix) {
@@ -337,9 +337,6 @@ GenerateCodeJava::writeClassComment (const std::string & nom) {
 
 void
 GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
-                                    const char * inheritance,
-                                    const char * implement,
-                                    bool compName,
                                     bool visible) {
     getFile () << spc ();
     if (visible) {
@@ -372,8 +369,7 @@ void
 GenerateCodeJava::writeClassStart2 (const umlClassNode & node,
                                     const char * inheritance,
                                     const char * implement,
-                                    bool compName,
-                                    bool visible) {
+                                    bool compName) {
     if (!node.getParents ().empty ()) {
         std::list <std::pair <umlClass *, Visibility> >::const_iterator parent;
 
@@ -416,8 +412,8 @@ GenerateCodeJava::writeClassStart2 (const umlClassNode & node,
 
 void
 GenerateCodeJava::writeClassStart (const umlClassNode & node) {
-    writeClassStart1 (node, " extends ", " implements ", true, true);
-    writeClassStart2 (node, " extends ", " implements ", true, true);
+    writeClassStart1 (node, true);
+    writeClassStart2 (node, " extends ", " implements ", true);
 }
 
 void
@@ -428,8 +424,7 @@ GenerateCodeJava::writeClassEnd () {
 void
 GenerateCodeJava::writeAttribute1 (const umlClassNode & node,
                                    const umlAttribute & attr,
-                                   Visibility & currVisibility,
-                                   const std::string & nameClass,
+                                   Visibility &,
                                    bool showType,
                                    const char * prefix,
                                    const char * constant) {
@@ -464,10 +459,9 @@ GenerateCodeJava::writeAttributeComment (const umlAttribute & attr) {
 void
 GenerateCodeJava::writeAttribute (const umlClassNode & node,
                                   const umlAttribute & attr,
-                                  Visibility & currVisibility,
-                                  const std::string & nameClass) {
+                                  Visibility & currVisibility) {
     writeAttributeComment (attr);
-    writeAttribute1 (node, attr, currVisibility, nameClass, true, "", "final");
+    writeAttribute1 (node, attr, currVisibility, true, "", "final");
 }
 
 void
@@ -491,7 +485,7 @@ GenerateCodeJava::writeNameSpaceStart (const umlClassNode * node) {
 }
 
 void
-GenerateCodeJava::writeNameSpaceEnd (const umlClassNode * node) {
+GenerateCodeJava::writeNameSpaceEnd (const umlClassNode *) {
 }
 
 void
@@ -573,7 +567,7 @@ GenerateCodeJava::writeTypedef (const umlClassNode & node) {
 void
 GenerateCodeJava::writeAssociation (const umlClassNode & node,
                                     const umlassoc & asso,
-                                    Visibility & currVisibility) {
+                                    Visibility &) {
     if (!asso.name.empty ()) {
         getFile () << spc ()
                    << visibility ("Class \"" + node.getName () +

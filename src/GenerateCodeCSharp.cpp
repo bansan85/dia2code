@@ -174,7 +174,7 @@ GenerateCodeCSharp::writeFunction (const umlClassNode & node,
 void
 GenerateCodeCSharp::writeFunctionGetSet (const umlClassNode & node,
                                          const umlOperation & ope,
-                                         Visibility & curr_visibility) {
+                                         Visibility &) {
     getFile () << spc ()
                << visibility ("Class \"" + node.getName () + "\", operation \""
                                          + ope.getName () + "\"",
@@ -228,17 +228,16 @@ GenerateCodeCSharp::writeClassComment (const std::string & nom) {
 
 void
 GenerateCodeCSharp::writeClassStart (const umlClassNode & node) {
-    writeClassStart1 (node, " : ", " : ", false, true);
-    writeClassStart2 (node, " : ", " : ", false, true);
+    writeClassStart1 (node, true);
+    writeClassStart2 (node, " : ", " : ", false);
 }
 
 void
 GenerateCodeCSharp::writeAttribute (const umlClassNode & node,
                                     const umlAttribute & attr,
-                                    Visibility & currVisibility,
-                                    const std::string & nameClass) {
+                                    Visibility & currVisibility) {
     writeAttributeComment (attr);
-    writeAttribute1 (node, attr, currVisibility, nameClass, true, "", "const");
+    writeAttribute1 (node, attr, currVisibility, true, "", "const");
 }
 
 void
@@ -295,7 +294,7 @@ GenerateCodeCSharp::writeStruct (const umlClassNode & node) {
         // Use of a tmp value to ignore visibility.
         Visibility vis = Visibility::PUBLIC;
         const_cast <umlAttribute &> (umla).setVisibility (Visibility::PUBLIC);
-        writeAttribute (node, umla, vis, node.getName ());
+        writeAttribute (node, umla, vis);
     }
     for (const umlOperation & umlo : node.getOperations ()) {
         if (umlo.getVisibility () != Visibility::PUBLIC) {
@@ -345,10 +344,9 @@ GenerateCodeCSharp::writeTemplates (
 
 void
 GenerateCodeCSharp::writeClassStart2 (const umlClassNode & node,
-                                      const char * inheritance,
-                                      const char * implement,
-                                      bool compName,
-                                      bool visible) {
+                                      const char *,
+                                      const char *,
+                                      bool compName) {
     if (!node.getParents ().empty ()) {
         std::list <std::pair <umlClass *, Visibility> >::const_iterator parent;
 
