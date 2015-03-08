@@ -174,7 +174,8 @@ class GenerateCode {
                             const char * startIncludeSystem,
                             const char * endIncludeSystem,
                             const char * startIncludeFile,
-                            const char * endIncludeFile);
+                            const char * endIncludeFile,
+                            bool forceExtExtern);
 
         virtual ~GenerateCode ();
 };

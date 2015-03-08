@@ -161,14 +161,10 @@ under certain conditions; read the COPYING file for details.\n";
 //                generator = generators[4];
             } else if (!strcmp (argv[i], "python")) {
 //                generator = generators[5];
-            } else if (!strcmp (argv[i], "php")) {
-//                generator = generators[6];
             } else if (!strcmp (argv[i], "shp")) {
 //                generator = generators[7];
             } else if (!strcmp (argv[i], "idl")) {
 //                generator = generators[8];
-            } else if (!strcmp(argv[i], "php5")) {
-//                generator = generators[10];
             } else if (!strcmp(argv[i], "ruby")) {
 //                generator = generators[11];
             } else if (!strcmp(argv[i], "as3")) {

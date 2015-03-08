@@ -931,7 +931,8 @@ GenerateCode::writeInclude1 (const std::list <std::pair <
                              const char * startIncludeSystem,
                              const char * endIncludeSystem,
                              const char * startIncludeFile,
-                             const char * endIncludeFile) {
+                             const char * endIncludeFile,
+                             bool forceExtExtern) {
     bool ret = false;
     // List of include then if (true) the class is system and should not be
     // generated.
@@ -956,8 +957,6 @@ GenerateCode::writeInclude1 (const std::list <std::pair <
                 }
             }
             include.append (it.second->getName ());
-            include.append (".");
-            include.append (getFileExt ());
         }
         else if (getOneClass ()) {
             if (!it.first.empty ()) {
@@ -967,20 +966,18 @@ GenerateCode::writeInclude1 (const std::list <std::pair <
                 }
             }
             include.append (it.second->getName ());
-            include.append (".");
-            include.append (getFileExt ());
         }
         else {
             if (!it.first.empty ()) {
                 include.append ((*it.first.begin ())->getName ());
-                include.append (".");
-                include.append (getFileExt ());
             }
             else {
                 include.append (it.second->getName ());
-                include.append (".");
-                include.append (getFileExt ());
             }
+        }
+        if ((forceExtExtern) || (!it.second->isStereotypeExtern ())) {
+            include.append (".");
+            include.append (getFileExt ());
         }
         add.first = include;
         add.second = it.second->isStereotypeExtern ();

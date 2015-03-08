@@ -86,7 +86,10 @@ bool
 GenerateCodeCpp::writeInclude (const std::list <std::pair <
                                                     std::list <umlPackage *>,
                                                     umlClassNode *> > & name) {
-    return writeInclude1 (name, "#include <", ">\n", "#include \"", "\"\n");
+    return writeInclude1 (name,
+                          "#include <", ">\n",
+                          "#include \"", "\"\n",
+                          false);
 }
 
 void

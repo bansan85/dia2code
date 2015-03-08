@@ -1,7 +1,7 @@
 #ifndef CLASSEB__HPP
 #define CLASSEB__HPP
 
-#include <Pack.hpp>
+#include <Pack>
 
 class ClasseB {
 };
