@@ -338,6 +338,7 @@ GenerateCodeJava::writeClassComment (const std::string & nom) {
 void
 GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
                                     const char * inheritance,
+                                    const char * implement,
                                     bool compName,
                                     bool visible) {
     getFile () << spc ();
@@ -347,7 +348,13 @@ GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
     if (node.isAbstract ()) {
         getFile () << "abstract ";
     }
-    getFile () << "class " << node.getName ();
+    if (node.isInterface ()) {
+        getFile () << "interface ";
+    }
+    else {
+        getFile () << "class ";
+    }
+    getFile () << node.getName ();
 
     if (!node.getTemplates ().empty ()) {
 #ifdef ENABLE_CORBA
@@ -359,10 +366,17 @@ GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
             writeTemplates (node.getTemplates ());
         }
     }
+}
 
+void
+GenerateCodeJava::writeClassStart2 (const umlClassNode & node,
+                                    const char * inheritance,
+                                    const char * implement,
+                                    bool compName,
+                                    bool visible) {
     if (!node.getParents ().empty ()) {
-        std::list <std::pair <umlClass *, Visibility> >::const_iterator
-                                                                        parent;
+        std::list <std::pair <umlClass *, Visibility> >::const_iterator parent;
+
         parent = node.getParents ().begin ();
         while (parent != node.getParents ().end ()) {
             if ((*parent).second != Visibility::PUBLIC) {
@@ -371,7 +385,12 @@ GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
                           << (*parent).first->getName ()
                           << "\": only a public visibility is supported.\n";
             }
-            getFile () << inheritance;
+            if ((*parent).first->isInterface ()) {
+                getFile () << implement;
+            }
+            else {
+                getFile () << inheritance;
+            }
             if (compName) {
                 getFile () << fqname (*(*parent).first, false);
             }
@@ -397,7 +416,8 @@ GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
 
 void
 GenerateCodeJava::writeClassStart (const umlClassNode & node) {
-    writeClassStart1 (node, " extends ", true, true);
+    writeClassStart1 (node, " extends ", " implements ", true, true);
+    writeClassStart2 (node, " extends ", " implements ", true, true);
 }
 
 void

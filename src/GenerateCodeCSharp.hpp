@@ -50,6 +50,12 @@ class GenerateCodeCSharp : public GenerateCodeJava {
         void writeTemplates ( const std::list <std::pair
                                           <std::string, std::string> > & tmps);
 
+        void writeClassStart2 (const umlClassNode & node,
+                               const char * inheritance,
+                               const char * implement,
+                               bool compName,
+                               bool visible);
+
         ~GenerateCodeCSharp ();
 };
 

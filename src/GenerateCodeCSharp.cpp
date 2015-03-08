@@ -228,7 +228,8 @@ GenerateCodeCSharp::writeClassComment (const std::string & nom) {
 
 void
 GenerateCodeCSharp::writeClassStart (const umlClassNode & node) {
-    writeClassStart1 (node, " : ", false, true);
+    writeClassStart1 (node, " : ", " : ", false, true);
+    writeClassStart2 (node, " : ", " : ", false, true);
 }
 
 void
@@ -339,6 +340,52 @@ GenerateCodeCSharp::writeTemplates (
         if (template_ != tmps.end ()) {
             getFile () << " ";
         }
+    }
+}
+
+void
+GenerateCodeCSharp::writeClassStart2 (const umlClassNode & node,
+                                      const char * inheritance,
+                                      const char * implement,
+                                      bool compName,
+                                      bool visible) {
+    if (!node.getParents ().empty ()) {
+        std::list <std::pair <umlClass *, Visibility> >::const_iterator parent;
+
+        parent = node.getParents ().begin ();
+        while (parent != node.getParents ().end ()) {
+            if ((*parent).second != Visibility::PUBLIC) {
+                std::cerr << "Class \"" << node.getName ()
+                          << "\", inheritance \""
+                          << (*parent).first->getName ()
+                          << "\": only a public visibility is supported.\n";
+            }
+            if (parent == node.getParents ().begin ()) {
+                getFile () << " : ";
+            }
+            else {
+                getFile () << ", ";
+            }
+            if (compName) {
+                getFile () << fqname (*(*parent).first, false);
+            }
+            else {
+                getFile () << (*parent).first->getName ();
+            }
+            ++parent;
+        }
+    }
+#ifdef ENABLE_CORBA
+    else if (getCorba ()) {
+        getFile () << " : " << strPackage ("CORBA") << "ValueBase";
+    }
+#endif
+    if (getOpenBraceOnNewline ()) {
+        getFile () << "\n"
+                   << spc () << "{\n";
+    }
+    else {
+        getFile () << " {\n";
     }
 }
 

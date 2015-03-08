@@ -80,6 +80,12 @@ class GenerateCodeJava : public GenerateCode {
                              char prefix);
         void writeClassStart1 (const umlClassNode & node,
                                const char * inheritance,
+                               const char * implement,
+                               bool compName,
+                               bool visible);
+        void writeClassStart2 (const umlClassNode & node,
+                               const char * inheritance,
+                               const char * implement,
                                bool compName,
                                bool visible);
         void writeAttribute1 (const umlClassNode & node,

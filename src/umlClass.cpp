@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "umlClass.hpp"
 #include "string2.hpp"
 #include "parse_diagram.hpp"
+#include "scan_tree.hpp"
 #include "umlClassNode.hpp"
 
 umlClass::umlClass () :
@@ -36,6 +37,7 @@ umlClass::umlClass () :
     stereotypeStruct (false),
     stereotypeGetSet (false),
     stereotypeExtern (false),
+    interface (false),
 #ifdef ENABLE_CORBA
     stereotypeCorba (false),
 #endif
@@ -99,6 +101,11 @@ umlClass::isStereotypeGetSet () const {
 bool
 umlClass::isStereotypeExtern () const {
     return stereotypeExtern;
+}
+
+bool
+umlClass::isInterface () const {
+    return interface;
 }
 
 #ifdef ENABLE_CORBA
@@ -192,6 +199,16 @@ umlClass::isGetSetStereo (std::string & stereo) {
             );
 }
 
+bool
+umlClass::isInterfaceStereo (std::string & stereo) {
+    return (!stereo.compare ("interface") ||
+            !stereo.compare ("Interface")
+#ifdef ENABLE_CORBA
+            || !stereo.compare ("CORBAInterface")
+#endif
+            );
+}
+
 /**
   * Adds get () (or is ()) and set () methods for each attribute
 */
@@ -208,53 +225,6 @@ umlClass::makeGetSetMethods () {
                                  false,
                                  true);
         umlOperation::insertOperation (operation2, operations);
-    }
-}
-
-/**
-  Simple, non-compromising, implementation declaration.
-  This function creates a plain vanilla interface (an
-  umlclasslist) and associates it to the implementator.
-  The implementator's code should contain the interface
-  name, but the interface itself will not be inserted
-  into the classlist, so no code can be generated for it.
-*/
-void
-umlClass::lolipopImplementation (std::list <umlClassNode> & classlist,
-                                 xmlNodePtr object) {
-    xmlNodePtr attribute;
-    xmlChar *id = NULL;
-    const char *name = NULL;
-    xmlChar *attrname;
-    umlClassNode * implementator;
-
-    attribute = object->xmlChildrenNode;
-    while (attribute != NULL) {
-        if (!strcmp ("connections", BAD_TSAC2 (attribute->name))) {
-            id = xmlGetProp (attribute->xmlChildrenNode, BAD_CAST2 ("to"));
-        } else {
-            attrname = xmlGetProp (attribute, BAD_CAST2 ("name"));
-            if (attrname != NULL &&
-                !strcmp ("text", BAD_TSAC2 (attrname)) &&
-                attribute->xmlChildrenNode != NULL &&
-                attribute->xmlChildrenNode->xmlChildrenNode != NULL) {
-                name = BAD_TSAC2 (attribute->xmlChildrenNode->xmlChildrenNode->content);
-            } else {
-                name = "";
-            }
-            free (attrname);
-        }
-        attribute = attribute->next;
-    }
-    implementator = umlClassNode::find (classlist, BAD_TSAC2 (id));
-    free (id);
-    if (implementator != NULL && name != NULL && strlen (name) > 2) {
-        umlClass * key = new umlClass ();
-        key->package = nullptr;
-        key->id.assign ("00");
-        parseDiaString (name, key->name);
-        key->abstract = true;
-        implementator->addParent (key, Visibility::PUBLIC);
     }
 }
 
@@ -649,7 +619,52 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
                 attribute = attribute->next;
             }
         } else if (!strcmp ("UML - Implements", BAD_TSAC2 (objtype))) {
-            umlClass::lolipopImplementation (res, object);
+            xmlNodePtr attribute = object->xmlChildrenNode;
+            Visibility visible = Visibility::PUBLIC;
+            end1 = nullptr;
+            end2 = nullptr;
+            while (attribute != NULL) {
+                if (!strcmp ("connections", BAD_TSAC2 (attribute->name))) {
+                    end2 = xmlGetProp (attribute->xmlChildrenNode,
+                                       BAD_CAST2 ("to"));
+                }
+                else if (!strcmp ("attribute", BAD_TSAC2 (attribute->name))) {
+                    xmlChar *name = xmlGetProp (attribute, BAD_CAST2 ("name"));
+
+                    if (!strcmp ("text", BAD_TSAC2 (name)))
+                    {
+                        std::string stereo;
+                        umlClassNode * tmpnode;
+
+                        parseDiaNode (attribute->xmlChildrenNode, stereo);
+                        tmpnode = findByName (res, stereo);
+                        if (tmpnode != NULL) {
+                            end1 = reinterpret_cast <xmlChar *>
+                                         (strdup (tmpnode->getId ().c_str ()));
+                        }
+                    }
+                    free (name);
+                }
+                attribute = attribute->next;
+            }
+            if ((end1 != nullptr) && (end2 != nullptr)) {
+                umlClassNode *umlend;
+
+                inheritRealize (res,
+                                BAD_TSAC2 (end1),
+                                BAD_TSAC2 (end2),
+                                visible);
+
+                umlend = umlClassNode::find (res, BAD_TSAC2 (end1));
+                if (umlend != NULL) {
+                    umlend->interface = true;
+                }
+
+                free (end2);
+                end2 = nullptr;
+                free (end1);
+                end1 = nullptr;
+            }
         } else if ((!strcmp ("UML - Generalization", BAD_TSAC2 (objtype))) ||
                    (!strcmp ("UML - Realizes", BAD_TSAC2 (objtype)))) {
             xmlNodePtr attribute = object->xmlChildrenNode;
@@ -698,8 +713,17 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
             if ((end1 != nullptr) && (end2 != nullptr)) {
                 inheritRealize (res,
                                 BAD_TSAC2 (end1),
-                                BAD_TSAC2(end2),
+                                BAD_TSAC2 (end2),
                                 visible);
+                if (!strcmp ("UML - Realizes", BAD_TSAC2 (objtype))) {
+                    umlClassNode *umlend;
+
+                    umlend = umlClassNode::find (res, BAD_TSAC2 (end1));
+                    if (umlend != NULL) {
+                        umlend->interface = true;
+                    }
+                }
+
                 free (end2);
                 end2 = nullptr;
                 free (end1);
@@ -787,6 +811,7 @@ umlClass::parseClass (xmlNodePtr class_) {
                 stereotypeStruct = isStructStereo (stereotype);
                 stereotypeGetSet = isGetSetStereo (stereotype);
                 stereotypeExtern = stereotype.compare ("extern") == 0;
+                interface = isInterfaceStereo (stereotype);
 #ifdef ENABLE_CORBA
                 stereotypeCorba = isCorbaStereo (stereotype);
 #endif

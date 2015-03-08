@@ -115,7 +115,8 @@ GenerateCodePhp::writeFunction (const umlClassNode & node,
 
 void
 GenerateCodePhp::writeClassStart (const umlClassNode & node) {
-    writeClassStart1 (node, " extends ", true, false);
+    writeClassStart1 (node, " extends ", " implements ", true, false);
+    writeClassStart2 (node, " extends ", " implements ", true, false);
 }
 
 void

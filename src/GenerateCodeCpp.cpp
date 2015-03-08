@@ -283,8 +283,8 @@ GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
 
     getFile () << spc () << "class " << node.getName ();
     if (!node.getParents ().empty ()) {
-        std::list <std::pair <umlClass *, Visibility> >::const_iterator
-                                                                        parent;
+        std::list <std::pair <umlClass *, Visibility> >::const_iterator parent;
+
         parent = node.getParents ().begin ();
         getFile () << " : ";
         while (parent != node.getParents ().end ()) {

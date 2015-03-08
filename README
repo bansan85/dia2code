@@ -754,6 +754,27 @@ Java generator:
 import Pack.Class;
 
 
+interface, Interface:
+---------  ---------
+Define a interface. The class will be automatically considers as a interface if
+a Realization or a Implementation link are pointing to it.
+
+
+C++ and C++11 generator:
+class Interface2 {
+};
+
+
+C# generator:
+public interface Interface2 {
+}
+
+
+Java generator:
+public interface Interface2 {
+}
+
+
 - Operation:
 
 delete:

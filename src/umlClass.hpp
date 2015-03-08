@@ -56,6 +56,7 @@ class umlClass {
         bool stereotypeStruct : 1;
         bool stereotypeGetSet : 1;
         bool stereotypeExtern : 1;
+        bool interface : 1;
 #ifdef ENABLE_CORBA
         bool stereotypeCorba : 1;
 #endif
@@ -75,6 +76,7 @@ class umlClass {
         static bool isConstStereo (std::string & stereo);
         static bool isStructStereo (std::string & stereo);
         static bool isGetSetStereo (std::string & stereo);
+        static bool isInterfaceStereo (std::string & stereo);
         static bool isCorbaStereo (std::string & stereo);
     public :
         umlClass ();
@@ -91,6 +93,7 @@ class umlClass {
         bool isStereotypeGetSet () const;
         bool isStereotypeCorba () const;
         bool isStereotypeExtern () const;
+        bool isInterface () const;
         const std::list <umlAttribute> & getAttributes () const;
         const std::list <umlOperation> & getOperations () const;
         umlPackage * getPackage () const;
