@@ -949,7 +949,7 @@ GenerateCode::writeInclude1 (const std::list <std::pair <
 
         ret = true;
     
-        if (getBuildTree ()) {
+        if (getBuildTree () || it.second->isStereotypeExtern ()) {
             if (!it.first.empty ()) {
                 for (const umlPackage * pack : it.first) {
                     include.append (pack->getName ());
