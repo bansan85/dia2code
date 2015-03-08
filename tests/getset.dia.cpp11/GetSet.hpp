@@ -10,9 +10,9 @@ class GetSet {
         bool boole;
     // Operations
     public :
-        constexpr type getNom ();
+        type getNom () const;
         void setNom (type value);
-        constexpr bool isBoole ();
+        bool isBoole () const;
         void setBoole (bool value);
 };
 

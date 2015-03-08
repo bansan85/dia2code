@@ -7,7 +7,7 @@
 class Class {
     // Attributes
     public :
-        constexpr type constance = 150;
+        const type constance = 150;
 };
 
 #endif

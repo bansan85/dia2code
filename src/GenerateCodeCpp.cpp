@@ -155,9 +155,9 @@ GenerateCodeCpp::writeFunction2 (const umlOperation & ope) {
             getFile () << "static ";
         }
     }
-    if ((ope.isConstant ()) && (getVersion () == 11)) {
+/*    if ((ope.isConstant ()) && (getVersion () == 11)) {
         getFile () << "constexpr ";
-    }
+    }*/
 }
 
 void
@@ -224,7 +224,7 @@ GenerateCodeCpp::writeFunction (const umlClassNode & node,
     // Write the reste of the function until the ")"
     writeFunction3 (ope);
 
-    if ((ope.isConstant ()) && (getVersion () == 99)) {
+    if ((ope.isConstant ()) /*&& (getVersion () == 99)*/) {
         getFile () << " const";
     }
 
@@ -346,12 +346,12 @@ GenerateCodeCpp::writeAttribute (const umlClassNode & node,
         getFile () << "static ";
     }
     if (node.isStereotypeConst ()) {
-        if (getVersion () == 99) {
+//        if (getVersion () == 99) {
             getFile () << "const ";
-        }
+/*        }
         else {
             getFile () << "constexpr ";
-        }
+        }*/
     }
     ref = findByName (getDia ().getUml (),
                       attr.getType ());

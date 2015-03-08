@@ -20,7 +20,7 @@ class operations {
         virtual type test (type1 in, type2 inOut, type3 undef = 0, type4 out) = 0;
     public :
         virtual static test2 ();
-        constexpr test3 ();
+        test3 () const;
     protected :
         test4 ();
     public :
