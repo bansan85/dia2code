@@ -5,7 +5,7 @@ namespace package {
     namespace pack2 {
         /**
          * \brief Classe 2
-        */
+         */
         class PackageClasse2 {
         };
     };

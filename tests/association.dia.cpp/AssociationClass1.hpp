@@ -6,7 +6,7 @@
 /**
  * \brief Multiple line
  *        comment
-*/
+ */
 class AssociationClass1 {
     // Associations
     public :

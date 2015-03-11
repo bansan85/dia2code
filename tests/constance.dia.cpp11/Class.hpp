@@ -3,7 +3,7 @@
 
 /**
  * \brief constance comm
-*/
+ */
 class Class {
     // Attributes
     public :

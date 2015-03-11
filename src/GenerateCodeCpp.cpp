@@ -267,7 +267,7 @@ GenerateCodeCpp::writeClassComment (const std::string & nom) {
                                std::string (spc () + " * \\brief "),
                                std::string (spc () + " *        "),
                                "\n");
-        getFile () << spc () << "*/\n";
+        getFile () << spc () << " */\n";
     }
 }
 
