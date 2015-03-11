@@ -740,6 +740,10 @@ extern:
 ------
 Define a external class. Usefull for external dependencies when you don't want
 to generate the class' source.
+IMPORTANT for C++ generator: because extern can define a system header <list>
+or a header for another <Class.hpp>, no extension will be automatically added.
+If a class implements such external class, the extension (if so) will be
+removed.
 
 
 C++ and C++11 generator:

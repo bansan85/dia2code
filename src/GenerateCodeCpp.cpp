@@ -293,8 +293,28 @@ GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
         getFile () << " : ";
         while (parent != node.getParents ().end ()) {
             getFile () << visibility ("Class \"" + node.getName () + "\"",
-                                      (*parent).second) << " "
-                       << fqname (*(*parent).first, false);
+                                      (*parent).second) << " ";
+            if (!(*parent).first->isStereotypeExtern ()) {
+                getFile () << fqname (*(*parent).first, false);
+            }
+            else {
+                // Remove extension if necessary
+                const char *pos, *name;
+
+                name = (*parent).first->getName ().c_str ();
+                pos = strchr (name, '.');
+
+                if (pos == NULL) {
+                    getFile () << fqname (*(*parent).first, false);
+                }
+                else {
+                    char *shortName;
+
+                    shortName = strndup (name, pos - name);
+                    getFile () << shortName;
+                    free (shortName);
+                }
+            }
             ++parent;
             if (parent != node.getParents ().end ()) {
                 getFile () << ", ";
