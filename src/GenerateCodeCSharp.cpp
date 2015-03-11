@@ -134,8 +134,10 @@ GenerateCodeCSharp::writeFunctionComment (const umlOperation & ope) {
                                std::string (spc () + "/// "),
                                "</param>\n");
     }
-    getFile () << spc () << "/// <returns>" << ope.getType ()
-               << "</returns>\n";
+    if (!ope.getType ().empty ()) {
+        getFile () << spc () << "/// <returns>" << ope.getType ()
+                   << "</returns>\n";
+    }
 }
 
 void

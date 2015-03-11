@@ -9,6 +9,9 @@ public class operations {
      * @return type
      */
     private abstract type test (type1 in, type2 inOut, type3 undef, type4 out);
+    /**
+     * comment2
+     */
     public static test2 () {
     }
     public final test3 () {

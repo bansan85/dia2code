@@ -116,7 +116,9 @@ GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
                                std::string (spc () + " *        "),
                                "\n");
     }
-    getFile () << spc () << " * \\return " << ope.getType () << "\n";
+    if (!ope.getType ().empty ()) {
+        getFile () << spc () << " * \\return " << ope.getType () << "\n";
+    }
     getFile () << spc () << " */\n";
 }
 
@@ -130,7 +132,6 @@ GenerateCodeCpp::writeFunction1 (const umlOperation & ope) {
 
 void
 GenerateCodeCpp::writeFunction2 (const umlOperation & ope) {
-    /* print comments on operation */
     if (!ope.getComment ().empty ()) {
         writeFunctionComment (ope);
     }

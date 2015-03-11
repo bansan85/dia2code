@@ -15,6 +15,9 @@ class operations {
      * @return type
      */
     abstract private function test ($in, $inOut, $undef, $out);
+    /**
+     * comment2
+     */
     public static function test2 () {
     }
     public function test3 () {
