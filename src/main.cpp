@@ -262,6 +262,7 @@ under certain conditions; read the COPYING file for details.\n";
 }
 catch (const std::string & Msg) {
     std::cerr << Msg;
+    return 1;
 }
 }
 
