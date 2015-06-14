@@ -37,7 +37,7 @@ umlClass::umlClass () :
     stereotypeStruct (false),
     stereotypeGetSet (false),
     stereotypeExtern (false),
-    interface (false),
+    stereotypeInterface (false),
 #ifdef ENABLE_CORBA
     stereotypeCorba (false),
 #endif
@@ -105,7 +105,7 @@ umlClass::isStereotypeExtern () const {
 
 bool
 umlClass::isInterface () const {
-    return interface;
+    return stereotypeInterface;
 }
 
 #ifdef ENABLE_CORBA
@@ -656,7 +656,7 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
 
                 umlend = umlClassNode::find (res, BAD_TSAC2 (end1));
                 if (umlend != NULL) {
-                    umlend->interface = true;
+                    umlend->stereotypeInterface = true;
                 }
 
                 free (end2);
@@ -720,7 +720,7 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
 
                     umlend = umlClassNode::find (res, BAD_TSAC2 (end1));
                     if (umlend != NULL) {
-                        umlend->interface = true;
+                        umlend->stereotypeInterface = true;
                     }
                 }
 
@@ -811,7 +811,7 @@ umlClass::parseClass (xmlNodePtr class_) {
                 stereotypeStruct = isStructStereo (stereotype);
                 stereotypeGetSet = isGetSetStereo (stereotype);
                 stereotypeExtern = isInside (stereotype, "extern");
-                interface = isInterfaceStereo (stereotype);
+                stereotypeInterface = isInterfaceStereo (stereotype);
 #ifdef ENABLE_CORBA
                 stereotypeCorba = isCorbaStereo (stereotype);
 #endif

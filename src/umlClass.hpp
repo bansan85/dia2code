@@ -56,7 +56,7 @@ class umlClass {
         bool stereotypeStruct : 1;
         bool stereotypeGetSet : 1;
         bool stereotypeExtern : 1;
-        bool interface : 1;
+        bool stereotypeInterface : 1;
 #ifdef ENABLE_CORBA
         bool stereotypeCorba : 1;
 #endif
