@@ -127,4 +127,24 @@ kindStr (Kind k) {
     }
 }
 
+bool
+isInside (std::string & meule, const char * aiguille) {
+    char * token = NULL;
+    char * tmp;
+    char * meule2 = new char [meule.length () + 1];
+
+    strcpy (meule2, meule.c_str ());
+
+    token = strtok_r (meule2, ",", &tmp);
+    while (token != nullptr) {
+        if (strcmp (token, aiguille) == 0) {
+            delete [] meule2;
+            return true;
+        }
+        token = strtok_r (nullptr, ",", &tmp);
+    }
+    delete [] meule2;
+    return false;
+}
+
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

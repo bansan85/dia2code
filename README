@@ -462,8 +462,9 @@ public class Class <template extends type> extends ParentClass {
 
 STEREOTYPES
 
-Only one stereotype can be apply on each class, attribute, operation and
-inheritance.
+Mutiple stereotype can be apply on each class, attribute, operation and
+inheritance by separating them with an "," without space.
+For example (without quotes): "interface,getset".
 
 
 - Inheritance or Realization of an interface:

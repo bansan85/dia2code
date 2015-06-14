@@ -78,10 +78,10 @@ umlOperation::umlOperation (xmlNodePtr node) :
         else if (!strcmp ("stereotype", BAD_TSAC2 (nodename))) {
             std::string stereo;
             parseDiaNode (node->xmlChildrenNode, stereo);
-            if (stereo.compare ("delete") == 0) {
+            if (isInside (stereo, "delete")) {
                 stereotypeDelete = true;
             }
-            else if (stereo.compare ("GetSet") == 0) {
+            else if (isInside (stereo, "GetSet")) {
                 stereotypeGetSet = true;
             }
             else if (!stereo.empty ()) {

@@ -137,31 +137,32 @@ umlClass::getTemplates () const {
 
 bool
 umlClass::isEnumStereo (std::string & stereo) {
-    return (!stereo.compare ("enum") ||
-            !stereo.compare ("enumeration") ||
-            !stereo.compare ("Enum") ||
-            !stereo.compare ("Enumeration")
+    return (isInside (stereo, "enum") ||
+            isInside (stereo, "enumeration") ||
+            isInside (stereo, "Enum") ||
+            isInside (stereo, "Enumeration")
 #ifdef ENABLE_CORBA
-            || !stereo.compare ("CORBAEnum")
+            || isInside (stereo, "CORBAEnum")
 #endif
             );
 }
 
 bool
 umlClass::isStructStereo (std::string & stereo) {
-    return (!stereo.compare ("struct") ||
-            !stereo.compare ("structure") ||
-            !stereo.compare ("Struct") ||
-            !stereo.compare ("Structure")
+    return (isInside (stereo, "struct") ||
+            isInside (stereo, "structure") ||
+            isInside (stereo, "Struct") ||
+            isInside (stereo, "Structure")
 #ifdef ENABLE_CORBA
-            || !stereo.compare ("CORBAStruct")
+            || isInside (stereo, "CORBAStruct")
 #endif
             );
 }
 
 bool
 umlClass::isTypedefStereo (std::string & stereo) {
-    return (!stereo.compare ("typedef")
+    return (isInside (stereo, "typedef") ||
+            isInside (stereo, "TypeDef")
 #ifdef ENABLE_CORBA
             || !stereo.compare ("CORBATypedef")
 #endif
@@ -171,40 +172,38 @@ umlClass::isTypedefStereo (std::string & stereo) {
 #ifdef ENABLE_CORBA
 bool
 umlClass::isCorbaStereo (std::string & stereo) {
-    return (!stereo.compare (0, 5, "CORBA")
-            || !stereo.compare ("CORBATypedef")
-            );
+    return (!stereo.compare (0, 5, "CORBA");
 }
 #endif
 
 bool
 umlClass::isConstStereo (std::string & stereo) {
-    return (!stereo.compare ("const") ||
-            !stereo.compare ("constant") ||
-            !stereo.compare ("Const") ||
-            !stereo.compare ("Constant")
+    return (isInside (stereo, "const") ||
+            isInside (stereo, "constant") ||
+            isInside (stereo, "Const") ||
+            isInside (stereo, "Constant")
 #ifdef ENABLE_CORBA
-            || !stereo.compare ("CORBAConstant")
+            || isInside (stereo, "CORBAConstant")
 #endif
             );
 }
 
 bool
 umlClass::isGetSetStereo (std::string & stereo) {
-    return (!stereo.compare ("getset") ||
-            !stereo.compare ("GetSet")
+    return (isInside (stereo, "getset") ||
+            isInside (stereo, "GetSet")
 #ifdef ENABLE_CORBA
-            || !stereo.compare ("CORBAGetSet")
+            || isInside (stereo, "CORBAGetSet")
 #endif
             );
 }
 
 bool
 umlClass::isInterfaceStereo (std::string & stereo) {
-    return (!stereo.compare ("interface") ||
-            !stereo.compare ("Interface")
+    return (isInside (stereo, "interface") ||
+            isInside (stereo, "Interface")
 #ifdef ENABLE_CORBA
-            || !stereo.compare ("CORBAInterface")
+            || isInside (stereo, "CORBAInterface")
 #endif
             );
 }
@@ -688,16 +687,17 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
                         if (stereo.empty ()) {
                             visible = Visibility::PUBLIC;
                         }
-                        else if (stereo.compare ("public") == 0) {
+                        else if (isInside (stereo, "public")) {
                             visible = Visibility::PUBLIC;
                         }
-                        else if (stereo.compare ("private") == 0) {
+                        else if (isInside (stereo, "private")) {
                             visible = Visibility::PRIVATE;
                         }
-                        else if (stereo.compare ("protected") == 0) {
+                        else if (isInside (stereo, "protected")) {
                             visible = Visibility::PROTECTED;
                         }
-                        else if (stereo.compare ("implementation") == 0) {
+                        else if (isInside (stereo,
+                                           "implementation")) {
                             visible = Visibility::IMPLEMENTATION;
                         }
                         else {
@@ -810,7 +810,7 @@ umlClass::parseClass (xmlNodePtr class_) {
                 stereotypeConst = isConstStereo (stereotype);
                 stereotypeStruct = isStructStereo (stereotype);
                 stereotypeGetSet = isGetSetStereo (stereotype);
-                stereotypeExtern = stereotype.compare ("extern") == 0;
+                stereotypeExtern = isInside (stereotype, "extern");
                 interface = isInterfaceStereo (stereotype);
 #ifdef ENABLE_CORBA
                 stereotypeCorba = isCorbaStereo (stereotype);

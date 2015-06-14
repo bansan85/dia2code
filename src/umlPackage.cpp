@@ -57,7 +57,7 @@ umlPackage::umlPackage (xmlNodePtr package, std::string id_) :
                 std::string stereo;
 
                 parseDiaNode (attribute->xmlChildrenNode, stereo);
-                if (!stereo.compare ("extern")) {
+                if (isInside (stereo, "extern")) {
                     stereotypeExtern = true;
                 }
                 else if (!stereo.empty ()) {

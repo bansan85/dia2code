@@ -48,6 +48,7 @@ std::string strtoupperfirst (const std::string & s);
 std::list <std::string> parseClassNames (char *s);
 bool isPresent (std::list <std::string> list, const char *name);
 const char * kindStr (Kind k);
+bool isInside (std::string & meule, const char * aiguille);
 
 #endif
 
