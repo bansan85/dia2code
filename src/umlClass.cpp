@@ -38,6 +38,7 @@ umlClass::umlClass () :
     stereotypeGetSet (false),
     stereotypeExtern (false),
     stereotypeInterface (false),
+    stereotypeDllExport (false),
 #ifdef ENABLE_CORBA
     stereotypeCorba (false),
 #endif
@@ -104,8 +105,13 @@ umlClass::isStereotypeExtern () const {
 }
 
 bool
-umlClass::isInterface () const {
+umlClass::isStereotypeInterface () const {
     return stereotypeInterface;
+}
+
+bool
+umlClass::isStereotypeDllExport () const {
+    return stereotypeDllExport;
 }
 
 #ifdef ENABLE_CORBA
@@ -208,6 +214,12 @@ umlClass::isInterfaceStereo (std::string & stereo) {
             );
 }
 
+bool
+umlClass::isDllExportStereo (std::string & stereo) {
+    return (isInside (stereo, "dllexport") ||
+            isInside (stereo, "DllExport"));
+}
+
 /**
   * Adds get () (or is ()) and set () methods for each attribute
 */
@@ -222,7 +234,8 @@ umlClass::makeGetSetMethods () {
                                  false,
                                  false,
                                  false,
-                                 true);
+                                 true,
+                                 false);
         umlOperation::insertOperation (operation2, operations);
     }
 }
@@ -812,6 +825,7 @@ umlClass::parseClass (xmlNodePtr class_) {
                 stereotypeGetSet = isGetSetStereo (stereotype);
                 stereotypeExtern = isInside (stereotype, "extern");
                 stereotypeInterface = isInterfaceStereo (stereotype);
+                stereotypeDllExport = isDllExportStereo (stereotype);
 #ifdef ENABLE_CORBA
                 stereotypeCorba = isCorbaStereo (stereotype);
 #endif

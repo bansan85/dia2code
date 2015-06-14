@@ -137,6 +137,9 @@ GenerateCodeCpp::writeFunction2 (const umlOperation & ope) {
     }
 
     getFile () << spc ();
+    if (ope.isStereotypeDllExport ()) {
+        getFile () << "DllExport ";
+    }
     if ((ope.getInheritance () != Inheritance::FINAL)
 #ifdef ENABLE_CORBA
         || (getCorba ())
@@ -285,7 +288,11 @@ GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
         }
     }
 
-    getFile () << spc () << "class " << node.getName ();
+    getFile () << spc () << "class ";
+    if (node.isStereotypeDllExport ()) {
+        getFile () << "DllExport ";
+    }
+    getFile () << node.getName ();
     if (!node.getParents ().empty ()) {
         std::list <std::pair <umlClass *, Visibility> >::const_iterator parent;
 

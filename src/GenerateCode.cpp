@@ -897,6 +897,7 @@ GenerateCode::writeFunctionGetSet1 (const umlClassNode & node,
                        ope.isStatic (),
                        true,
                        false,
+                       false,
                        false);
     writeFunction (node,ope2, curr_visibility);
 
@@ -917,6 +918,7 @@ GenerateCode::writeFunctionGetSet1 (const umlClassNode & node,
                          ope.getVisibility (),
                          ope.getInheritance (),
                          ope.isStatic (),
+                         false,
                          false,
                          false,
                          false);

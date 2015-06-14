@@ -282,6 +282,12 @@ GenerateCodeJava::writeFunction (const umlClassNode & node,
                                  Visibility & currVisibility) {
     writeFunction1 (node, ope, currVisibility);
 
+    if (ope.isStereotypeDllExport ()) {
+        std::cerr << "Class \"" << node.getName () << "\", "
+                  << "Operation \"" << ope.getName ()
+                  << "\": this generator doesn't support DllExport feature.\n";
+    }
+
     getFile () << spc ();
     getFile () << visibility ("Class, \"" + node.getName () +
                                     "\", operation \"" + ope.getName () + "\"",
@@ -340,6 +346,11 @@ GenerateCodeJava::writeClassComment (const std::string & nom) {
 void
 GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
                                     bool visible) {
+    if (node.isStereotypeDllExport ()) {
+        std::cerr << "Class \"" << node.getName ()
+                  << "\": this generator doesn't support DllExport feature.\n";
+    }
+
     getFile () << spc ();
     if (visible) {
         getFile () << "public ";
@@ -347,7 +358,7 @@ GenerateCodeJava::writeClassStart1 (const umlClassNode & node,
     if (node.isAbstract ()) {
         getFile () << "abstract ";
     }
-    if (node.isInterface ()) {
+    if (node.isStereotypeInterface ()) {
         getFile () << "interface ";
     }
     else {
@@ -383,7 +394,7 @@ GenerateCodeJava::writeClassStart2 (const umlClassNode & node,
                           << (*parent).first->getName ()
                           << "\": only a public visibility is supported.\n";
             }
-            if ((*parent).first->isInterface ()) {
+            if ((*parent).first->isStereotypeInterface ()) {
                 getFile () << implement;
             }
             else {

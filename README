@@ -780,10 +780,28 @@ public interface Interface2 {
 }
 
 
+dllexport, DllExport:
+---------  ---------
+Force some signature to be store in a Microsoft Library Manager (lib).
+
+
+C++ and C++11 generator:
+class DllExport operations {
+}
+// Don't forget to add a #define:
+// #define DllExport __declspec (dllexport)
+
+
+C# generator:
+Java generator:
+PHP gerenator:
+not supported
+
+
 - Operation:
 
-delete:
-------
+delete, Delete:
+------  ------
 In C++11, a deleted function must be defined in header.
 Not applicable in C# and Java.
 
@@ -824,6 +842,25 @@ GetSet:
 ------
 This feature will generate the same output than GetSet for class except it will
 respect the visibility of the operation. You also need to define the attribut.
+
+
+dllexport, DllExport:
+---------  ---------
+Force some signature to be store in a Microsoft Library Manager (lib).
+
+
+C++ and C++11 generator:
+class operations {
+  DllExport test ();
+}
+// Don't forget to add a #define:
+// #define DllExport __declspec (dllexport)
+
+
+C# generator:
+Java generator:
+PHP gerenator:
+not supported
 
 
 - Attributes:

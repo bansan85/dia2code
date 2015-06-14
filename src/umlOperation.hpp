@@ -32,6 +32,7 @@ class umlOperation : public umlAttribute {
     private :
         bool stereotypeDelete : 1;
         bool stereotypeGetSet : 1;
+        bool stereotypeDllExport : 1;
         std::list <umlAttribute> parameters;
     public :
         static void insertOperation (umlOperation &n,
@@ -46,12 +47,14 @@ class umlOperation : public umlAttribute {
                       Inheritance inheritance_,
                       bool isstatic_,
                       bool isconstant_,
-                      bool stereotypeDelete,
-                      bool stereotypeGetSet);
+                      bool stereotypeDelete_,
+                      bool stereotypeGetSet_,
+                      bool stereotypeDllExport_);
 
         void addParameter (umlAttribute & attr);
         bool isStereotypeDelete () const;
         bool isStereotypeGetSet () const;
+        bool isStereotypeDllExport () const;
         const std::list <umlAttribute> & getParameters () const;
 
         ~umlOperation ();

@@ -146,6 +146,11 @@ GenerateCodeCSharp::writeFunction (const umlClassNode & node,
                                    Visibility & curr_visibility) {
     writeFunction1 (node, ope, curr_visibility);
 
+    if (ope.isStereotypeDllExport ()) {
+        std::cerr << "Class \"" << node.getName () << "\", "
+                  << "Operation \"" << ope.getName ()
+                  << "\": this generator doesn't support DllExport feature.\n";
+    }
 
     getFile () << spc ();
     getFile () << visibility ("Class, \"" + node.getName () +

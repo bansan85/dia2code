@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "umlOperation.hpp"
 #include "parse_diagram.hpp"
 #include "string2.hpp"
+#include "umlClass.hpp"
 
 /**
   * Inserts "n" into the list "l", in orderly fashion
@@ -66,6 +67,7 @@ umlOperation::umlOperation (xmlNodePtr node) :
     umlAttribute (),
     stereotypeDelete (false),
     stereotypeGetSet (false),
+    stereotypeDllExport (false),
     parameters ()
 {
     parse (node);
@@ -78,16 +80,15 @@ umlOperation::umlOperation (xmlNodePtr node) :
         else if (!strcmp ("stereotype", BAD_TSAC2 (nodename))) {
             std::string stereo;
             parseDiaNode (node->xmlChildrenNode, stereo);
-            if (isInside (stereo, "delete")) {
+            if (isInside (stereo, "delete") ||
+                isInside (stereo, "Delete")) {
                 stereotypeDelete = true;
             }
-            else if (isInside (stereo, "GetSet")) {
+            if (umlClass::isGetSetStereo (stereo)) {
                 stereotypeGetSet = true;
             }
-            else if (!stereo.empty ()) {
-                std::cerr << "Unknown stereotype: " << stereo << ".\n"
-                          << "Allow stereotypes are: "
-                          << "\"delete\", \"GetSet\".\n";
+            if (umlClass::isDllExportStereo (stereo)) {
+                stereotypeDllExport = true;
             }
         }
         free (nodename);
@@ -103,7 +104,8 @@ umlOperation::umlOperation (std::string name_,
                             bool isstatic_,
                             bool isconstant_,
                             bool stereotypeDelete_,
-                            bool stereotypeGetSet_) :
+                            bool stereotypeGetSet_,
+                            bool stereotypeDllExport_) :
     umlAttribute (name_,
                   "",
                   type_,
@@ -115,6 +117,7 @@ umlOperation::umlOperation (std::string name_,
                   Kind::UNKNOWN),
     stereotypeDelete (stereotypeDelete_),
     stereotypeGetSet (stereotypeGetSet_),
+    stereotypeDllExport (stereotypeDllExport_),
     parameters ()
 {
 }
@@ -137,6 +140,11 @@ umlOperation::isStereotypeDelete () const {
 bool
 umlOperation::isStereotypeGetSet () const {
     return stereotypeGetSet;
+}
+
+bool
+umlOperation::isStereotypeDllExport () const {
+    return stereotypeDllExport;
 }
 
 umlOperation::~umlOperation ()
