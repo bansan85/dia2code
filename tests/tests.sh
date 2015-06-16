@@ -61,6 +61,18 @@ do
         res="false"
     fi ;
     echo ""
+
+    rm -Rf result/*
+    echo "dia2code -t $gen cl.dia -d result -cl Classe1,Classe3"
+    ../src/dia2code -t $gen cl.dia -d result -cl Classe1,Classe3 || exit 1
+    diff -pu cl.dia.$gen"_cl" result > cl.dia.$gen"_cl".result.txt
+    if [[ ! $? -eq 0 ]] ; then
+        echo cl.dia.$gen"_cl" FAILED
+        rm -Rf cl.dia.$gen"_cl".fail
+        cp -R result cl.dia.$gen"_cl".fail
+        res="false"
+    fi ;
+    echo ""
 done
 
 if [[ $res == "false" ]] ; then

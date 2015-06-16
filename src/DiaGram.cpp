@@ -236,8 +236,10 @@ DiaGram::push (umlClassNode & node) {
     // Make sure all classes that this one depends on are already pushed.
     for (umlClassNode & it : usedClasses) {
         // don't push this class
-        if ((node.getName ().compare (it.getName ()) != 0) &&
-            (!(isPresent (tmp_classes, it.getName ().c_str ())^invertsel))) {
+        if (((getGenClasses ().empty ()) ||
+            (isPresent (getGenClasses (),
+                        it.getName ().c_str ()) ^ getInvertSel ())) &&
+            (!(isPresent (tmp_classes, it.getName ().c_str ())))) {
             push (it);
         }
     }

@@ -226,9 +226,9 @@ GenerateCode::generate_code () {
     std::list <umlClassNode> tmplist = getDia ().getUml ();
     
     for (umlClassNode & it : tmplist) {
-        if (!(isPresent (getDia ().getGenClasses (),
-                         it.getName ().c_str ()) ^
-                                                  getDia ().getInvertSel ())) {
+        if ((getDia ().getGenClasses ().empty ()) ||
+            (isPresent (getDia ().getGenClasses (),
+                        it.getName ().c_str ()) ^ getDia ().getInvertSel ())) {
             getDia ().push (it);
         }
     }
