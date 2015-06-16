@@ -26,14 +26,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 umlClassNode * findByName (std::list <umlClassNode> & list,
                            const std::string & name ) {
     umlClassNode * ret = NULL;
+    bool stereo = true;
+
     if (!name.empty ()) {
         for (umlClassNode & it : list) {
-            if ( it.getName ().compare (name) == 0) {
-                if (ret != NULL) {
+            if (it.getName ().compare (name) == 0) {
+                if ((ret != NULL)  &&
+                    (!stereo) &&
+                    (!it.isStereotypeExtern ())) {
                     std::cerr << "More than one class as the same name "
                               << name << ". \n";
                 }
-                ret = &it;
+                if (stereo)
+                {
+                    ret = &it;
+                }
+                stereo = it.isStereotypeExtern ();
             }
         }
     }
