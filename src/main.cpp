@@ -92,7 +92,8 @@ under certain conditions; read the COPYING file for details.\n";
     Note: parameters can be specified in any order.";
 
     if (argc < 2) {
-        throw std::string (std::string (notice) + "\nUsage: " + std::string (argv[0]) + " " + std::string (help) + "\n");
+        std::cout << notice << "\nUsage: " << argv[0] << " " << help << "\n";
+        return 0;
     }
 
     // Argument parsing: rewritten from scratch
