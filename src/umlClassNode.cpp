@@ -171,7 +171,7 @@ umlClassNode::addDependency (umlPackage * dependent) {
 void
 umlClassNode::addAggregate (const char *name_,
         char composite,
-        umlClassNode & base,
+        umlClassNode * base,
         const char *multiplicity,
         Visibility visibility) {
     umlassoc tmp;
@@ -194,7 +194,7 @@ umlClassNode::addAggregate (const char *name_,
         tmp.multiplicity[0] = '1';
         tmp.multiplicity[1] = 0;
     }
-    tmp.key = &base;
+    tmp.key = base;
     tmp.composite = composite;
     tmp.visibility = visibility;
     associations.push_front (tmp);

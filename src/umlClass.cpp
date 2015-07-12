@@ -281,7 +281,7 @@ associate (std::list <umlClassNode *> & classlist,
     if (umlbase != NULL && umlaggregate != NULL) {
         umlaggregate->addAggregate (name,
                                     composite,
-                                    *umlbase,
+                                    umlbase,
                                     multiplicity,
                                     visibility);
     }

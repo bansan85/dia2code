@@ -56,7 +56,7 @@ class umlClassNode : public umlClass {
         void addDependency (umlPackage * dependent);
         void addAggregate (const char *name,
                            char composite,
-                           umlClassNode & base,
+                           umlClassNode * base,
                            const char *multiplicity,
                            Visibility visibility);
 
