@@ -39,7 +39,8 @@ class DiaGram {
         bool        usecorba : 1;
 #endif
         
-        std::list <std::string> tmp_classes;
+        // To detect circular loop.
+        std::list <umlClassNode *> tmp_classes;
         std::list <std::pair <std::list <umlPackage *>, umlClassNode * > >
                                                                       includes;
         std::list <declaration> decl;
@@ -73,7 +74,9 @@ class DiaGram {
         void setUseCorba (bool corba);
 #endif
 
-        void push (umlClassNode &node);
+        void cleanTmpClasses ();
+        std::list <umlClassNode *> & getTmpClasses ();
+        void push (umlClassNode & node);
         const std::list <std::pair <std::list <umlPackage *>,
                               umlClassNode * > > & getIncludes () const;
         void cleanIncludes ();

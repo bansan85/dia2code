@@ -98,6 +98,18 @@ GenerateCodeCpp::writeInclude (const char * name) {
 }
 
 void
+GenerateCodeCpp::writeAfterInclude (umlClassNode * node)
+{
+/*    std::list <const umlClass *>::const_iterator it;
+    
+    it = node->getCircularLoop ().begin ();
+    while (it != node->getCircularLoop ().end ()) {
+        getFile () << spc () << "class " << (*it)->getName () << ";\n";
+        ++it;
+    }*/
+}
+
+void
 GenerateCodeCpp::writeFunctionComment (const umlOperation & ope) {
     getFile () << spc () << "/**\n";
     getFile () << comment (ope.getComment (),

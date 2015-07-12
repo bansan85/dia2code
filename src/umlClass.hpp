@@ -50,6 +50,7 @@ class umlClass {
         std::string name;
         std::string comment;
         bool abstract : 1;
+        bool pushed : 1;
         bool stereotypeTypedef : 1;
         bool stereotypeEnum : 1;
         bool stereotypeConst : 1;
@@ -63,11 +64,7 @@ class umlClass {
 #endif
         std::list <umlAttribute> attributes;
         std::list <umlOperation> operations;
-/*
- * struct umltemplate {
-    std::string name;
-    std::string type;
-};*/
+        std::list <const umlClass *> circularLoop;
         std::list <std::pair <std::string, std::string> > templates;
         umlPackage *package;
         geometry geom;
@@ -88,6 +85,8 @@ class umlClass {
         const std::string & getName () const;
         const std::string & getComment () const;
         bool isAbstract () const;
+        bool isPushed () const;
+        void setPushed ();
         bool isStereotypeTypedef () const;
         bool isStereotypeEnum () const;
         bool isStereotypeConst () const;
@@ -100,6 +99,8 @@ class umlClass {
         bool isStereotypeDllExport () const;
         const std::list <umlAttribute> & getAttributes () const;
         const std::list <umlOperation> & getOperations () const;
+        void addCircularLoop (const umlClass * classe);
+        const std::list <const umlClass *> & getCircularLoop () const;
         umlPackage * getPackage () const;
         const std::list <std::pair <std::string, std::string> > &
                                                          getTemplates () const;

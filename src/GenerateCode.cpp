@@ -207,6 +207,7 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
 #endif
 
     writeInclude (getDia ().getIncludes ());
+    writeAfterInclude (d.u.this_class);
 
     return;
 }
@@ -226,9 +227,16 @@ GenerateCode::generate_code () {
     std::list <umlClassNode> tmplist = getDia ().getUml ();
     
     for (umlClassNode & it : tmplist) {
-        if ((getDia ().getGenClasses ().empty ()) ||
-            (isPresent (getDia ().getGenClasses (),
-                        it.getName ().c_str ()) ^ getDia ().getInvertSel ())) {
+        if ((!it.isPushed ()) &&
+            ((getDia ().getGenClasses ().empty ()) ||
+             (isPresent (getDia ().getGenClasses (),
+                      it.getName ().c_str ()) ^ getDia ().getInvertSel ())) &&
+            (find_if (getDia ().getTmpClasses ().begin (),
+                      getDia ().getTmpClasses ().end (),
+                      [&it](umlClassNode * it3)
+                      {
+                        return it3->getName ().compare (it.getName ()) == 0;
+                      }) == getDia ().getTmpClasses ().end ())) {
             getDia ().push (it);
         }
     }
@@ -1010,6 +1018,11 @@ GenerateCode::writeInclude1 (const std::list <std::pair <
     }
 
     return ret;
+}
+
+void
+GenerateCode::writeAfterInclude (umlClassNode *) {
+
 }
 
 GenerateCode::~GenerateCode () {

@@ -41,6 +41,7 @@ class GenerateCodeCpp : public GenerateCode {
         bool writeInclude (const std::list <std::pair <std::list <umlPackage*>,
                                                     umlClassNode * > > & name);
         void writeInclude (const char * name);
+        void writeAfterInclude (umlClassNode * node);
         void writeFunctionComment (const umlOperation & ope);
         void writeFunction (const umlClassNode & node,
                             const umlOperation & ope,

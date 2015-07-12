@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
 #include <cassert>
+#include <algorithm>
 
 #include "DiaGram.hpp"
 #include "scan_tree.hpp"
@@ -222,6 +223,25 @@ findOrAddModule (std::list <declaration> &dptr,
 }
 
 void
+DiaGram::cleanTmpClasses () {
+    for (umlClassNode * it : tmp_classes) {
+        for (const umlClassNode * it2 : tmp_classes) {
+            if (it != it2) {
+                umlClassNode * classe = new umlClassNode (*it2);
+                it->addCircularLoop (classe);
+            }
+        }
+    }
+
+    tmp_classes.clear ();
+}
+
+std::list <umlClassNode *> &
+DiaGram::getTmpClasses () {
+    return tmp_classes;
+}
+
+void
 DiaGram::push (umlClassNode & node) {
     std::list <umlClassNode> usedClasses;
     declaration d;
@@ -230,16 +250,23 @@ DiaGram::push (umlClassNode & node) {
         return;
     }
 
-    tmp_classes.push_back (node.getName ());
+    tmp_classes.push_back (&node);
+    node.setPushed ();
 
     listClasses (node, usedClasses, true);
     // Make sure all classes that this one depends on are already pushed.
     for (umlClassNode & it : usedClasses) {
         // don't push this class
-        if (((getGenClasses ().empty ()) ||
-            (isPresent (getGenClasses (),
-                        it.getName ().c_str ()) ^ getInvertSel ())) &&
-            (!(isPresent (tmp_classes, it.getName ().c_str ())))) {
+        if ((!node.isPushed ()) &&
+            ((genClasses.empty ()) ||
+             (isPresent (genClasses,
+                         it.getName ().c_str ()) ^ getInvertSel ())) &&
+            (find_if (tmp_classes.begin (),
+                      tmp_classes.end (),
+                      [&it](umlClassNode * it2)
+                      {
+                        return it2->getName ().compare (it.getName ()) == 0;
+                      }) == tmp_classes.end ())) {
             push (it);
         }
     }

@@ -31,6 +31,7 @@ umlClass::umlClass () :
     name (),
     comment (),
     abstract (false),
+    pushed (false),
     stereotypeTypedef (false),
     stereotypeEnum (false),
     stereotypeConst (false),
@@ -44,6 +45,7 @@ umlClass::umlClass () :
 #endif
     attributes (),
     operations (),
+    circularLoop (),
     templates (),
     package (nullptr),
     geom ({0., 0., 0., 0.}) {
@@ -67,6 +69,16 @@ umlClass::getComment () const {
 bool
 umlClass::isAbstract () const {
     return abstract;
+}
+
+bool
+umlClass::isPushed () const {
+    return pushed;
+}
+
+void
+umlClass::setPushed () {
+    pushed = true;
 }
 
 bool
@@ -129,6 +141,16 @@ umlClass::getAttributes () const {
 const std::list <umlOperation> &
 umlClass::getOperations () const {
     return operations;
+}
+
+void
+umlClass::addCircularLoop (const umlClass * classe) {
+    circularLoop.push_back (classe);
+}
+
+const std::list <const umlClass *> &
+umlClass::getCircularLoop () const {
+    return circularLoop;
 }
 
 umlPackage *
