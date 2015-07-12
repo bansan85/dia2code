@@ -58,8 +58,8 @@ GenerateCodePhp::writeEndHeader () {
 
 bool
 GenerateCodePhp::writeInclude (const std::list <std::pair <
-                                                   std::list <umlPackage *>,
-                                                   umlClassNode * > > & name) {
+                                                      std::list <umlPackage *>,
+                                             const umlClassNode * > > & name) {
     return writeInclude1 (name,
                           "require_once '", "';\n",
                           "require_once '", "';\n",

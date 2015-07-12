@@ -106,8 +106,6 @@ class umlClass {
                                                          getTemplates () const;
         
         void makeGetSetMethods ();
-        static void lolipopImplementation (std::list <umlClassNode> & classlist,
-                                           xmlNodePtr object);
         static bool parseDiagram (char *diafile,
                                   std::list <umlClassNode> & res);
         void parseClass (xmlNodePtr class_);

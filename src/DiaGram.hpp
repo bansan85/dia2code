@@ -41,7 +41,7 @@ class DiaGram {
         
         // To detect circular loop.
         std::list <umlClassNode *> tmp_classes;
-        std::list <std::pair <std::list <umlPackage *>, umlClassNode * > >
+        std::list <std::pair <std::list <umlPackage *>, const umlClassNode *> >
                                                                       includes;
         std::list <declaration> decl;
         
@@ -52,10 +52,10 @@ class DiaGram {
                           bool expandPackages);
 
         bool haveInclude (std::list <umlPackage *> & packages,
-                          umlClassNode * cla) const;
+                          const umlClassNode * cla) const;
         void addInclude (std::list <umlPackage *> & packages,
-                         umlClassNode * cla);
-        void pushInclude (const umlClassNode & node);
+                         const umlClassNode * cla);
+        void pushInclude (const umlClassNode * node);
         void pushInclude (umlPackage * node);
     public:
         DiaGram ();
@@ -78,7 +78,7 @@ class DiaGram {
         std::list <umlClassNode *> & getTmpClasses ();
         void push (umlClassNode & node);
         const std::list <std::pair <std::list <umlPackage *>,
-                              umlClassNode * > > & getIncludes () const;
+                               const umlClassNode * > > & getIncludes () const;
         void cleanIncludes ();
         void determineIncludes (declaration &d, bool expandPackages);
         

@@ -133,7 +133,7 @@ class GenerateCode {
         // return true if at least one include has been written.
         virtual bool writeInclude (const std::list <std::pair <
                                      std::list <umlPackage *>,
-                                                umlClassNode * > > & name) = 0;
+                                          const umlClassNode * > > & name) = 0;
         virtual void writeInclude (const char * name) = 0;
         virtual void writeAfterInclude (umlClassNode * node);
         virtual void writeFunctionComment (const umlOperation & ope) = 0;
@@ -170,8 +170,8 @@ class GenerateCode {
                                    const umlOperation & ope,
                                    Visibility & curr_visibility);
         bool writeInclude1 (const std::list <std::pair <
-                                                     std::list <umlPackage *>,
-                                                     umlClassNode *> > & name,
+                                                      std::list <umlPackage *>,
+                            const umlClassNode *> > & name,
                             const char * startIncludeSystem,
                             const char * endIncludeSystem,
                             const char * startIncludeFile,

@@ -940,7 +940,7 @@ GenerateCode::writeFunctionGetSet1 (const umlClassNode & node,
 bool
 GenerateCode::writeInclude1 (const std::list <std::pair <
                                                       std::list <umlPackage *>,
-                                                      umlClassNode *> > & name,
+                                                const umlClassNode *> > & name,
                              const char * startIncludeSystem,
                              const char * endIncludeSystem,
                              const char * startIncludeFile,
@@ -951,8 +951,8 @@ GenerateCode::writeInclude1 (const std::list <std::pair <
     // generated.
     std::list <std::pair <std::string, bool> > incs;
 
-    for (const std::pair <std::list <umlPackage *>, umlClassNode *> & it :
-                                                                        name) {
+    for (const std::pair <std::list <umlPackage *>,
+                                           const umlClassNode *> & it : name) {
         std::string include;
         std::pair <std::string, bool> add;
 

@@ -295,10 +295,10 @@ DiaGram::push (umlClassNode & node) {
 
 bool
 DiaGram::haveInclude (std::list <umlPackage *> & packages,
-                      umlClassNode * cla) const
+                      const umlClassNode * cla) const
 {
     for (std::pair <std::list <umlPackage *>,
-                    umlClassNode * > inc : includes) {
+                    const umlClassNode * > inc : includes) {
         bool idem = true;
         std::list <umlPackage *>::const_iterator namei = packages.begin ();
 
@@ -321,7 +321,7 @@ DiaGram::haveInclude (std::list <umlPackage *> & packages,
 
 void
 DiaGram::addInclude (std::list <umlPackage *> & packages,
-                     umlClassNode * cla) {
+                     const umlClassNode * cla) {
     if (haveInclude (packages, cla)) {
         return;
     }
@@ -330,13 +330,13 @@ DiaGram::addInclude (std::list <umlPackage *> & packages,
 }
 
 void
-DiaGram::pushInclude (const umlClassNode & node) {
+DiaGram::pushInclude (const umlClassNode * node) {
     std::list <umlPackage *> pkglist;
 
-    if (node.getPackage () != NULL) {
-        umlPackage::makePackageList (node.getPackage (), pkglist);
+    if (node->getPackage () != NULL) {
+        umlPackage::makePackageList (node->getPackage (), pkglist);
     }
-    addInclude (pkglist, new umlClassNode (node));
+    addInclude (pkglist, node);
 }
 
 void
@@ -347,17 +347,13 @@ DiaGram::pushInclude (umlPackage * node) {
     addInclude (pkglist, nullptr);
 }
 
-const std::list <std::pair <std::list <umlPackage *>, umlClassNode * > > &
+const std::list <std::pair <std::list <umlPackage *>, const umlClassNode *> > &
 DiaGram::getIncludes () const {
     return includes;
 }
 
 void
 DiaGram::cleanIncludes () {
-    for (std::pair <std::list <umlPackage *>, umlClassNode * > & it :
-                                                                    includes) {
-        delete it.second;
-    }
     includes.clear ();
 }
 
@@ -373,7 +369,7 @@ DiaGram::determineIncludes (declaration &d,
 
         listClasses (*d.u.this_class, cl, expandPackages);
         for (const umlClassNode * it : cl) {
-            pushInclude (*it);
+            pushInclude (it);
         }
         
         for (umlPackage * it : d.u.this_class->getDependenciesPack ()) {

@@ -32,13 +32,13 @@ GenerateCodeCSharp::GenerateCodeCSharp (DiaGram & diagram) :
 
 bool
 GenerateCodeCSharp::writeInclude (const std::list <std::pair <
-                                                   std::list <umlPackage *>,
-                                                   umlClassNode * > > & name) {
+                                                      std::list <umlPackage *>,
+                                             const umlClassNode * > > & name) {
     bool ret = false;
     std::list <std::string> incs;
 
-    for (const std::pair <std::list <umlPackage *>, umlClassNode *> & it : 
-                                                                        name) {
+    for (const std::pair <std::list <umlPackage *>, const umlClassNode *> &
+                                                                   it : name) {
         std::string include;
 
         if (!it.first.empty ()) {

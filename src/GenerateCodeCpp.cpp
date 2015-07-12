@@ -84,8 +84,8 @@ GenerateCodeCpp::writeEndHeader () {
 
 bool
 GenerateCodeCpp::writeInclude (const std::list <std::pair <
-                                                    std::list <umlPackage *>,
-                                                    umlClassNode *> > & name) {
+                                                      std::list <umlPackage *>,
+                                              const umlClassNode *> > & name) {
     return writeInclude1 (name,
                           "#include <", ">\n",
                           "#include \"", "\"\n",
