@@ -633,11 +633,11 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
                                multiplicity_b,
                                visibility_b);
                 }
-                free (end1);
-                end1 = nullptr;
-                free (end2);
-                end2 = nullptr;
             }
+            free (end2);
+            end2 = nullptr;
+            free (end1);
+            end1 = nullptr;
 
         } else if (!strcmp ("UML - Dependency", BAD_TSAC2 (objtype))) {
             xmlNodePtr attribute = object->xmlChildrenNode;
@@ -738,12 +738,11 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
                 if (umlend != NULL) {
                     umlend->stereotypeInterface = true;
                 }
-
-                free (end2);
-                end2 = nullptr;
-                free (end1);
-                end1 = nullptr;
             }
+            free (end2);
+            end2 = nullptr;
+            free (end1);
+            end1 = nullptr;
         } else if ((!strcmp ("UML - Generalization", BAD_TSAC2 (objtype))) ||
                    (!strcmp ("UML - Realizes", BAD_TSAC2 (objtype)))) {
             xmlNodePtr attribute = object->xmlChildrenNode;
@@ -803,12 +802,11 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
                         umlend->stereotypeInterface = true;
                     }
                 }
-
-                free (end2);
-                end2 = nullptr;
-                free (end1);
-                end1 = nullptr;
             }
+            free (end2);
+            end2 = nullptr;
+            free (end1);
+            end1 = nullptr;
         }
         free (objtype);
         object = getNextObject (object);
