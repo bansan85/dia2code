@@ -332,22 +332,9 @@ GenerateCodeCpp::writeClassStart (const umlClassNode & node) {
                 getFile () << fqname (*(*parent).first, false);
             }
             else {
-                // Remove extension if necessary
-                const char *pos, *name;
+                const std::string n = (*parent).first->getName ();
 
-                name = (*parent).first->getName ().c_str ();
-                pos = strchr (name, '.');
-
-                if (pos == NULL) {
-                    getFile () << fqname (*(*parent).first, false);
-                }
-                else {
-                    char *shortName;
-
-                    shortName = strndup (name, pos - name);
-                    getFile () << shortName;
-                    free (shortName);
-                }
+                getFile () << n.substr (0, n.find_last_of ("."));
             }
             ++parent;
             if (parent != node.getParents ().end ()) {
