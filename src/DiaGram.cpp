@@ -31,6 +31,7 @@ DiaGram::DiaGram () :
     uml (),
     genClasses (),
     invertsel (false),
+    circularLoop (false),
 #ifdef ENABLE_CORBA
     usecorba (false),
 #endif
@@ -225,15 +226,18 @@ findOrAddModule (std::list <declaration> &dptr,
 
 void
 DiaGram::cleanTmpClasses () {
-    for (umlClassNode * it : tmp_classes) {
-        for (umlClassNode * it2 : tmp_classes) {
-            if (it != it2) {
-                it->addCircularLoop (it2);
+    if (circularLoop) {
+        for (umlClassNode * it : tmp_classes) {
+            for (umlClassNode * it2 : tmp_classes) {
+                if (it != it2) {
+                    it->addCircularLoop (it2);
+                }
             }
         }
     }
 
     tmp_classes.clear ();
+    circularLoop = false;
 }
 
 std::list <umlClassNode *> &
@@ -251,7 +255,6 @@ DiaGram::push (umlClassNode * node) {
     }
 
     tmp_classes.push_back (node);
-    node->setPushed ();
 
     listClasses (*node, usedClasses, true);
     // Make sure all classes that this one depends on are already pushed.
@@ -260,16 +263,22 @@ DiaGram::push (umlClassNode * node) {
         if ((!it->isPushed ()) &&
             ((genClasses.empty ()) ||
              (isPresent (genClasses,
-                         it->getName ().c_str ()) ^ getInvertSel ())) &&
-            (find_if (tmp_classes.begin (),
-                      tmp_classes.end (),
-                      [&it](umlClassNode * it2)
-                      {
-                        return it2->getName ().compare (it->getName ()) == 0;
-                      }) == tmp_classes.end ())) {
-            push (it);
+                         it->getName ().c_str ()) ^ getInvertSel ()))) {
+            if (find_if (tmp_classes.begin (),
+                         tmp_classes.end (),
+                         [&it](umlClassNode * it2)
+                         {
+                          return it2->getName ().compare (it->getName ()) == 0;
+                          }) != tmp_classes.end ()) {
+                circularLoop = true;
+            }
+            else {
+                push (it);
+            }
         }
     }
+
+    node->setPushed ();
 
     d.decl_kind = dk_class;
     d.u.this_class = node;

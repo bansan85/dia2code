@@ -35,6 +35,7 @@ class DiaGram {
         std::list <std::string> genClasses;
         // Flag that inverts the above selection.
         bool        invertsel : 1;
+        bool        circularLoop : 1;
 #ifdef ENABLE_CORBA
         bool        usecorba : 1;
 #endif
