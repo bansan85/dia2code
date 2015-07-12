@@ -48,4 +48,29 @@ umlClassNode * findByName (std::list <umlClassNode> & list,
     return ret;
 }
 
+umlClassNode * findByName (std::list <umlClassNode *> & list,
+                           const std::string & name ) {
+    umlClassNode * ret = NULL;
+    bool stereo = true;
+
+    if (!name.empty ()) {
+        for (umlClassNode * it : list) {
+            if (it->getName ().compare (name) == 0) {
+                if ((ret != NULL)  &&
+                    (!stereo) &&
+                    (!it->isStereotypeExtern ())) {
+                    std::cerr << "More than one class as the same name "
+                              << name << ". \n";
+                }
+                if (stereo)
+                {
+                    ret = it;
+                }
+                stereo = it->isStereotypeExtern ();
+            }
+        }
+    }
+    return ret;
+}
+
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

@@ -88,7 +88,7 @@ DiaGram::setUseCorba (bool corba) {
    given batch */
 void
 DiaGram::listClasses (umlClassNode & current,
-                      std::list <umlClassNode> & resCla,
+                      std::list <umlClassNode *> & resCla,
                       bool expandPackages) {
     umlClassNode * tmpnode;
 
@@ -97,7 +97,7 @@ DiaGram::listClasses (umlClassNode & current,
         if (!umla.getType ().empty ()) {
             tmpnode = findByName (uml, umla.getType ());
             if (tmpnode && ! findByName (resCla, umla.getType ())) {
-                resCla.push_back (*tmpnode);
+                resCla.push_back (tmpnode);
             }
         }
     }
@@ -105,12 +105,12 @@ DiaGram::listClasses (umlClassNode & current,
     for (const umlOperation & umlo : current.getOperations ()) {
         tmpnode = findByName (uml, umlo.getType ());
         if (tmpnode && ! findByName (resCla, umlo.getType ())) {
-            resCla.push_back (*tmpnode);
+            resCla.push_back (tmpnode);
         }
         for (const umlAttribute & umla : umlo.getParameters ()) {
             tmpnode = findByName (uml, umla.getType ());
             if (tmpnode && !findByName (resCla, umla.getType ())) {
-                resCla.push_back (*tmpnode);
+                resCla.push_back (tmpnode);
             }
         }
     }
@@ -121,7 +121,7 @@ DiaGram::listClasses (umlClassNode & current,
         tmpnode = findByName (uml, classit.first->getName ());
         assert (tmpnode != NULL);
         if (!findByName (resCla, classit.first->getName ())) {
-            resCla.push_back (*tmpnode);
+            resCla.push_back (tmpnode);
         }
     }
 
@@ -129,7 +129,7 @@ DiaGram::listClasses (umlClassNode & current,
         tmpnode = findByName (uml, classit.getName ());
         assert (tmpnode != NULL);
         if (!findByName (resCla, classit.getName ())) {
-            resCla.push_back (*tmpnode);
+            resCla.push_back (tmpnode);
         }
     }
 
@@ -137,18 +137,18 @@ DiaGram::listClasses (umlClassNode & current,
         tmpnode = findByName (uml, associations.key->getName ());
         assert (tmpnode != NULL);
         if (!findByName (resCla, associations.key->getName ())) {
-            resCla.push_back (*tmpnode);
+            resCla.push_back (tmpnode);
         }
     }
 
     if (expandPackages) {
-        for (const umlClassNode & umlc : uml) {
+        for (umlClassNode & umlc : uml) {
             umlPackage * parent = umlc.getPackage ();
             while (parent != NULL) {
                 for (const umlPackage *umlp : current.getDependenciesPack ()) {
                     if (umlp == parent) {
                         if (!findByName (resCla, umlc.getName ())) {
-                            resCla.push_back (umlc);
+                            resCla.push_back (&umlc);
                         }
                         parent = nullptr;
                         break;
@@ -224,11 +224,12 @@ findOrAddModule (std::list <declaration> &dptr,
 
 void
 DiaGram::cleanTmpClasses () {
+    std::cout << "clean" << tmp_classes.size () << "\n";
     for (umlClassNode * it : tmp_classes) {
-        for (const umlClassNode * it2 : tmp_classes) {
+        for (umlClassNode * it2 : tmp_classes) {
             if (it != it2) {
-                umlClassNode * classe = new umlClassNode (*it2);
-                it->addCircularLoop (classe);
+                std::cout << it->getName () << " " << it2->getName () << "\n";
+                it->addCircularLoop (it2);
             }
         }
     }
@@ -243,7 +244,7 @@ DiaGram::getTmpClasses () {
 
 void
 DiaGram::push (umlClassNode & node) {
-    std::list <umlClassNode> usedClasses;
+    std::list <umlClassNode *> usedClasses;
     declaration d;
 
     if (node.findClass (decl) != NULL) {
@@ -255,19 +256,19 @@ DiaGram::push (umlClassNode & node) {
 
     listClasses (node, usedClasses, true);
     // Make sure all classes that this one depends on are already pushed.
-    for (umlClassNode & it : usedClasses) {
+    for (umlClassNode * it : usedClasses) {
         // don't push this class
         if ((!node.isPushed ()) &&
             ((genClasses.empty ()) ||
              (isPresent (genClasses,
-                         it.getName ().c_str ()) ^ getInvertSel ())) &&
+                         it->getName ().c_str ()) ^ getInvertSel ())) &&
             (find_if (tmp_classes.begin (),
                       tmp_classes.end (),
                       [&it](umlClassNode * it2)
                       {
-                        return it2->getName ().compare (it.getName ()) == 0;
+                        return it2->getName ().compare (it->getName ()) == 0;
                       }) == tmp_classes.end ())) {
-            push (it);
+            push (*it);
         }
     }
 
@@ -368,11 +369,11 @@ DiaGram::determineIncludes (declaration &d,
             determineIncludes (it, expandPackages);
         }
     } else {
-        std::list <umlClassNode> cl;
+        std::list <umlClassNode *> cl;
 
         listClasses (*d.u.this_class, cl, expandPackages);
-        for (const umlClassNode & it : cl) {
-            pushInclude (it);
+        for (const umlClassNode * it : cl) {
+            pushInclude (*it);
         }
         
         for (umlPackage * it : d.u.this_class->getDependenciesPack ()) {

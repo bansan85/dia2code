@@ -100,13 +100,13 @@ GenerateCodeCpp::writeInclude (const char * name) {
 void
 GenerateCodeCpp::writeAfterInclude (umlClassNode * node)
 {
-/*    std::list <const umlClass *>::const_iterator it;
+    std::list <const umlClass *>::const_iterator it;
     
     it = node->getCircularLoop ().begin ();
     while (it != node->getCircularLoop ().end ()) {
         getFile () << spc () << "class " << (*it)->getName () << ";\n";
         ++it;
-    }*/
+    }
 }
 
 void

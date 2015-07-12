@@ -207,7 +207,9 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
 #endif
 
     writeInclude (getDia ().getIncludes ());
-    writeAfterInclude (d.u.this_class);
+    if (d.decl_kind == dk_class) {
+        writeAfterInclude (d.u.this_class);
+    }
 
     return;
 }
@@ -235,9 +237,10 @@ GenerateCode::generate_code () {
                       getDia ().getTmpClasses ().end (),
                       [&it](umlClassNode * it3)
                       {
-                        return it3->getName ().compare (it.getName ()) == 0;
+                          return it3->getName ().compare (it.getName ()) == 0;
                       }) == getDia ().getTmpClasses ().end ())) {
             getDia ().push (it);
+            getDia ().cleanTmpClasses ();
         }
     }
 
