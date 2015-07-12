@@ -296,7 +296,7 @@ makeDepend (std::list <umlClassNode *> & classlist,
     umldependent = umlClassNode::find (classlist, dependent);
     umldependee = umlClassNode::find (classlist, dependee);
     if (umldependent != NULL && umldependee != NULL) {
-        umldependee->addDependency (*umldependent);
+        umldependee->addDependency (umldependent);
     }
     // The dependence is a package
     else if (umldependent == NULL && umldependee != NULL) {

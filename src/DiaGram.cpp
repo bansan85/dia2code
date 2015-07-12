@@ -126,10 +126,10 @@ DiaGram::listClasses (umlClassNode & current,
         }
     }
 
-    for (const umlClassNode & classit : current.getDependencies ()) {
-        tmpnode = findByName (uml, classit.getName ());
+    for (const umlClassNode * classit : current.getDependencies ()) {
+        tmpnode = findByName (uml, classit->getName ());
         assert (tmpnode != NULL);
-        if (!findByName (resCla, classit.getName ())) {
+        if (!findByName (resCla, classit->getName ())) {
             resCla.push_back (tmpnode);
         }
     }
