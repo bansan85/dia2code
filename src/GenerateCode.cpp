@@ -229,10 +229,7 @@ GenerateCode::generate_code () {
     std::list <umlClassNode *> tmplist = getDia ().getUml ();
     
     for (umlClassNode * it : tmplist) {
-        if ((!it->isPushed ()) &&
-            ((getDia ().getGenClasses ().empty ()) ||
-             (isPresent (getDia ().getGenClasses (),
-                      it->getName ().c_str ()) ^ getDia ().getInvertSel ()))) {
+        if (!it->isPushed ()) {
             getDia ().push (it);
             getDia ().cleanTmpClasses ();
         }
@@ -241,7 +238,17 @@ GenerateCode::generate_code () {
     // Generate a file for each outer declaration.
     it2 = getDia ().getDeclBegin ();
     while (it2 != getDia ().getDeclEnd ()) {
-        genDecl (*it2, true);
+        if (it2->decl_kind == dk_class) {
+            if ((getDia ().getGenClasses ().empty ()) ||
+                (isPresent (getDia ().getGenClasses (),
+                            it2->u.this_class->getName ().c_str ()) ^
+                                                  getDia ().getInvertSel ())) {
+                genDecl (*it2, true);
+            }
+        }
+        else {
+            genDecl (*it2, true);
+        }
 
         ++it2;
     }

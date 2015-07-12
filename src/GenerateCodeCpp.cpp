@@ -104,7 +104,18 @@ GenerateCodeCpp::writeAfterInclude (umlClassNode * node)
     
     it = node->getCircularLoop ().begin ();
     while (it != node->getCircularLoop ().end ()) {
-        getFile () << spc () << "class " << (*it)->getName () << ";\n";
+        std::cout << "Nom : " << (*it)->getName ();
+        getFile () << spc () << "class ";
+        if (node->isStereotypeExtern ()) {
+            std::cout << " E : " << (*it)->getName ().substr (0, (*it)->getName ().find_last_of (".")) << "\n";
+            getFile () << (*it)->getName ().substr (0,
+                                         (*it)->getName ().find_last_of ("."));
+        }
+        else {
+            std::cout << " EP : " << (*it)->getName () << "\n";
+            getFile () << (*it)->getName ();
+        }
+        getFile () << ";\n";
         ++it;
     }
 

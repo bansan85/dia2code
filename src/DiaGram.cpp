@@ -260,10 +260,7 @@ DiaGram::push (umlClassNode * node) {
     // Make sure all classes that this one depends on are already pushed.
     for (umlClassNode * it : usedClasses) {
         // don't push this class
-        if ((!it->isPushed ()) &&
-            ((genClasses.empty ()) ||
-             (isPresent (genClasses,
-                         it->getName ().c_str ()) ^ getInvertSel ()))) {
+        if (!it->isPushed ()) {
             if (find_if (tmp_classes.begin (),
                          tmp_classes.end (),
                          [&it](umlClassNode * it2)
