@@ -254,7 +254,9 @@ DiaGram::push (umlClassNode * node) {
                        it);
             if (it2 != tmp_classes.end ()) {
                 auto it3 = it2;
+                std::cout << "Loop detected : ";
                 while (it3 != tmp_classes.end ()) {
+                    std::cout << (*it3)->getName () << ", ";
                     auto it4 = it2;
                     while (it4 != tmp_classes.end ()) {
                         if (it3 != it4)
@@ -263,6 +265,7 @@ DiaGram::push (umlClassNode * node) {
                     }
                     ++it3;
                 }
+                std::cout << (*it2)->getName () << ".\n";
             }
             else {
                 push (it);
