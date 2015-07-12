@@ -98,20 +98,18 @@ GenerateCodeCpp::writeInclude (const char * name) {
 }
 
 void
-GenerateCodeCpp::writeAfterInclude (umlClassNode * node)
+GenerateCodeCpp::writeBeforeInclude (umlClassNode * node)
 {
-    std::list <const umlClass *>::const_iterator it;
+    std::list <const umlClass *>::const_reverse_iterator it;
     
-    it = node->getCircularLoop ().begin ();
-    while (it != node->getCircularLoop ().end ()) {
+    it = node->getCircularLoop ().rbegin ();
+    while (it != node->getCircularLoop ().rend ()) {
         getFile () << spc () << "class ";
         if (node->isStereotypeExtern ()) {
-            std::cout << " E : " << (*it)->getName ().substr (0, (*it)->getName ().find_last_of (".")) << "\n";
             getFile () << (*it)->getName ().substr (0,
                                          (*it)->getName ().find_last_of ("."));
         }
         else {
-            std::cout << " EP : " << (*it)->getName () << "\n";
             getFile () << (*it)->getName ();
         }
         getFile () << ";\n";

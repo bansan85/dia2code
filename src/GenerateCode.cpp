@@ -206,6 +206,9 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
     }
 #endif
 
+    if (d.decl_kind == dk_class) {
+        writeBeforeInclude (d.u.this_class);
+    }
     writeInclude (getDia ().getIncludes ());
     if (d.decl_kind == dk_class) {
         writeAfterInclude (d.u.this_class);
@@ -1024,8 +1027,11 @@ GenerateCode::writeInclude1 (const std::list <std::pair <
 }
 
 void
-GenerateCode::writeAfterInclude (umlClassNode *) {
+GenerateCode::writeBeforeInclude (umlClassNode *) {
+}
 
+void
+GenerateCode::writeAfterInclude (umlClassNode *) {
 }
 
 GenerateCode::~GenerateCode () {

@@ -135,6 +135,7 @@ class GenerateCode {
                                      std::list <umlPackage *>,
                                           const umlClassNode * > > & name) = 0;
         virtual void writeInclude (const char * name) = 0;
+        virtual void writeBeforeInclude (umlClassNode * node);
         virtual void writeAfterInclude (umlClassNode * node);
         virtual void writeFunctionComment (const umlOperation & ope) = 0;
         virtual void writeFunction (const umlClassNode & node,
