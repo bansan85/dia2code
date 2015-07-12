@@ -243,22 +243,22 @@ DiaGram::getTmpClasses () {
 }
 
 void
-DiaGram::push (umlClassNode & node) {
+DiaGram::push (umlClassNode * node) {
     std::list <umlClassNode *> usedClasses;
     declaration d;
 
-    if (node.findClass (decl) != NULL) {
+    if (node->findClass (decl) != NULL) {
         return;
     }
 
-    tmp_classes.push_back (&node);
-    node.setPushed ();
+    tmp_classes.push_back (node);
+    node->setPushed ();
 
-    listClasses (node, usedClasses, true);
+    listClasses (*node, usedClasses, true);
     // Make sure all classes that this one depends on are already pushed.
     for (umlClassNode * it : usedClasses) {
         // don't push this class
-        if ((!node.isPushed ()) &&
+        if ((!node->isPushed ()) &&
             ((genClasses.empty ()) ||
              (isPresent (genClasses,
                          it->getName ().c_str ()) ^ getInvertSel ())) &&
@@ -268,18 +268,18 @@ DiaGram::push (umlClassNode & node) {
                       {
                         return it2->getName ().compare (it->getName ()) == 0;
                       }) == tmp_classes.end ())) {
-            push (*it);
+            push (it);
         }
     }
 
     d.decl_kind = dk_class;
-    d.u.this_class = new umlClassNode (node);
+    d.u.this_class = node;
 
-    if (node.getPackage () != NULL) {
+    if (node->getPackage () != NULL) {
         std::list <umlPackage *> pkglist;
         module *m;
 
-        umlPackage::makePackageList (node.getPackage (), pkglist);
+        umlPackage::makePackageList (node->getPackage (), pkglist);
         m = findOrAddModule (decl, pkglist.begin (), pkglist.end ());
         m->contents.push_back (d);
     } else {
@@ -287,7 +287,7 @@ DiaGram::push (umlClassNode & node) {
     }
 
 #ifdef ENABLE_CORBA
-    if (node.getStereotype ().compare (0, 5, "CORBA") == 0) {
+    if (node->getStereotype ().compare (0, 5, "CORBA") == 0) {
         usecorba = true;
     }
 #endif
@@ -390,10 +390,7 @@ DiaGram::getDeclEnd () {
 
 DiaGram::~DiaGram () {
     for (declaration & d : decl) {
-        if (d.decl_kind == dk_class) {
-            delete d.u.this_class;
-        }
-        else if (d.decl_kind == dk_module) {
+        if (d.decl_kind == dk_module) {
             delete d.u.this_module;
         }
     }

@@ -239,7 +239,7 @@ GenerateCode::generate_code () {
                       {
                           return it3->getName ().compare (it.getName ()) == 0;
                       }) == getDia ().getTmpClasses ().end ())) {
-            getDia ().push (it);
+            getDia ().push (&it);
             getDia ().cleanTmpClasses ();
         }
     }

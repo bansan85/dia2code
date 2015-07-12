@@ -76,7 +76,7 @@ class DiaGram {
 
         void cleanTmpClasses ();
         std::list <umlClassNode *> & getTmpClasses ();
-        void push (umlClassNode & node);
+        void push (umlClassNode * node);
         const std::list <std::pair <std::list <umlPackage *>,
                                const umlClassNode * > > & getIncludes () const;
         void cleanIncludes ();
