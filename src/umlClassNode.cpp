@@ -22,11 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "parse_diagram.hpp"
 
 umlClassNode *
-umlClassNode::find (std::list <umlClassNode> & list, const char *id) {
+umlClassNode::find (std::list <umlClassNode *> & list, const char *id) {
     if (id != NULL) {
-        for (umlClassNode & it : list) {
-            if (it.getId ().compare (id) == 0) {
-                return &it;
+        for (umlClassNode * it : list) {
+            if (it->getId ().compare (id) == 0) {
+                return it;
             }
         }
     }

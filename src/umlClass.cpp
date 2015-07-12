@@ -263,7 +263,7 @@ umlClass::makeGetSetMethods () {
 }
 
 void
-associate (std::list <umlClassNode> & classlist,
+associate (std::list <umlClassNode *> & classlist,
            const char * name,
            char composite,
            const char * base,
@@ -283,7 +283,7 @@ associate (std::list <umlClassNode> & classlist,
 }
 
 void
-makeDepend (std::list <umlClassNode> & classlist,
+makeDepend (std::list <umlClassNode *> & classlist,
             std::list <umlPackage *> & packagelist,
             const char * dependent,
             const char * dependee) {
@@ -311,7 +311,7 @@ makeDepend (std::list <umlClassNode> & classlist,
 }
 
 void
-inheritRealize (std::list <umlClassNode> & classlist,
+inheritRealize (std::list <umlClassNode *> & classlist,
                 const char * base,
                 const char * derived,
                 Visibility visible) {
@@ -386,7 +386,7 @@ parseGeomHeight (xmlNodePtr attribute, geometry * geom ) {
 }
 
 bool
-umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
+umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
     xmlDocPtr ptr;
     xmlChar *end1 = nullptr;
     xmlChar *end2 = nullptr;
@@ -408,11 +408,11 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
         // Here we have a Dia object
         if (strcmp ("UML - Class", BAD_TSAC2 (objtype)) == 0) {
             // Here we have a class definition
-            umlClassNode tmplist;
-            tmplist.parseClass (object);
+            umlClassNode * tmplist = new umlClassNode ();
+            tmplist->parseClass (object);
             // We get the ID of the object here
             xmlChar *objid = xmlGetProp (object, BAD_CAST2 ("id"));
-            tmplist.id.assign (BAD_TSAC2 (objid));
+            tmplist->id.assign (BAD_TSAC2 (objid));
             free (objid);
 
             // We insert it here
@@ -790,12 +790,12 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode> & res) {
 
     // Associate packages to classes
     for (umlPackage * dummypcklst : packagelst) {
-        for (umlClassNode & it : res) {
-            if (isInside (dummypcklst->getGeometry (), it.geom)) {
-                if ((it.package == NULL) ||
+        for (umlClassNode * it : res) {
+            if (isInside (dummypcklst->getGeometry (), it->geom)) {
+                if ((it->package == NULL) ||
                      (! isInside (dummypcklst->getGeometry (),
-                                  it.package->getGeometry ()))) {
-                    it.package = dummypcklst;
+                                  it->package->getGeometry ()))) {
+                    it->package = dummypcklst;
                 }
             }
         }

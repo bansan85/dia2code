@@ -32,7 +32,7 @@ class umlClassNode : public umlClass {
         std::list <umlClassNode> classDep;
         std::list <umlPackage *> packageDep;
     public :
-        static umlClassNode * find (std::list <umlClassNode> & list,
+        static umlClassNode * find (std::list <umlClassNode *> & list,
                                     const char *id);
         umlClassNode ();
         umlClassNode (const umlClassNode & classnode);

@@ -104,7 +104,7 @@ GenerateCodeCpp::writeAfterInclude (umlClassNode * node)
     
     it = node->getCircularLoop ().begin ();
     while (it != node->getCircularLoop ().end ()) {
-        getFile () << spc () << "class " << (*it)->getName () << ";\n";
+//        getFile () << spc () << "class " << (*it)->getName () << ";\n";
         ++it;
     }
 }

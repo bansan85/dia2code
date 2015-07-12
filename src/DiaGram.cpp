@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <cassert>
 #include <algorithm>
+#include <memory>
 
 #include "DiaGram.hpp"
 #include "scan_tree.hpp"
@@ -39,7 +40,7 @@ DiaGram::DiaGram () :
 }
 
 
-std::list <umlClassNode> &
+std::list <umlClassNode *> &
 DiaGram::getUml () {
     return uml;
 }
@@ -142,13 +143,13 @@ DiaGram::listClasses (umlClassNode & current,
     }
 
     if (expandPackages) {
-        for (umlClassNode & umlc : uml) {
-            umlPackage * parent = umlc.getPackage ();
+        for (umlClassNode * umlc : uml) {
+            umlPackage * parent = umlc->getPackage ();
             while (parent != NULL) {
                 for (const umlPackage *umlp : current.getDependenciesPack ()) {
                     if (umlp == parent) {
-                        if (!findByName (resCla, umlc.getName ())) {
-                            resCla.push_back (&umlc);
+                        if (!findByName (resCla, umlc->getName ())) {
+                            resCla.push_back (umlc);
                         }
                         parent = nullptr;
                         break;
@@ -224,11 +225,9 @@ findOrAddModule (std::list <declaration> &dptr,
 
 void
 DiaGram::cleanTmpClasses () {
-    std::cout << "clean" << tmp_classes.size () << "\n";
     for (umlClassNode * it : tmp_classes) {
         for (umlClassNode * it2 : tmp_classes) {
             if (it != it2) {
-                std::cout << it->getName () << " " << it2->getName () << "\n";
                 it->addCircularLoop (it2);
             }
         }
@@ -258,7 +257,7 @@ DiaGram::push (umlClassNode * node) {
     // Make sure all classes that this one depends on are already pushed.
     for (umlClassNode * it : usedClasses) {
         // don't push this class
-        if ((!node->isPushed ()) &&
+        if ((!it->isPushed ()) &&
             ((genClasses.empty ()) ||
              (isPresent (genClasses,
                          it->getName ().c_str ()) ^ getInvertSel ())) &&
@@ -395,6 +394,9 @@ DiaGram::~DiaGram () {
         }
     }
     cleanIncludes ();
+    std::for_each (uml.begin (),
+                   uml.end (),
+                   std::default_delete <umlClassNode> ());
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

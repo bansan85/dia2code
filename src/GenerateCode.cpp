@@ -226,20 +226,14 @@ GenerateCode::closeOutfile () {
 void
 GenerateCode::generate_code () {
     std::list <declaration>::iterator it2;
-    std::list <umlClassNode> tmplist = getDia ().getUml ();
+    std::list <umlClassNode *> tmplist = getDia ().getUml ();
     
-    for (umlClassNode & it : tmplist) {
-        if ((!it.isPushed ()) &&
+    for (umlClassNode * it : tmplist) {
+        if ((!it->isPushed ()) &&
             ((getDia ().getGenClasses ().empty ()) ||
              (isPresent (getDia ().getGenClasses (),
-                      it.getName ().c_str ()) ^ getDia ().getInvertSel ())) &&
-            (find_if (getDia ().getTmpClasses ().begin (),
-                      getDia ().getTmpClasses ().end (),
-                      [&it](umlClassNode * it3)
-                      {
-                          return it3->getName ().compare (it.getName ()) == 0;
-                      }) == getDia ().getTmpClasses ().end ())) {
-            getDia ().push (&it);
+                      it->getName ().c_str ()) ^ getDia ().getInvertSel ()))) {
+            getDia ().push (it);
             getDia ().cleanTmpClasses ();
         }
     }

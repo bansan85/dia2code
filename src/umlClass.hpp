@@ -107,7 +107,7 @@ class umlClass {
         
         void makeGetSetMethods ();
         static bool parseDiagram (char *diafile,
-                                  std::list <umlClassNode> & res);
+                                  std::list <umlClassNode *> & res);
         void parseClass (xmlNodePtr class_);
 
         ~umlClass ();

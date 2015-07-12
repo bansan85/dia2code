@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class DiaGram {
     private:
         // Diagram under uml format.
-        std::list <umlClassNode> uml;
+        std::list <umlClassNode *> uml;
         // Selection of classes to generate code for.
         std::list <std::string> genClasses;
         // Flag that inverts the above selection.
@@ -61,7 +61,7 @@ class DiaGram {
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;
 
-        std::list <umlClassNode> & getUml ();
+        std::list <umlClassNode *> & getUml ();
 
         void addGenClasses (std::list <std::string> classes);
         std::list <std::string> getGenClasses () const;
