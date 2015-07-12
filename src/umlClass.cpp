@@ -641,10 +641,26 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
                                        BAD_CAST2 ("to"));
                     end2 = xmlGetProp (attribute->xmlChildrenNode,
                                        BAD_CAST2 ("to"));
-                    makeDepend (res,
-                                packagelst,
-                                BAD_TSAC2 (end1),
-                                BAD_TSAC2 (end2));
+                    if (BAD_TSAC2 (end1) == nullptr) {
+                        umlClassNode * node = umlClassNode::find (
+                                                        res, BAD_TSAC2 (end2));
+                        std::cerr << "One dependency of "
+                                  << node->getName ()
+                                  << " is broken.\n";
+                    }
+                    else if (BAD_TSAC2 (end2) == nullptr) {
+                        umlClassNode * node = umlClassNode::find (
+                                                        res, BAD_TSAC2 (end1));
+                        std::cerr << "One dependency of "
+                                  << node->getName ()
+                                  << " is broken.\n";
+                    }
+                    else {
+                        makeDepend (res,
+                                    packagelst,
+                                    BAD_TSAC2 (end1),
+                                    BAD_TSAC2 (end2));
+                    }
                     free (end1);
                     end1 = nullptr;
                     free (end2);
