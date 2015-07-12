@@ -35,7 +35,6 @@ class DiaGram {
         std::list <std::string> genClasses;
         // Flag that inverts the above selection.
         bool        invertsel : 1;
-        bool        circularLoop : 1;
 #ifdef ENABLE_CORBA
         bool        usecorba : 1;
 #endif
@@ -58,6 +57,8 @@ class DiaGram {
                          const umlClassNode * cla);
         void pushInclude (const umlClassNode * node);
         void pushInclude (umlPackage * node);
+        void pushTmp (umlClassNode * node);
+        void popTmp ();
     public:
         DiaGram ();
 //        DiaGram (DiaGram & diagram) = delete;
@@ -75,8 +76,6 @@ class DiaGram {
         void setUseCorba (bool corba);
 #endif
 
-        void cleanTmpClasses ();
-        std::list <umlClassNode *> & getTmpClasses ();
         void push (umlClassNode * node);
         const std::list <std::pair <std::list <umlPackage *>,
                                const umlClassNode * > > & getIncludes () const;

@@ -31,7 +31,6 @@ DiaGram::DiaGram () :
     uml (),
     genClasses (),
     invertsel (false),
-    circularLoop (false),
 #ifdef ENABLE_CORBA
     usecorba (false),
 #endif
@@ -224,25 +223,12 @@ findOrAddModule (std::list <declaration> &dptr,
     return createNestedModulesFromPkglist (debut, fin, m);
 }
 
-void
-DiaGram::cleanTmpClasses () {
-    if (circularLoop) {
-        for (umlClassNode * it : tmp_classes) {
-            for (umlClassNode * it2 : tmp_classes) {
-                if (it != it2) {
-                    it->addCircularLoop (it2);
-                }
-            }
-        }
-    }
-
-    tmp_classes.clear ();
-    circularLoop = false;
+void DiaGram::pushTmp (umlClassNode * node) {
+    tmp_classes.push_back (node);
 }
 
-std::list <umlClassNode *> &
-DiaGram::getTmpClasses () {
-    return tmp_classes;
+void DiaGram::popTmp () {
+    tmp_classes.pop_back ();
 }
 
 void
@@ -254,20 +240,29 @@ DiaGram::push (umlClassNode * node) {
         return;
     }
 
-    tmp_classes.push_back (node);
+    pushTmp (node);
 
     listClasses (*node, usedClasses, true);
     // Make sure all classes that this one depends on are already pushed.
     for (umlClassNode * it : usedClasses) {
         // don't push this class
         if (!it->isPushed ()) {
-            if (find_if (tmp_classes.begin (),
-                         tmp_classes.end (),
-                         [&it](umlClassNode * it2)
-                         {
-                          return it2->getName ().compare (it->getName ()) == 0;
-                          }) != tmp_classes.end ()) {
-                circularLoop = true;
+            // Circular dependency
+            std::list <umlClassNode *>::iterator it2;
+            it2 = find (tmp_classes.begin (),
+                       tmp_classes.end (),
+                       it);
+            if (it2 != tmp_classes.end ()) {
+                auto it3 = it2;
+                while (it3 != tmp_classes.end ()) {
+                    auto it4 = it2;
+                    while (it4 != tmp_classes.end ()) {
+                        if (it3 != it4)
+                            (*it3)->addCircularLoop (*it4);
+                        ++it4;
+                    }
+                    ++it3;
+                }
             }
             else {
                 push (it);
@@ -276,6 +271,7 @@ DiaGram::push (umlClassNode * node) {
     }
 
     node->setPushed ();
+    popTmp ();
 
     d.decl_kind = dk_class;
     d.u.this_class = node;

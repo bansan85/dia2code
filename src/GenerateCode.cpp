@@ -231,7 +231,6 @@ GenerateCode::generate_code () {
     for (umlClassNode * it : tmplist) {
         if (!it->isPushed ()) {
             getDia ().push (it);
-            getDia ().cleanTmpClasses ();
         }
     }
 

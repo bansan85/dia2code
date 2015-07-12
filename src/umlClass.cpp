@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config.h"
 
 #include <iostream>
+#include <algorithm>
 
 #include "umlClass.hpp"
 #include "string2.hpp"
@@ -145,7 +146,11 @@ umlClass::getOperations () const {
 
 void
 umlClass::addCircularLoop (const umlClass * classe) {
-    circularLoop.push_back (classe);
+    if (find (circularLoop.begin (),
+              circularLoop.end (),
+              classe) == circularLoop.end ()) {
+        circularLoop.push_back (classe);
+    }
 }
 
 const std::list <const umlClass *> &
