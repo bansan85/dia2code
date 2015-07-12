@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "scan_tree.hpp"
 
 GenerateCodeCpp::GenerateCodeCpp (DiaGram & diagram, uint8_t version_) :
-    GenerateCode (diagram, "hpp", version_, false) {
+    GenerateCode (diagram, "hpp", version_, false, true) {
 }
 
 std::string

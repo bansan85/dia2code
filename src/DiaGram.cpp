@@ -90,7 +90,7 @@ DiaGram::setUseCorba (bool corba) {
 void
 DiaGram::listClasses (umlClassNode & current,
                       std::list <umlClassNode *> & resCla,
-                      bool expandPackages) {
+                      uint8_t flag) {
     umlClassNode * tmpnode;
 
     // Type may be unknown.
@@ -117,7 +117,7 @@ DiaGram::listClasses (umlClassNode & current,
     }
 
     // But not parents, dependencies and associations.
-    for (const std::pair <umlClass *, Visibility> classit :
+    for (const std::pair <umlClass *, Visibility> & classit :
                                                  current.getParents ()) {
         tmpnode = findByName (uml, classit.first->getName ());
         assert (tmpnode != NULL);
@@ -126,11 +126,14 @@ DiaGram::listClasses (umlClassNode & current,
         }
     }
 
-    for (const umlClassNode * classit : current.getDependencies ()) {
-        tmpnode = findByName (uml, classit->getName ());
-        assert (tmpnode != NULL);
-        if (!findByName (resCla, classit->getName ())) {
-            resCla.push_back (tmpnode);
+    for (const std::pair <umlClassNode *, uint8_t> & classit :
+                                                  current.getDependencies ()) {
+        if (!(((classit.second & 1) == 1) && ((flag & 2) == 2))) {
+            tmpnode = findByName (uml, classit.first->getName ());
+            assert (tmpnode != NULL);
+            if (!findByName (resCla, classit.first->getName ())) {
+                resCla.push_back (tmpnode);
+            }
         }
     }
 
@@ -142,7 +145,7 @@ DiaGram::listClasses (umlClassNode & current,
         }
     }
 
-    if (expandPackages) {
+    if ((flag & 1) == 1) {
         for (umlClassNode * umlc : uml) {
             umlPackage * parent = umlc->getPackage ();
             while (parent != NULL) {
@@ -242,7 +245,7 @@ DiaGram::push (umlClassNode * node) {
 
     pushTmp (node);
 
-    listClasses (*node, usedClasses, true);
+    listClasses (*node, usedClasses, 1);
     // Make sure all classes that this one depends on are already pushed.
     for (umlClassNode * it : usedClasses) {
         // don't push this class
@@ -363,15 +366,24 @@ DiaGram::cleanIncludes () {
 
 void
 DiaGram::determineIncludes (declaration &d,
-                            bool expandPackages) {
+                            bool expandPackages,
+                            bool noLoop) {
     if (d.decl_kind == dk_module) {
         for (declaration & it : d.u.this_module->contents) {
-            determineIncludes (it, expandPackages);
+            determineIncludes (it, expandPackages, noLoop);
         }
     } else {
         std::list <umlClassNode *> cl;
+        uint8_t flag = 0;
 
-        listClasses (*d.u.this_class, cl, expandPackages);
+        if (expandPackages) {
+            flag = flag | 1;
+        }
+        if (noLoop) {
+            flag = flag | 2;
+        }
+
+        listClasses (*d.u.this_class, cl, flag);
         for (const umlClassNode * it : cl) {
             pushInclude (it);
         }

@@ -49,7 +49,10 @@ class DiaGram {
         // sub-packages are add to resCla
         void listClasses (umlClassNode & current,
                           std::list <umlClassNode *> & resCla,
-                          bool expandPackages);
+                          // bit 0 : expandPackages
+                          // bit 1 : do not include connection with NoLoop
+                          //         stereotype.
+                          uint8_t flag);
 
         bool haveInclude (std::list <umlPackage *> & packages,
                           const umlClassNode * cla) const;
@@ -80,7 +83,9 @@ class DiaGram {
         const std::list <std::pair <std::list <umlPackage *>,
                                const umlClassNode * > > & getIncludes () const;
         void cleanIncludes ();
-        void determineIncludes (declaration &d, bool expandPackages);
+        void determineIncludes (declaration &d,
+                                bool expandPackages,
+                                bool noLoop);
         
         std::list <declaration>::iterator getDeclBegin ();
         std::list <declaration>::iterator getDeclEnd ();

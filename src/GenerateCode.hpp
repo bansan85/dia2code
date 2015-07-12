@@ -51,6 +51,7 @@ class GenerateCode {
         // If the language handles include package. If not, include ALL classes
         // inside the package and their children.
         bool        handleIncludePackage : 1;
+        bool        noLoopSupport : 1;
 #ifdef ENABLE_CORBA
         bool        isCorba : 1;
 #endif
@@ -60,10 +61,11 @@ class GenerateCode {
         void closeOutfile ();
         void genDecl (declaration &d, bool forceOpen);
     public:
-        GenerateCode (DiaGram & diagram,
+        GenerateCode (DiaGram    & diagram,
                       const char * ext,
-                      uint8_t version_,
-                      bool handleIncludePackage_);
+                      uint8_t      version_,
+                      bool         handleIncludePackage_,
+                      bool         noLoopSupport_);
 
         DiaGram & getDia ();
         void generate_code ();

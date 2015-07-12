@@ -56,7 +56,8 @@ umlClassNode::umlClassNode (umlClass * _key,
                             std::list <std::pair <umlClass *,
                                                   Visibility> > & parents_,
                             std::list <umlassoc> & associations_,
-                            std::list <umlClassNode *> & classDep_,
+                            std::list <std::pair <umlClassNode *,
+                                                  uint8_t> > & classDep_,
                             std::list <umlPackage *> & packageDep_) :
     umlClass (*_key),
     parents (parents_),
@@ -85,7 +86,7 @@ umlClassNode::getAssociations () const {
     return associations;
 }
 
-const std::list <umlClassNode *> &
+const std::list <std::pair <umlClassNode *, uint8_t> > &
 umlClassNode::getDependencies () const {
     return classDep;
 }
@@ -159,8 +160,8 @@ umlClassNode::addParent (umlClass * key, Visibility inh) {
 }
 
 void
-umlClassNode::addDependency (umlClassNode * dependent) {
-    classDep.push_front (dependent);
+umlClassNode::addDependency (umlClassNode * dependent, uint8_t flag) {
+    classDep.push_front (std::make_pair (dependent, flag));
 }
 
 void

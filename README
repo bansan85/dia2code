@@ -462,8 +462,8 @@ public class Class <template extends type> extends ParentClass {
 
 STEREOTYPES
 
-Mutiple stereotype can be apply on each class, attribute, operation and
-inheritance by separating them with an "," without space.
+Mutiple stereotype can be apply on each class, attribute, operation,
+inheritance and dependence by separating them with an "," without space.
 For example (without quotes): "interface,getset".
 
 
@@ -894,6 +894,15 @@ Union      First attribute's type contains the switch type. Only
            for that case.
            Everything else unused.
 Value      Use much like a normal class. Staticness not supported.
+
+
+- Dependency:
+
+NoLoop, noloop
+------  ------
+In C/C++, circular dependencies are a really mess with include and only user
+can handle it. Adding a "NoLoop" stereotype will disable the "#include" for the
+connection.
 
 
 MISCELLANEOUS

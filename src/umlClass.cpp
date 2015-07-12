@@ -291,12 +291,13 @@ void
 makeDepend (std::list <umlClassNode *> & classlist,
             std::list <umlPackage *> & packagelist,
             const char * dependent,
-            const char * dependee) {
+            const char * dependee,
+            uint8_t      flag) {
     umlClassNode *umldependent, *umldependee;
     umldependent = umlClassNode::find (classlist, dependent);
     umldependee = umlClassNode::find (classlist, dependee);
     if (umldependent != NULL && umldependee != NULL) {
-        umldependee->addDependency (umldependent);
+        umldependee->addDependency (umldependent, flag);
     }
     // The dependence is a package
     else if (umldependent == NULL && umldependee != NULL) {
@@ -305,7 +306,7 @@ makeDepend (std::list <umlClassNode *> & classlist,
             umldependee->addDependency (umldependent2);
         }
         else {
-            std::cerr << "Failed to find dependence for " << dependent
+            std::cerr << "Failed to find dependency for " << dependent
                       << ".\n";
         }
     }
@@ -640,39 +641,62 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
 
         } else if (!strcmp ("UML - Dependency", BAD_TSAC2 (objtype))) {
             xmlNodePtr attribute = object->xmlChildrenNode;
+            bool noLoop = false;
             while (attribute != NULL) {
                 if (!strcmp ("connections", BAD_TSAC2 (attribute->name))) {
                     end1 = xmlGetProp (attribute->xmlChildrenNode->next,
                                        BAD_CAST2 ("to"));
                     end2 = xmlGetProp (attribute->xmlChildrenNode,
                                        BAD_CAST2 ("to"));
-                    if (BAD_TSAC2 (end1) == nullptr) {
-                        umlClassNode * node = umlClassNode::find (
-                                                        res, BAD_TSAC2 (end2));
-                        std::cerr << "One dependency of "
-                                  << node->getName ()
-                                  << " is broken.\n";
+                }
+                else if (!strcmp ("attribute", BAD_TSAC2 (attribute->name))) {
+                    xmlChar *name = xmlGetProp (attribute, BAD_CAST2 ("name"));
+
+                    if (!strcmp ("stereotype", BAD_TSAC2 (name)))
+                    {
+                        std::string stereo;
+
+                        parseDiaNode (attribute->xmlChildrenNode, stereo);
+                        if (isInside (stereo, "NoLoop") ||
+                            isInside (stereo, "noloop")) {
+                            noLoop = true;
+                        }
                     }
-                    else if (BAD_TSAC2 (end2) == nullptr) {
-                        umlClassNode * node = umlClassNode::find (
-                                                        res, BAD_TSAC2 (end1));
-                        std::cerr << "One dependency of "
-                                  << node->getName ()
-                                  << " is broken.\n";
-                    }
-                    else {
-                        makeDepend (res,
-                                    packagelst,
-                                    BAD_TSAC2 (end1),
-                                    BAD_TSAC2 (end2));
-                    }
-                    free (end1);
-                    end1 = nullptr;
-                    free (end2);
-                    end2 = nullptr;
+                    free (name);
                 }
                 attribute = attribute->next;
             }
+            if ((BAD_TSAC2 (end1) == nullptr) &&
+                (BAD_TSAC2 (end2) != nullptr)) {
+                umlClassNode * node = umlClassNode::find (
+                                                res, BAD_TSAC2 (end2));
+                std::cerr << "One dependency of "
+                          << node->getName ()
+                          << " is broken.\n";
+            }
+            else if ((BAD_TSAC2 (end2) == nullptr) &&
+                     (BAD_TSAC2 (end1) != nullptr)) {
+                umlClassNode * node = umlClassNode::find (
+                                                res, BAD_TSAC2 (end1));
+                std::cerr << "One dependency of "
+                          << node->getName ()
+                          << " is broken.\n";
+            }
+            else {
+                uint8_t flag = 0;
+                if (noLoop) {
+                    flag = flag | 1;
+                }
+                makeDepend (res,
+                            packagelst,
+                            BAD_TSAC2 (end1),
+                            BAD_TSAC2 (end2),
+                            flag);
+            }
+            free (end1);
+            end1 = nullptr;
+            free (end2);
+            end2 = nullptr;
         } else if (!strcmp ("UML - Implements", BAD_TSAC2 (objtype))) {
             xmlNodePtr attribute = object->xmlChildrenNode;
             Visibility visible = Visibility::PUBLIC;
