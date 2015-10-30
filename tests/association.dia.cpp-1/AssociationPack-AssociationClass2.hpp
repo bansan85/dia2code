@@ -4,6 +4,6 @@
 namespace AssociationPack {
     class AssociationClass2 {
     };
-};
+}
 
 #endif

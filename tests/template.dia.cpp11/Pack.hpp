@@ -4,6 +4,6 @@
 namespace Pack {
     class ClassTemplate {
     };
-};
+}
 
 #endif

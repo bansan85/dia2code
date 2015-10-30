@@ -5,7 +5,7 @@ namespace DepPack {
     namespace pack2 {
         class DepClasse2 {
         };
-    };
-};
+    }
+}
 
 #endif

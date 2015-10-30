@@ -4,6 +4,6 @@
 namespace DepPack {
     class DepClasse1 {
     };
-};
+}
 
 #endif

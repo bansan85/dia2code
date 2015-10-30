@@ -4,13 +4,13 @@
 namespace DepPack {
     class DepClasse1 {
     };
-};
+}
 
 namespace DepPack {
     namespace pack2 {
         class DepClasse2 {
         };
-    };
-};
+    }
+}
 
 #endif

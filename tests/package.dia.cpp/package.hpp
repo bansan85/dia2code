@@ -9,9 +9,9 @@ namespace package {
              */
             class PackageClasse3 {
             };
-        };
-    };
-};
+        }
+    }
+}
 
 namespace package {
     namespace pack2 {
@@ -20,8 +20,8 @@ namespace package {
          */
         class PackageClasse2 {
         };
-    };
-};
+    }
+}
 
 namespace package {
     /**
@@ -29,6 +29,6 @@ namespace package {
      */
     class PackageClasse1 {
     };
-};
+}
 
 #endif

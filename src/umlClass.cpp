@@ -682,7 +682,8 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
                           << node->getName ()
                           << " is broken.\n";
             }
-            else {
+            else if ((BAD_TSAC2 (end1) != nullptr) &&
+                     (BAD_TSAC2 (end2) != nullptr)) {
                 uint8_t flag = 0;
                 if (noLoop) {
                     flag = flag | 1;

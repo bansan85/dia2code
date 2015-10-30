@@ -8,7 +8,7 @@ namespace package {
          */
         class PackageClasse2 {
         };
-    };
-};
+    }
+}
 
 #endif

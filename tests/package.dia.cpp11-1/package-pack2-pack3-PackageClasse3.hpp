@@ -9,8 +9,8 @@ namespace package {
              */
             class PackageClasse3 {
             };
-        };
-    };
-};
+        }
+    }
+}
 
 #endif

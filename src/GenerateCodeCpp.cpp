@@ -434,7 +434,7 @@ GenerateCodeCpp::writeNameSpaceEnd (const umlClassNode * node) {
 
     while (pack != NULL) {
         decIndentLevel ();
-        getFile () << spc () << "};\n";
+        getFile () << spc () << "}\n";
         pack = pack->getParent ();
     }
     getFile () << spc () << "\n";
