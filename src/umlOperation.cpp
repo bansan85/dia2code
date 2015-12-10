@@ -18,8 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
-#include <iostream>
-
 #include "umlOperation.hpp"
 #include "parse_diagram.hpp"
 #include "string2.hpp"

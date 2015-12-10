@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 
 #include "GenerateCodeCpp.hpp"
-#include "GenerateCodeJava.hpp"
 #include "string2.hpp"
 #include "scan_tree.hpp"
 

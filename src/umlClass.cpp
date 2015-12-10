@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "string2.hpp"
 #include "parse_diagram.hpp"
 #include "scan_tree.hpp"
-#include "umlClassNode.hpp"
 
 umlClass::umlClass () :
     id ("00"),

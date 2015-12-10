@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DiaGram.hpp"
 #include "scan_tree.hpp"
-#include "string2.hpp"
 
 DiaGram::DiaGram () :
     uml (),

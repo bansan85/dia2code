@@ -19,12 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
-#include <libxml/tree.h>
 #include <iostream>
 
 #include "string2.hpp"
 #include "GenerateCodeCpp.hpp"
-#include "GenerateCodeJava.hpp"
 #include "GenerateCodeCSharp.hpp"
 #include "GenerateCodePhp.hpp"
 

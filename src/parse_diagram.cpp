@@ -19,8 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
 
-#include <libxml/tree.h>
-
 #include "parse_diagram.hpp"
 #include "string2.hpp"
 
