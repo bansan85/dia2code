@@ -86,7 +86,10 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	INSTALL README TODO compile config.guess config.sub depcomp \
 	install-sh missing ltmain.sh
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -233,6 +236,7 @@ LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
@@ -312,11 +316,12 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = dia2code 
-EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README TODO dia2code.lsm Makefile.am aclocal.m4 configure.in dia2code.kaptn dia2code.spec dia2code.1 dia.ico dia1.bmp dia2.bmp dia2code.nsi README.win32 Report_a_Bug.url dia2code_Homepage.url
+EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README TODO dia2code.lsm Makefile.am aclocal.m4 dia2code.kaptn dia2code.spec dia2code.1 dia.ico dia1.bmp dia2.bmp dia2code.nsi README.win32 Report_a_Bug.url dia2code_Homepage.url
 
 ####### kdevelop will overwrite this part!!! (end)############
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
+CLEANFILES = stamp-h2
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -701,6 +706,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)

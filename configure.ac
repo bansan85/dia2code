@@ -39,4 +39,4 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 
 dnl Checks for library functions.
 
-AC_OUTPUT(Makefile dia2code/Makefile dia2code/docs/Makefile dia2code/docs/en/Makefile)
+AC_OUTPUT(Makefile dia2code/Makefile)

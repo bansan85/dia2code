@@ -83,7 +83,10 @@ subdir = dia2code
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/mkinstalldirs $(top_srcdir)/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -219,6 +222,7 @@ LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
@@ -300,12 +304,8 @@ top_srcdir = @top_srcdir@
 dia2code_CPPFLAGS = @XML_CFLAGS@
 dia2code_CFLAGS = @XML_CFLAGS@
 dia2code_LDADD = @XML_LIBS@
-dia2code_SOURCES = dia2code.c main.c parse_diagram.c scan_tree.c generate_code_c.c \
-generate_code_java.c generate_code_cpp.c generate_code_ada.c generate_code_sql.c \
-generate_code_python.c generate_code_php.c generate_code_shp.c generate_code_idl.c \
-generate_code_csharp.c generate_code_php_five.c generate_code_ruby.c generate_code_as3.c \
-decls.c includes.c source_parser.c comment_helper.c
-
+dia2code_SOURCES = dia2code.c main.c parse_diagram.c scan_tree.c generate_code_c.c generate_code_java.c generate_code_cpp.c generate_code_ada.c generate_code_sql.c generate_code_python.c generate_code_php.c generate_code_shp.c generate_code_idl.c generate_code_csharp.c generate_code_php_five.c generate_code_ruby.c generate_code_as3.c decls.c includes.c source_parser.c comment_helper.c
+EXTRA_DIST = code_generators.h comment_helper.h decls.h dia2code.h includes.h parse_diagram.h source_parser.h
 all: all-am
 
 .SUFFIXES:
@@ -319,9 +319,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu dia2code/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign dia2code/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu dia2code/Makefile
+	  $(AUTOMAKE) --foreign dia2code/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

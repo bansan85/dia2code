@@ -32,7 +32,7 @@
 *.dSYM/
 
 # Project specific
-*Makefile
+Makefile
 config.h
 config.log
 config.status
