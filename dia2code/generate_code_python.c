@@ -5,6 +5,10 @@
     copyright            : (C) 2001 by Cyrille Chepelov (based on code from
                                                                Javier O'Hara)
     email                : chepelov@calixo.net
+
+    patched by Wolf Ó Spealáin to recognise class and instance variables
+            and tidy Python output. 9th July 2016
+
  ***************************************************************************/
 
 /***************************************************************************
@@ -22,18 +26,11 @@ void generate_code_python(batch *b) {
     umlclasslist tmplist, parents;
     umlattrlist umla, tmpa;
     umloplist umlo;
-    char *tmpname;
     char outfilename[BIG_BUFFER];
-    FILE * outfile, *dummyfile, *licensefile = NULL;
+    FILE *licensefile = NULL;
     namelist used_classes, tmpnamelist;
-
-    int tmpdirlgth, tmpfilelgth;
+    int intro_was_printed;
     int interface, abstract;
-
-    if (b->outdir == NULL) {
-        b->outdir = ".";
-    }
-    tmpdirlgth = strlen(b->outdir);
 
     tmplist = b->classlist;
 
@@ -50,150 +47,168 @@ void generate_code_python(batch *b) {
 
         if ( ! ( is_present(b->classes, tmplist->key->name) ^ b->mask ) ) {
 
-            tmpname = tmplist->key->name;
+            char *tmpname = tmplist->key->name;
 
-            /* This prevents buffer overflows */
-            tmpfilelgth = strlen(tmpname);
-            if (tmpfilelgth + tmpdirlgth > sizeof(*outfilename) - 2) {
-                fprintf(stderr, "Sorry, name of file too long ...\nTry a smaller dir name\n");
-                exit(4);
+            sprintf(outfilename, "%s.py", tmplist->key->name);
+            spec = open_outfile (outfilename, b);
+            if (spec == NULL) {
+                tmplist = tmplist->next;
+                continue;
             }
 
-            sprintf(outfilename, "%s/%s.py", b->outdir, tmplist->key->name);
-            dummyfile = fopen(outfilename, "r");
-            if ( b->clobber || ! dummyfile ) {
-
-                outfile = fopen(outfilename, "w");
-                if ( outfile == NULL ) {
-                    fprintf(stderr, "Can't open file %s for writing\n", outfilename);
-                    exit(3);
+            /* add license to the header */
+            if (b->license != NULL) {
+                int lc;
+                rewind(licensefile);
+                while ((lc = fgetc(licensefile)) != EOF) {
+                    print("%c", (char) lc);
                 }
+            }
 
-                /* add license to the header */
-                if (b->license != NULL) {
-                    int lc;
-                    rewind(licensefile);
-                    while ((lc = fgetc(licensefile)) != EOF) {
-                        fprintf(outfile,"%c", (char) lc);
+            print("# File: %s\n\n", outfilename);
+            used_classes = find_classes(tmplist, b);
+            tmpnamelist = used_classes;
+            while (tmpnamelist != NULL) {
+                print("from %s import %s\n",
+                        tmpnamelist->name, tmpnamelist->name);
+                tmpnamelist = tmpnamelist->next;
+            }
+            if (used_classes != NULL) {
+                print("\n");
+            }
+            tmpname = strtolower(tmplist->key->stereotype);
+            interface = eq("interface", tmpname);
+            abstract = tmplist->key->isabstract;
+            free(tmpname);
+
+            print("class %s", tmplist->key->name);
+
+            parents = tmplist->parents;
+            if (parents != NULL) {
+                print("(");
+                while ( parents != NULL ) {
+                    print("%s", parents->key->name);
+                    parents = parents->next;
+                    if (parents != NULL) print(", ");
+                }
+                print(")");
+            }
+            print(":");
+            if (abstract) {
+                print("    # Abstract class");
+            } else if (interface) {
+                print("    # Interface");
+            }
+            intro_was_printed = 0;
+            umla = tmplist->key->attributes;
+
+            /* class scope */
+            while (umla != NULL) {
+                if (umla->key.isstatic) {
+                    if (!intro_was_printed) {
+                        print("\n\n# Attributes: Class\n");
+                        intro_was_printed = 1;
                     }
-                }
-
-                used_classes = find_classes(tmplist, b);
-                tmpnamelist = used_classes;
-                while (tmpnamelist != NULL) {
-                    fprintf(outfile, "from %s import %s\n",
-                            tmpnamelist->name, tmpnamelist->name);
-                    tmpnamelist = tmpnamelist->next;
-                }
-
-                fprintf(outfile, "\n");
-
-                tmpname = strtolower(tmplist->key->stereotype);
-                interface = eq("interface", tmpname);
-                abstract = tmplist->key->isabstract;
-                free(tmpname);
-
-                fprintf(outfile, "class %s", tmplist->key->name);
-
-                parents = tmplist->parents;
-                if (parents != NULL) {
-                    fprintf(outfile, "(");
-                    while ( parents != NULL ) {
-                        fprintf(outfile, "%s", parents->key->name);
-                        parents = parents->next;
-                        if (parents != NULL) fprintf(outfile, ", ");
-                    }
-                    fprintf(outfile, ")");
-                }
-                fprintf(outfile, ":\n");
-                if (abstract) {
-                    fprintf(outfile, "    \"\"\"Abstract class %s\n    \"\"\"\n",
-                            tmplist->key->name);
-                } else if (interface) {
-                    fprintf(outfile, "    \"\"\"Interface %s\n    \"\"\"\n",
-                            tmplist->key->name);
-                } else {
-                    fprintf(outfile, "    \"\"\"Class %s\n    \"\"\"\n",
-                            tmplist->key->name);
-                }
-
-                fprintf(outfile, "    # Attributes:\n");
-                umla = tmplist->key->attributes;
-                while ( umla != NULL) {
-
                     switch (umla->key.visibility) {
                     case '0':
-                        fprintf (outfile, "    ");
+                        print("\n    ");
                         break;
                     case '1':
-                        fprintf (outfile, "    __");
+                        print("\n    __");
                         break;
                     case '2':
-                        fprintf (outfile, "    _");
+                        print("\n    _");
                         break;
                     }
-
-                    fprintf(outfile, "%s", umla->key.name);
+                    print("%s", umla->key.name);
                     if ( umla->key.value[0] != 0 ) {
-                        fprintf(outfile, " = %s", umla->key.value);
+                        print(" = %s", umla->key.value);
                     } else {
-                        fprintf(outfile, " = None");
+                        print(" = None");
                     }
-                    fprintf(outfile, "  # (%s) \n", umla->key.type);
-                    umla = umla->next;
+                    if (umla->key.type[0] != 0) {
+                        print("  # %s", umla->key.type);
+                    }
                 }
-
-                fprintf(outfile, "    \n");
-                umlo = tmplist->key->operations;
-                fprintf(outfile, "    # Operations\n");
-                while ( umlo != NULL) {
-
-                    switch (umlo->key.attr.visibility) {
+                umla = umla->next;
+            }
+            /* instance attributes */
+            umla = tmplist->key->attributes;
+            print("\n\n# Attributes: Instance\n\n");
+            print("    def __init__(self):");
+            while ( umla != NULL) {
+                if (!umla->key.isstatic) {
+                    switch (umla->key.visibility) {
                     case '0':
-                        fprintf (outfile, "    def %s(self", umlo->key.attr.name);
+                        print("\n        self.");
                         break;
                     case '1':
-                        fprintf (outfile, "    def __%s(self", umlo->key.attr.name);
+                        print("\n        self.__");
                         break;
                     case '2':
-                        fprintf (outfile, "    def _%s(self", umlo->key.attr.name);
+                        print("\n        self._");
                         break;
                     }
-
-                    tmpa = umlo->key.parameters;
-                    while (tmpa != NULL) {
-                        fprintf(outfile, ", %s", tmpa->key.name);
-                        if ( tmpa->key.value[0] != 0 ) {
-                            fprintf(outfile, " = %s", tmpa->key.value);
-                        }
-                        tmpa = tmpa->next;
-                    }
-                    fprintf(outfile, "):\n");
-                    fprintf(outfile, "        \"\"\"function %s\n", umlo->key.attr.name);
-                    tmpa = umlo->key.parameters;
-                    if (tmpa) fprintf(outfile, "        \n");
-                    while (tmpa != NULL) {
-                        fprintf(outfile, "        %s: %s\n", tmpa->key.name, tmpa->key.type);
-                        tmpa = tmpa->next;
-                    }
-                    fprintf(outfile, "        \n");
-                    fprintf(outfile, "        returns %s\n", umlo->key.attr.type);
-                    fprintf(outfile, "        \"\"\"\n");
-
-                    if (abstract || interface) {
-                        fprintf(outfile, "        raise NotImplementedError()\n    \n");
+                    print("%s", umla->key.name);
+                    if ( umla->key.value[0] != 0 ) {
+                        print(" = %s", umla->key.value);
                     } else {
-                        fprintf(outfile, "        return None # should raise NotImplementedError()\n    \n");
+                        print(" = None");
                     }
-                    umlo = umlo->next;
+                    if (umla->key.type[0] != 0) {
+                        print("  # %s", umla->key.type);
+                    }
                 }
-                fprintf(outfile, "\n");
-
-                fclose(outfile);
+                umla = umla->next;
             }
+
+            umlo = tmplist->key->operations;
+            print("\n\n# Operations\n\n");
+            while (umlo != NULL) {
+
+                switch (umlo->key.attr.visibility) {
+                case '0':
+                    print("    def %s(self", umlo->key.attr.name);
+                    break;
+                case '1':
+                    print("    def __%s(self", umlo->key.attr.name);
+                    break;
+                case '2':
+                    print("    def _%s(self", umlo->key.attr.name);
+                    break;
+                }
+
+                tmpa = umlo->key.parameters;
+                while (tmpa != NULL) {
+                    print(", %s", tmpa->key.name);
+                    if ( tmpa->key.value[0] != 0 ) {
+                        print(" = %s", tmpa->key.value);
+                    }
+                    tmpa = tmpa->next;
+                }
+                print("):\n");
+                tmpa = umlo->key.parameters;
+                if (tmpa)
+                    print("        \n");
+                while (tmpa != NULL) {
+                    print("        %s: %s\n", tmpa->key.name, tmpa->key.type);
+                    tmpa = tmpa->next;
+                }
+                if (abstract || interface) {
+                    print("        raise NotImplementedError()\n    \n");
+                } else {
+                    print("        return");
+                    if (umlo->key.attr.type[0]) 
+                        print("    # %s", umlo->key.attr.type);
+                    print("\n    \n");
+                }
+                umlo = umlo->next;
+            }
+            print("\n");
+
+            fclose(spec);
         }
         tmplist = tmplist->next;
     }
 }
-
 

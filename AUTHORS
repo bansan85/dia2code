@@ -21,6 +21,7 @@ Contributors: (in alphabetical order, by last name)
 - Dmitry V. Sabanin <sdmitry@lrn.ru> Ruby code generation.
 - Charles Schaefer <charlesschaefer@gmail.com> Improvements to PHP5 generator.
 - Jérôme Slangen <jeromes@mail.be> Wildcard class list mechanism.
+- Wolf Ó Spealáin <wolfospealain@users.sourceforge.net> Improvement to Python generation
 - Takaaki Tateishi <> Dynamic Shared Objects for dynamic code generator modules.
 - Martin Vidner <mvidner@users.sourceforge.net> Porting to libxml2.
 
