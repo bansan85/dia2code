@@ -88,7 +88,7 @@ GenerateCodeJava::writeInclude (const std::list <std::pair <
         }
 
         bool found = false;
-        std::list <std::string>::const_iterator inc = incs.begin ();
+        std::list <std::string>::iterator inc = incs.begin ();
         size_t taille = include.length ();
 
         while (inc != incs.end ()) {
