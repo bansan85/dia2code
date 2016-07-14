@@ -3,7 +3,7 @@ AC_PREREQ([2.68])
 
 AC_CONFIG_HEADER(config.h)
 
-AC_INIT(dia2code, [0.9.0])
+AC_INIT(dia2code, [0.8.8])
 AC_CONFIG_SRCDIR([dia2code/main.c])
 AM_INIT_AUTOMAKE
 AC_CONFIG_MACRO_DIR([m4])
