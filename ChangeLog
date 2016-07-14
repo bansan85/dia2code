@@ -1,4 +1,4 @@
-Unreleased:  Version 0.8.8
+14 Jul 2016:  Version 0.8.8
 - Applied C++ compatibility changes, whitespace cleanups, and vim settings
   from the dia2code-c++ branch.
 - Applied modified patch https://sourceforge.net/p/dia2code/patches/27/
