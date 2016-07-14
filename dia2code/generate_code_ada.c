@@ -34,13 +34,13 @@ static batch *gb;   /* The current batch being processed.  */
 /* Utilities.  */
 
 static void
-check_umlattr (umlattribute *u, char *typename)
+check_umlattr (umlattribute *u, char *typename_)
 {
     /* Check settings that don't make sense for Ada generation.  */
     if (u->visibility == '1')
-        fprintf (stderr, "%s/%s: ignoring non-visibility\n", typename, u->name);
+        fprintf (stderr, "%s/%s: ignoring non-visibility\n", typename_, u->name);
     if (u->isstatic)
-        fprintf (stderr, "%s/%s: ignoring staticness\n", typename, u->name);
+        fprintf (stderr, "%s/%s: ignoring staticness\n", typename_, u->name);
 }
 
 static char *

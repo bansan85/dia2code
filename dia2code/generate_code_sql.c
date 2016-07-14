@@ -116,8 +116,8 @@ void generate_code_sql(batch *b) {
             while ( umla != NULL) {
                 if( umla->key.isstatic ) {
                     if( !seenFirst ) {
-                	    seenFirst = 1;
-                	    fprintf(outfilesql, ",\n  PRIMARY KEY (\n");
+                            seenFirst = 1;
+                            fprintf(outfilesql, ",\n  PRIMARY KEY (\n");
                     }
                     fprintf(outfilesql, "    %s", umla->key.name);
                     if (umla->next != NULL && umla->next->key.isstatic) {
@@ -157,11 +157,11 @@ void generate_code_sql(batch *b) {
                 fk_col = temp->name;
             }
             fprintf( outfilesql, "\n\nALTER TABLE %s ADD\n", temp->key->name );
-            fprintf( outfilesql, "    CONSTRAINT  FK_%s_%s  FOREIGN KEY(%s) REFERENCES %s (%s);\n", 
-                     temp->key->name, 
-                     tmplist->key->name, 
-                     temp->name, 
-                     tmplist->key->name, 
+            fprintf( outfilesql, "    CONSTRAINT  FK_%s_%s  FOREIGN KEY(%s) REFERENCES %s (%s);\n",
+                     temp->key->name,
+                     tmplist->key->name,
+                     temp->name,
+                     tmplist->key->name,
                      fk_col );
             temp = temp->next;
         }
@@ -171,3 +171,4 @@ void generate_code_sql(batch *b) {
     fclose(outfilesql);
 }
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
