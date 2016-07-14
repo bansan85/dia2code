@@ -1,18 +1,20 @@
 Author:
 - Javier O'Hara <joh314@users.sourceforge.net>: author and mantainer
+- Leo West <west_leo AT yahoo DOT com>
 - Richard Torkar <richard.torkar@htu.se>: maintainer
 
 Contributors: (in alphabetical order, by last name)
-- bansan <bansan@users.sourceforge.net> Improvements to C++ code generation
 - Cyrille Chepelov <chepelov@calixo.net> Python code generation, Debian package management,
   Hurd conformance
 - Harald Fielker <hfielker@softsolutions.de> PHP code generation.
 - Thomas Hansen <thomas.hansen@adramatch.com> C# code generation.
 - Alejandro Imass <aimass@yabarana.com> Improved foreign keys in SQL generation
 - Oliver Kellogg <okellogg@users.sourceforge.net> Fixes for scan_tree.c and IDL generation
+- Vincent Le Garrec (bansan) <vincent@le-garrec.fr> Convert to C++.
 - Dima Levchenko <dimalev@users.sf.net> AS3 code generation, association multiplicities
 - Ophir Lojkine <@lovasoa> bug fixes, import of database diagrams
 - Ruben Lopez <ryu@gpul.org>, C code generation
+- Leandro Lucarella <luca@lugmen.org.ar>, php code generation
 - Steffen Macke <sdteffen@gmail.com> batch shapefile generation, win32 installer
 - Chris McGee <sirnewton_01@yahoo.ca> Dependencies, Associations, C++ Templates, SQL, IDL
 - Takashi Okamoto <toraneko@kun.ne.jp> License inclusion mechanism.
@@ -25,3 +27,5 @@ Contributors: (in alphabetical order, by last name)
 - Takaaki Tateishi <> Dynamic Shared Objects for dynamic code generator modules.
 - Martin Vidner <mvidner@users.sourceforge.net> Porting to libxml2.
 
+Thanks:
+Collin Starkweather and Slush Gore for the extra help.
