@@ -12,6 +12,7 @@ Contributors: (in alphabetical order, by last name)
 - Oliver Kellogg <okellogg@users.sourceforge.net> Fixes for scan_tree.c and IDL generation
 - Vincent Le Garrec (bansan) <vincent@le-garrec.fr> Convert to C++.
 - Dima Levchenko <dimalev@users.sf.net> AS3 code generation, association multiplicities
+- Ophir Lojkine <@lovasoa> bug fixes, import of database diagrams
 - Ruben Lopez <ryu@gpul.org>, C code generation
 - Leandro Lucarella <luca@lugmen.org.ar>, php code generation
 - Steffen Macke <sdteffen@gmail.com> batch shapefile generation, win32 installer
@@ -22,6 +23,7 @@ Contributors: (in alphabetical order, by last name)
 - Dmitry V. Sabanin <sdmitry@lrn.ru> Ruby code generation.
 - Charles Schaefer <charlesschaefer@gmail.com> Improvements to PHP5 generator.
 - Jérôme Slangen <jeromes@mail.be> Wildcard class list mechanism.
+- Wolf Ó Spealáin <wolfospealain@users.sourceforge.net> Improvement to Python generation
 - Takaaki Tateishi <> Dynamic Shared Objects for dynamic code generator modules.
 - Martin Vidner <mvidner@users.sourceforge.net> Porting to libxml2.
 

@@ -1,4 +1,16 @@
+Unreleased:  Version 0.9.0
+- Refactoring code : convert to program to C++.
+
 Unreleased:  Version 0.8.8
+- Applied C++ compatibility changes, whitespace cleanups, and vim settings
+  from the dia2code-c++ branch.
+- Applied modified patch https://sourceforge.net/p/dia2code/patches/27/
+  adding generation of __init__ method in generate_code_python.c
+- Applied various patches provided by Ophir Lojkine.
+- Fixed bug in parse_diagram.c related to the order in which dependencies
+  are considered.
+- Applied fgetc.patch from http://sourceforge.net/p/dia2code/patches/25/
+  to fix infinite loop on reading license file.
 - Applied dia2code.patch3 from http://bugs.debian.org/240091
   (java code: interface bug fix and better pretty printing)
   to dia2code/generate_code_java.c. Author Stefano Zacchiroli explains:
@@ -8,7 +20,9 @@ Unreleased:  Version 0.8.8
   > clauses only when the class name is fully qualified.
 - Fixed infinite loop on reading license file, see fgetc.patch at
   http://sourceforge.net/p/dia2code/patches/25/
-- Refactoring code : convert to program to C++.
+- Fix a SEGFAULT on empty dia files.
+- Add support for dia's database tables.
+- Import sql primary keys from database diagrams.
 
 07 Jul 2014:  Version 0.8.7
 - Added ActionScript-3 code generator by Dima Levchenko

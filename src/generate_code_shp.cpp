@@ -87,7 +87,7 @@ void generate_code_shp(batch *b) {
                         if((strcmp(umla->key.name,"Shape") != 0)&&
                            (umla->key.visibility != 1)) {
                             if(strcmp(umla->key.type,"String") == 0) {
-                                fprintf(outfileshp, " -s %s 255", 
+                                fprintf(outfileshp, " -s %s 255",
                                         umla->key.name);
                             }
                             else if((strcmp(umla->key.type,
@@ -151,7 +151,7 @@ void generate_code_shp(batch *b) {
                     }
                 }
                 fclose(outfileshp);
-            }      
+            }
         }
         tmplist = tmplist->next;
     }

@@ -53,7 +53,12 @@ void generate_code_sql(batch *b) {
     tmpdirlgth = strlen(b->outdir);
 
     tmplist = b->classlist;
-    
+
+    if (tmplist == NULL) {
+        fprintf(stderr, "Sorry, no class found in your file.\n");
+        exit(4);
+    }
+
     tmpname = strtolower(tmplist->key->name);
 
     /* This prevents buffer overflows */
@@ -101,13 +106,12 @@ void generate_code_sql(batch *b) {
             umla = tmplist->key->attributes;
             inherit_attributes (tmplist->parents, umla);
             while ( umla != NULL) {
-                fprintf(outfilesql, "%s %s", umla->key.name, umla->key.type);
+                fprintf(outfilesql, "  %s %s", umla->key.name, umla->key.type);
                 if (umla->next != NULL) {
                     fprintf(outfilesql, ",\n");
                 }
                 umla = umla->next;
             }
-            fprintf(outfilesql, ");\n\n");
 
             /* IsStatic attribute (Primary Key) */
             umla = tmplist->key->attributes;
@@ -115,19 +119,18 @@ void generate_code_sql(batch *b) {
                 if( umla->key.isstatic ) {
                     if( !seenFirst ) {
                             seenFirst = 1;
-                            fprintf(outfilesql, "ALTER TABLE  %s ADD\n", tmplist->key->name);
-                            fprintf(outfilesql, "    CONSTRAINT  PK_%s  PRIMARY KEY\n    (\n", tmplist->key->name);
+                            fprintf(outfilesql, ",\n  PRIMARY KEY (\n");
                     }
-                    fprintf(outfilesql, "        %s", umla->key.name);
+                    fprintf(outfilesql, "    %s", umla->key.name);
                     if (umla->next != NULL && umla->next->key.isstatic) {
-                        fprintf(outfilesql, ",");
+                        fprintf(outfilesql, ",\n");
                     }
-                    fprintf(outfilesql, "\n");
                 }
                 umla = umla->next;
             }
-            if( seenFirst )
-                fprintf(outfilesql, "    );\n\n\n");
+            if (seenFirst) fprintf(outfilesql, ")\n");
+
+            fprintf(outfilesql, ");\n\n");
         }
 
         tmplist = tmplist->next;
@@ -166,7 +169,7 @@ void generate_code_sql(batch *b) {
         }
         tmplist = tmplist->next;
     }
-    fprintf(stderr, "Finished!");
+    fprintf(stderr, "Finished!\n");
     fclose(outfilesql);
 }
 

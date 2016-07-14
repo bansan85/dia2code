@@ -33,12 +33,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define JAVA_EXTENDS         0
 #define JAVA_IMPLEMENTS      1
 
-char *java_visibility_to_string(int visibility);
-
 /**
- * get the visibility java keyword from the Dia visibility code
+ * get the visibility as3 keyword from the Dia visibility code
  * @param int the dia visibility constant
- * @return the java keyword for visibility
+ * @return the as3 keyword for visibility
  */
 char *as3_visibility_to_string(int visibility)
 {
@@ -103,7 +101,7 @@ int as3_generate_attribute( FILE * outfile, umlattribute *attr )
 {
     debug( DBG_GENCODE, "generate attribute %s\n", attr->name );
     generate_attribute_comment( outfile, NULL, attr );
-    d2c_fprintf(outfile, "%s ", java_visibility_to_string(attr->visibility));
+    d2c_fprintf(outfile, "%s ", as3_visibility_to_string(attr->visibility));
     if (attr->isstatic)
         d2c_fprintf(outfile, "static ");
     d2c_fprintf(outfile, "var %s:%s", attr->name, attr->type);
@@ -131,7 +129,7 @@ int as3_generate_operation( FILE * outfile, umloperation *ope, int classtype )
         /* d2c_fprintf(outfile, "abstract "); */
         /* ope->attr.value[0] = '0'; */
     }
-    d2c_fprintf(outfile, "%s ", java_visibility_to_string(ope->attr.visibility));
+    d2c_fprintf(outfile, "%s ", as3_visibility_to_string(ope->attr.visibility));
     if ( ope->attr.isstatic )
         d2c_fprintf(outfile, "static ");
     d2c_fprintf(outfile, " function %s(", ope->attr.name);
@@ -306,7 +304,7 @@ void generate_code_as3(batch *b)
                     fprintf( stderr, "Actionscript cannot have abstract classes!\n" );
                 } else {
                     classtype = CLASSTYPE_CLASS;
-		}
+                }
             }
             free(tmpname);
 
