@@ -27,8 +27,6 @@
 #define SPEC_EXT "h"
 #define BODY_EXT "cpp"
 
-#define eq  !strcmp
-
 static batch *gb;   /* The current batch being processed.  */
 
 /* Utilities.  */

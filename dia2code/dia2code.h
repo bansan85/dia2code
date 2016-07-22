@@ -32,9 +32,9 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#define VERSION "0.8.7"
+#include "config.h"
 
-#ifdef DSO
+#if DSO == 1 && defined(CODEGEN_USE_DSO)
 #include <dlfcn.h>
 #define MODULE_DIR ".dia2code"
 #define DSO_PREFIX "generate_code_"
@@ -287,8 +287,11 @@ char *find_diaoid( const char *buf, char **newpos  );
 int d2c_backup(char *filename);
 void d2c_log( int level, char * msg );
 
+void debug_setlevel(int newlevel);
+void debug(int level, char *fmt, ...);
+
 #define TAG fprintf(stderr, "%s %d\n", __FILE__, __LINE__);
-#define eq  !strcmp
+#define eq(a, b)  !strcmp((const char *)(a), (const char *)(b))
 
 struct param_list
 {

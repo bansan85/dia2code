@@ -162,8 +162,7 @@ void generate_code_java(batch *b)
     umloplist umlo;
     char *tmpname;
     char outfilename[BIG_BUFFER];
-    FILE * outfile, *dummyfile, *licensefile = NULL;
-    int file_found = 0;
+    FILE * outfile, *licensefile = NULL;
     umlclasslist used_classes;
     umlclass *class;
     int classtype;

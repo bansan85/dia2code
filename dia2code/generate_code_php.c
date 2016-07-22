@@ -46,7 +46,7 @@ void generate_code_php(batch *b)
 {
     umlclasslist tmplist, parents;
     umlassoclist associations;
-    umlattrlist umla, tmpa, parama;
+    umlattrlist umla, tmpa;
     umlpackagelist tmppcklist;
     umloplist umlo;
     char *tmpname, *outdir;
@@ -55,7 +55,7 @@ void generate_code_php(batch *b)
     umlclasslist used_classes;
     sourceblocknode *sbklist = NULL;
     sourceblock *srcblock;
-    sourcecode *source;
+    sourcecode *source = NULL;
     
     int tmpdirlgth, tmpfilelgth;
 
@@ -103,7 +103,10 @@ void generate_code_php(batch *b)
                 sprintf(outfilename, "%s.php", tmplist->key->name);
             }
 
-            /* get implementation code from the existing file */
+            /* get implementation code from the existing file
+               This does not work yet - source_preserve() 4th arg (source)
+               should be double-pointer (char**) because the updated source
+               pointer must be visible at the caller.  */
             source_preserve( b, tmplist->key, outfilename, source );
             
             if ( b->clobber ) {
@@ -236,7 +239,7 @@ void generate_code_php(batch *b)
 
                 umlo = tmplist->key->operations;
                 while ( umlo != NULL) {
-                    char *diaoid, *dummycp;
+                    char *diaoid;
                     /** comment_helper function that generate the javadoc comment block */
                     generate_operation_comment( outfile, NULL, &umlo->key );
                     /* fprintf(outfile,"%s * @access %s \n", TABS, php_visibility(umlo->key.attr.visibility)  );

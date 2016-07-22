@@ -21,10 +21,6 @@
 #define MIN(x, y) (x < y ? x : y)
 #endif
 
-/* In case of unnamed associations, the attribute will get the name
-   "unnamed_" followed by the anon_cnt converted to string:  */
-static unsigned anon_cnt = 0;
-
 static char *sscanfmt()
 {
     static char buf[16];
@@ -58,7 +54,6 @@ void parse_dia_string(xmlNodePtr stringnode, char *buffer) {
 /* the buffer must have room for LARGE_BUFFER characters */
 void parse_dia_string_large(xmlNodePtr stringnode, char *buffer) {
     xmlChar *content;
-    char fmt[16];
 
     content = xmlNodeGetContent(stringnode);
     strncpy (buffer, content + 1, MIN(strlen(content) - 2, LARGE_BUFFER - 1));

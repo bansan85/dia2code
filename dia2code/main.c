@@ -23,7 +23,7 @@ int process_initialization_file(char *filename, int exit_if_not_found);
 
 #define DEFAULT_TARGET 0
 
-#ifdef DSO
+#if DSO == 1 && defined(CODEGEN_USE_DSO)
 static void *
 find_dia2code_module(const char *lang) {
     char *homedir;
@@ -225,7 +225,7 @@ under certain conditions; read the COPYING file for details.\n";
                 generator = generators[12];
                 generator_buildtree = 1;
             } else {
-#ifdef DSO
+#if DSO == 1 && defined(CODEGEN_USE_DSO)
                 generator = find_dia2code_module(argv[i]);
                 if ( ! generator ) {
                     fprintf(stderr, "can't find the generator: %s\n", dlerror());
@@ -425,13 +425,15 @@ int process_initialization_file(char *filename, int exit_if_not_found)
     char s[LARGE_BUFFER];
     
     if (f == NULL)
-    if (exit_if_not_found)
     {
-        fprintf(stderr, "Could not open initialization file %s\n", filename);
-        exit(-1);
+        if (exit_if_not_found)
+        {
+            fprintf(stderr, "Could not open initialization file %s\n", filename);
+            exit(-1);
+        }
+        else
+            return 0;
     }
-    else
-        return 0;
 
     while (fgets(s, LARGE_BUFFER - 1, f) != NULL)
     {

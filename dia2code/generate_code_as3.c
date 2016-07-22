@@ -169,8 +169,7 @@ void generate_code_as3(batch *b)
     umloplist umlo;
     char *tmpname;
     char outfilename[BIG_BUFFER];
-    FILE * outfile, *dummyfile, *licensefile = NULL;
-    int file_found = 0;
+    FILE * outfile, *licensefile = NULL;
     umlclasslist used_classes;
     umlclass *class_;
     int classtype;

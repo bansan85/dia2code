@@ -85,7 +85,7 @@ void d2c_php_print_func_comments(FILE *outfile, umloplist umlo)
 {
     
     umlattrlist parama;
-    char *tmpname;
+
     /* begin function comments */
     fprintf(outfile, "%s/**\n", TABS);
     if (strlen(umlo->key.attr.comment) > 0)
