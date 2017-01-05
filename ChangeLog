@@ -1,3 +1,9 @@
+Unreleased:  Version 0.8.9
+- Added support for platforms that lack libc function strndup(), this fixes
+  https://sourceforge.net/p/dia2code/bugs/27/
+- Applied java-void.diff from https://sourceforge.net/p/dia2code/patches/29/
+  fixing generation of constructors.  Applied similar improvement for C++.
+
 14 Jul 2016:  Version 0.8.8
 - Applied C++ compatibility changes, whitespace cleanups, and vim settings
   from the dia2code-c++ branch.
@@ -15,8 +21,6 @@
   > qualified namespace (e.g. "my.name.space.Foo"). The attached patch [...]
   > adds a test which makes the Java code generator output the "import"
   > clauses only when the class name is fully qualified.
-- Fixed infinite loop on reading license file, see fgetc.patch at
-  http://sourceforge.net/p/dia2code/patches/25/
 - Fix a SEGFAULT on empty dia files.
 - Add support for dia's database tables.
 - Import sql primary keys from database diagrams.

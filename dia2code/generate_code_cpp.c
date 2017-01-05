@@ -357,9 +357,10 @@ gen_class (umlclassnode *node)
                 else
                     emit ("static ");
             }
-            if (strlen (umlo->key.attr.type) > 0) {
+            if (strlen (umlo->key.attr.type) > 0)
                 emit ("%s ", cppname (umlo->key.attr.type));
-            }
+            else if (strcmp (umlo->key.attr.name, name))
+                emit ("void ");  /* It's no constructor */
             emit ("%s (", umlo->key.attr.name);
             tmpa = umlo->key.parameters;
             while (tmpa != NULL) {

@@ -108,7 +108,7 @@ int java_generate_attribute( FILE * outfile, umlattribute *attr )
  * @param the output file
  * @param the operation struct to generate
  */
-int java_generate_operation( FILE * outfile, umloperation *ope, int classtype )
+int java_generate_operation( FILE * outfile, umloperation *ope, int classtype, char *classname)
 {
     umlattrlist tmpa;
     debug( DBG_GENCODE, "generate method %s\n", ope->attr.name );
@@ -125,6 +125,8 @@ int java_generate_operation( FILE * outfile, umloperation *ope, int classtype )
         d2c_fprintf(outfile, "static ");
     if (strlen(ope->attr.type) > 0)
         d2c_fprintf(outfile, "%s ", ope->attr.type);
+    else if (strcmp(ope->attr.name, classname))
+        d2c_fprintf(outfile, "void ");  /* It's no constructor */
     d2c_fprintf(outfile, "%s ( ", ope->attr.name);
     tmpa = ope->parameters;
     while (tmpa != NULL)
@@ -341,7 +343,7 @@ void generate_code_java(batch *b)
             umlo = class->operations;
             while ( umlo != NULL)
             {
-                java_generate_operation( outfile, &umlo->key, classtype );
+                java_generate_operation( outfile, &umlo->key, classtype, class->name);
                 umlo = umlo->next;
             }
 

@@ -55,8 +55,10 @@ do_operations (char *typename_, umloplist umlo)
 
         if (strlen (umlo->key.attr.type) > 0)
             emit ("%s ", umlo->key.attr.type);
+        else if (eq (umlo->key.attr.name, typename_))
+            emit ("factory ");  /* It's a constructor */
         else
-            emit ("void ");
+            emit ("void ");     /* It's no constructor */
         emit ("%s (", umlo->key.attr.name);
 
         while (tmpa != NULL) {
