@@ -180,16 +180,28 @@ void * my_malloc( size_t size ) {
     return tmp;
 }
 
+char * my_strndup(const char *s, size_t n) {
+    char *retval;
+    size_t len = strlen(s);
+    if (s == NULL)
+        return NULL;
+    if (len > n)
+        len = n;
+    retval = (char*)malloc(len + 1);
+    strncpy(retval, s, len);
+    retval[len] = '\0';
+    return retval;
+}
 
 /*
     Builds a package list from the hierarchy of parents of package.
     The topmost package will be the first on the list and the initial
     package will be the last.
 */
-umlpackagelist make_package_list(umlpackage * package){
+umlpackagelist make_package_list(umlpackage * package) {
     umlpackagelist dummylist, tmplist=NULL;
 
-    while ( package != NULL ){
+    while (package != NULL) {
         dummylist = NEW (umlpackagenode);
         dummylist->next = tmplist;
         tmplist = dummylist;
@@ -464,7 +476,7 @@ void append_endless_string(endless_string * es, char *s)
     es->end = esb;
 }
 
-struct d2c_impl{
+struct d2c_impl {
     char name[SMALL_BUFFER];
     endless_string *impl;
     int impl_len;
@@ -998,7 +1010,7 @@ char *find_diaoid( const char *buf, char **newpos  )
     if( ep == NULL ) {
         oidp = strdup(cp);
     } else {
-        oidp= (char*) strndup( cp, (size_t) ( ep-cp));
+        oidp= (char*) my_strndup( cp, (size_t) ( ep-cp));
     }
     /* caller want the new position : we set it */
     if( newpos != NULL ) {

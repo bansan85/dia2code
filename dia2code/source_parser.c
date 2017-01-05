@@ -53,7 +53,7 @@ void source_preserve( batch *b, umlclass *class, const char *filename, sourcecod
                 srcblock = sourceblock_find( source->blocks, diaoid );
                 // srcblock->spos poitns the implementation of lengtjh srcblock->len
                 if( srcblock != NULL ) {
-                    umlo->key.implementation = (char*) strndup( srcblock->spos, srcblock->len );
+                    umlo->key.implementation = (char*) my_strndup( srcblock->spos, srcblock->len );
                 }
             } else {
                 debug( DBG_SOURCE, "diaoid %s not found in source", diaoid );
@@ -77,7 +77,7 @@ sourceblock *sourceblock_new( char *spos, size_t len, char *oid, int type )
     blk->spos = spos;
     blk->len = len;
     blk->type = type;
-    blk->oid = (char*) strndup( oid, 30 );
+    blk->oid = (char*) my_strndup( oid, 30 );
     return blk;
 }
 
@@ -150,7 +150,7 @@ sourceblocknode *source_parse( const char *sourcebuffer )
                 debug( DBG_GENCODE, "srcbk spos=%p len=%ld \n",  srcbk->spos, srcbk->len );
                 /* this to remove the { and } from the block */
                 srcbk->spos ++; srcbk->len -= 2;
-                char *source = (char*) strndup( srcbk->spos, srcbk->len ); /* only used for debug message */
+                char *source = (char*) my_strndup( srcbk->spos, srcbk->len ); /* only used for debug message */
                 debug( 7, "METHOD SOURCE-----------------------------------------\n%s\n------------------------------------\n", source );
                 free(source);
                 list = sourceblocklist_add( list, srcbk );                
@@ -215,7 +215,7 @@ int find_more_str( char *buf, char *tofind[], sourceblock pblocks[] )
             if( i > 0 ) {
                 pblocks[i-1].len = ep-np;
             }
-            // printf( "--->found %s<--------\n", (char*)strndup(ep,40));
+            // printf( "--->found %s<--------\n", (char*)my_strndup(ep,40));
             np=ep;
         }
         i++;

@@ -210,6 +210,7 @@ int is_const_stereo (char * stereo);
 umlattrlist copy_attributes(umlattrlist src);
 
 void * my_malloc( size_t size );
+char * my_strndup(const char *s, size_t n);
 
 #define NEW(c) ((c*)my_malloc(sizeof(c)))
 
