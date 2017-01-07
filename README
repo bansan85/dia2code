@@ -1,4 +1,4 @@
-Dia2Code v. 0.9.0
+Dia2Code v. 1.0.0
 
 SUMMARY
 
@@ -8,8 +8,10 @@ This program generates code for many languages from an UML Dia Diagram.
 DESCRIPTION
 
 This program is a small utility that makes code from a Dia diagram. Supported
-languages are: ActionScript3, Ada, C, C++(99,11), C#, IDL, Java, PHP(4,5),
-Python, Ruby, shapefiles, and SQL create statement files.
+target languages are: C++(99,11), C#, Java, PHP5.
+Starting version 1.0.0, the program was completely rewritten in C++.
+Target languages still to be ported from the dia2code-0.8.x C implementation are:
+ActionScript3, Ada, C, Python, Ruby, shapefiles, and SQL create statement files.
 
 Its intended purpose is to ease the programmer's work by generating
 the structure of the classes in an Object Oriented language
@@ -19,10 +21,12 @@ the structure of the classes in an Object Oriented language
 
 STATUS
 
-Dia2Code generates ActionScript, Ada, C, C++, C#, IDL, Java, PHP, Python, Ruby,
-and shape files.
-It can also generate a file with SQL's CREATE TABLE statements and .bat files
-for creating shapes. Templates and packages are supported.
+Dia2Code generates C++(99,11), C#, Java, PHP.
+Templates and packages are supported.
+In the future, it will be able to generate ActionScript, Ada, C, IDL, Python, Ruby,
+shape files, and SQL's CREATE TABLE statements.
+For the time being, if you require any of these languages, please continue to use
+the dia2code-0.8.x C based implementation.
 
 The generation of #include and import directives is automatically done
 considering the types used in each class but they may be added by dependencies.
