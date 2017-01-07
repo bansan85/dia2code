@@ -48,7 +48,14 @@ std::string strtoupperfirst (const std::string & s);
 std::list <std::string> parseClassNames (char *s);
 bool isPresent (std::list <std::string> list, const char *name);
 const char * kindStr (Kind k);
-bool isInside (std::string & meule, const char * aiguille);
+
+/**
+ * Find `aiguille' in the segments of `meule' where `meule' is a CSV (Comma Separated Value) list.
+ * @param meule  The haystack to search.
+ * @param aiguille The needle to find.
+ * @return True if found, false if not found.
+ */
+bool isInside (const std::string & meule, const char * aiguille);
 
 #endif
 

@@ -126,7 +126,7 @@ kindStr (Kind k) {
 }
 
 bool
-isInside (std::string & meule, const char * aiguille) {
+isInside (const std::string & meule, const char * aiguille) {
     char * token = NULL;
     char * tmp;
     char * meule2 = new char [meule.length () + 1];
