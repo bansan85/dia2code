@@ -212,28 +212,28 @@ File bit-by-bit.
 #ifndef README__HPP
 #define README__HPP
 
-** Dependancies
-#include "dependancies.hpp"
+** Dependencies
+#include "dependencies.hpp"
 
 ** Templates
 template <type template>
 
-** Namespace if class are in package.
+** Namespace if classes are in package.
 namespace package {
     ** Class with inheritance if necessary.
     class Class : public ParentClass {
-        ** Visibility of the attribut / operation. Public, private, protected
+        ** Visibility of the attribute / operation. Public, private, protected
         ** are supported. Implementation is not, default will be public.
-        ** Attributes will be print first, then operations.
+        ** Attributes will be printed first, then operations.
         // Attributes
-        ** Default value are ignored. for attribute.
+        ** Default values are ignored for attributes.
         public :
             ** Comments are in doxygen format.
             /// Comment for the first
             /// attribute.
             type1 nom1;
         private :
-            /// Exemple of static attribut.
+            /// Example of static attribute.
             static type2 nom2;
         protected :
             type3 nom3;
@@ -244,9 +244,9 @@ namespace package {
              * \brief Multiple line
              *        comment
              */
-            ** An abstact operation must not be define so " = 0".
+            ** An abstact operation must not be defined thus " = 0".
             virtual AbstractOperation () = 0;
-            ** A virtual operation must be define in the source code.
+            ** A virtual operation must be defined in the source code.
             virtual VirtualOperation ();
             NonAbstractOperation ();
             /**
@@ -276,8 +276,8 @@ File bit-by-bit.
 #ifndef README__HPP
 #define README__HPP
 
-** Dependancies
-#include "dependancies.hpp"
+** Dependencies
+#include "dependencies.hpp"
 
 ** Templates
 template <type template>
@@ -286,11 +286,11 @@ template <type template>
 namespace package {
     ** Class with inheritance if necessary.
     public class Class : public ParentClass {
-        ** Visibility of the attribut / operation. Public, private, protected
+        ** Visibility of the attribute / operation. Public, private, protected
         ** are supported. Implementation is not, default will be public.
         ** Attributes will be print first, then operations.
         // Attributes
-        ** Default value are ignored. for attribute.
+        ** Default values are ignored for attributes.
         public :
             ** Comments are in doxygen format.
             /// Comment for the first
@@ -308,9 +308,9 @@ namespace package {
              * \brief Multiple line
              *        comment
              */
-            ** An abstact operation must not be define so " = 0".
+            ** An abstact operation must not be defined thus " = 0".
             virtual AbstractOperation () = 0;
-            ** A virtual operation must be define in the source code.
+            ** A virtual operation must be defined in the source code.
             virtual VirtualOperation ();
             NonAbstractOperation ();
             /**
@@ -343,17 +343,17 @@ File bit-by-bit.
 
 ** No header guard
 
-** Dependancies
-using dependancies;
+** Dependencies
+using dependencies;
 
 ** Templates
 template <type template>
 
-** Namespace if class are in package.
+** Namespace if classes are in package.
 namespace package {
     ** Class with inheritance and templates if necessary.
     public class Class <template> : ParentClass where template : type  {
-        ** Attributes will be print first, then operations.
+        ** Attributes will be printed first, then operations.
         // Attributes
         ** Comments are in XML format.
         /// <summary>com1</summary>
@@ -423,15 +423,15 @@ File bit-by-bit.
 
 ** No header guard
 
-** Dependancies
-import Dependancies;
+** Dependencies
+import Dependencies;
 
 ** If class are in package.
 package Pack;
 
 ** Class with inheritance and templates if necessary.
 public class Class <template extends type> extends ParentClass {
-    ** Attributes will be print first, then operations.
+    ** Attributes will be printed first, then operations.
     // Attributes
     ** Comments are in doxygen format.
     /**
@@ -462,14 +462,14 @@ public class Class <template extends type> extends ParentClass {
 
 STEREOTYPES
 
-Mutiple stereotype can be apply on each class, attribute, operation,
-inheritance and dependence by separating them with an "," without space.
+Multiple stereotypes can be apply on each class, attribute, operation,
+inheritance and dependence by separating them with a "," without space.
 For example (without quotes): "interface,getset".
 
 
 - Inheritance or Realization of an interface:
 
-By default, all inheritances are public. Some language, like C++, allow a
+By default, all inheritances are public. Some languages, like C++, allow a
 different visibility like protected or private.
 Possible value: public, private, protected, implementation.
 
@@ -802,13 +802,13 @@ not supported
 
 delete, Delete:
 ------  ------
-In C++11, a deleted function must be defined in header.
+In C++11, a deleted function must be defined in the header.
 Not applicable in C# and Java.
 
 C++ generator:
-** In C++, delete do not exists. So the commun way to delete a function (like
-** copy constructor) is to make this function private and not defining it in
-** source.
+** In C++, there is no keyword for function hiding (as `delete` in C++11).
+** So the common way to delete a function (like copy constructor) is to make
+** the function private and not define it in source.
 class operations {
     private :
         test5 ();
@@ -840,13 +840,13 @@ class operations {
 
 GetSet:
 ------
-This feature will generate the same output than GetSet for class except it will
-respect the visibility of the operation. You also need to define the attribut.
+This feature will generate the same output as GetSet for class except it will
+respect the visibility of the operation. You also need to define the attribute.
 
 
 dllexport, DllExport:
 ---------  ---------
-Force some signature to be store in a Microsoft Library Manager (lib).
+Force some signature to be stored in a Microsoft Library Manager (lib).
 
 
 C++ and C++11 generator:
@@ -900,7 +900,7 @@ Value      Use much like a normal class. Staticness not supported.
 
 NoLoop, noloop
 ------  ------
-In C/C++, circular dependencies are a really mess with include and only user
+In C/C++, circular dependencies are really messy with include and only the user
 can handle it. Adding a "NoLoop" stereotype will disable the "#include" for the
 connection.
 
@@ -1068,7 +1068,7 @@ Write an association.
 Write a template.
 
 Add a new generator to the main program:
-The following files needs to be updated:
+The following files need to be updated:
  - src/main.cpp:
      - add a new include at the top of the file with the header of the new
        generator,
@@ -1083,7 +1083,7 @@ The following files needs to be updated:
  - builds/vs-community-2013/dia2code.vcxproj
      - add the new source and header files.
  - README:
-     - add examples for classic classes and for the differents stereotypes.
+     - add examples for classic usecases and for the different stereotypes.
  - tests/tests.sh:
      - add your new generator to generators.
 And of course, don't forget to run "git add GenerateCodeXXX.?pp".

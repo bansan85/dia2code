@@ -1,5 +1,5 @@
 Unreleased:  Version 0.9.0
-- Refactoring code : convert to program to C++.
+- Refactoring code : converted program to C++.
 
 14 Jul 2016:  Version 0.8.8
 - Applied C++ compatibility changes, whitespace cleanups, and vim settings

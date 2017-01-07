@@ -7,7 +7,7 @@ Documentation:
 Code generators:
 - Default return value for non-void methods.
 - Code generation for more languages, see
-  http://http://sourceforge.net/p/dia2code/feature-requests
+  http://sourceforge.net/p/dia2code/feature-requests
 
 Compilation, Installation and Distribution
 - Modify autoconf/automake files to install dia2code.1 and dia2code.kaptn
