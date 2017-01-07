@@ -49,7 +49,7 @@ under certain conditions; read the COPYING file for details.\n";
     const char *help = "[-h|--help] [-d <dir>] [--buildtree] [-l <license file>\n\
        [-nc] [-cl <classlist>] [-v] [--version] [--tab <number>]\n\
        [-ext <extension>] [-bext <extension>] [-nl] [-1] \n\
-       <-t (ada|as3|c|cpp|csharp|idl|java|php4|php(5)|python|ruby|shp|sql)>\n\
+       <-t (ada|as3|c|cpp|csharp|idl|java|php(5)|python|ruby|shp|sql)>\n\
        <diagramfile>";
 
     const char *bighelp = "\
@@ -83,7 +83,7 @@ under certain conditions; read the COPYING file for details.\n";
                          --buildtree.\n\
                          Off by default but java.\n\
     -t <target>          Selects the output language. <target> can be one of:\n\
-                         ada,as3,c,cpp,cpp11,csharp,idl,java,php4,php(5),\n\
+                         ada,as3,c,cpp,cpp11,csharp,idl,java,php(5),\n\
                          python,ruby,shp,sql.\n\
     <diagramfile>        The Dia file that holds the diagram to be read.\n\
 \n\
@@ -153,21 +153,21 @@ under certain conditions; read the COPYING file for details.\n";
                        (!strcmp (argv[i], "php5"))) {
                 generator = new GenerateCodePhp (diagram);
             } else if (!strcmp (argv[i], "c")) {
-//                generator = generators[2];
+                throw std::string ("Target language " + std::string (argv[i]) + " not yet implemented in dia2code-c++.\n");
             } else if (!strcmp (argv[i], "sql")) {
-//                generator = generators[3];
+                throw std::string ("Target language " + std::string (argv[i]) + " not yet implemented in dia2code-c++.\n");
             } else if (!strcmp (argv[i], "ada")) {
-//                generator = generators[4];
+                throw std::string ("Target language " + std::string (argv[i]) + " not yet implemented in dia2code-c++.\n");
             } else if (!strcmp (argv[i], "python")) {
-//                generator = generators[5];
+                throw std::string ("Target language " + std::string (argv[i]) + " not yet implemented in dia2code-c++.\n");
             } else if (!strcmp (argv[i], "shp")) {
-//                generator = generators[7];
+                throw std::string ("Target language " + std::string (argv[i]) + " not yet implemented in dia2code-c++.\n");
             } else if (!strcmp (argv[i], "idl")) {
-//                generator = generators[8];
+                throw std::string ("Target language " + std::string (argv[i]) + " not yet implemented in dia2code-c++.\n");
             } else if (!strcmp(argv[i], "ruby")) {
-//                generator = generators[11];
+                throw std::string ("Target language " + std::string (argv[i]) + " not yet implemented in dia2code-c++.\n");
             } else if (!strcmp(argv[i], "as3")) {
-//                generator = generators[12];
+                throw std::string ("Target language " + std::string (argv[i]) + " not yet implemented in dia2code-c++.\n");
             } else {
                 throw std::string ("Unknown generator : " + std::string (argv[i]) + ".\n");
             }
@@ -208,21 +208,20 @@ under certain conditions; read the COPYING file for details.\n";
         }
         }
     }
-    /* parameter != 0 means the command line was invalid */
+
+    if (!generator) {
+        throw std::string ("Error : no generator specified.\n");
+    }
 
     if (!infile) {
         delete generator;
         throw std::string ("Error : Dia diagram not specified.\n");
     }
 
+    /* parameter != 0 means the command line was invalid */
     if (parameter != 0) {
         delete generator;
         throw std::string (std::string (notice) + "\nUsage: " + std::string (argv[0]) + " " + std::string (help) + "\n\n" + std::string (bighelp) + "\n");
-    }
-
-    if (!generator) {
-        delete generator;
-        throw std::string ("Error : no generator specified.\n");
     }
 
     LIBXML_TEST_VERSION;
