@@ -26,13 +26,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DiaGram.hpp"
 #include "scan_tree.hpp"
 
+#ifdef ENABLE_CORBA
+bool DiaGram::usecorba = false;  // static
+#endif
+
 DiaGram::DiaGram () :
     uml (),
     genClasses (),
     invertsel (false),
-#ifdef ENABLE_CORBA
-    usecorba (false),
-#endif
     tmp_classes (),
     includes (),
     decl () {
@@ -71,14 +72,8 @@ DiaGram::setInvertSel (bool invert) {
 
 #ifdef ENABLE_CORBA
 bool
-DiaGram::getUseCorba () const {
+DiaGram::getUseCorba () {  // static
     return usecorba;
-}
-
-
-void
-DiaGram::setUseCorba (bool corba) {
-    usecorba = corba;
 }
 #endif
 
@@ -116,7 +111,7 @@ DiaGram::listClasses (umlClassNode & current,
     }
 
     // But not parents, dependencies and associations.
-    for (const std::pair <umlClass *, Visibility> & classit :
+    for (const umlClassNode::ClassAndVisibility& classit :
                                                  current.getParents ()) {
         tmpnode = findByName (uml, classit.first->getName ());
         assert (tmpnode != NULL);
@@ -125,8 +120,8 @@ DiaGram::listClasses (umlClassNode & current,
         }
     }
 
-    for (const std::pair <umlClassNode *, uint8_t> & classit :
-                                                  current.getDependencies ()) {
+    for (const umlClassNode::ClassNodeAndFlags & classit :
+                                                 current.getDependencies ()) {
         if (!(((classit.second & 1) == 1) && ((flag & 2) == 2))) {
             tmpnode = findByName (uml, classit.first->getName ());
             assert (tmpnode != NULL);
@@ -293,7 +288,7 @@ DiaGram::push (umlClassNode * node) {
     }
 
 #ifdef ENABLE_CORBA
-    if (node->getStereotype ().compare (0, 5, "CORBA") == 0) {
+    if (node->isStereotypeCorba ()) {
         usecorba = true;
     }
 #endif

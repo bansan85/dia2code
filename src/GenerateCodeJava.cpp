@@ -384,7 +384,7 @@ GenerateCodeJava::writeClassStart2 (const umlClassNode & node,
                                     const char * implement,
                                     bool compName) {
     if (!node.getParents ().empty ()) {
-        std::list <std::pair <umlClass *, Visibility> >::const_iterator parent;
+        std::list <umlClassNode::ClassAndVisibility>::const_iterator parent;
 
         parent = node.getParents ().begin ();
         while (parent != node.getParents ().end ()) {

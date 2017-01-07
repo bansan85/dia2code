@@ -317,17 +317,10 @@ GenerateCode::passByReference (umlClass & cl) const {
 #ifdef ENABLE_CORBA
 static bool
 isOoClass (umlClass &cl) {
-    const char *st;
-    st = cl.getStereotype ().c_str ();
-    if (strlen (st) == 0) {
-        return true;
-    }
-    return (!isConstStereo (st) &&
-            !isTypedefStereo (st) &&
-            !isEnumStereo (st) &&
-            !isStructStereo (st) &&
-            !eq (st, "CORBAUnion") &&
-            !eq (st, "CORBAException"));
+    return (!cl.isStereotypeTypedef () &&
+            !cl.isStereotypeEnum () &&
+            !cl.isStereotypeStruct () &&
+            !cl.isStereotypeExtern ());
 }
 #endif
 
@@ -335,7 +328,7 @@ const char *
 GenerateCode::cppName (std::string name) {
     static std::string buf;
 #ifdef ENABLE_CORBA
-    if (dia.getUseCorba ()) {
+    if (DiaGram::getUseCorba ()) {
         if (name.compare ("boolean") == 0 || name.compare ("char") == 0 || name.compare ("octet") == 0 ||
             name.compare ("short") == 0 ||
             name.compare ("long") == 0 ||

@@ -36,7 +36,7 @@ class DiaGram {
         // Flag that inverts the above selection.
         bool        invertsel : 1;
 #ifdef ENABLE_CORBA
-        bool        usecorba : 1;
+        static bool usecorba : 1;
 #endif
         
         // To detect circular loop.
@@ -75,8 +75,7 @@ class DiaGram {
         void setInvertSel (bool invert);
 
 #ifdef ENABLE_CORBA
-        bool getUseCorba () const;
-        void setUseCorba (bool corba);
+        static bool getUseCorba ();
 #endif
 
         void push (umlClassNode * node);

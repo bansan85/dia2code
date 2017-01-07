@@ -53,11 +53,9 @@ umlClassNode::umlClassNode (const umlClassNode & classnode) :
 }
 
 umlClassNode::umlClassNode (umlClass * _key,
-                            std::list <std::pair <umlClass *,
-                                                  Visibility> > & parents_,
+                            std::list <umlClassNode::ClassAndVisibility> & parents_,
                             std::list <umlassoc> & associations_,
-                            std::list <std::pair <umlClassNode *,
-                                                  uint8_t> > & classDep_,
+                            std::list <umlClassNode::ClassNodeAndFlags> & classDep_,
                             std::list <umlPackage *> & packageDep_) :
     umlClass (*_key),
     parents (parents_),
@@ -76,7 +74,7 @@ umlClassNode::umlClassNode (umlClass & _key) :
 {
 }
 
-const std::list <std::pair <umlClass *, Visibility> > &
+const std::list <umlClassNode::ClassAndVisibility> &
 umlClassNode::getParents () const {
     return parents;
 }
@@ -86,7 +84,7 @@ umlClassNode::getAssociations () const {
     return associations;
 }
 
-const std::list <std::pair <umlClassNode *, uint8_t> > &
+const std::list <umlClassNode::ClassNodeAndFlags> &
 umlClassNode::getDependencies () const {
     return classDep;
 }
