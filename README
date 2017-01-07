@@ -244,7 +244,7 @@ namespace package {
              * \brief Multiple line
              *        comment
              */
-            ** An abstact operation must not be defined thus " = 0".
+            ** An abstract operation must not be defined thus " = 0".
             virtual AbstractOperation () = 0;
             ** A virtual operation must be defined in the source code.
             virtual VirtualOperation ();
@@ -308,7 +308,7 @@ namespace package {
              * \brief Multiple line
              *        comment
              */
-            ** An abstact operation must not be defined thus " = 0".
+            ** An abstract operation must not be defined thus " = 0".
             virtual AbstractOperation () = 0;
             ** A virtual operation must be defined in the source code.
             virtual VirtualOperation ();
@@ -462,7 +462,7 @@ public class Class <template extends type> extends ParentClass {
 
 STEREOTYPES
 
-Multiple stereotypes can be apply on each class, attribute, operation,
+Multiple stereotypes can be applied on each class, attribute, operation,
 inheritance and dependence by separating them with a "," without space.
 For example (without quotes): "interface,getset".
 
