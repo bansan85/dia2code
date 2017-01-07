@@ -1,5 +1,8 @@
-Unreleased:  Version 0.9.0
-- Refactoring code : converted program to C++.
+07 Jan 2017:  Version 1.0.0 (download area: dia2code+)
+- Refactoring code: Converted program to C++, see git dia2code-c++ branch.
+- Target languages implemented: cpp, cpp11, csharp, java, php.
+- Not yet implemented: ada, as3, c, idl, python, ruby, shp, sql, and
+  code preservation.
 
 14 Jul 2016:  Version 0.8.8
 - Applied C++ compatibility changes, whitespace cleanups, and vim settings
