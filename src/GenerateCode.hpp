@@ -28,28 +28,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "umlClass.hpp"
 #include "umlAssoc.hpp"
 
+/**
+ * Abstract base class for code generators.
+ */
 class GenerateCode {
     private:
-        // Diagram to generate into code.
-        DiaGram &   dia;
-        // License file.
-        std::string license;
-        // Output directory.
-        std::string outdir;
-        std::string file_ext;
-        std::string body_file_ext;
-        std::list <std::ofstream *> file;
-        uint8_t     version;
-        uint8_t     indent : 4;
-        uint8_t     indentlevel : 3;
-        // Overwrite files while generating code.
-        bool        overwrite : 1;
-        // Convert package names to a directory tree.
-        bool        buildtree : 1;
-        bool        bOpenBraceOnNewline : 1;
-        bool        oneClassOneHeader : 1;
-        // If the language handles include package. If not, include ALL classes
-        // inside the package and their children.
+        DiaGram &   dia;  ///< Diagram to generate into code
+        std::string license;  ///< License file
+     
+        std::string outdir;   ///< Output directory
+        std::string file_ext;   ///< File extension
+        std::string body_file_ext;  ///< Implementation file extension (for languages where body is generated)
+        std::list <std::ofstream *> file;  ///< Stack of files generated
+        uint8_t     version;  ///< Version of language to generate. For C++: 99 = C++99, 11 = C++11
+        uint8_t     indent : 4;  ///< Number of spaces for one indentation
+        uint8_t     indentlevel : 4;  ///< Current indentation level
+        bool        overwrite : 1;  ///< Overwrite files while generating code
+        bool        buildtree : 1;  ///< Convert package names to a directory tree
+        bool        bOpenBraceOnNewline : 1;   ///< Place opening brace on a new line
+        bool        oneClassOneHeader : 1;     ///< Create separate file for each classifier
+        /**
+         * True if the language handles include package.
+         * If false, include ALL classes inside the package and its children.
+         */
         bool        handleIncludePackage : 1;
         bool        noLoopSupport : 1;
 #ifdef ENABLE_CORBA
