@@ -404,7 +404,7 @@ GenerateCode::genClass (const umlClassNode & node) {
     isCorba = node.isStereotypeCorba ();
 #endif
 
-    // Check that if class is abstract, at least one class are abstract.
+    // Check that if class is abstract, at least one operation is abstract.
     if (node.isAbstract ()) {
         bool absok = false;
 

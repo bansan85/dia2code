@@ -24,10 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "string2.hpp"
 #include "GenerateCodeCpp.hpp"
 #include "GenerateCodeCSharp.hpp"
+#include "GenerateCodeJava.hpp"
+#include "GenerateCodeAda.hpp"
 #include "GenerateCodePhp.hpp"
 
 int main (int argc, char **argv) {
-try {
+  try {
     DiaGram diagram;
     int i;
     char *infile = NULL;
@@ -157,7 +159,8 @@ under certain conditions; read the COPYING file for details.\n";
             } else if (!strcmp (argv[i], "sql")) {
                 throw std::string ("Target language " + std::string (argv[i]) + " not yet implemented in dia2code-c++.\n");
             } else if (!strcmp (argv[i], "ada")) {
-                throw std::string ("Target language " + std::string (argv[i]) + " not yet implemented in dia2code-c++.\n");
+                generator = new GenerateCodeAda (diagram);
+                oneclass = true;
             } else if (!strcmp (argv[i], "python")) {
                 throw std::string ("Target language " + std::string (argv[i]) + " not yet implemented in dia2code-c++.\n");
             } else if (!strcmp (argv[i], "shp")) {
@@ -257,11 +260,11 @@ under certain conditions; read the COPYING file for details.\n";
     xmlCleanupParser ();
 
     return 0;
-}
-catch (const std::string & Msg) {
+  }
+  catch (const std::string & Msg) {
     std::cerr << Msg;
     return 1;
-}
+  }
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

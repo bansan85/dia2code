@@ -4,6 +4,7 @@ dia2code_CXXFLAGS = @XML_CFLAGS@ -std=c++11 -Wall -Wextra -Wpacked -Wmissing-for
 dia2code_LDADD    = @XML_LIBS@
 dia2code_SOURCES  = DiaGram.cpp \
 										GenerateCode.cpp \
+										GenerateCodeAda.cpp \
 										GenerateCodeCpp.cpp \
 										GenerateCodeCSharp.cpp \
 										GenerateCodeJava.cpp \
