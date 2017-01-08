@@ -397,7 +397,7 @@ GenerateCode::genClass (const umlClassNode & node) {
     Visibility tmpv = Visibility::IMPLEMENTATION;
 
     if (node.getName ().empty ()) {
-        std::cerr << "A class have an empty name.\n";
+        std::cerr << "A class has an empty name.\n";
     }
 
 #ifdef ENABLE_CORBA
@@ -500,11 +500,11 @@ GenerateCode::genClass (const umlClassNode & node) {
                 if (umla.getName ().empty ()) {
                     std::cerr << "An attribute of the "
                               << fqname (node, false)
-                              << " class have an empty name.\n";
+                              << " class has an empty name.\n";
                 }
                 if (umla.getType ().empty ()) {
                     std::cerr << "An attribute of the " << fqname (node, false)
-                              << " class have an empty type.\n";
+                              << " class has an empty type.\n";
                 }
                 writeAttribute (node, umla, tmpv);
             }
