@@ -71,12 +71,6 @@ class GenerateCodeAda : public GenerateCode {
         void writeFunction1 (const umlClassNode & node,
                              const umlOperation & ope,
                              Visibility & currVisibility);
-        void writeFunction2 (const umlClassNode & node,
-                             const umlOperation & ope,
-                             Visibility & currVisibility,
-                             bool defaultParam,
-                             bool showType,
-                             char prefix);
 
         ~GenerateCodeAda ();
 

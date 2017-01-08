@@ -218,76 +218,6 @@ GenerateCodeAda::writeFunction1 (const umlClassNode &,
 }
 
 void
-GenerateCodeAda::writeFunction2 (const umlClassNode & node,
-                                  const umlOperation & ope,
-                                  Visibility &,
-                                  bool defaultParam,
-                                  bool showType,
-                                  char prefix) {
-    bool isFunction = false;
-    if (showType) {
-        if (ope.getType ().empty () || ope.getType () == "void") {
-            getFile () << spc() << "procedure ";
-        } else {
-            getFile () << spc() << "function ";
-            isFunction = true;
-        }
-    }
-    getFile () << ope.getName ();
-    if (!ope.isStatic ()) {
-        getFile () << " (Self : in ";
-        if (!ope.isConstant ())
-            getFile () << "out ";
-        getFile () << "Object";
-    }
-
-    if (!ope.getParameters ().empty ()) {
-        if (ope.isStatic ())
-            getFile () << " (";
-        else
-            getFile () << "; ";
-        std::list <umlAttribute>::const_iterator tmpa;
-        tmpa = ope.getParameters ().begin ();
-        while (tmpa != ope.getParameters ().end ()) {
-            getFile () << (*tmpa).getName () << " : in ";
-            if (!(*tmpa).isConstant ())
-                getFile () << "out ";
-            getFile () << (*tmpa).getType ();
-            if (!defaultParam) {
-                if (!(*tmpa).getValue ().empty ()) {
-                    std::cerr << "Class \"" << node.getName ()
-                              << "\", operation \"" << ope.getName ()
-                              << "\", parameter \"" << (*tmpa).getName ()
-                              << "\": this generator doesn't support param default.\n";
-                }
-            }
-            else {
-                if (!(*tmpa).getValue ().empty ()) {
-                    getFile () << " := " << (*tmpa).getValue ();
-                }
-            }
-            ++tmpa;
-            if (tmpa != ope.getParameters ().end ()) {
-                getFile () << "; ";
-            }
-        }
-    }
-    if (!(ope.isStatic () && ope.getParameters ().empty ()))
-        getFile () << ")";
-    if (isFunction)
-        getFile () << " return " << cppName (ope.getType ());
-    if (ope.isConstant ()) {
-        std::cerr << "Class \"" << node.getName () << "\", operation \""
-                  << ope.getName ()
-                  << "\": this generator doesn't support const operation.\n";
-    }
-    if (ope.getInheritance () == Inheritance::ABSTRACT) {
-        getFile () << " is abstract";
-    }
-    getFile () << ";\n\n";
-}
-
-void
 GenerateCodeAda::writeFunction (const umlClassNode & node,
                                  const umlOperation & ope,
                                  Visibility & currVisibility) {
@@ -319,7 +249,51 @@ GenerateCodeAda::writeFunction (const umlClassNode & node,
             getFile () << spc () << "-- static\n";
         }
     }
-    writeFunction2 (node, ope, currVisibility, false, true, '\0');
+
+    bool isFunction = false;
+    if (ope.getType ().empty () || ope.getType () == "void") {
+        getFile () << spc() << "procedure ";
+    } else {
+        getFile () << spc() << "function ";
+        isFunction = true;
+    }
+    getFile () << ope.getName ();
+    if (!ope.isStatic ()) {
+        getFile () << " (Self : in ";
+        if (!ope.isConstant ())
+            getFile () << "out ";
+        getFile () << "Object";
+    }
+
+    if (!ope.getParameters ().empty ()) {
+        if (ope.isStatic ())
+            getFile () << " (";
+        else
+            getFile () << "; ";
+        std::list <umlAttribute>::const_iterator tmpa;
+        tmpa = ope.getParameters ().begin ();
+        while (tmpa != ope.getParameters ().end ()) {
+            getFile () << (*tmpa).getName () << " : in ";
+            if (!(*tmpa).isConstant ())
+                getFile () << "out ";
+            getFile () << (*tmpa).getType ();
+            if (!(*tmpa).getValue ().empty ()) {
+                getFile () << " := " << (*tmpa).getValue ();
+            }
+            ++tmpa;
+            if (tmpa != ope.getParameters ().end ()) {
+                getFile () << "; ";
+            }
+        }
+    }
+    if (!(ope.isStatic () && ope.getParameters ().empty ()))
+        getFile () << ")";
+    if (isFunction)
+        getFile () << " return " << cppName (ope.getType ());
+    if (node.isStereotypeInterface () || ope.getInheritance () == Inheritance::ABSTRACT) {
+        getFile () << " is abstract";
+    }
+    getFile () << ";\n\n";
 }
 
 void
@@ -475,9 +449,9 @@ GenerateCodeAda::writeAttributeComment (const umlAttribute & attr) {
 }
 
 void
-GenerateCodeAda::writeAttribute (const umlClassNode & node,
+GenerateCodeAda::writeAttribute (const umlClassNode &,
                                   const umlAttribute & attr,
-                                  Visibility & currVisibility) {
+                                  Visibility &) {
     writeAttributeComment (attr);
     if (attr.getVisibility () != Visibility::PUBLIC) {
         getFile () << spc () << "-- " << attr.getName () << " visibility: "
@@ -509,29 +483,11 @@ GenerateCodeAda::writeNameSpaceStart (const umlClassNode * node) {
         getFile () << "\n";
     }
     getFile () << "package " << fqname (*node) << " is\n\n";
-/*
-    if (node->getPackage () != NULL) {
-        std::list <umlPackage*> pkglist;
-
-        umlPackage::makePackageList (node->getPackage (), pkglist);
-        std::list <umlPackage *>::const_iterator it = pkglist.begin ();
-
-        getFile () << spc () << "package ";
-        while (it != pkglist.end ()) {
-            getFile () << (*it)->getName ();
-            ++it;
-            if (it != pkglist.end ()) {
-                getFile () << ".";
-            }
-        }
-        getFile () << " is\n\n";
-    }
- */
 }
 
 void
-GenerateCodeAda::writeNameSpaceEnd (const umlClassNode *) {
-    getFile () << "end ;\n\n";
+GenerateCodeAda::writeNameSpaceEnd (const umlClassNode *node) {
+    getFile () << "end " << fqname (*node) << ";\n\n";
 }
 
 void
@@ -573,15 +529,20 @@ GenerateCodeAda::writeStruct (const umlClassNode & node) {
     incIndentLevel ();
     for (const umlAttribute & umla : node.getAttributes ()) {
         umla.check (node);
-        // Use of a tmp value to ignore visibility.
-        Visibility vis = umla.getVisibility ();
-        writeAttribute (node, umla, vis);
+        if (umla.isStatic ()) {
+            std::cerr << "Struct " << node.getName () << ": Ignoring static " << umla.getName () << "\n";
+            continue;
+        }
+        getFile () << spc () << umla.getName () << " : " << umla.getType ();
+        if (!umla.getValue ().empty ())
+            getFile () << " := " << umla.getValue ();
+        getFile () << ";\n";
     }
     if (!node.getOperations ().empty ()) {
         std::cerr << "Struct " << node.getName () << ": Ada cannot handle operations\n";
     }
     decIndentLevel ();
-    getFile () << spc () << "end record;\n";
+    getFile () << spc () << "end record;\n\n";
     decIndentLevel ();
 }
 
@@ -598,11 +559,11 @@ GenerateCodeAda::writeTypedef (const umlClassNode & node) {
 
     const umlClassNode * umlc = findByName (getDia ().getUml (),
                                             (*umla).getType ().c_str ());
-    getFile () << spc () << "type " << node.getName () << " is new ";
+    getFile () << spc () << "  type " << node.getName () << " is new ";
     if (umlc == NULL) {
         getFile () << cppName ((*umla).getType ());
     } else {
-        getFile () << fqname (*umlc, false);
+        getFile () << fqname (*umlc);
     }
     getFile () << " " << (*umla).getValue () << ";\n";
 }
