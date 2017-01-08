@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 GenerateCodeAda::GenerateCodeAda (DiaGram & diagram) :
     GenerateCode (diagram, "ads", 12,  // using Ada2012 only because of "in out" for function parameters
-                  true, true)
+                  true, true), m_needPrivatePart (false)
 {
 }
 
@@ -359,11 +359,15 @@ GenerateCodeAda::writeClassStart (const umlClassNode & node) {
     }
 
     incIndentLevel ();
-    getFile () << spc () << "type Object is";
-    if (node.isStereotypeInterface ())
-        getFile () << " interface";
-    else if (node.isAbstract ())
-        getFile () << " abstract";
+    m_node = &node;
+    m_needPrivatePart = true;
+    m_classDecl = "type Object is";
+    if (node.isStereotypeInterface ()) {
+        m_classDecl += " interface";
+        m_needPrivatePart = false;
+    } else if (node.isAbstract ()) {
+        m_classDecl += " abstract";
+    }
     if (!node.getParents ().empty ()) {
         umlClass *nonInterface = nullptr;
         std::list<umlClassNode::ClassAndVisibility>::const_iterator parent;
@@ -382,7 +386,7 @@ GenerateCodeAda::writeClassStart (const umlClassNode & node) {
                 decIndentLevel ();
                 return;
             }
-            getFile () << " new " << fqname (*nonInterface) << ".Object";
+            m_classDecl.append (" new ").append (fqname (*nonInterface)).append (".Object");
         }
         parent = node.getParents ().begin ();
         bool firstParent = true;
@@ -395,10 +399,9 @@ GenerateCodeAda::writeClassStart (const umlClassNode & node) {
             }
             umlClass *p = (*parent).first;
             if (!node.isStereotypeInterface () && !nonInterface && firstParent) {
-                getFile () << " new " << fqname (*p) << ".Object";
+                m_classDecl.append (" new ").append (fqname (*p)).append (".Object");
             } else if (p->isStereotypeInterface ()) {
-                // TBC compName ?
-                getFile () << " and " << fqname (*p) << ".Object";
+                m_classDecl.append (" and ").append (fqname (*p)).append (".Object");
             } else if (p != nonInterface) {
                 std::cerr << "Class \"" << node.getName ()
                           << "\": Ada does not support multiple inheritance from non interface ("
@@ -408,27 +411,61 @@ GenerateCodeAda::writeClassStart (const umlClassNode & node) {
             ++parent;
         }
         if (!node.isStereotypeInterface ()) {
-            getFile () << " with";
-            if (node.getAttributes ().empty ())
-                getFile () << " null record";
-            else
-                getFile () << " private";
+            m_classDecl += " with";
+            if (node.getAttributes ().empty ()) {
+                m_classDecl += " null record";
+                m_needPrivatePart = false;
+            } else {
+                m_classDecl += " private";
+            }
         }
     } else if (!node.isStereotypeInterface ()) {
-        getFile () << " tagged";
-        if (node.getAttributes ().empty ())
-            getFile () << " null record";
-        else
-            getFile () << " private";
+        m_classDecl += " tagged";
+        if (node.getAttributes ().empty ()) {
+            m_classDecl += " null record";
+            m_needPrivatePart = false;
+        } else {
+            m_classDecl += " private";
+        }
     }
-    getFile () << ";\n\n";
+    getFile () << spc () << m_classDecl << ";\n\n";
     decIndentLevel ();
 }
 
 void
 GenerateCodeAda::writeClassEnd () {
-    // TODO: Generate full declaration in private part
-    // getFile () << spc () << "end record;\n";
+    if (!m_needPrivatePart)
+        return;
+
+    getFile () << spc () << "private\n\n";
+    incIndentLevel ();
+    // Check for non public static attributes
+    for (const umlAttribute & umla : m_node->getAttributes ()) {
+        if (!umla.isStatic () || umla.getVisibility () == Visibility::PUBLIC)
+            continue;
+        getFile () << spc () << "-- static\n";
+        getFile () << spc () << umla.getName () << " : " << umla.getType ();
+        if (!umla.getValue ().empty ())
+            getFile () << " := " << umla.getValue ();
+        getFile () << ";\n\n";
+    }
+    // Generate full view of class
+    const size_t len = m_classDecl.length ();
+    if (len > 8 && m_classDecl.substr (len - 8) == " private")
+        m_classDecl.erase (len - 8);
+    getFile () << spc () << m_classDecl << " record\n";
+    incIndentLevel ();
+    for (const umlAttribute & attr : m_node->getAttributes ()) {
+        if (attr.isStatic ())
+            continue;
+        getFile () << spc () << attr.getName () << " : " << attr.getType ();
+        if (!attr.getValue ().empty ())
+            getFile () << " := " << attr.getValue ();
+        getFile () << ";\n";
+    }
+    decIndentLevel ();
+    getFile () << spc () << "end record;\n\n";
+    decIndentLevel ();
 }
 
 
@@ -442,27 +479,34 @@ GenerateCodeAda::writeAttribute (const umlClassNode & node,
                                   const umlAttribute & attr,
                                   Visibility & currVisibility) {
     writeAttributeComment (attr);
-    getFile () << spc () << attr.getName () << " : " << attr.getType ();
-
-    if (!attr.getValue ().empty ()) {
-        getFile () << " := " << attr.getValue ();
+    if (attr.getVisibility () != Visibility::PUBLIC) {
+        getFile () << spc () << "-- " << attr.getName () << " visibility: "
+                   << visibility ("", attr.getVisibility ()) << "\n\n";
+        return;
     }
-    getFile () << ";";
-    if (attr.getVisibility () != Visibility::PUBLIC)
-        getFile () << "  -- vis: " << visibility ("", attr.getVisibility ());
     if (attr.isStatic ()) {
-        getFile () << spc() << "  -- static";
+        getFile () << spc () << "-- static\n";
+        getFile () << spc () << attr.getName () << " : " << attr.getType ();
+        if (!attr.getValue ().empty ())
+            getFile () << " := " << attr.getValue ();
+        getFile () << ";\n\n";
+        return;
     }
+    const std::string upperFirst = strtoupperfirst (attr.getName ());
+    getFile () << spc () << "procedure Set_" << upperFirst
+               << " (Self : in out Object; Value : in " << attr.getType () << ");\n";
+    getFile () << spc () << "function  Get_" << upperFirst
+               << " (Self : in Object) return " << attr.getType () << ";\n";
     getFile () << "\n";
-    /* << visibility ("Class \"" + node.getName () + "\", attribute \""
-                      + attr.getName () + "\"", attr.getVisibility ()) << " "; */
 }
 
 void
 GenerateCodeAda::writeNameSpaceStart (const umlClassNode * node) {
     if (!node->getTemplates ().empty ()) {
         getFile () << "generic\n";
+        getFile () << "   -- ";
         writeTemplates (node->getTemplates ());
+        getFile () << "\n";
     }
     getFile () << "package " << fqname (*node) << " is\n\n";
 /*

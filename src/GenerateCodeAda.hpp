@@ -79,6 +79,11 @@ class GenerateCodeAda : public GenerateCode {
                              char prefix);
 
         ~GenerateCodeAda ();
+
+    private:
+        bool m_needPrivatePart;   ///< set to true if a private part needs to be generated
+        const umlClassNode *m_node;   ///< writeClassEnd requires access to the class node
+        std::string m_classDecl;   ///< the type declaration is buffered for reuse on generating the full view
 };
 
 #endif
