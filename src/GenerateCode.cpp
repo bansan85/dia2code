@@ -568,13 +568,63 @@ dirName (umlPackage * pkg, char separator) {
     umlPackage::makePackageList (pkg, pkglist);
     it = pkglist.begin ();
     while (it != pkglist.end ()) {
-        buf.append ((*it)->getName ());
+        std::string dir = (*it)->getName ();
+        for (size_t i = 0; i < dir.length (); i++) {
+            if (dir[i] == '.')
+                dir[i] = separator;
+        }
+        buf.append (dir);
         ++it;
         if (it != pkglist.end ()) {
             buf.append (1, separator);
         }
     }
     return buf.c_str ();
+}
+
+// return 0 for success
+static int
+my_mkdir (char *dir) {
+    struct stat info;
+    if (stat (dir, &info) == 0) {
+        if (info.st_mode & S_IFDIR)
+            return 0;
+        else
+            return 1;
+    }
+#if defined(_WIN32) || defined(_WIN64)
+    return _mkdir (dir);
+#else
+    return mkdir (dir, 0777);
+#endif
+}
+
+// return empty string for success
+// return error message for failure
+static std::string
+my_mkpath (std::string path) {
+    char *buf = const_cast<char *> (path.c_str ());
+    char *p = strchr (buf + 2, '/');
+    while (p) {
+        *p = '\0';
+        if (my_mkdir (buf) != 0) {
+            *p = '/';
+            std::string errMsg ("Fail to create folder ");
+            errMsg.append (buf).append (".\n");
+            return errMsg;
+        }
+        *p = '/';
+        p = strchr (p + 1, '/');
+    }
+    // create the final directory segment
+    if (*(buf + strlen (buf) - 1) != '/') {
+        if (my_mkdir (buf) != 0) {
+            std::string errMsg ("Fail to create folder ");
+            errMsg.append (buf).append (".\n");
+            return errMsg;
+        }
+    }
+    return std::string ();
 }
 
 void
@@ -601,18 +651,9 @@ GenerateCode::genDecl (declaration &d,
         folder.append (1, SEPARATOR);
         folder.append (dirName (d.u.this_module->pkg, SEPARATOR));
 
-        if (
-#if defined(_WIN32) || defined(_WIN64)
-        _mkdir (folder.c_str ()) != 0
-#else
-        mkdir (folder.c_str (), 0777) != 0
-#endif
-        ) {
-            if (errno != EEXIST) {
-                throw std::string (std::string ("Fail to create folder ") +
-                                   folder + std::string (".\n"));
-            }
-        }
+        std::string errMsg = my_mkpath (folder);
+        if (!errMsg.empty ())
+            throw errMsg;
     }
 
     if (forceOpen && (!oneClassOneHeader || !d.decl_kind == dk_module)) {
