@@ -71,7 +71,8 @@ class GenerateCodeCpp : public GenerateCode {
 
         void writeFunction1 (const umlOperation & ope);
         void writeFunction2 (const umlOperation & ope);
-        void writeFunction3 (const umlOperation & ope);
+        void writeFunction3 (const umlClassNode & node,
+                             const umlOperation & ope);
 
         ~GenerateCodeCpp ();
 };

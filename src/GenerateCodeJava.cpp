@@ -221,8 +221,12 @@ GenerateCodeJava::writeFunction2 (const umlClassNode & node,
                                   bool defaultParam,
                                   bool showType,
                                   char prefix) {
-    if ((!ope.getType ().empty ()) && (showType)) {
-        getFile () << cppName (ope.getType ()) << " ";
+    if (showType) {
+        if (!ope.getType ().empty ()) {
+            getFile () << cppName (ope.getType ()) << " ";
+        } else if (ope.getName () != node.getName ()) {
+            getFile () << "void ";
+        }
     }
     getFile () << ope.getName () << " (";
 

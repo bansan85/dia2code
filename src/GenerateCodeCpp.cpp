@@ -188,9 +188,12 @@ GenerateCodeCpp::writeFunction2 (const umlOperation & ope) {
 }
 
 void
-GenerateCodeCpp::writeFunction3 (const umlOperation & ope) {
+GenerateCodeCpp::writeFunction3 (const umlClassNode & node,
+                                 const umlOperation & ope) {
     if (!ope.getType ().empty ()) {
         getFile () << cppName (ope.getType ()) << " ";
+    } else if (ope.getName () != node.getName ()) {
+        getFile () << "void ";
     }
     getFile () << ope.getName () << " (";
 
@@ -249,7 +252,7 @@ GenerateCodeCpp::writeFunction (const umlClassNode & node,
     // Write comment and start function with virtual and static.
     writeFunction2 (ope);
     // Write the reste of the function until the ")"
-    writeFunction3 (ope);
+    writeFunction3 (node, ope);
 
     if ((ope.isConstant ()) /*&& (getVersion () == 99)*/) {
         getFile () << " const";
