@@ -81,7 +81,7 @@ under certain conditions; read the COPYING file for details.\n";
                          ada:\"adb\", c:\"c\".\n\
     -nl                  Create new line on new brace. Off by default.\n\
     -1                   One header contains only one header. If two classes\n\
-                         have the same name, they will be overwrite without\n\
+                         have the same name, they will be overwritten without\n\
                          --buildtree.\n\
                          Off by default but java.\n\
     -t <target>          Selects the output language. <target> can be one of:\n\
