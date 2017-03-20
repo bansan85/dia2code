@@ -171,9 +171,13 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
 
     outfilename.assign (outdir);
     outfilename.append (1, SEPARATOR);
-    outfilename.append (filename);
+    const std::string ext (getFileExt ());
+    if (ext == "ada" || ext == "ads" || ext == "adb" || ext == "py")
+        outfilename.append (strtolower (filename));
+    else
+        outfilename.append (filename);
     outfilename.append (".");
-    outfilename.append (getFileExt ());
+    outfilename.append (ext);
 
     std::ifstream f (outfilename.c_str ());
 

@@ -19,11 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config.h"
 
 #include "string2.hpp"
+#include <algorithm>
 
 /**
  * This function returns the upper case char* of the one taken on input
  * The char * received may be freed by the caller
-*/
+ */
 std::string
 strtoupper (const std::string & s) {
     std::string tmp (s);
@@ -39,10 +40,10 @@ strtoupper (const std::string & s) {
 }
 
 /**
-  * This function returns the a char* that has the first
-  * character in upper case and the rest unchanged.
-  * The char * received may be freed by the caller
-*/
+ * This function returns the a char* that has the first
+ * character in upper case and the rest unchanged.
+ * The char * received may be freed by the caller
+ */
 std::string
 strtoupperfirst (const std::string & s) {
     std::string tmp (s);
@@ -50,6 +51,16 @@ strtoupperfirst (const std::string & s) {
         return s;
     }
     tmp[0] = static_cast <char> (toupper (tmp[0]));
+    return tmp;
+}
+
+/**
+ * This function returns the lower case string of the input string
+ */
+std::string
+strtolower (const std::string & s) {
+    std::string tmp (s);
+    std::transform (tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
     return tmp;
 }
 

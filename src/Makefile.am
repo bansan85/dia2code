@@ -9,6 +9,7 @@ dia2code_SOURCES  = DiaGram.cpp \
 										GenerateCodeCSharp.cpp \
 										GenerateCodeJava.cpp \
 										GenerateCodePhp.cpp \
+										GenerateCodePython.cpp \
                     main.cpp \
 										parse_diagram.cpp \
 										scan_tree.cpp \
@@ -32,6 +33,7 @@ EXTRA_DIST = decls.hpp \
 						 GenerateCodeCSharp.hpp \
 						 GenerateCodeJava.hpp \
 						 GenerateCodePhp.hpp \
+						 GenerateCodePython.hpp \
 						 parse_diagram.hpp \
 						 scan_tree.hpp \
              string2.hpp \

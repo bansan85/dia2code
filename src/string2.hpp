@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef STRING2_HPP
 #define STRING2_HPP
 
-#include "config.h"
-
 #include <list>
 #include <string>
 #include <cstring>
@@ -45,6 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 std::string strtoupper (const std::string & s);
 std::string strtoupperfirst (const std::string & s);
+std::string strtolower (const std::string & s);
 std::list <std::string> parseClassNames (char *s);
 bool isPresent (std::list <std::string> list, const char *name);
 const char * kindStr (Kind k);

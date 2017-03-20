@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GenerateCodeJava.hpp"
 #include "GenerateCodeAda.hpp"
 #include "GenerateCodePhp.hpp"
+#include "GenerateCodePython.hpp"
 
 int main (int argc, char **argv) {
   try {
@@ -162,7 +163,7 @@ under certain conditions; read the COPYING file for details.\n";
                 generator = new GenerateCodeAda (diagram);
                 oneclass = true;
             } else if (!strcmp (argv[i], "python")) {
-                throw std::string ("Target language " + std::string (argv[i]) + " not yet implemented in dia2code-c++.\n");
+                generator = new GenerateCodePython (diagram);
             } else if (!strcmp (argv[i], "shp")) {
                 throw std::string ("Target language " + std::string (argv[i]) + " not yet implemented in dia2code-c++.\n");
             } else if (!strcmp (argv[i], "idl")) {
