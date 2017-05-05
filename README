@@ -91,6 +91,17 @@ To cross-compiling from Linux (build=x86_64-pc-linux-gnu):
         - To Linux64:
         # ./configure --disable-static --enable-shared -m64
 
+MACOS
+
+As with any open-source software, compilation requires a copy of the
+Xcode command-line tools.
+
+To run ./configure the user may be required to run  ./reconfig.sh, if
+so you must obtain a copy of libtool from Homebrew or MacPorts.
+
+- Xcode Command Line Tools: https://developer.apple.com/library/content/technotes/tn2339/_index.html
+- Homebrew: https://brew.sh
+- MacPorts: https://www.macports.org
 
 OPERATION
 
@@ -966,7 +977,7 @@ Code Generators:
 **IMPORTANT**: When a modification is done in a generator, BE SURE to do the
 same with all generators if necessary.
 
-A code generator (class derived from GenerateCode) is a class that takes 
+A code generator (class derived from GenerateCode) is a class that takes
 reference to a DiaGram class.
 
 The DiaGram class contains:

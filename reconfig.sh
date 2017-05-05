@@ -7,6 +7,10 @@
 
 autoheader
 aclocal -I m4
-libtoolize
+
+# macOS has a Mach-O version of libtool installed. Thus MacPorts and Homebrew use the prefix 'g'.
+case `uname` in Darwin*) glibtoolize --copy ;;
+  *) libtoolize --copy ;; esac
+
 automake --add-missing --copy
 autoconf
