@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Clumsy workaround to implement __init__ method seperately to class attributes without changing parent code:
         writing buffer to initialisation_method_parameters and initialisation_method_assignments,
         writeInit(), check on first_operation in writeFunction() and writeClassEnd()
+    Doesn't implement inherited attributes in __init__().
     Parent code could benefit from presenting class attributes separately to instance variables.
     Requires lowercase filenames - added to GenerateCode.cpp.
     Unimplemented code, which may be Java specific, is highlighted with std::cerr << "DEBUG:" output.
@@ -45,8 +46,11 @@ void
 GenerateCodePython::writeInit(){
     getFile() << spc() << "def __init__(self";
     getFile() << initialisation_method_parameters << "):\n";
+    getFile() << spc() << spc() << "# Any inherited parameters not implemented in __init__().\n";
     getFile() << initialisation_method_assignments;
     getFile() << spc() << spc() << "return\n\n";
+    initialisation_method_assignments = "";
+    initialisation_method_parameters = "";
 }
 
 GenerateCodePython::GenerateCodePython(DiaGram & diagram) :
@@ -200,10 +204,10 @@ GenerateCodePython::writeFunctionComment(const umlOperation & ope) {
 
     getFile() << spc() << spc() << "\"\"\"";
     if(!ope.getComment().empty()){
-        getFile() << comment(ope.getComment(), "", spc(), "\n\n") << spc() << spc();
+        getFile() << comment(ope.getComment(), "", spc(), "\n");
     }
     if(!ope.getParameters().empty()){
-        getFile() << "Keyword Arguments:" << "\n";
+        getFile() << spc() << spc() << "Keyword Arguments:" << "\n";
     }
     for(const umlAttribute & tmpa2 : ope.getParameters()) {
         std::string comment_;
@@ -218,7 +222,7 @@ GenerateCodePython::writeFunctionComment(const umlOperation & ope) {
         getFile() << comment(comment_, spc()+spc(), spc(), "\n");
     }
     if(!ope.getType().empty()) {
-        getFile() << "\n" << spc() << spc() << "Returns: " << ope.getType() << "\n";
+        getFile() << spc() << spc() << "Returns: " << ope.getType() << "\n";
     }
     getFile() << spc() << spc() << "\"\"\"";
 }
@@ -277,7 +281,7 @@ GenerateCodePython::writeFunction(const umlClassNode & node,
     if((!ope.getType().empty())) {
         getFile() << " -> " << ope.getType();
     }
-    getFile() << ":\n\n";
+    getFile() << ":\n";
 
     // comments
     writeFunctionComment(ope);
@@ -345,7 +349,12 @@ GenerateCodePython::writeClassEnd() {
 
     // check if any operations have been added
     if(first_operation){
+            incIndentLevel ();
+            getFile() << "\n";
+            writeComment ("Operations:");
+            getFile() << "\n";
             writeInit();
+            decIndentLevel ();
     }
     first_operation = true;
  }
