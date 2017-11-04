@@ -17,12 +17,12 @@ public class operations {
     /**
      * comment2
      */
-    public static test2 () {
+    public static void test2 () {
     }
-    public final test3 () {
+    public final void test3 () {
     }
-    protected final test4 () {
+    protected final void test4 () {
     }
-    public final test5 () {
+    public final void test5 () {
     }
 }

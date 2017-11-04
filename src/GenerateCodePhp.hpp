@@ -29,6 +29,8 @@ class GenerateCodePhp : public GenerateCodeJava {
         GenerateCodePhp (DiaGram & diagram);
 
         std::string strPackage (const char * package) const;
+        std::string getConstructorName(const std::string & name) const;
+        std::string getDestructorName(const std::string & name) const;
 
         void writeStartHeader (std::string & name);
         void writeEndHeader ();

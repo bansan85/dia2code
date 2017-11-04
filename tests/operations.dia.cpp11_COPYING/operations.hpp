@@ -22,12 +22,12 @@ class operations {
         /**
          * \brief comment2
          */
-        virtual static test2 ();
-        test3 () const;
+        virtual static void test2 ();
+        void test3 () const;
     protected :
-        test4 ();
+        void test4 ();
     public :
-        test5 () = delete;
+        void test5 () = delete;
 };
 
 #endif

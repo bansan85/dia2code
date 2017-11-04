@@ -30,6 +30,11 @@ GenerateCodeCSharp::GenerateCodeCSharp (DiaGram & diagram) :
     setFileExt ("cs");
 }
 
+std::string
+GenerateCodeCSharp::getDestructorName(const std::string & name) const {
+    return '~' + name;
+}
+
 bool
 GenerateCodeCSharp::writeInclude (const std::list <std::pair <
                                                       std::list <umlPackage *>,

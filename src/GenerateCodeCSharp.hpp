@@ -28,6 +28,7 @@ class GenerateCodeCSharp : public GenerateCodeJava {
     public:
         GenerateCodeCSharp (DiaGram & diagram);
 
+        virtual std::string getDestructorName(const std::string & name) const;
         bool writeInclude (const std::list <std::pair <std::list <umlPackage*>,
                                               const umlClassNode * > > & name);
         void writeFunctionComment (const umlOperation & ope);

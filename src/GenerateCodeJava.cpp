@@ -43,6 +43,16 @@ GenerateCodeJava::strPackage (const char * package) const {
     return retour;
 }
 
+std::string
+GenerateCodeJava::getConstructorName(const std::string & name) const {
+    return name;
+}
+
+std::string
+GenerateCodeJava::getDestructorName(const std::string &) const {
+    return "finalize";
+}
+
 const char *
 GenerateCodeJava::visibility (std::string desc,
                               const Visibility & vis) {
@@ -224,11 +234,23 @@ GenerateCodeJava::writeFunction2 (const umlClassNode & node,
     if (showType) {
         if (!ope.getType ().empty ()) {
             getFile () << cppName (ope.getType ()) << " ";
-        } else if (ope.getName () != node.getName ()) {
+        }
+        // Do not add void for constructor and destructor.
+        else if ((ope.getName () != node.getName ()) && (ope.getName () != getDestructorName (node.getName ()))) {
             getFile () << "void ";
         }
     }
-    getFile () << ope.getName () << " (";
+    // Constructor
+    if (ope.getName ().compare (node.getName ()) == 0) {
+        getFile () << getConstructorName (node.getName ()) << " (";
+    }
+    // Destructor
+    else if (ope.getName ().compare ('~' + node.getName ()) == 0) {
+        getFile () << getDestructorName (node.getName ()) << " (";
+    }
+    else {
+        getFile () << ope.getName () << " (";
+    }
 
     std::list <umlAttribute>::const_iterator tmpa;
     tmpa = ope.getParameters ().begin ();

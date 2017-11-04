@@ -30,6 +30,8 @@ class GenerateCodeJava : public GenerateCode {
 
         std::string strPackage (const char * package) const;
         std::string strPointer (const std::string & type) const;
+        virtual std::string getConstructorName(const std::string & name) const;
+        virtual std::string getDestructorName(const std::string & name) const;
         const char * visibility (std::string desc, const Visibility & vis);
 
         void writeLicense ();

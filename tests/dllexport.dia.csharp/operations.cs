@@ -8,13 +8,13 @@ public class operations {
     /// <returns>type</returns>
     private abstract type test (type1 in, type2 inOut, type3 undef = 0, type4 out);
     /// <summary>comment2</summary>
-    public virtual static test2 () {
+    public virtual static void test2 () {
     }
-    public test3 () {
+    public void test3 () {
     }
-    protected test4 () {
+    protected void test4 () {
     }
-    public test5 () {
+    public void test5 () {
     }
 }
 

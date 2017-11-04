@@ -44,6 +44,16 @@ GenerateCodePhp::strPackage (const char * package) const {
     return retour;
 }
 
+std::string
+GenerateCodePhp::getConstructorName(const std::string &) const {
+    return "__construct";
+}
+
+std::string
+GenerateCodePhp::getDestructorName(const std::string &) const {
+    return "__destruct";
+}
+
 void
 GenerateCodePhp::writeStartHeader (std::string &) {
     getFile () << "<?php" << std::endl;

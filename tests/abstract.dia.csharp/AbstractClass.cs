@@ -1,9 +1,9 @@
 public abstract class AbstractClass {
     // Operations
-    public abstract AbstractOperation ();
-    public virtual VirtualOperation () {
+    public abstract void AbstractOperation ();
+    public virtual void VirtualOperation () {
     }
-    public NonAbstractOperation () {
+    public void NonAbstractOperation () {
     }
 }
 

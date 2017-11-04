@@ -192,7 +192,9 @@ GenerateCodeCpp::writeFunction3 (const umlClassNode & node,
                                  const umlOperation & ope) {
     if (!ope.getType ().empty ()) {
         getFile () << cppName (ope.getType ()) << " ";
-    } else if (ope.getName () != node.getName ()) {
+    }
+    // Do not add void for constructor and destructor.
+    else if ((ope.getName () != node.getName ()) && (ope.getName () != '~' + node.getName ())) {
         getFile () << "void ";
     }
     getFile () << ope.getName () << " (";

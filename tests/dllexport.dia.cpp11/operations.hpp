@@ -17,12 +17,12 @@ class DllExport operations {
         /**
          * \brief comment2
          */
-        DllExport virtual static test2 ();
-        DllExport test3 () const;
+        DllExport virtual static void test2 ();
+        DllExport void test3 () const;
     protected :
-        DllExport test4 () = delete;
+        DllExport void test4 () = delete;
     public :
-        DllExport test5 () = delete;
+        DllExport void test5 () = delete;
 };
 
 #endif
