@@ -32,7 +32,9 @@ parseDiaNode (xmlNodePtr stringnode, std::string &buffer) {
     xmlChar *content;
 
     content = xmlNodeGetContent (stringnode);
-    buffer.assign (BAD_TSAC2 (content), 1, strlen (BAD_TSAC2 (content)) - 2);
+    if (content != NULL && strlen (BAD_TSAC2 (content)) > 1) {
+        buffer.assign (BAD_TSAC2 (content), 1, strlen (BAD_TSAC2 (content)) - 2);
+    }
     xmlFree (content);
 }
 
@@ -71,7 +73,11 @@ void
 parseTemplates (xmlNodePtr node,
                 std::list <std::pair <std::string, std::string>> &res) {
     while (node != NULL) {
-        if (node->xmlChildrenNode->xmlChildrenNode->xmlChildrenNode != NULL &&
+        if (node->xmlChildrenNode != NULL &&
+            node->xmlChildrenNode->xmlChildrenNode != NULL &&
+            node->xmlChildrenNode->xmlChildrenNode->xmlChildrenNode != NULL &&
+            node->xmlChildrenNode->next != NULL &&
+            node->xmlChildrenNode->next->xmlChildrenNode != NULL &&
             node->xmlChildrenNode->next->xmlChildrenNode->xmlChildrenNode !=
                                                                        NULL ) {
             std::pair <std::string, std::string> tn;

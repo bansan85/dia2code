@@ -30,7 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GenerateCodePython.hpp"
 
 int main (int argc, char **argv) {
-  try {
     DiaGram diagram;
     int i;
     char *infile = NULL;
@@ -234,8 +233,9 @@ under certain conditions; read the COPYING file for details.\n";
     // We build the class list from the dia file here
     if (!umlClass::parseDiagram (infile, diagram.getUml ())) {
         delete generator;
-        throw std::string ("File " + std::string (infile) +
-                           " does not exist or is not a Dia diagram.\n");
+        std::cerr << "File " << std::string (infile) <<
+            " does not exist or is not a Dia diagram." << std::endl;
+        return 1;
     }
 
     generator->setIndent (tab);
@@ -261,11 +261,6 @@ under certain conditions; read the COPYING file for details.\n";
     xmlCleanupParser ();
 
     return 0;
-  }
-  catch (const std::string & Msg) {
-    std::cerr << Msg;
-    return 1;
-  }
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

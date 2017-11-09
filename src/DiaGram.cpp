@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config.h"
 
 #include <iostream>
-#include <cassert>
 #include <algorithm>
 #include <memory>
 
@@ -114,7 +113,11 @@ DiaGram::listClasses (umlClassNode & current,
     for (const umlClassNode::ClassAndVisibility& classit :
                                                  current.getParents ()) {
         tmpnode = findByName (uml, classit.first->getName ());
-        assert (tmpnode != NULL);
+        if (tmpnode == NULL) {
+            std::cerr << "Failed to find parent " <<
+                classit.first->getName () << "." << std::endl;
+            return;
+        }
         if (!findByName (resCla, classit.first->getName ())) {
             resCla.push_back (tmpnode);
         }
@@ -124,7 +127,11 @@ DiaGram::listClasses (umlClassNode & current,
                                                  current.getDependencies ()) {
         if (!(((classit.second & 1) == 1) && ((flag & 2) == 2))) {
             tmpnode = findByName (uml, classit.first->getName ());
-            assert (tmpnode != NULL);
+            if (tmpnode == NULL) {
+                std::cerr << "Failed to find dependence " <<
+                    classit.first->getName () << "." << std::endl;
+                return;
+            }
             if (!findByName (resCla, classit.first->getName ())) {
                 resCla.push_back (tmpnode);
             }
@@ -133,7 +140,11 @@ DiaGram::listClasses (umlClassNode & current,
 
     for (const umlassoc & associations : current.getAssociations ()) {
         tmpnode = findByName (uml, associations.key->getName ());
-        assert (tmpnode != NULL);
+        if (tmpnode == NULL) {
+            std::cerr << "Failed to find association " <<
+                associations.key->getName () << "." << std::endl;
+            return;
+        }
         if (!findByName (resCla, associations.key->getName ())) {
             resCla.push_back (tmpnode);
         }
@@ -168,7 +179,10 @@ createNestedModulesFromPkglist (const std::list <umlPackage*>::iterator &debut,
                                 module *m) {
     bool first = true;
     std::list <umlPackage *>::iterator it;
-    assert (m != NULL);
+    if (m == NULL) {
+        std::cerr << "Invalid module." << std::endl;
+        return NULL;
+    }
     /* Expects pkglist and m to be non-NULL and m->contents to be NULL.
        Returns a reference to the innermost module created.  */
     for (it = debut; it != fin; ++it) {

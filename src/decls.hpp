@@ -51,10 +51,8 @@ typedef enum {
 
 struct declaration {
     decl_kind_t decl_kind;
-    union /* switch(decl_kind) */ {
-    /* case dk_module: */
+    union {
         module *this_module;
-    /* case dk_class:  */
         umlClassNode *this_class;
     } u;
 };

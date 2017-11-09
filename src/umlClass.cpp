@@ -348,18 +348,45 @@ parseGeomPosition (xmlNodePtr attribute, geometry * geom) {
     char * token;
 
     val = xmlGetProp (attribute, BAD_CAST2 ("val"));
+    if (val == NULL) {
+        std::cerr << "Failed to get val of a node (" <<
+            attribute->name << ")." << std::endl <<
+            "Parent is \"" << attribute->parent->name <<
+            "\"" << std::endl;
+        return;
+    }
 
 #if defined(_WIN32) || defined(_WIN64)
     char *context = NULL;
 
     token = strtok_s (reinterpret_cast <char *> (val), ",", &context);
+    if (token == NULL) {
+        std::cerr << "Failed to decode geometry point (" << val <<
+            ")." << std::endl;
+        return;
+    }
     sscanf_s (token, "%f", &(geom->posX) );
     token = strtok_s(nullptr, ",", &context);
+    if (token == NULL) {
+        std::cerr << "Failed to decode geometry point (" << val <<
+            ")." << std::endl;
+        return;
+    }
     sscanf_s (token, "%f", &(geom->posY));
 #else
     token = strtok(reinterpret_cast <char *> (val), ",");
+    if (token == NULL) {
+        std::cerr << "Failed to decode geometry point (" << val <<
+            ")." << std::endl;
+        return;
+    }
     sscanf (token, "%f", &(geom->posX));
     token = strtok (nullptr, ",");
+    if (token == NULL) {
+        std::cerr << "Failed to decode geometry point (" << val <<
+            ")." << std::endl;
+        return;
+    }
     sscanf (token, "%f", &(geom->posY));
 #endif
 
@@ -370,6 +397,13 @@ void
 parseGeomWidth (xmlNodePtr attribute, geometry * geom ) {
     xmlChar *val;
     val = xmlGetProp (attribute, BAD_CAST2 ("val"));
+    if (val == NULL) {
+        std::cerr << "Failed to get val of a node (" <<
+            attribute->name << ")." << std::endl <<
+            "Parent is \"" << attribute->parent->name <<
+            "\"" << std::endl;
+        return;
+    }
 #if defined(_WIN32) || defined(_WIN64)
     sscanf_s (BAD_TSAC2 (val), "%f", &(geom->width) );
 #else
@@ -382,6 +416,13 @@ void
 parseGeomHeight (xmlNodePtr attribute, geometry * geom ) {
     xmlChar *val;
     val = xmlGetProp (attribute, BAD_CAST2 ("val"));
+    if (val == NULL) {
+        std::cerr << "Failed to get val of a node (" <<
+            attribute->name << ")." << std::endl <<
+            "Parent is \"" << attribute->parent->name <<
+            "\"" << std::endl;
+        return;
+    }
 #if defined(_WIN32) || defined(_WIN64)
     sscanf_s (BAD_TSAC2 (val), "%f", &(geom->height) );
 #else
@@ -401,7 +442,8 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
 
     ptr = xmlParseFile (diafile);
 
-    if (ptr == NULL) {
+    if (ptr == NULL || ptr->xmlRootNode->xmlChildrenNode == NULL) {
+        std::cerr << "Empty diagram." << std::endl;
         return false;
     }
 
@@ -410,23 +452,37 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
 
     while (object != NULL) {
         xmlChar *objtype = xmlGetProp (object, BAD_CAST2 ("type"));
+        if (objtype == NULL) {
+            std::cerr << "Failed to get type of a node (" <<
+                object->name << ")." << std::endl <<
+                "Parent is \"" << object->parent->name <<
+                "\"" << std::endl;
+        }
         // Here we have a Dia object
-        if (strcmp ("UML - Class", BAD_TSAC2 (objtype)) == 0) {
+        else if (strcmp ("UML - Class", BAD_TSAC2 (objtype)) == 0) {
             // Here we have a class definition
             umlClassNode * tmplist = new umlClassNode ();
             tmplist->parseClass (object);
             // We get the ID of the object here
             xmlChar *objid = xmlGetProp (object, BAD_CAST2 ("id"));
-            tmplist->id.assign (BAD_TSAC2 (objid));
-            free (objid);
+            if (objid != NULL) {
+                tmplist->id.assign (BAD_TSAC2 (objid));
+                free (objid);
+            }
 
             // We insert it here
             res.push_back (tmplist);
         } else if (!strcmp ("UML - LargePackage", BAD_TSAC2 (objtype)) ||
                    !strcmp ("UML - SmallPackage", BAD_TSAC2 (objtype))) {
             xmlChar *objid = xmlGetProp (object, BAD_CAST2 ("id"));
-            umlPackage *tmppck = new umlPackage (object, BAD_TSAC2 (objid));
-            free (objid);
+            umlPackage *tmppck;
+            if (objid != NULL) {
+                tmppck = new umlPackage (object, BAD_TSAC2 (objid));
+                free (objid);
+            }
+            else {
+                tmppck = new umlPackage (object, std::string());
+            }
 
             // We insert it here
             packagelst.push_back (tmppck);
@@ -442,7 +498,13 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
 
     while (object != NULL) {
         xmlChar *objtype = xmlGetProp (object, BAD_CAST2 ("type"));
-        if (!strcmp ("UML - Association", BAD_TSAC2 (objtype))) {
+        if (objtype == NULL) {
+            std::cerr << "Failed to get type of a node (" <<
+                object->name << ")." << std::endl <<
+                "Parent is \"" << object->parent->name <<
+                "\"" << std::endl;
+        }
+        else if (!strcmp ("UML - Association", BAD_TSAC2 (objtype))) {
             const char *name = NULL;
             const char *name_a = NULL;
             const char *name_b = NULL;
@@ -461,83 +523,142 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
                 if (attrtype != NULL) {
                     xmlNodePtr child = attribute->xmlChildrenNode;
                     if (!strcmp ("direction", attrtype)) {
-                        xmlChar *tmptype = xmlGetProp (child, BAD_CAST2 ("val"));
-                        if (!strcmp (BAD_TSAC2 (tmptype), "0")) {
-                            direction = 1;
+                        if (child == NULL) {
+                            std::cerr <<
+                            "Failed to get children node of an association node (" << attrtype << ") with direction attribute." <<
+                            std::endl;
                         }
                         else {
-                            direction = 0;
+                            xmlChar *tmptype = xmlGetProp (child, BAD_CAST2 ("val"));
+                            if (tmptype == NULL) {
+                                std::cerr << "Failed to get val of a node (" <<
+                                    child->name << ")." << std::endl <<
+                                    "Parent is \"" << child->parent->name <<
+                                    "\"" << std::endl;
+                            }
+                            else if (!strcmp (BAD_TSAC2 (tmptype), "0")) {
+                                direction = 1;
+                            }
+                            else {
+                                direction = 0;
+                            }
+                            free (tmptype);
                         }
-                        free (tmptype);
                     }
                     else if (!strcmp ("assoc_type", attrtype)) {
-                        xmlChar *tmptype = xmlGetProp (child,
-                                                       BAD_CAST2 ("val"));
-                        if (!strcmp (BAD_TSAC2 (tmptype), "1")) {
-                            composite = 0;
+                        if (child == NULL) {
+                            std::cerr <<
+                            "Failed to get children node of an association node (" <<
+                            attrtype << ") with assoc_type attribute." <<
+                            std::endl;
                         }
                         else {
-                            composite = 1;
+                            xmlChar *tmptype = xmlGetProp (child,
+                                                           BAD_CAST2 ("val"));
+                            if (tmptype == NULL) {
+                                std::cerr << "Failed to get val of a node (" <<
+                                    child->name << ")." << std::endl <<
+                                    "Parent is \"" << child->parent->name <<
+                                    "\"" << std::endl;
+                            }
+                            else if (!strcmp (BAD_TSAC2 (tmptype), "1")) {
+                                composite = 0;
+                            }
+                            else {
+                                composite = 1;
+                            }
+                            free (tmptype);
                         }
-                        free (tmptype);
                     }
                     else if (!strcmp ("visibility_a", attrtype)) {
-                        xmlChar *tmptype = xmlGetProp (child,
-                                                       BAD_CAST2 ("val"));
-                        switch (tmptype[0]) {
-                            case '0' : {
-                                visibility_a = Visibility::PUBLIC;
-                                break;
+                        if (child == NULL) {
+                            std::cerr <<
+                            "Failed to get children node of an association node (" <<
+                            attrtype << ") with visibility_a attribute." <<
+                            std::endl;
+                        }
+                        else {
+                            xmlChar *tmptype = xmlGetProp (child,
+                                                           BAD_CAST2 ("val"));
+                            if (tmptype == NULL) {
+                                std::cerr << "Failed to get val of a node (" <<
+                                    child->name << ")." << std::endl <<
+                                    "Parent is \"" << child->parent->name <<
+                                    "\"" << std::endl;
                             }
-                            case '1' : {
-                                visibility_a = Visibility::PRIVATE;
-                                break;
-                            }
-                            case '2' : {
-                                visibility_a = Visibility::PROTECTED;
-                                break;
-                            }
-                            case '3' : {
-                                visibility_a = Visibility::IMPLEMENTATION;
-                                break;
-                            }
-                            default : {
-                                std::cout << "Unknown visibility : "
-                                          << tmptype[0] << "\n";
-                                return false;
+                            else {
+                                switch (tmptype[0]) {
+                                    case '0' : {
+                                        visibility_a = Visibility::PUBLIC;
+                                        break;
+                                    }
+                                    case '1' : {
+                                        visibility_a = Visibility::PRIVATE;
+                                        break;
+                                    }
+                                    case '2' : {
+                                        visibility_a = Visibility::PROTECTED;
+                                        break;
+                                    }
+                                    case '3' : {
+                                        visibility_a = Visibility::IMPLEMENTATION;
+                                        break;
+                                    }
+                                    default : {
+                                        std::cout << "Unknown visibility : "
+                                                  << tmptype[0] << "\n";
+                                        return false;
+                                    }
+                                }
+                                free (tmptype);
                             }
                         }
-                        free (tmptype);
                     }
                     else if (!strcmp ("visibility_b", attrtype)) {
-                        xmlChar *tmptype = xmlGetProp (child,
-                                                       BAD_CAST2 ("val"));
-                        switch (tmptype[0]) {
-                            case '0' : {
-                                visibility_b = Visibility::PUBLIC;
-                                break;
+                        if (child == NULL) {
+                            std::cerr <<
+                            "Failed to get children node of an association node (" <<
+                            attrtype << ") with visibility_b attribute." <<
+                            std::endl;
+                        }
+                        else {
+                            xmlChar *tmptype = xmlGetProp (child,
+                                                           BAD_CAST2 ("val"));
+                            if (tmptype == NULL) {
+                                std::cerr << "Failed to get val of a node (" <<
+                                    child->name << ")." << std::endl <<
+                                    "Parent is \"" << child->parent->name <<
+                                    "\"" << std::endl;
                             }
-                            case '1' : {
-                                visibility_b = Visibility::PRIVATE;
-                                break;
-                            }
-                            case '2' : {
-                                visibility_b = Visibility::PROTECTED;
-                                break;
-                            }
-                            case '3' : {
-                                visibility_b = Visibility::IMPLEMENTATION;
-                                break;
-                            }
-                            default : {
-                                std::cout << "Unknown visibility : "
-                                          << tmptype[0] << "\n";
-                                return false;
+                            else {
+                                switch (tmptype[0]) {
+                                    case '0' : {
+                                        visibility_b = Visibility::PUBLIC;
+                                        break;
+                                    }
+                                    case '1' : {
+                                        visibility_b = Visibility::PRIVATE;
+                                        break;
+                                    }
+                                    case '2' : {
+                                        visibility_b = Visibility::PROTECTED;
+                                        break;
+                                    }
+                                    case '3' : {
+                                        visibility_b = Visibility::IMPLEMENTATION;
+                                        break;
+                                    }
+                                    default : {
+                                        std::cout << "Unknown visibility : "
+                                                  << tmptype[0] << "\n";
+                                        return false;
+                                    }
+                                }
+                                free (tmptype);
                             }
                         }
-                        free (tmptype);
                     }
-                    else if (child->xmlChildrenNode) {
+                    else if (child && child->xmlChildrenNode) {
                         xmlNodePtr grandchild = child->xmlChildrenNode;
                         if (!strcmp (attrtype, "name")) {
                             name = BAD_TSAC2 (grandchild->content);
@@ -560,7 +681,13 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
                                     xmlNodePtr ggchild = grandchild->xmlChildrenNode;
                                     if (ggchild->xmlChildrenNode) {
                                         attrtype = reinterpret_cast <char *> (xmlGetProp (grandchild, BAD_CAST2 ("name")));
-                                        if (!strcmp (attrtype, "role")) {
+                                        if (attrtype == NULL) {
+                                            std::cerr << "Failed to get name of a node (" <<
+                                                grandchild->name << ")." << std::endl <<
+                                                "Parent is \"" << grandchild->parent->name <<
+                                                "\"" << std::endl;
+                                        }
+                                        else if (!strcmp (attrtype, "role")) {
                                             name_a = BAD_TSAC2 (ggchild->xmlChildrenNode->content);
                                         }
                                         else if (!strcmp (attrtype, "multiplicity")) {
@@ -580,7 +707,13 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
                                     xmlNodePtr ggchild = grandchild->xmlChildrenNode;
                                     if (ggchild->xmlChildrenNode) {
                                         attrtype = reinterpret_cast <char *> (xmlGetProp (grandchild, BAD_CAST2 ("name")));
-                                        if (!strcmp (attrtype, "role")) {
+                                        if (attrtype == NULL) {
+                                            std::cerr << "Failed to get name of a node (" <<
+                                                grandchild->name << ")." << std::endl <<
+                                                "Parent is \"" << grandchild->parent->name <<
+                                                "\"" << std::endl;
+                                        }
+                                        else if (!strcmp (attrtype, "role")) {
                                             name_b = BAD_TSAC2 (ggchild->xmlChildrenNode->content);
                                         }
                                         else if (!strcmp (attrtype, "multiplicity")) {
@@ -643,25 +776,40 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
             bool noLoop = false;
             while (attribute != NULL) {
                 if (!strcmp ("connections", BAD_TSAC2 (attribute->name))) {
-                    end1 = xmlGetProp (attribute->xmlChildrenNode->next,
-                                       BAD_CAST2 ("to"));
-                    end2 = xmlGetProp (attribute->xmlChildrenNode,
-                                       BAD_CAST2 ("to"));
+                    if (attribute->xmlChildrenNode != NULL) {
+                        end1 = xmlGetProp (attribute->xmlChildrenNode->next,
+                                           BAD_CAST2 ("to"));
+                        end2 = xmlGetProp (attribute->xmlChildrenNode,
+                                           BAD_CAST2 ("to"));
+                    }
+                    else {
+                        std::cerr <<
+                        "Failed to get children node of a connections node." <<
+                        std::endl;
+                    }
                 }
                 else if (!strcmp ("attribute", BAD_TSAC2 (attribute->name))) {
                     xmlChar *name = xmlGetProp (attribute, BAD_CAST2 ("name"));
 
-                    if (!strcmp ("stereotype", BAD_TSAC2 (name)))
-                    {
-                        std::string stereo;
+                    if (name != NULL) {
+                        if (!strcmp ("stereotype", BAD_TSAC2 (name)))
+                        {
+                            std::string stereo;
 
-                        parseDiaNode (attribute->xmlChildrenNode, stereo);
-                        if (isInside (stereo, "NoLoop") ||
-                            isInside (stereo, "noloop")) {
-                            noLoop = true;
+                            parseDiaNode (attribute->xmlChildrenNode, stereo);
+                            if (isInside (stereo, "NoLoop") ||
+                                isInside (stereo, "noloop")) {
+                                noLoop = true;
+                            }
                         }
+                        free (name);
                     }
-                    free (name);
+                    else {
+                        std::cerr << "Failed to get name of a node (" <<
+                            attribute->name << ")." << std::endl <<
+                            "Parent is \"" << attribute->parent->name <<
+                            "\"" << std::endl;
+                    }
                 }
                 attribute = attribute->next;
             }
@@ -669,17 +817,27 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
                 (BAD_TSAC2 (end2) != nullptr)) {
                 umlClassNode * node = umlClassNode::find (
                                                 res, BAD_TSAC2 (end2));
-                std::cerr << "One dependency of "
-                          << node->getName ()
-                          << " is broken.\n";
+                if (node != NULL) {
+                    std::cerr << "One dependency of " << node->getName ()
+                              << " is broken.\n";
+                }
+                else {
+                    std::cerr << "Failed to found node " << end2 <<
+                                 std::endl;
+                }
             }
             else if ((BAD_TSAC2 (end2) == nullptr) &&
                      (BAD_TSAC2 (end1) != nullptr)) {
                 umlClassNode * node = umlClassNode::find (
                                                 res, BAD_TSAC2 (end1));
-                std::cerr << "One dependency of "
-                          << node->getName ()
-                          << " is broken.\n";
+                if (node != NULL) {
+                    std::cerr << "One dependency of " << node->getName ()
+                              << " is broken.\n";
+                }
+                else {
+                    std::cerr << "Failed to found node " << end1 <<
+                                 std::endl;
+                }
             }
             else if ((BAD_TSAC2 (end1) != nullptr) &&
                      (BAD_TSAC2 (end2) != nullptr)) {
@@ -710,19 +868,27 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
                 else if (!strcmp ("attribute", BAD_TSAC2 (attribute->name))) {
                     xmlChar *name = xmlGetProp (attribute, BAD_CAST2 ("name"));
 
-                    if (!strcmp ("text", BAD_TSAC2 (name)))
-                    {
-                        std::string stereo;
-                        umlClassNode * tmpnode;
+                    if (name != NULL) {
+                        if (!strcmp ("text", BAD_TSAC2 (name)))
+                        {
+                            std::string stereo;
+                            umlClassNode * tmpnode;
 
-                        parseDiaNode (attribute->xmlChildrenNode, stereo);
-                        tmpnode = findByName (res, stereo);
-                        if (tmpnode != NULL) {
-                            end1 = reinterpret_cast <xmlChar *>
-                                         (strdup (tmpnode->getId ().c_str ()));
+                            parseDiaNode (attribute->xmlChildrenNode, stereo);
+                            tmpnode = findByName (res, stereo);
+                            if (tmpnode != NULL) {
+                                end1 = reinterpret_cast <xmlChar *>
+                                             (strdup (tmpnode->getId ().c_str ()));
+                            }
                         }
+                        free (name);
                     }
-                    free (name);
+                    else {
+                        std::cerr << "Failed to get name of a node (" <<
+                            attribute->name << ")." << std::endl <<
+                            "Parent is \"" << attribute->parent->name <<
+                            "\"" << std::endl;
+                    }
                 }
                 attribute = attribute->next;
             }
@@ -751,41 +917,54 @@ umlClass::parseDiagram (char *diafile, std::list <umlClassNode *> & res) {
             end2 = nullptr;
             while (attribute != NULL) {
                 if (!strcmp ("connections", BAD_TSAC2 (attribute->name))) {
-                    end1 = xmlGetProp (attribute->xmlChildrenNode,
-                                       BAD_CAST2 ("to"));
-                    end2 = xmlGetProp (attribute->xmlChildrenNode->next,
-                                       BAD_CAST2 ("to"));
+                    if (attribute->xmlChildrenNode == NULL) {
+                        std::cerr << "Failed to find both connection of a connections type." << std::endl;
+                    }
+                    else {
+                        end1 = xmlGetProp (attribute->xmlChildrenNode,
+                                           BAD_CAST2 ("to"));
+                        end2 = xmlGetProp (attribute->xmlChildrenNode->next,
+                                           BAD_CAST2 ("to"));
+                    }
                 }
                 else if (!strcmp ("attribute", BAD_TSAC2 (attribute->name))) {
                     xmlChar *name = xmlGetProp (attribute, BAD_CAST2 ("name"));
 
-                    if (!strcmp ("stereotype", BAD_TSAC2 (name)))
-                    {
-                        std::string stereo;
-                        parseDiaNode (attribute->xmlChildrenNode, stereo);
-                        if (stereo.empty ()) {
-                            visible = Visibility::PUBLIC;
+                    if (name != NULL) {
+                        if (!strcmp ("stereotype", BAD_TSAC2 (name)))
+                        {
+                            std::string stereo;
+                            parseDiaNode (attribute->xmlChildrenNode, stereo);
+                            if (stereo.empty ()) {
+                                visible = Visibility::PUBLIC;
+                            }
+                            else if (isInside (stereo, "public")) {
+                                visible = Visibility::PUBLIC;
+                            }
+                            else if (isInside (stereo, "private")) {
+                                visible = Visibility::PRIVATE;
+                            }
+                            else if (isInside (stereo, "protected")) {
+                                visible = Visibility::PROTECTED;
+                            }
+                            else if (isInside (stereo,
+                                               "implementation")) {
+                                visible = Visibility::IMPLEMENTATION;
+                            }
+                            else {
+                                std::cerr << "Unknown stereotype for Generalization or Realizes: "
+                                          << stereo << ".\n"
+                                          << "Allow stereotype is: \"public\", \"private\", \"protected\" and \"implementation\".\n";
+                            }
                         }
-                        else if (isInside (stereo, "public")) {
-                            visible = Visibility::PUBLIC;
-                        }
-                        else if (isInside (stereo, "private")) {
-                            visible = Visibility::PRIVATE;
-                        }
-                        else if (isInside (stereo, "protected")) {
-                            visible = Visibility::PROTECTED;
-                        }
-                        else if (isInside (stereo,
-                                           "implementation")) {
-                            visible = Visibility::IMPLEMENTATION;
-                        }
-                        else {
-                            std::cerr << "Unknown stereotype for Generalization or Realizes: "
-                                      << stereo << ".\n"
-                                      << "Allow stereotype is: \"public\", \"private\", \"protected\" and \"implementation\".\n";
-                        }
+                        free (name);
                     }
-                    free (name);
+                    else {
+                        std::cerr << "Failed to get name of a node (" <<
+                            attribute->name << ")." << std::endl <<
+                            "Parent is \"" << attribute->parent->name <<
+                            "\"" << std::endl;
+                    }
                 }
                 attribute = attribute->next;
             }
@@ -860,10 +1039,14 @@ umlClass::parseClass (xmlNodePtr class_) {
         xmlChar *attrname;
         attrname = xmlGetProp (attribute, BAD_CAST2 ("name"));
         if (attrname == NULL) {
-            attribute = attribute->next;
-            continue;
-        }
-        if (!strcmp ("name", BAD_TSAC2 (attrname))) {
+        } else if (!strcmp ("operations", BAD_TSAC2 (attrname))) {
+            umlOperation::parseOperations (attribute->xmlChildrenNode,
+                                            operations);
+            if (stereotypeGetSet) {
+                makeGetSetMethods ();
+            }
+        } else if (attribute->xmlChildrenNode == NULL) {
+        } else if (!strcmp ("name", BAD_TSAC2 (attrname))) {
             parseDiaNode (attribute->xmlChildrenNode, name);
         } else if (!strcmp ("obj_pos", BAD_TSAC2 (attrname))) {
             parseGeomPosition (attribute->xmlChildrenNode, &geom);
@@ -899,13 +1082,8 @@ umlClass::parseClass (xmlNodePtr class_) {
             abstract = parseBoolean (attribute->xmlChildrenNode);
         } else if (!strcmp ("attributes", BAD_TSAC2 (attrname))) {
             parseAttributes (attribute->xmlChildrenNode, attributes);
-        } else if (!strcmp ("operations", BAD_TSAC2 (attrname))) {
-            umlOperation::parseOperations (attribute->xmlChildrenNode,
-                                            operations);
-            if (stereotypeGetSet) {
-                makeGetSetMethods ();
-            }
-        } else if (!strcmp ("templates", BAD_TSAC2 (attrname))) {
+        }
+        else if (!strcmp ("templates", BAD_TSAC2 (attrname))) {
             parseTemplates (attribute->xmlChildrenNode, templates);
         }
         free (attrname);

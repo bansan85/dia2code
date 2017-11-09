@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "parse_diagram.hpp"
 #include "string2.hpp"
 #include "umlClass.hpp"
+#include <iostream>
 
 /**
   * Inserts "n" into the list "l", in orderly fashion
@@ -72,7 +73,12 @@ umlOperation::umlOperation (xmlNodePtr node) :
     while (node != NULL) {
         xmlChar *nodename;
         nodename = xmlGetProp (node, BAD_CAST2 ("name"));
-        if (!strcmp ("parameters", BAD_TSAC2 (nodename))) {
+        if (nodename == NULL) {
+            std::cerr << "Failed to get name of a node (" << node->name <<
+                ")." << std::endl <<
+                "Parent is \"" << node->parent->name << "\"" << std::endl;
+        }
+        else if (!strcmp ("parameters", BAD_TSAC2 (nodename))) {
             parseAttributes (node->xmlChildrenNode, parameters);
         }
         else if (!strcmp ("stereotype", BAD_TSAC2 (nodename))) {

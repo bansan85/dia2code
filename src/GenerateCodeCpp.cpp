@@ -520,7 +520,9 @@ GenerateCodeCpp::writeTypedef (const umlClassNode & node) {
 
     umla = node.getAttributes ().begin ();
     if (umla == node.getAttributes ().end ()) {
-        throw std::string ("Error: first attribute (impl type) not set at typedef " + node.getName () + ".\n");
+        std::cerr << "Error: first attribute (impl type) not set at typedef "
+            << node.getName () << "." << std::endl;
+        return;
     }
 
     (*umla).check (node);

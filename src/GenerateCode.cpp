@@ -183,7 +183,8 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
 
     if ((f.good ()) && (!overwrite)) {
         f.close();
-        throw std::string ("Overwrite " + outfilename + " is forbidden.\n");
+        std::cerr << "Overwrite " << outfilename << " is forbidden." <<
+            std::endl;
     }
     else {
         f.close();
@@ -193,7 +194,7 @@ GenerateCode::openOutfile (const std::string & filename, declaration & d) {
     file.back ()->open (outfilename.c_str ());
     if (!file.back ()->is_open ()) {
         file.back ()->close ();
-        throw std::string ("Failed to create " + outfilename + ".\n");
+        std::cerr << "Failed to create " << outfilename << "." << std::endl;
     }
 
     tmpname = strtoupper (filename);
@@ -656,8 +657,10 @@ GenerateCode::genDecl (declaration &d,
         folder.append (dirName (d.u.this_module->pkg, SEPARATOR));
 
         std::string errMsg = my_mkpath (folder);
-        if (!errMsg.empty ())
-            throw errMsg;
+        if (!errMsg.empty ()) {
+            std::cerr << errMsg;
+            return;
+        }
     }
 
     if (forceOpen && (!oneClassOneHeader || !d.decl_kind == dk_module)) {
@@ -740,7 +743,8 @@ GenerateCode::genDecl (declaration &d,
     }
     else if (eq (stype, "CORBAUnion")) {
         if (umla == node->getAttributes ().end ()) {
-            throw std::string ("Attributes not set at union " + name + "\n");
+            std::cerr << "Attributes not set at union " << name << std::endl;
+            return;
         }
         std::cerr << name << ": CORBAUnion not yet fully implemented.\n";
         if (bOpenBraceOnNewline) {
@@ -840,13 +844,17 @@ GenerateCode::writeFile () {
     FILE * licensefile;
     if ((fopen_s (&licensefile, license.c_str (), "r") != 0) ||
         (licensefile == NULL)) {
-        throw std::string ("Can't open the license file " + license + ".\n");
+        std::cerr << "Can't open the license file " << license << "." <<
+            std::endl;
+        return;
     }
 #else
     FILE * licensefile = fopen (license.c_str (), "r");
 
     if (!licensefile) {
-        throw std::string ("Can't open the license file " + license + ".\n");
+        std::cerr << "Can't open the license file " << license << "." <<
+            std::endl;
+        return;
     }
 #endif
 
@@ -922,8 +930,10 @@ GenerateCode::visibility1 (std::string desc,
         case Visibility::IMPLEMENTATION :
             std::cerr << desc + ": implementation not applicable. Default: public.\n";
             return "public";
-        default :
-            throw std::string ("Unknown visibility.\n");
+        default : {
+            std::cerr << "Unknown visibility." << std::endl;
+            return "";
+        }
     }
 }
 

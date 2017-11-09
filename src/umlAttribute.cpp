@@ -178,7 +178,13 @@ umlAttribute::parse (xmlNodePtr node) {
         xmlChar *nodename;
         nodename = xmlGetProp (node, BAD_CAST2 ("name"));
 
-        if (!strcmp ("name", BAD_TSAC2 (nodename))) {
+        if (nodename == NULL) {
+            std::cerr << "Failed to get name of a node (" <<
+                node->name << ")." << std::endl <<
+                "Parent is \"" << node->parent->name <<
+                "\"" << std::endl;
+        }
+        else if (!strcmp ("name", BAD_TSAC2 (nodename))) {
             parseDiaNode (node->xmlChildrenNode, name);
         } else if (!strcmp ("value", BAD_TSAC2 (nodename))) {
             if (node->xmlChildrenNode->xmlChildrenNode != NULL) {
@@ -199,83 +205,104 @@ umlAttribute::parse (xmlNodePtr node) {
         } else if (!strcmp ("kind", BAD_TSAC2 (nodename))) {
             char tmp;
             attrval = xmlGetProp (node->xmlChildrenNode, BAD_CAST2 ("val"));
-            tmp = attrval[0];
-            switch (tmp) {
-                case '0' : {
-                    kind = Kind::UNKNOWN;
-                    break;
+            if (attrval != NULL) {
+                tmp = attrval[0];
+                switch (tmp) {
+                    case '0' : {
+                        kind = Kind::UNKNOWN;
+                        break;
+                    }
+                    case '1' : {
+                        kind = Kind::IN;
+                        break;
+                    }
+                    case '2' : {
+                        kind = Kind::OUT;
+                        break;
+                    }
+                    case '3' : {
+                        kind = Kind::IN_OUT;
+                        break;
+                    }
+                    default : {
+                        std::cerr << "Unknown kind: "  <<
+                            std::string (1, tmp) << std::endl;
+                    }
                 }
-                case '1' : {
-                    kind = Kind::IN;
-                    break;
-                }
-                case '2' : {
-                    kind = Kind::OUT;
-                    break;
-                }
-                case '3' : {
-                    kind = Kind::IN_OUT;
-                    break;
-                }
-                default : {
-                    free (attrval);
-                    throw std::string (std::string ("Unknown kind: ") +
-                                       std::string (1, tmp));
-                }
+                free (attrval);
             }
-            free (attrval);
+            else {
+                std::cerr << "Failed to get val of a node (" <<
+                    node->xmlChildrenNode->name << ")." << std::endl <<
+                    "Parent is \"" << node->xmlChildrenNode->parent->name <<
+                    "\"" << std::endl;
+            }
         } else if (!strcmp ("visibility", BAD_TSAC2 (nodename))) {
             char tmp;
             attrval = xmlGetProp (node->xmlChildrenNode, BAD_CAST2 ("val"));
-            tmp = attrval[0];
-            switch (tmp) {
-                case '0' : {
-                    visibility = Visibility::PUBLIC;
-                    break;
+            if (attrval != NULL) {
+                tmp = attrval[0];
+                switch (tmp) {
+                    case '0' : {
+                        visibility = Visibility::PUBLIC;
+                        break;
+                    }
+                    case '1' : {
+                        visibility = Visibility::PRIVATE;
+                        break;
+                    }
+                    case '2' : {
+                        visibility = Visibility::PROTECTED;
+                        break;
+                    }
+                    case '3' : {
+                        visibility = Visibility::IMPLEMENTATION;
+                        break;
+                    }
+                    default : {
+                        std::cerr << "Unknown visibility: " <<
+                            std::string (1, tmp) << std::endl;
+                    }
                 }
-                case '1' : {
-                    visibility = Visibility::PRIVATE;
-                    break;
-                }
-                case '2' : {
-                    visibility = Visibility::PROTECTED;
-                    break;
-                }
-                case '3' : {
-                    visibility = Visibility::IMPLEMENTATION;
-                    break;
-                }
-                default : {
-                    free (attrval);
-                    throw std::string (std::string ("Unknown visibility: ") +
-                                       std::string (1, tmp));
-                }
+                free (attrval);
             }
-            free (attrval);
+            else {
+                std::cerr << "Failed to get val of a node (" <<
+                    node->xmlChildrenNode->name << ")." << std::endl <<
+                    "Parent is \"" << node->xmlChildrenNode->parent->name <<
+                    "\"" << std::endl;
+            }
         } else if (!strcmp ("inheritance_type", BAD_TSAC2 (nodename))) {
             char inheritance_tmp;
             attrval = xmlGetProp (node->xmlChildrenNode, BAD_CAST2 ("val"));
-            inheritance_tmp = attrval[0];
-            switch (inheritance_tmp) {
-                case '0' : {
-                    inheritance = Inheritance::ABSTRACT;
-                    break;
+            if (attrval != NULL) {
+                inheritance_tmp = attrval[0];
+                switch (inheritance_tmp) {
+                    case '0' : {
+                        inheritance = Inheritance::ABSTRACT;
+                        break;
+                    }
+                    case '1' : {
+                        inheritance = Inheritance::VIRTUAL;
+                        break;
+                    }
+                    case '2' : {
+                        inheritance = Inheritance::FINAL;
+                        break;
+                    }
+                    default : {
+                        std::cerr << "Unknown inheritance : " <<
+                            std::string (1, inheritance_tmp) << std::endl;
+                    }
                 }
-                case '1' : {
-                    inheritance = Inheritance::VIRTUAL;
-                    break;
-                }
-                case '2' : {
-                    inheritance = Inheritance::FINAL;
-                    break;
-                }
-                default : {
-                    free (attrval);
-                    throw std::string (std::string ("Unknown inheritance : ") +
-                                       std::string (1, inheritance_tmp));
-                }
+                free (attrval);
             }
-            free (attrval);
+            else {
+                std::cerr << "Failed to get val of a node (" <<
+                    node->xmlChildrenNode->name << ")." << std::endl <<
+                    "Parent is \"" << node->xmlChildrenNode->parent->name <<
+                    "\"" << std::endl;
+            }
         } else if (!strcmp ("class_scope", BAD_TSAC2 (nodename))) {
             isstatic = parseBoolean (node->xmlChildrenNode);
         } else if (!strcmp ("query", BAD_TSAC2 (nodename))) {

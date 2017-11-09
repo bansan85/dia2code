@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "string2.hpp"
 #include <algorithm>
+#include <iostream>
 
 /**
  * This function returns the upper case char* of the one taken on input
@@ -131,7 +132,8 @@ kindStr (Kind k) {
             return "in/out";
         }
         default : {
-            throw std::string ("Unknown kind.\n");
+            std::cerr << "Unknown kind." << std::endl;
+            return "???";
         }
     }
 }
