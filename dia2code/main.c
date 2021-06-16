@@ -130,7 +130,24 @@ under certain conditions; read the COPYING file for details.\n";
     -ini <file>          Can be used instead of command-line parameters\n\
     --debug <level>     Show debugging messages of this level\n\
     <diagramfile>        The Dia file that holds the diagram to be read\n\n\
-    Note: parameters can be specified in any order.";
+    Note: parameters can be specified in any order.\n\n\
+    SQL DDL Generation Rules and Caveats\n\
+    ====================================\n\
+    Works on UML Class Diagrams Only. Class becomes table, attribute becomes field.\n\
+    Attributes marked as Class Scope become Primary Key(s). Attribute type becomes DDL\n\
+    type. Actual SQL DDL for your specific RDBMS can be used in type field. For example:\n\
+    For PostgeSQL attribute Name=id, Type=bigserial ... Name=created, Type=timestamp\n\
+    with time zone not null default now().\n\
+    Class Associations and Foreign Keys\n\
+    -----------------------------------\n\
+    Class Associations become Foreign Keys. Side a is the parent table, side b is the \n\
+    child table. Direction is ignored (always assumes A to B). Association name can use the\n\
+    surrogate key standard (name ending in \"_id\"), in which case the field name in the \n\
+    parent table is always \"id\". If you are not using the surrogate model, then the \n\
+    referenced parent field is the Association Name itself.\n\
+    Tips: Use Multiplicity (usually Side A = 1 and Side B = *) to make your diagrams and\n\
+    Foreign Keys clearer to understand. Leave the default Direction From A to B and the black \n\
+    arrow, next to the association name, will always point to parent table.";
 
     /* initialise stuff like global variables to their default values */
     dia2code_initializations();

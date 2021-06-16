@@ -3,6 +3,8 @@
                              -------------------
     begin                : Sat Jun 2 2001
     email                : sirnewton_01@yahoo.ca
+    contrib              : 2012-2021
+    email                : alejandro.imass@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -29,17 +31,11 @@ void inherit_attributes(umlclasslist parents, umlattrlist umla) {
 }
 
 void generate_code_sql(batch *b) {
-    /*
-    umlclasslist tmplist,parents,dependencies;
-    umlassoclist associations;
-    namelist used_classes,tmpnamelist;
-    umlattrlist umla,tmpa;
-    umloplist umlo;
-    */
-    umlclasslist tmplist;
+    umlclasslist tablelist;
     umlattrlist umla;
     char *tmpname;
     char outfilename[BIG_BUFFER];
+    unsigned int counter = 0;
     FILE * outfilesql, *dummyfile;
 
     int tmpdirlgth, tmpfilelgth;
@@ -50,19 +46,10 @@ void generate_code_sql(batch *b) {
 
     tmpdirlgth = strlen(b->outdir);
 
-    tmplist = b->classlist;
+    tablelist = b->classlist;
 
-    if (tmplist == NULL) {
+    if (tablelist == NULL) {
         fprintf(stderr, "Sorry, no class found in your file.\n");
-        exit(4);
-    }
-
-    tmpname = strtolower(tmplist->key->name);
-
-    /* This prevents buffer overflows */
-    tmpfilelgth = strlen(tmpname);
-    if (tmpfilelgth + tmpdirlgth > sizeof(*outfilename) - 2) {
-        fprintf(stderr, "Sorry, name of file too long ...\nTry a smaller dir name\n");
         exit(4);
     }
 
@@ -76,33 +63,29 @@ void generate_code_sql(batch *b) {
         }
 
         /* This prevents buffer overflows */
-        tmpfilelgth = strlen(tmpname);
-        if (tmpfilelgth + tmpdirlgth > sizeof(*outfilename) - 2) {
+        if (tmpdirlgth > sizeof(*outfilename) - 2) {
             fprintf(stderr, "Sorry, name of file too long ...\nTry a smaller dir name\n");
             exit(4);
         }
-
-        free(tmpname);
     }
 
+    while ( tablelist != NULL ) {
 
-    while ( tmplist != NULL ) {
-
-        if ( ! ( is_present(b->classes, tmplist->key->name) ^ b->mask ) ) {
+        if ( ! ( is_present(b->classes, tablelist->key->name) ^ b->mask ) ) {
             char seenFirst = 0;
 
-            if (tmplist->key->isabstract) {
-                tmplist = tmplist->next;
+            if (tablelist->key->isabstract) {
+                tablelist = tablelist->next;
                 continue;
             }
 
             /* Class (table) */
-            fprintf(outfilesql, "CREATE TABLE %s(\n", tmplist->key->name);
+            fprintf(outfilesql, "CREATE TABLE %s(\n", tablelist->key->name);
 
             /* Attributes (columns) */
             fprintf(outfilesql, "-- Attributes --\n");
-            umla = tmplist->key->attributes;
-            inherit_attributes (tmplist->parents, umla);
+            umla = tablelist->key->attributes;
+            inherit_attributes (tablelist->parents, umla);
             while ( umla != NULL) {
                 fprintf(outfilesql, "  %s %s", umla->key.name, umla->key.type);
                 if (umla->next != NULL) {
@@ -112,7 +95,7 @@ void generate_code_sql(batch *b) {
             }
 
             /* IsStatic attribute (Primary Key) */
-            umla = tmplist->key->attributes;
+            umla = tablelist->key->attributes;
             while ( umla != NULL) {
                 if( umla->key.isstatic ) {
                     if( !seenFirst ) {
@@ -131,41 +114,74 @@ void generate_code_sql(batch *b) {
             fprintf(outfilesql, ");\n\n");
         }
 
-        tmplist = tmplist->next;
+        tablelist = tablelist->next;
     }
 
-    /* Adding associations LAST since we want to have all tables around FIRST */
-    tmplist = b->classlist;
-    while( tmplist != NULL )
-    {
-        umlassocnode* temp = tmplist->associations;
-        while( temp != NULL )
-        {
+    /*
+        Adding associations LAST since we want to have all tables around FIRST
+        Rules and Caveats:
+            Side a is always the parent table, side b is always the child table
+            Association direction is ignored so regardless of the direction it always assumes A to B
+        The FK is generated from side b to side a like this:
+            ALTER TABLE [side b] ADD
+            CONSTRAINT  FK_[side b]_[side a]  FOREIGN KEY([assoc name]) REFERENCES [side a] ([field]);
+            field = "id" if assoc_name ends in _id else assoc_name
+    */
+    tablelist = b->classlist;
+    while( tablelist != NULL ) {
+        umlassocnode* assoc = tablelist->associations;
+        // a class may have multiple assocs (FKs)
+        counter = 1;
+        while( assoc != NULL ) {
             /*
               AI: use "surrogate key" trailing _id convention of most popular ORMs
               http://en.wikipedia.org/wiki/Surrogate_key
             */
             char tail[4];
-            const char *fk_col =  temp->name;
+            const char *fk_col =  assoc->name;
             strncpy(tail, fk_col + strlen(fk_col) - 3, 3);
             if (!strcmp("_id", tail)) {
                 fk_col = "id";
             } else {
                 printf("warning: association name %s does not end in _id but rather %s,\n",
-                       temp->name, tail);
+                       assoc->name, tail);
                 printf("make sure FK cols have the same name on both tables\n");
-                fk_col = temp->name;
+                fk_col = assoc->name;
             }
-            fprintf( outfilesql, "\n\nALTER TABLE %s ADD\n", temp->key->name );
-            fprintf( outfilesql, "    CONSTRAINT  FK_%s_%s  FOREIGN KEY(%s) REFERENCES %s (%s);\n",
-                     temp->key->name,
-                     tmplist->key->name,
-                     temp->name,
-                     tmplist->key->name,
-                     fk_col );
-            temp = temp->next;
+            // assumes the default A to B direction (ignores direction setting in drawing)
+            fprintf( outfilesql, "\n\nALTER TABLE %s ADD\n", assoc->key->name ); //side b, child
+            fprintf( outfilesql, "    CONSTRAINT  FK_%s_%s_%i  FOREIGN KEY(%s) REFERENCES %s (%s);\n",
+                     assoc->key->name, //side b, child
+                     tablelist->key->name, //side a, parent
+                     counter,
+                     assoc->name,
+                     tablelist->key->name, // side a, parent
+                     fk_col ); // parent field, depends on surrogate model or not
+            /* AI: add indexes to FOREIGN KEY */
+            if(is_present(b->sqlopts, "fkidx")){
+                /* AI: many-to-many connectors have fk that are also pk... */
+                int pk = 0;
+                umla = assoc->key->attributes;
+                while ( umla != NULL) {
+                    if( umla->key.isstatic && !strcmp(umla->key.name,assoc->name)) {
+                        pk = 1;
+                    }
+                    umla = umla->next;
+                }
+                /* ... and these already have indexes */
+                if(!pk){
+                fprintf( outfilesql, "\n\nCREATE INDEX  FKIDX_%s_%s_%i  ON %s (%s);\n",
+                    assoc->key->name,
+                    tablelist->key->name,
+                    counter,
+                    assoc->key->name,
+                    assoc->name );
+                }
+            }
+            assoc = assoc->next;
+            counter++;
         }
-        tmplist = tmplist->next;
+        tablelist = tablelist->next;
     }
     fprintf(stderr, "Finished!\n");
     fclose(outfilesql);

@@ -3,6 +3,11 @@ Unreleased:  Version 0.8.9
   https://sourceforge.net/p/dia2code/bugs/27/
 - Applied java-void.diff from https://sourceforge.net/p/dia2code/patches/29/
   fixing generation of constructors.  Applied similar improvement for C++.
+- Fixes and improvement in SQL generation:
+   - Added detailed SQL Rules and Caveats section in extended help
+   - Cleaned up module code. made more understandable
+   - Multiple child table FKs are allowed now
+   - Option to generate FK indexes
 
 14 Jul 2016:  Version 0.8.8
 - Applied C++ compatibility changes, whitespace cleanups, and vim settings
