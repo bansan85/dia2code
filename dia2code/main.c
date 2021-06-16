@@ -140,14 +140,15 @@ under certain conditions; read the COPYING file for details.\n";
     with time zone not null default now().\n\
     Class Associations and Foreign Keys\n\
     -----------------------------------\n\
-    Class Associations become Foreign Keys. Side a is the parent table, side b is the \n\
-    child table. Direction is ignored (always assumes A to B). Association name can use the\n\
-    surrogate key standard (name ending in \"_id\"), in which case the field name in the \n\
-    parent table is always \"id\". If you are not using the surrogate model, then the \n\
-    referenced parent field is the Association Name itself.\n\
-    Tips: Use Multiplicity (usually Side A = 1 and Side B = *) to make your diagrams and\n\
-    Foreign Keys clearer to understand. Leave the default Direction From A to B and the black \n\
-    arrow, next to the association name, will always point to parent table.";
+    Class Associations become Foreign Keys. Side A is the parent table, side B is the \n\
+    child table. Direction is ignored (A is always parent, B is always child). Association\n\
+    name can use the surrogate key standard (name ending in \"_id\"), in which case the \n\
+    field name in the parent table is always \"id\". If you are not using the surrogate model,\n\
+    then the referenced parent field is the Association Name itself.\n\
+    Tips: Use Multiplicity (usually Side A will be 1 and Side B will be *) to make your \n\
+    diagrams and foreign keys clearer to understand. You can also, change the association \n\
+    Direction to make the black arrow (next to the association name) always point to parent \n\
+    table (A side). But as mentioned above, the direction itself is ignored.";
 
     /* initialise stuff like global variables to their default values */
     dia2code_initializations();
